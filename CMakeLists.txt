@@ -1,0 +1,6 @@
+cmake_minimum_required (VERSION 3.12)
+project (MC3dSolver)
+set (MC3dSolver_VERSION_MAJOR 0)
+set (MC3dSolver_VERSION_MINOR 0)
+file(GLOB_RECURSE source_list src "*.cpp" "*.hpp")
+add_executable (solver ${source_list})
