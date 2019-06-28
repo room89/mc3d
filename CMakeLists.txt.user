@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.9.2, 2019-06-28T19:54:51. -->
+<!-- Written by QtCreator 4.9.2, 2019-06-28T20:23:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -365,7 +365,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/tmp/QtCreator-OjBQrk/qtc-cmake-zKeFcKIb</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/lostpointer/my_projects/build-mc3d-Desktop-Default</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

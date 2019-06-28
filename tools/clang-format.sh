@@ -6,7 +6,7 @@ walk_dir () {
             walk_dir "$pathname"
         elif [ -e "$pathname" ]; then
             case "$pathname" in
-                *.hpp|*.cpp)
+                *.hpp|*.cpp|*.h)
                     printf '%s\n' "$pathname"
                     clang-format -i "$pathname"
             esac

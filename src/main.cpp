@@ -1,116 +1,154 @@
-//File: main.h 
-//Program: MC3D
-//Author: Khokhlov "AAsad" Ivan
-//Version: 0.3.9
-//Last modified: 18.05.10.
-//Description: Program for calculation of freemolecular flows.
+// File: main.h
+// Program: MC3D
+// Author: Khokhlov "AAsad" Ivan
+// Version: 0.5.1
+// Last modified: 18.05.10.
+// Description: Program for calculation of rarefaid flows.
 
 #pragma once
-#include <mpi.h>
-#include <iostream>
-#include "timer.h"
+
+//#include <iostream>
+//#include "mpi.h"
+#include "Header.h"
 #include "cell.h"
+#include "cell_cluster.h"
 #include "point.h"
-#include "cell_claster.h"
-#include "pereodic_boundary.h"
 
-
-//#include "header.h"
 using namespace std;
 
-const double Lx = 1,  Ly = 1, Lz = 1;
-typedef unsigned int uint;
+const double Lx = 1, Ly = 1, Lz = 1;
 
-int main(int argc, char * argv[])
-{
-	int *argc1 = 0;
-	char ***argv1 = NULL;
-	MPI_Init(argc1, argv1);
+int main(int argc, char* argv[]) {
+  geometry* cone = new geometry;
+  // cone->create_wedge(-0.3, 5, .4, 0.69813);
+  cone->create_cube();
+  int ddd = cone->fix_poligons();
+  cone->rev_nrml();
+  cone->write_geometry_file("wadge.stl", "wadge");
+  // cone->scaling(-1);
+  cone->fragmentation(0.1);
 
-	double Kn, Cu, T;
-	unsigned int N = 0;
-	unsigned int ncx = 0, ncy = 0, ncz = 0;
-	//double dx, dy, dz;
-	unsigned int np = 100;
-	int numproc, proc_id;
+  //	double work_time = MPI_Wtime();
+  double Kn = .05, Cu = .9, T = 1.5;
+  unsigned int N = 0;
+  unsigned int ncx = 5, ncy = 5, ncz = 2;
+  unsigned int np = 60;
+  double S = 5;
+  point a(-0.5 * Lx, -0.5 * Ly, -0.5 * Lz);
 
-	MPI_Comm_size(MPI_COMM_WORLD, &numproc);
-	MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
+  // cell *temp_cell = new cell;
 
+  // temp_cell->set_param(10, 0, 1);
 
-	Kn = .05;
-	cout<<"Input Knudsen number: "<< Kn <<endl;
+  // temp_cell->set_apex(point(-.5, -.5, -.5));					//задание
+  // опорной
+  // точки temp_cell->set_size(1, 1, 1);			//задание
+  // размеров
 
-	Cu = .9;
-	cout<<"Input Courant number, Cu<=1: "<< Cu <<endl;
+  // temp_cell->initialazition(50, cone);
+  // //инициализация ячейки, с заданным количеством частиц
 
-	T = .2;
-	cout<<"Input time: "<< T;
-	
-	ncx = 25;
-	cout<<"Input dimension, x: "<< ncx <<endl;
-	ncy = 25;
-	cout<<"Input dimension, y: "<< ncy <<endl;
-	ncz = 1;
-	cout<<"Input dimension, z: "<< ncz <<endl;
-	
-	np = 400;
-	cout<<"Input statistics level: "<< np <<endl;
+  // temp_cell->set_L(Lx);
+  // //задание характерного размера для ячейки temp_cell->set_Kn(Kn);
 
-	cout<<"Numproc: "<<numproc<<"   "<<"proc_id: "<<proc_id<<endl;
-	
+  // temp_cell->calc_dt();
 
-	point a;
-	a.x = -Lx * 0.5 + Lx * proc_id / numproc;
-	a.y = -Ly * 0.5;
-	a.z = -Lz * 0.5;
+  // temp_cell->calc();
 
-	cell_claster claster;
+  mc3d::cell_cluster cluster;
 
-	claster.set_apex(a);
-	claster.set_size(Lx / numproc, Ly, Lz);
+  cluster.set_apex(a);
 
-	claster.initialazition(ncx / numproc, ncy, ncz, np, Kn, Cu, numproc, proc_id);
-	
-	boundary *boundary_cond[6];
+  cluster.set_size(Lx, Ly, Lz);
 
-	a.x = -Lx / 2;
-	a.y = 0;
-	a.z = 0;
-	point b(-1,0,0);
-	point c(Ly,0,0);
+  // bool fjh = cone->is_inner_point(point(0, 0, 0));
 
-	boundary_cond[0] = new pereodic_boundary(a, b, c);
-	boundary_cond[1] = new pereodic_boundary(a * -1, b * -1, c * -1);
+  // cluster.initialazition(ncx, ncy, ncz, np, Kn, Cu, NULL, numproc, proc_id);
+  // cluster.initialazition("cone_cluster.net", Kn, Cu, Lx, cone);
+  cluster.initialazition(ncx, ncy, ncz, np * ncx * ncy * ncz, Kn, Cu, cone,
+                         true, S, 0, 1, 1, 0);
 
-	a.set(0, -Ly * 0.5, 0);
-	b.set(0, -1, 0);
-	c.set(0, Ly, 0);
+  // cluster.write_cell_file("new_cells.net");
 
-	boundary_cond[2] = new pereodic_boundary(a, b, c);
-	boundary_cond[3] = new pereodic_boundary(a * -1, b * -1, c * -1);
+  cluster.write_file();
 
-	a.set(0, 0, -Lz * 0.5);
-	b.set(0, 0, -1);
-	c.set(0, 0, Lz);
+  boundary* boundary_cond[6];
 
-	boundary_cond[4] = new pereodic_boundary(a, b, c);
-	boundary_cond[5] = new pereodic_boundary(a * -1, b * -1, c * -1);
+  a.x = -Lx / 2;
+  a.y = 0;
+  a.z = 0;
+  point b(-1, 0, 0);
+  point c(Ly, 0, 0);
 
-	claster.set_boundary_condition(boundary_cond, 6);
+  // boundary_cond[0] = new mirror_boundary(a, b);
+  // boundary_cond[1] = new mirror_boundary(a * -1, b * -1);
 
-	claster.set_end_time(T);
+  // boundary_cond[0] = new pereodic_boundary(a, b, c);
+  // boundary_cond[1] = new pereodic_boundary(a * -1, b * -1, c * -1);
 
-	cout<<" t1 = "<<global_timer.calc_av()<<endl;
+  /*boundary_cond[0] = new free_boundary(a, b, np, 1, 1, 0);
+  boundary_cond[1] = new free_boundary(a * -1, b * -1,  np, 1, 1, 0);*/
 
-	claster.computation();
-	claster.write_file();
+  boundary_cond[0] = new giper_free_boundary(a, b, np, S, 1, 0);
+  boundary_cond[1] = new giper_free_boundary(a * -1, b * -1, np, S, 1, 0);
 
-	for(int i = 0; i < 6; i++)
-		delete boundary_cond[i];
+  a.set(0, -Ly * 0.5, 0);
+  b.set(0, -1, 0);
+  c.set(0, Ly, 0);
 
-	MPI_Finalize();
-	//cin>>np;
+  boundary_cond[2] = new mirror_boundary(a, b);
+  boundary_cond[3] = new mirror_boundary(a * -1, b * -1);
 
-	return 0;
+  // boundary_cond[2] = new pereodic_boundary(a, b, c);
+  // boundary_cond[3] = new pereodic_boundary(a * -1, b * -1, c * -1);
+
+  // boundary_cond[2] = new free_boundary(a, b, np, 0, 1, 0);
+  // boundary_cond[3] = new free_boundary(a * -1, b * -1,  np, 0, 1, 0);
+
+  // boundary_cond[2] = new giper_free_boundary(a, b, np, S, 1, 0);
+  // boundary_cond[3] = new giper_free_boundary(a * -1, b * -1,  np, S, 1, 0);
+
+  a.set(0, 0, -Lz * 0.5);
+  b.set(0, 0, -1);
+  c.set(0, 0, Lz);
+
+  // boundary_cond[4] = new mirror_boundary(a, b);
+  // boundary_cond[5] = new mirror_boundary(a * -1, b * -1);
+
+  boundary_cond[4] = new pereodic_boundary(a, b, c);
+  boundary_cond[5] = new pereodic_boundary(a * -1, b * -1, c * -1);
+
+  // boundary_cond[4] = new free_boundary(a, b, np, S, 1, 0);
+  // boundary_cond[5] = new free_boundary(a * -1, b * -1,  np, S, 1, 0);
+
+  cluster.set_boundary_condition(boundary_cond, 6);
+  // cluster.set_boundary_condition(boundary_cond[5]);
+
+  cluster.write_speed_file();
+
+  cluster.set_end_time(T);
+
+  cluster.write_file("data_NU.dat");
+
+  cluster.computation();
+  // while(!cluster.time_step());
+  std::cout << "Computation is over." << endl;
+  cluster.write_cell_file("end_cell.net");
+  cluster.write_file();
+  cluster.write_times();
+  cluster.write_speed_file();
+
+  for (int i = 0; i < 6; i++) delete boundary_cond[i];
+
+  // delete cone;
+
+  //	work_time = MPI_Wtime() - work_time;
+
+  //	MPI_Barrier(MPI_COMM_WORLD);
+
+  //	MPI_Finalize();
+
+  //	std::cin >> N;
+
+  return 0;
 }

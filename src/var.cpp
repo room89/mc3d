@@ -1,38 +1,25 @@
-//File: var.cpp 
-//Program: MC3D
-//Author: Khokhlov "AAsad" Ivan
-//Version: 0.3.1
-//Last modified: 22.12.09.
-//Description: Program for calculation of freemolecular flows.
+// File: var.cpp
+// Program: MC3D
+// Author: Khokhlov "AAsad" Ivan
+// Version: 0.3.1
+// Last modified: 22.12.09.
+// Description: Program for calculation of rarefaid flows.
 
 #include "var.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
-var::var(void)
-{
+namespace mc3d {
+cell* var::make_cell() {
+  cell* new_cell = new cell;
+
+  new_cell->set_t(T);
+  new_cell->set_vel(velocity);
+  return NULL;
 }
 
-var::var(double u, double v, double w, double t, unsigned int n)
-{
-	this->set(u, v, w, t, n);
+std::ostream& operator<<(std::ostream& o, const var c) {
+  o << c.apex + c.size / 2 << c.N << "\t" << c.T << c.velocity << "\t";
+  return o;
 }
-
-var::~var(void)
-{
-}
-
-void var::set(double u, double v, double w, double t, unsigned int n)
-{
-	this->n = n;
-	this->u = u;
-	this->v = v;
-	this->w = w;
-	this->t = t;
-}
-
-ostream & operator<<(ostream &o, const var &c)
-{
-	o<<double(c.n)/c.t<<" "<<double(c.n);
-	return o;
-}
+}  // namespace mc3d
