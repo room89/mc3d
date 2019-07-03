@@ -34,14 +34,14 @@ class cell {
   point apex;         //опорная точка
   double lx, ly, lz;  //размеры
   double T;           //температура внутри ячейки
-  // double u;																//средняя скорость
-  // частиц в ячейке, координата X double v;
+  // double u;
+  // //средняя скорость частиц в ячейке, координата X double v;
   // //средняя скорость частиц в ячейке, координата Y double w;
   // //средняя скорость частиц в ячейке, координата Z
   point velocity;
   point mass_center;
   double volume;  //объем ячейки(пока не используеться)
-  unsigned int n;  //количество частиц в ячейке
+  size_t n;       //количество частиц в ячейке
   // unsigned int total_n;
   // //
   double Kn_l;       //локальый кнутсен
@@ -76,9 +76,10 @@ class cell {
   void set_inner_boundary(inner_boundary bound);
   void set_body_mark(bool mark);
   virtual bool initialazition(
-      unsigned int N,
-      mc3d::geometry* bbody);  //инициализация ячейки (N-количество частиц)
-  virtual double generate_random(unsigned int N);                     //
+      size_t N,
+      const std::unique_ptr<geometry>&
+          bbody);  //инициализация ячейки (N-количество частиц)
+  virtual double generate_random(size_t N);                           //
   virtual double generate_random(unsigned int N, double T, point V);  //
   virtual double generate_free_random(
       unsigned int N, double T, point V,
@@ -123,8 +124,8 @@ class cell {
   bool write_file();                                      //
   void calc();                                            //
   void attach_thread_mark(int& ptr);                      //
-  deque<cell*> fragmentation(geometry* body);
-  void clean_inner_particle(geometry* body);
+  deque<cell*> fragmentation(const std::unique_ptr<geometry>& body);
+  void clean_inner_particle(const geometry& body);
 
   bool _dbg_test_particle();
 

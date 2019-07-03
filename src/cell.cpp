@@ -45,7 +45,7 @@ void cell::set_size(point dl) {
 
 void cell::set_apex(point a) { apex = a; }
 
-bool cell::initialazition(unsigned int N, geometry* bbody) {
+bool cell::initialazition(size_t N, const std::unique_ptr<geometry>& bbody) {
   this->n = N;
   this->generate_random(n);
 
@@ -59,9 +59,9 @@ bool cell::initialazition(unsigned int N, geometry* bbody) {
   this->dt = dtt;
   random_shuffle(particles.begin(), particles.end());
 
-  if (bbody != NULL) {
-    body_mark = body_boundary.add_poligon(bbody, get_center(), L);
-    this->body_boundary.set_geometry(bbody);
+  if (bbody) {
+    body_mark = body_boundary.add_poligon(bbody.get(), get_center(), L);
+    body_boundary.set_geometry(bbody.get());
   } else
     body_mark = false;
 
@@ -70,19 +70,19 @@ bool cell::initialazition(unsigned int N, geometry* bbody) {
 
 unsigned int cell::N() { return n = particles.size(); }
 
-double cell::generate_random(unsigned int N) {
+double cell::generate_random(size_t N) {
   point d(lx, ly, lz);
 
   double rmt = 1 / double(RAND_MAX);
   double ti = 0;
   deque<particle>::iterator data;
 
-  unsigned int nn = N;
+  size_t nn = N;
   double nt = 1 / double(N);
 
   data = particles.begin();
 
-  unsigned int nn2 = (nn - nn % 2) / 2;
+  size_t nn2 = (nn - nn % 2) / 2;
 
   particle p1, p2;
 
@@ -705,28 +705,29 @@ void cell::collisions() {
 //				double r2 = double(std::rand()) * rmt;
 
 //				point g1(	g * sin(Pi * r1) * cos(2. * Pi *
-// r2), 							g * sin(Pi * r1) * sin(2. * Pi * r2),
-// g * cos(Pi * r1));
+// r2), 							g * sin(Pi * r1) * sin(2. * Pi
+// * r2), g * cos(Pi * r1));
 
 //				double g1x = g * sin(Pi * r1) * cos(2. * Pi *
-// r2); 				double g1y = g * sin(Pi * r1) * sin(2. * Pi * r2);
-// double g1z = g * cos(Pi * r1);
+// r2); 				double g1y = g * sin(Pi * r1) * sin(2. * Pi
+// * r2); double g1z = g * cos(Pi * r1);
 
 //				//cout << "g1 = " << point(g1x, g1y, g1z) <<
 // endl;
 
 //				/*a->velocity.x = 0.5 * (vel_1.x + vel_2.x -
-// g1.x); 				a->velocity.y = 0.5 * (vel_1.y + vel_2.y - g1.y);
-// a->velocity.z = 0.5 * (vel_1.z + vel_2.z - g1.z);
+// g1.x); 				a->velocity.y = 0.5 * (vel_1.y + vel_2.y
+// - g1.y); a->velocity.z = 0.5 * (vel_1.z + vel_2.z - g1.z);
 
 //				b->velocity.x = 0.5 * (vel_1.x + vel_2.x +
-// g1.x); 				b->velocity.y = 0.5 * (vel_1.y + vel_2.y + g1.y);
-// b->velocity.z = 0.5 * (vel_1.z + vel_2.z + g1.z);*/
+// g1.x); 				b->velocity.y = 0.5 * (vel_1.y + vel_2.y
+// + g1.y); b->velocity.z = 0.5 * (vel_1.z + vel_2.z + g1.z);*/
 //				//cout << (vel_1 + vel_2 - g1) * .5 << endl <<
 //(vel_1
 //+ vel_2 + g1) * .5 << endl;
 
-//				point v1 = (vel_1 + vel_2 - g1) * .5, v2 = (vel_1
+//				point v1 = (vel_1 + vel_2 - g1) * .5, v2 =
+//(vel_1
 //+ vel_2 + g1) * .5; 				a->velocity = v1;
 // b->velocity = v2;
 
@@ -1011,17 +1012,17 @@ point cell::get_size() const { return point(abs(lx), abs(ly), abs(lz)); }
 
 double cell::get_L() { return L; }
 
-deque<cell*> cell::fragmentation(geometry* body) {
+deque<cell*> cell::fragmentation(const std::unique_ptr<geometry>& body) {
   deque<cell*> new_cells(8);
 
-  for (int i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) {
     new_cells[i] = new cell;
   }
 
   point a(0, 0, 0);
   point dl(lx / 2, ly / 2, lz / 2);
 
-  for (int i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) {
     new_cells[i]->set_size(dl);
     // new_cells[i]->set_inner_boundary(body_boundary);
   }
@@ -1066,7 +1067,7 @@ deque<cell*> cell::fragmentation(geometry* body) {
   new_cells[7]->set_apex(a);
   // new_cells[7]->add_particle(&particles);
 
-  for (int i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) {
     new_cells[i]->initialazition(n / 8, body);
     // new_cells[i]->set_inner_boundary(body_boundary);
   }
@@ -1112,7 +1113,7 @@ point cell::get_particle_mass_center() {
   return particle_mass_center;
 }
 
-void cell::clean_inner_particle(geometry* body) {
+void cell::clean_inner_particle(const geometry& body) {
   if (particles.size() < 100) {
     point ad = point(0, 0, 0);
   }
@@ -1120,7 +1121,7 @@ void cell::clean_inner_particle(geometry* body) {
 
   deque<particle>::iterator data = particle_buffer.begin();
   while (data != particle_buffer.end()) {
-    if (!body->is_inner_point(data->position)) {
+    if (!body.is_inner_point(data->position)) {
       particles.push_back(*data);
     }
     data++;

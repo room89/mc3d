@@ -15,7 +15,7 @@ bool inner_boundary::add_poligon(geometry* body, point cell_center, double L) {
   eps = 0.00001;
 
   this->cell_center = cell_center;
-  
+  
   deque<poligon*>::iterator poligon_iter = bbody->poligons.begin();
 
   while(poligon_iter != bbody->poligons.end())

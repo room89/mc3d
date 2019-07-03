@@ -5,10 +5,6 @@
 // Last modified: 18.05.10.
 // Description: Program for calculation of rarefaid flows.
 
-#pragma once
-
-//#include <iostream>
-//#include "mpi.h"
 #include "Header.h"
 #include "cell.h"
 #include "cell_cluster.h"
@@ -19,10 +15,10 @@ using namespace std;
 const double Lx = 1, Ly = 1, Lz = 1;
 
 int main(int argc, char* argv[]) {
-  geometry* cone = new geometry;
+  auto cone = std::make_unique<geometry>();
   // cone->create_wedge(-0.3, 5, .4, 0.69813);
   cone->create_cube();
-  int ddd = cone->fix_poligons();
+  cone->fix_poligons();
   cone->rev_nrml();
   cone->write_geometry_file("wadge.stl", "wadge");
   // cone->scaling(-1);
@@ -30,7 +26,6 @@ int main(int argc, char* argv[]) {
 
   //	double work_time = MPI_Wtime();
   double Kn = .05, Cu = .9, T = 1.5;
-  unsigned int N = 0;
   unsigned int ncx = 5, ncy = 5, ncz = 2;
   unsigned int np = 60;
   double S = 5;
@@ -40,10 +35,9 @@ int main(int argc, char* argv[]) {
 
   // temp_cell->set_param(10, 0, 1);
 
-  // temp_cell->set_apex(point(-.5, -.5, -.5));					//задание
-  // опорной
-  // точки temp_cell->set_size(1, 1, 1);			//задание
-  // размеров
+  // temp_cell->set_apex(point(-.5, -.5, -.5));
+  // //задание опорной точки temp_cell->set_size(1, 1, 1);
+  // //задание размеров
 
   // temp_cell->initialazition(50, cone);
   // //инициализация ячейки, с заданным количеством частиц
@@ -65,8 +59,8 @@ int main(int argc, char* argv[]) {
 
   // cluster.initialazition(ncx, ncy, ncz, np, Kn, Cu, NULL, numproc, proc_id);
   // cluster.initialazition("cone_cluster.net", Kn, Cu, Lx, cone);
-  cluster.initialazition(ncx, ncy, ncz, np * ncx * ncy * ncz, Kn, Cu, cone,
-                         true, S, 0, 1, 1, 0);
+  cluster.initialazition(ncx, ncy, ncz, np * ncx * ncy * ncz, Kn, Cu,
+                         std::move(cone), S, 0, 1);
 
   // cluster.write_cell_file("new_cells.net");
 

@@ -42,7 +42,7 @@ class geometry {
   point mass_center();
   void move(point a);
   void scaling(double e);
-  bool is_inner_point(point test_point);
+  bool is_inner_point(point test_point) const;
   pair<point, point> size();
   double dist_to_point(point p);
   int fix_poligons();

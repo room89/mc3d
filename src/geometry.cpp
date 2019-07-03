@@ -99,7 +99,8 @@ geometry::~geometry(void) {
 //*
 //(*poligon_iterator)->get_normal();
 //
-//					double tc = ((*poligon_iterator)->get_p1()
+//					double tc =
+//((*poligon_iterator)->get_p1()
 //- particle_iter->get_position()) * (*poligon_iterator)->get_normal() / A;
 //
 //					if(tc <= 0) continue;
@@ -192,13 +193,11 @@ void geometry::scaling(double e) {
   }
 }
 
-bool geometry::is_inner_point(point test_point) {
-  double dist = 100000.;
-  int n = 0;
+bool geometry::is_inner_point(point test_point) const {
+  size_t n = 0;
   bool res = false;
 
-  deque<poligon*>::iterator poligon_col = poligons.end();
-  std::deque<poligon*>::iterator poligon_iter = poligons.begin();
+  auto poligon_iter = poligons.begin();
 
   while (poligon_iter != poligons.end()) {
     /*if(dist == (*poligon_iter)->dist_to_point(test_point))
@@ -221,12 +220,6 @@ bool geometry::is_inner_point(point test_point) {
 
     poligon_iter++;
   }
-
-  /*if((*poligon_col)->get_normal() * (test_point - (*poligon_col)->get_gmt()) >
-  0)
-  {
-          res = true;
-  }*/
 
   if (n == poligons.size()) {
     return true;
@@ -270,7 +263,7 @@ bool geometry::is_inner_point(point test_point) {
                 {
                         point collision_pstn = test_point + point(1, 0, 0) *
 tcx;
-                         
+                         
                         point d1 = (*poligon_iterator)->get_p1() -
 collision_pstn; point d2 = (*poligon_iterator)->get_p2() - collision_pstn; point
 d3 = (*poligon_iterator)->get_p3() - collision_pstn;
@@ -287,8 +280,8 @@ d3.vec_mult(c) > 0.)
                                 dttx = tcx;
                         }
                 }
-                        
-                        
+                        
+                        
                 double Ay = point(0, 1, 0) * (*poligon_iterator)->get_normal();
                 double tcy = ((*poligon_iterator)->get_p1() - test_point) *
 (*poligon_iterator)->get_normal() / Ay;
@@ -297,7 +290,7 @@ d3.vec_mult(c) > 0.)
                 {
                         point collision_pstn = test_point + point(1, 0, 0) *
 tcy;
-                         
+                         
                         point d1 = (*poligon_iterator)->get_p1() -
 collision_pstn; point d2 = (*poligon_iterator)->get_p2() - collision_pstn; point
 d3 = (*poligon_iterator)->get_p3() - collision_pstn;
@@ -323,7 +316,7 @@ d3.vec_mult(c) > 0.)
                 {
                         point collision_pstn = test_point + point(1, 0, 0) *
 tcz;
-                         
+                         
                         point d1 = (*poligon_iterator)->get_p1() -
 collision_pstn; point d2 = (*poligon_iterator)->get_p2() - collision_pstn; point
 d3 = (*poligon_iterator)->get_p3() - collision_pstn;
@@ -403,7 +396,7 @@ vertices[1]).vec_mult(vertices[1] - vertices[0]).nrmlz());
         temp_poligon->set(vertices[2], vertices[1], vertices[4], (vertices[1] -
 vertices[2]).vec_mult(vertices[4] - vertices[2]).nrmlz());
         poligons.push_back(temp_poligon);
-        
+        
         temp_poligon = new poligon;
         temp_poligon->set(vertices[0], vertices[3], vertices[5], (vertices[5] -
 vertices[0]).vec_mult(vertices[3] - vertices[0]).nrmlz());

@@ -29,29 +29,26 @@
 
 const int NUM_CPU = 4;
 
-/*
-*** 	 cell_cluster - основной класс, в нем происходит инициализация, обмен
-*частицами между ячейками, выполнение граничных условий, обмен между
-*кластерами(если их больше одного)
-*/
 namespace mc3d {
+
+// cell_cluster - основной класс, в нем происходит инициализация, обмен
+// частицами между ячейками, выполнение граничных условий, обмен между
+// кластерами(если их больше одного)
 class cell_cluster {
  private:
   int numproc;  //количество процессов(не путать с нитями), специально для MPI
   int proc_id;  //номер процесса
   unsigned int i_j_k;  //переменная используется при инициализации кластера|
-                       //todo: удалить
+                       // todo: удалить
   unsigned int np;     //уровень статистики
   unsigned int ncx, ncy, ncz;  //начальное количество ячеек по x, y, z
   unsigned int N;  //начальное количество частиц в кластере(в ячейках кластера)
   unsigned int step;
   double Lx, Ly, Lz;  //начальные размеры кластера
   point apex;  //координаты опорной точки кластера.
-  mutable int*
-      thread_mark;  //указатель на массив флагов, определяющих состояние нити
-  double Kn;        //Кнудсен
-  double Cu;        //число Куранта
-  double t;  //время с начала расчёта(физическое)
+  double Kn;   //Кнудсен
+  double Cu;   //число Куранта
+  double t;    //время с начала расчёта(физическое)
   double t_end;  //время окончания рассчета
   double dt;  //шаг по времени(должен быть равен во всех кластерах)
   double begin_time;  //время начала расчета(для вычисления времени работы)
@@ -82,7 +79,7 @@ class cell_cluster {
   inline void sync_dt();  //синхронизация шага по времени. тоже самое что и
                           //методы: send_dt() и recv_dt(), только в одном методе
   ofstream log;  //переменная для вывода логов, пока не реализовано
-  geometry* body;
+  std::unique_ptr<geometry> body;
   double data_dt;
   double data_t;
   double density;
@@ -114,16 +111,16 @@ class cell_cluster {
   void set_end_time(double t_end);  //задание времени окончания рассчета
   void set_data_save_dtime(double data_dt);
   bool initialazition(unsigned int ncx, unsigned int ncy, unsigned int ncz,
-                      unsigned int np, double Kn, double Cu, geometry* body,
-                      int numproc = 1, int my_id = 0);
+                      unsigned int np, double Kn, double Cu,
+                      std::unique_ptr<geometry>&& body);
   //инициализация кластера(параметры:	ncx, ncy, ncz	- количество ячеек по
   //координатам, np - уровень статистик, Kn - Кнудсен
   bool initialazition(unsigned int ncx, unsigned int ncy, unsigned int ncz,
-                      double density, double Kn, double Cu, geometry* body,
-                      bool fragmentation, double S, double alpha, double T,
-                      int numproc = 1, int my_id = 0);
+                      double density, double Kn, double Cu,
+                      std::unique_ptr<geometry>&& body,
+                      double S, double alpha, double T);
   bool initialazition(const char* init_file, double Kn, double Cu, double L,
-                      geometry* body, int numproc = 1, int my_id = 0);
+                      std::unique_ptr<geometry>&& body);
   // bool read_cell_file(const char *init_file);
   bool write_cell_file(const char* init_file);
   bool write_file();  //запись данных в файл(плотность и энэргия), данные
@@ -140,7 +137,6 @@ class cell_cluster {
                              //массив, i - количество элементов в массиве.
   void set_boundary_condition(
       boundary* a);  //установка граничных условий a - указатель на гр. условие
-  void set_geometry(geometry* body);
   void computation(void);  //вычисления
   void cells_fragmentation();
   void cells_test();

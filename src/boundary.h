@@ -20,6 +20,7 @@ class boundary {
   point pstn;  //положение граничного условия
  public:
   virtual int bondary_condition(deque<particle>* a, double dt = 0) = 0;
+  virtual ~boundary() {}
   void set_position(point a);  //установка места граничных условий
   void set_normal(point a);  //установка направления граничных условий
 };

@@ -23,7 +23,7 @@ struct point {
       point size);  //возврощает рандомную точку с коорд.: x от 0 до size.x, y
                     //от 0 до size.y, z от 0 до size.z
   point rand_point();  //возврощает рандомную точку с коорд.: x от 0 до this->x,
-                       //y от 0 до this->y, z от 0 до this->z
+                       // y от 0 до this->y, z от 0 до this->z
   void print();
   double mod() const;
   double volume() const;

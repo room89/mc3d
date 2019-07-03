@@ -1,12 +1,3 @@
-// File: cell_cluster.cpp
-// Program: MC3D
-// Author: Khokhlov "AAsad" Ivan
-// Version: 0.5.1
-// Last modified: 16.12.10.
-// Description: Program for calculation of rarefaid flows.
-
-#pragma once
-
 #include <thread>
 
 #include "cell_cluster.h"
@@ -34,17 +25,6 @@ cell_cluster::cell_cluster(void) {
   t = 0;
   dt = 10000;
   step = 0;
-
-  thread_mark = new int[NUM_CPU];
-
-  for (int i = 0; i < NUM_CPU; i++) {
-    thread_mark[i] =
-        0;  //устанавилваем для каждой нити состояние готовности рассчета
-  }
-  /*char *log_name = "proc00.log";
-  char a = '0' + proc_id;
-  MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
-  log.open(log_name);*/
 }
 
 cell_cluster::~cell_cluster(void) {
@@ -60,39 +40,12 @@ cell_cluster::~cell_cluster(void) {
 
 bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
                                   unsigned int ncz, double density, double Kn,
-                                  double Cu, geometry* body, bool fragmentation,
-                                  double S, double alpha, double T, int numproc,
-                                  int proc_id) {
-  this->numproc = numproc;
-  this->proc_id = proc_id;
-  this->body = body;
+                                  double Cu, std::unique_ptr<geometry>&& body,
+                                  double S, double alpha,
+                                  double T) {
+  this->body = std::move(body);
 
-  srand((unsigned int)time(0));
-
-  // char  _fname[] = "mpi_data.dat";
-
-  int mpi_init = 1;
-
-  //    MPI_Initialized(&mpi_init);
-
-  if (!mpi_init)  //проверка инициализации MPI
-  {
-    int arg1 = 0;
-    char** arg2 = NULL;
-    //      MPI_Init(&arg1, &arg2);                     //инициализируем MPI
-    //      MPI_Comm_size(MPI_COMM_WORLD, &numproc);    //устанавливаем кол-во
-    //      процессов MPI_Comm_rank(MPI_COMM_WORLD, &proc_id); //устанавливаем
-    //      номер процесса
-  }
-
-  //    begin_time = MPI_Wtime();	                    //устанавливаем
-  //    время начала работы
-
-  begin_iter_time = begin_time;  //устанавливаем время начала нулевой
-                                 //итерации(нулевая итерация - инициализация)
-
-  // MPI_File_open(MPI_COMM_WORLD, mpi_fname, MPI_MODE_CREATE | MPI_MODE_WRONLY,
-  // MPI_INFO_NULL, &mpi_file);
+  srand(static_cast<unsigned int>(time(nullptr)));
 
   this->ncx = ncx;
   this->ncy = ncy;
@@ -105,136 +58,20 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
 
   unsigned int N = 0;
 
-  double dx = Lx / double(ncx);  //устанавливаем размер ячейки
-  double dy = Ly / double(ncy);  //устанавливаем размер ячейки
-  double dz = Lz / double(ncz);  //устанавливаем размер ячейки
+  double dx = Lx / double(ncx);
+  double dy = Ly / double(ncy);
+  double dz = Lz / double(ncz);
 
-  this->t = 0;  //устанавливаем "физическое" время на ноль
-  this->dt = 100000;
-
-  double fragm_dist = std::min(dx, min(dy, dz)) * 3.1;
+  this->t = 0;
+  this->dt = 1000000000;
 
   cell_iter = cells.begin();
-  for (int i = 0; i < int(ncx);
-       i++)  //цыклы генерации ячеек	по 3м координатам
-  {
-    for (int j = 0; j < int(ncy); j++) {
-      for (int k = 0; k < int(ncz); k++) {
-        if (fragmentation) {
-          point a, dc(dx / 2, dy / 2, dz / 2);
-          a.x = apex.x + i * dx;
-          a.y = apex.y + j * dy;
-          a.z = apex.z + k * dz;
+  for (size_t i = 0; i < ncx; i++) {
+    for (size_t j = 0; j < ncy; j++) {
+      for (size_t k = 0; k < ncz; k++) {
+          cell* temp_cell = new cell;
 
-          if (body != NULL) {
-            // double di = body->dist_to_point(a + dc);
-            if (body->dist_to_point(a + dc) < fragm_dist) {
-              // point a(0, 0, 0);
-              point dl(dx / 2, dy / 2, dz / 2);
-
-              unsigned int N_ =
-                  static_cast<unsigned int>(density * dl.volume());
-
-              cell* temp_cells[8];
-
-              for (int i = 0; i < 8; i++) {
-                temp_cells[i] = new cell;
-                temp_cells[i]->set_param(S, alpha, T);
-              }
-
-              for (int i = 0; i < 8; i++) {
-                temp_cells[i]->set_size(dl);
-              }
-
-              point cell_apex = a;
-              temp_cells[0]->set_apex(cell_apex);
-
-              point shift(dx / 2, 0, 0);
-
-              cell_apex = a + shift;
-              temp_cells[1]->set_apex(cell_apex);
-
-              shift.set(0, dy / 2, 0);
-              cell_apex = a + shift;
-              temp_cells[2]->set_apex(cell_apex);
-
-              shift.set(0, 0, dz / 2);
-              cell_apex = a + shift;
-              temp_cells[3]->set_apex(cell_apex);
-
-              shift.set(dx / 2, dy / 2, 0);
-              cell_apex = a + shift;
-              temp_cells[4]->set_apex(cell_apex);
-
-              shift.set(dx / 2, 0, dz / 2);
-              cell_apex = a + shift;
-              temp_cells[5]->set_apex(cell_apex);
-
-              shift.set(0, dy / 2, dz / 2);
-              cell_apex = a + shift;
-              temp_cells[6]->set_apex(cell_apex);
-
-              shift.set(dx / 2, dy / 2, dz / 2);
-              cell_apex = a + shift;
-              temp_cells[7]->set_apex(cell_apex);
-
-              for (int i = 0; i < 8; i++) {
-                temp_cells[i]->initialazition(N_, body);
-                temp_cells[i]->set_L(
-                    Lx);  //задание характерного размера для ячейки
-                temp_cells[i]->set_Kn(Kn);  //задание кнудсена для ячейки
-                // temp_cells[i]->set_body_mark(true);
-
-                cell_iter = cells.insert(cell_iter, temp_cells[i]);
-              }
-
-              N += N_ * 8;
-            } else {
-              cell* temp_cell;
-
-              temp_cell = new cell;
-
-              unsigned int i_j_k = k * ncx * ncy + j * ncx + i;
-
-              unsigned int N_;  //количество частиц в добавляймой ячейке
-              point a;
-              a.x = apex.x + i * dx;
-              a.y = apex.y + j * dy;
-              a.z = apex.z + k * dz;
-
-              N_ = static_cast<unsigned int>(density * dx * dy * dz);
-              temp_cell->set_param(S, alpha, T);
-
-              temp_cell->set_apex(a);  //задание опорной точки
-              temp_cell->set_size(dx, dy, dz);  //задание размеров
-
-              temp_cell->initialazition(
-                  N_,
-                  body);  //инициализация ячейки, с заданным количеством частиц
-
-              temp_cell->set_L(Lx);  //задание характерного размера для ячейки
-              temp_cell->set_Kn(Kn);  //задание кнудсена для ячейки
-
-              cell_iter = cells.insert(
-                  cell_iter, temp_cell);  //копирование и вставка подготовленной
-                                          //ячейки в дэк класстера
-
-              N += N_;
-
-              double dtt = (*cell_iter)->get_dt();
-              dt = min(
-                  this->dt,
-                  dtt);  //вычисляем минимальный шаг по времени для всех ячеек
-            }
-          }
-        } else {
-          cell* temp_cell;
-
-          temp_cell = new cell;
-
-          unsigned int i_j_k = k * ncx * ncy + j * ncx + i;
-
-          unsigned int N_;  //количество частиц в добавляймой ячейке
+          size_t N_;
           point a;
           a.x = apex.x + i * dx;
           a.y = apex.y + j * dy;
@@ -243,25 +80,22 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
           N_ = static_cast<unsigned int>(density * dx * dy * dz);
           temp_cell->set_param(S, alpha, T);
 
-          temp_cell->set_apex(a);  //задание опорной точки
-          temp_cell->set_size(dx, dy, dz);  //задание размеров
+          temp_cell->set_apex(a);
+          temp_cell->set_size(dx, dy, dz);
 
           temp_cell->initialazition(
-              N_, body);  //инициализация ячейки, с заданным количеством частиц
+              N_, body);
 
-          temp_cell->set_L(Lx);  //задание характерного размера для ячейки
-          temp_cell->set_Kn(Kn);  //задание кнудсена для ячейуи
+          temp_cell->set_L(Lx);
+          temp_cell->set_Kn(Kn);
 
           cell_iter = cells.insert(
-              cell_iter, temp_cell);  //копирование и вставка подготовленной
-                                      //ячейки в дэк класстера
-
+              cell_iter, temp_cell);
           N += N_;
 
           double dtt = (*cell_iter)->get_dt();
           dt = min(this->dt,
-                   dtt);  //вычисляем минимальный шаг по времени для всех ячеек
-        }
+                   dtt);
       }
     }
   }
@@ -310,60 +144,22 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
 
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
-    (*cell_iter)->clean_inner_particle(body);
+    (*cell_iter)->clean_inner_particle(*body);
     cell_iter++;
   }
 
-  /*cell_iter = cells.begin();
-  while(cell_iter != cells.end())
-  {
-    if(*cell_iter == NULL)
-    {
-      cell_iter = cells.erase(cell_iter);
-    }
-    else cell_iter++;
-  }*/
-
   this->sync_dt();
-  cout << "Cluster inicializirovan" << endl;
+  cout << "Cluster initialize is done" << endl;
 
   return true;
 }
 
 bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
                                   unsigned int ncz, unsigned int np, double Kn,
-                                  double Cu, geometry* body, int numproc,
-                                  int proc_id) {
-  this->numproc = numproc;
-  this->proc_id = proc_id;
-  this->body = body;
+                                  double Cu, std::unique_ptr<geometry>&& body) {
+  this->body = std::move(body);
 
-  srand((unsigned int)time(0));
-
-  // char mpi_fname[] = "mpi_data.dat";
-
-  int mpi_init = 1;
-
-  //    MPI_Initialized(&mpi_init);
-
-  if (!mpi_init)  //проверка инициализации MPI
-  {
-    int arg1 = 0;
-    char** arg2 = NULL;
-    //      MPI_Init(&arg1, &arg2);                     //инициализируем MPI
-    //      MPI_Comm_size(MPI_COMM_WORLD, &numproc);    //устанавливаем кол-во
-    //      процессов MPI_Comm_rank(MPI_COMM_WORLD, &proc_id); //устанавливаем
-    //      номер процесса
-  }
-
-  //    begin_time = MPI_Wtime();	                    //устанавливаем
-  //    время начала работы
-
-  begin_iter_time = begin_time;  //устанавливаем время начала нулевой
-                                 //итерации(нулевая итерация - инициализация)
-
-  // MPI_File_open(MPI_COMM_WORLD, mpi_fname, MPI_MODE_CREATE | MPI_MODE_WRONLY,
-  // MPI_INFO_NULL, &mpi_file);
+  srand(static_cast<unsigned int>(time(nullptr)));
 
   this->ncx = ncx;
   this->ncy = ncy;
@@ -386,78 +182,47 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
   cell* temp_cell;
 
   cell_iter = cells.begin();
-  for (int i = 0; i < int(ncx);
-       i++)  //цыклы генерации ячеек	по 3м координатам
-  {
-    for (int j = 0; j < int(ncy); j++) {
-      for (int k = 0; k < int(ncz); k++) {
+  for (size_t i = 0; i < ncx; i++) {
+    for (size_t j = 0; j < ncy; j++) {
+      for (size_t k = 0; k < ncz; k++) {
         temp_cell = new cell;
 
-        unsigned int i_j_k = k * ncx * ncy + j * ncx + i;
-
-        unsigned int N_;  //количество частиц в добавляймой ячейке
+        size_t N_;  //количество частиц в добавляймой ячейке
         point a;
         a.x = apex.x + i * dx;
         a.y = apex.y + j * dy;
         a.z = apex.z + k * dz;
-        // N_ = unsigned int(np * (1 + 10 * F(a.x + 0.5 * dx, a.y + 0.5 * dy,
-        // a.z + 0.5 * dz))); N_ = unsigned int(np * (F2(a.x + 0.5 * dx, a.y +
-        // 0.5 * dy, .05)));
 
         N_ = np;
         temp_cell->set_param(10, 0, 1);
 
-        temp_cell->set_apex(a);  //задание опорной точки
-        temp_cell->set_size(dx, dy, dz);  //задание размеров
+        temp_cell->set_apex(a);
+        temp_cell->set_size(dx, dy, dz);
 
-        temp_cell->initialazition(
-            N_, body);  //инициализация ячейки, с заданным количеством частиц
+        temp_cell->initialazition(N_, body);
 
-        temp_cell->set_L(Lx);  //задание характерного размера для ячейки
-        temp_cell->set_Kn(Kn);  //задание кнудсена для ячейуи
+        temp_cell->set_L(Lx);
+        temp_cell->set_Kn(Kn);
 
         // cout << "New cell vel: " << temp_cell->calc_vel() <<endl;
 
-        /*N_ = (unsigned int)(np * (1. + 0.1 * sin(2. * Pi * (a.x + 0.5 * dx +
-        0.5)) * sin(2. * Pi * (a.y + 0.5 * dy + 0.5)))); temp_cell->set_vel(0.5
-        * sin(2. * Pi * (a.x + 0.5 * dx + 0.5)) * cos(2. * Pi * (a.y + 0.5 * dy
-        + 0.5)), -0.4 * cos(2. * Pi * (a.x + 0.5 * dx + 0.5)) * sin(2. * Pi *
-        (a.y + 0.5 * dy + 0.5)), 0); temp_cell->set_t(1. + 0.1 * cos(2. * Pi *
-        (a.x + 0.5*dx + 0.5)) * cos(2. * Pi * (a.y + 0.5*dy + 0.5)));*/
-
-        /*N_ = (unsigned int)(np * (1. + 0.1 * sin(2. * Pi * (a.x + 0.5*dx +
-        0.5)) * sin(2. * Pi * (a.y + 0.5*dy + 0.5)))); temp_cell->set_vel(0.2 -
-        (a.y + 0.5 * dy) * mc3d::V(a.x + 0.5 * dx, a.y + 0.5*dy, 0.1) / ((a.x +
-        0.5*dx) * (a.x + 0.5*dx) + (a.y + 0.5*dy) * (a.y + 0.5*dy)), 0.35 + (a.x
-        + 0.5*dx) * mc3d::V(a.x + 0.5*dx, a.y + 0.5*dy, 0.1) / ((a.x + 0.5*dx) *
-        (a.x + 0.5*dx) + (a.y + 0.5*dy) * (a.y + 0.5*dy)), 0);
-        temp_cell->set_t(1 - 0.2 * mc3d::V(a.x + 0.5*dx, a.y + 0.5*dy, 0.1) *
-        mc3d::V(a.x + 0.5*dx, a.y + 0.5*dy, 0.1));*/
-
-        cell_iter = cells.insert(
-            cell_iter, temp_cell);  //копирование и вставка подготовленной
-                                    //ячейки в дэк класстера
+        cell_iter = cells.insert(cell_iter, temp_cell);
 
         N += N_;
 
         double dtt = (*cell_iter)->get_dt();
-        dt = min(this->dt,
-                 dtt);  //вычисляем минимальный шаг по времени для всех ячеек
+        dt = min(this->dt, dtt);
       }
     }
   }
 
-  this->set_dt_in_cells(dt);  //устанавливаем шаг по времени
+  this->set_dt_in_cells(dt);
 
   deque<cell*> cells_swap;
 
   cells_test();
 
-  // cells_fragmentation();
-
-  // cells_test();
-
-  //поиск "соседей"(соседних ячеек) для каждой ячейки:
+  // find neighbour cells for evry cell
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
     deque<cell*>::iterator cell_iter2 = cells.begin();
@@ -470,7 +235,7 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
       double LL = std::sqrt((cell_c1 - cell_c2) * (cell_c1 - cell_c2));
 
       if ((LL <= 1.8 * dx) && (*cell_iter != *cell_iter2))
-        (*cell_iter)->add_neighbor(*cell_iter2);  //добавление "соседей"
+        (*cell_iter)->add_neighbor(*cell_iter2);
 
       cell_iter2++;
     }
@@ -484,7 +249,7 @@ bool cell_cluster::initialazition(unsigned int ncx, unsigned int ncy,
 
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
-    if (*cell_iter == NULL) {
+    if (*cell_iter == nullptr) {
       cell_iter = cells.erase(cell_iter);
     } else
       cell_iter++;
@@ -504,10 +269,6 @@ void cell_cluster::set_size(double Lx, double Ly, double Lz) {
 }
 
 bool cell_cluster::time_step() {
-  //    times.push_back(MPI_Wtime() - begin_iter_time);
-
-  //    begin_iter_time = MPI_Wtime();
-
   sync_dt();
 
   if (!proc_id) cout << "dt = " << dt << endl;
@@ -523,54 +284,15 @@ bool cell_cluster::time_step() {
   //    double start_section_time = MPI_Wtime();
   int cell_number = 0;
   while (cell_iter != cells.end()) {
-    // cell_vel += (*cell_iter)->calc_vel();
-    // for(int i = 0; i < NUM_CPU; i++)
-    //{
-    //	if(cell_iter == cells.end()) break;
-    //	if(thread_mark[i] == 0)															//проверка
-    //не занятости нити(точнее проверка возможности запустить нить(максимальное
-    //количество нитей - константа NUM_CPU))
-    //	{
-    //		thread_mark[i] = 2;
-    ////устанавливаем семафор нити в состояние вычисления
-    //		(*cell_iter)->attach_thread_mark(thread_mark[i]);
-    ////привязываем флаг(семафор)	к ячейке. 		my_thread[i] =
-    ///new
-    // boost::thread(&cell::calc, (*cell_iter)->get_ptr());
-    // cell_iter++;
-    //	}
-    //}
-    // for(int i = 0; i < NUM_CPU; i++)
-    //{
-    //	if(cell_iter == cells.end()) break;
-    //	if(thread_mark[i] == 1)															//проверка
-    //на окончания вычисления нити(1 - нить закончила вычисления и готова к
-    //завершению работы)
-    //	{
-    //		thread_mark[i] = 0;
-    //		my_thread[i]->join();
-    //		delete my_thread[i];
-    //	}
-    //}
     std::vector<std::thread> threads(NUM_CPU);
     for (size_t i = 0; i < NUM_CPU; i++) {
       if (cell_iter == cells.end()) break;
       threads[i] = std::thread(&cell::calc, (*cell_iter)->get_ptr());
-      //        threads.add_thread(my_thread[i]);
-      //(*cell_iter)->_dbg_test_particle();
       cell_iter++;
     }
     for (auto& thread : threads) thread.join();
-    // delete [] my_thread;
   }
 
-  // cout << "cells vel: " << cell_vel / cells.size() << endl;
-
-  //    calc_times.push_back(MPI_Wtime() - start_section_time);
-
-  //    start_section_time = MPI_Wtime();
-
-  //сортировка частиц по ячейкам и буфферу кластера:
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
     //(*cell_iter)->_dbg_test_particle();
@@ -589,75 +311,33 @@ bool cell_cluster::time_step() {
     (*cell_iter)->add_particle(&partile_buffer);
     cell_iter++;
   }
-  //окончание сортировки.
-
-  //    sort_times.push_back(MPI_Wtime() - start_section_time);
-
-  //    start_section_time = MPI_Wtime();
 
   boundary_condition();
 
-  //сортировака частиц оставшихся в буффере кластера после граничных условий
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
     (*cell_iter)->add_particle(&partile_buffer);
     cell_iter++;
   }
-  //окончание сортировки.
-
-  //    double section_time = MPI_Wtime() - start_section_time;
-  //    bound_times.push_back(section_time);
-
-  //    start_section_time = MPI_Wtime();
-  // sync_data();
-  //    send_times.push_back(MPI_Wtime() - start_section_time);
-
   t += dt;
 
-  if (!proc_id) cout << "t = " << t << endl;
-  //    double work_time = MPI_Wtime() - begin_time;
-  //    if(!proc_id) cout << "Work time: " << int(work_time / 60) << "(" <<
-  //    int(100 * t / t_end) << "%)\tTime to end: " << int((work_time) * (t_end
-  //    / t - 1)) / 60 << "( " << int((t_end - t) * section_time / dt) / 60 <<
-  //    ") min "
-  //      << int((work_time) * (t_end  / t - 1)) % 60 << " sec." << endl;
-
-  partile_buffer
-      .clear();  //очистка буффера кластера, т.к. в нем остались только
-                 //"лишние"(напр. дублированые в других кластерах) частицы
+  cout << "t = " << t << endl;
+  partile_buffer.clear();
 
   if (data_dt > 0) {
     if (t > data_t) {
-      std::string file_name = "data t=";
+      std::string file_name = "data";
       std::ostringstream ost;
       ost << t << ".dat";
       file_name += ost.str();
       data_t += data_dt;
       write_file(file_name.c_str());
       /*file_name.clear();
-      file_name = "velocity t=";
+      file_name = "velocity";
       file_name += ost.str();
       write_speed_file(file_name.c_str());*/
     }
   }
-
-  //сортировка ячеек по времени рассчета
-  if (!step % 3) {
-    // std::rotate(cells.begin(), cells.begin() + 1 + cells.size() / (NUM_CPU *
-    // 2), cells.end());
-
-    std::vector<std::thread> threads;
-
-    for (size_t i = 0; i < NUM_CPU; i++) {
-      int hj = cells.size() / NUM_CPU;
-      auto sort_iter = cells.begin() + i * cells.size() / NUM_CPU;
-      threads[i] = std::thread(&sort<deque<cell*>::iterator>, sort_iter,
-                               sort_iter + cells.size() / NUM_CPU);
-    }
-    for (auto& thread : threads) thread.join();
-  }
-
-  //окончание сортировки ячеек по времени рассчета
 
   if (t >= t_end)
     return true;
@@ -673,153 +353,9 @@ void cell_cluster::boundary_condition() {
   }
 }
 
-bool cell_cluster::send_data() {
-  if (numproc > 0) {
-    int n = partile_buffer.size();
+bool cell_cluster::send_data() { return true; }
 
-    //буффер используются т.к. mpi не "умеет" посылать deque, соответственно
-    //создаем буффер для обмена
-    send_buffer_u = new double[n];
-    send_buffer_v = new double[n];
-    send_buffer_w = new double[n];
-    send_buffer_x = new double[n];
-    send_buffer_y = new double[n];
-    send_buffer_z = new double[n];
-
-    int j = 0;
-    deque<particle>::iterator particle_iter = partile_buffer.begin();
-    while (particle_iter != partile_buffer.end()) {
-      send_buffer_u[j] = particle_iter->velocity.x;
-      send_buffer_v[j] = particle_iter->velocity.y;
-      send_buffer_w[j] = particle_iter->velocity.z;
-      send_buffer_x[j] = particle_iter->velocity.x;
-      send_buffer_y[j] = particle_iter->velocity.y;
-      send_buffer_z[j] = particle_iter->velocity.z;
-
-      j++;
-
-      particle_iter++;
-    }
-
-    for (int i = 0; i < numproc; i++) {
-      if (i == proc_id) continue;
-      //        MPI_Send(send_buffer_u, n, MPI_DOUBLE, i, 100, MPI_COMM_WORLD);
-      //        MPI_Send(send_buffer_v, n, MPI_DOUBLE, i, 101, MPI_COMM_WORLD);
-      //        MPI_Send(send_buffer_w, n, MPI_DOUBLE, i, 102, MPI_COMM_WORLD);
-      //        MPI_Send(send_buffer_x, n, MPI_DOUBLE, i, 103, MPI_COMM_WORLD);
-      //        MPI_Send(send_buffer_y, n, MPI_DOUBLE, i, 104, MPI_COMM_WORLD);
-      //        MPI_Send(send_buffer_z, n, MPI_DOUBLE, i, 105, MPI_COMM_WORLD);
-    }
-
-    partile_buffer.clear();
-    delete[] send_buffer_u;
-    delete[] send_buffer_v;
-    delete[] send_buffer_w;
-    delete[] send_buffer_x;
-    delete[] send_buffer_y;
-    delete[] send_buffer_z;
-  }
-  return true;
-}
-
-bool cell_cluster::recv_data() {
-  if (numproc > 1) {
-    //      MPI_Status *status = NULL;
-    bool* step1 = NULL;
-    bool* step2 = NULL;
-    int* recv_elem = NULL;
-
-    try {
-      bool recv = true;  // true - прием сообщений, false - сообщения приняты.
-      step1 = new bool[numproc];  //флаг готовности приема сообщения
-      step2 =
-          new bool[numproc];  //флаг приема сообщения(true - сообщение принято)
-      int k;
-      recv_elem = new int[numproc];  //размер принимаемого сообщения
-
-      for (int i = 0; i < numproc; i++) {
-        step1[i] = step2[i] = false;
-      }
-
-      step1[proc_id] = true;
-      step2[proc_id] = true;
-
-      while (recv) {
-        for (int i = 0; i < numproc; i++) {
-          if (!step1[i]) {
-            //              MPI_Iprobe(i, 100, MPI_COMM_WORLD, &k, &status[i]);
-            //              //k == true - сообщение готово к приему(тип int)
-            step1[i] = (bool)k;
-          }
-          if (step1[i] && !step2[i]) {
-            //              MPI_Get_count(&status[i], MPI_DOUBLE,
-            //              &recv_elem[i]);
-
-            recv_buffer_u = new double[recv_elem[i]];
-            recv_buffer_v = new double[recv_elem[i]];
-            recv_buffer_w = new double[recv_elem[i]];
-            recv_buffer_x = new double[recv_elem[i]];
-            recv_buffer_y = new double[recv_elem[i]];
-            recv_buffer_z = new double[recv_elem[i]];
-
-            //              MPI_Recv(recv_buffer_u, recv_elem[i], MPI_DOUBLE, i,
-            //              100, MPI_COMM_WORLD, &status[i]);
-            //              MPI_Recv(recv_buffer_v, recv_elem[i], MPI_DOUBLE, i,
-            //              101, MPI_COMM_WORLD, &status[i]);
-            //              MPI_Recv(recv_buffer_w, recv_elem[i], MPI_DOUBLE, i,
-            //              102, MPI_COMM_WORLD, &status[i]);
-            //              MPI_Recv(recv_buffer_x, recv_elem[i], MPI_DOUBLE, i,
-            //              103, MPI_COMM_WORLD, &status[i]);
-            //              MPI_Recv(recv_buffer_y, recv_elem[i], MPI_DOUBLE, i,
-            //              104, MPI_COMM_WORLD, &status[i]);
-            //              MPI_Recv(recv_buffer_z, recv_elem[i], MPI_DOUBLE, i,
-            //              105, MPI_COMM_WORLD, &status[i]);
-
-            particle* temp = new particle[recv_elem[i]];
-
-            for (int j = 0; j < recv_elem[i]; j++) {
-              temp[j].velocity.x = recv_buffer_u[j];
-              temp[j].velocity.y = recv_buffer_v[j];
-              temp[j].velocity.z = recv_buffer_w[j];
-              temp[j].velocity.x = recv_buffer_x[j];
-              temp[j].velocity.y = recv_buffer_y[j];
-              temp[j].velocity.z = recv_buffer_z[j];
-            }
-            cell_iter = cells.begin();
-            while (cell_iter != cells.end()) {
-              (*cell_iter)->add_particle(temp, recv_elem[i]);
-              cell_iter++;
-            }
-
-            delete[] temp;
-            delete[] recv_buffer_u;
-            delete[] recv_buffer_v;
-            delete[] recv_buffer_w;
-            delete[] recv_buffer_x;
-            delete[] recv_buffer_y;
-            delete[] recv_buffer_z;
-
-            step2[i] = true;
-          }
-        }
-
-        for (int i = 0; i < numproc; i++) {
-          if (i != proc_id) recv = recv && (!step2[i]);
-        }
-      }
-
-      return true;
-    } catch (bad_alloc& ba) {
-      cout << ba.what() << endl;
-      //        if(status != NULL) delete [] status;
-      if (step1 != NULL) delete[] step1;
-      if (step2 != NULL) delete[] step2;
-      if (recv_elem != NULL) delete[] recv_elem;
-      exit(unusual_situations::exit_code::MEMORY_NOT_ALLOCATED);
-    }
-  }
-  return true;
-}
+bool cell_cluster::recv_data() { return true; }
 
 bool cell_cluster::write_file(const char* file_name) {
   // if(proc_id != 0) return false;
@@ -1283,8 +819,6 @@ void cell_cluster::sync_data() {
   }
 }
 
-void cell_cluster::set_geometry(geometry* body) { this->body = body; }
-
 void cell_cluster::cells_fragmentation() {
   deque<cell*> temp_cells;
 
@@ -1353,15 +887,11 @@ void cell_cluster::cells_test() {
 }
 
 bool cell_cluster::initialazition(const char* init_file, double Kn, double Cu,
-                                  double L, geometry* body, int numproc,
-                                  int my_id) {
+                                  double L, std::unique_ptr<geometry>&& body) {
   //    begin_time = MPI_Wtime();	                    //устанавливаем
   //    время начала работы
   begin_iter_time = begin_time;  //устанавливаем время начала нулевой
                                  //итерации(нулевая итерация - инициализация)
-
-  this->numproc = numproc;
-  this->proc_id = my_id;
 
   this->np = np;
 
@@ -1374,7 +904,7 @@ bool cell_cluster::initialazition(const char* init_file, double Kn, double Cu,
   this->volume = 0;
   this->N = 0;
 
-  this->set_geometry(body);
+  this->body = std::move(body);
 
   double vol = 0;
 
@@ -1648,7 +1178,7 @@ void cell_cluster::set_data_save_dtime(double data_dt) {
 void cell_cluster::clean_inner_particle() {
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
-    (*cell_iter)->clean_inner_particle(body);
+    (*cell_iter)->clean_inner_particle(*body);
     cell_iter++;
   }
 }
