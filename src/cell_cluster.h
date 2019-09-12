@@ -1,40 +1,64 @@
-// File: cell_cluster.h
-// Program: MC3D
-// Author: Khokhlov "AAsad" Ivan
-// Version: 0.5.1
-// Last modified: 16.12.10.
-// Description: Program for calculation of rarefaid flows.
-
 #pragma once
 
-//#include "mpi.h"
-//#include "mpicxx.h"
-//#include "boost\mpi.hpp"
-#include "cell.h"
-#include "inner_cell.h"
-#include "point.h"
-//#include "Header.h"
-#include "exit_code.h"
-#include "free_boundary.h"
-#include "geometry.h"
-#include "giper_free_boundary.h"
-#include "mirror_boundary.h"
-#include "pereodic_boundary.h"
-//#include "typeinfo.h"
 #include <complex>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 
-const int NUM_CPU = 4;
+#include <cell.h>
+#include <exit_code.h>
+#include <free_boundary.h>
+#include <geometry.h>
+#include <giper_free_boundary.h>
+#include <inner_cell.h>
+#include <mirror_boundary.h>
+#include <pereodic_boundary.h>
+#include <point.h>
+#include <utils/threadpool.hpp>
+
+const int NUM_CPU = 8;
 
 namespace mc3d {
 
-// cell_cluster - основной класс, в нем происходит инициализация, обмен
-// частицами между ячейками, выполнение граничных условий, обмен между
-// кластерами(если их больше одного)
-class cell_cluster {
+class CellCluster {
+ public:
+  inline void calc_dt();  //вычисление шага по времени для данного кластера
+  inline void set_dt_in_cells(
+      double dt);  //установка шага по времени во все ячейки
+  inline bool time_step();
+  CellCluster(void);   //конструктор по умолчанию
+  ~CellCluster(void);  //деструктор
+  void set_apex(point apex);  //задание опорной точки кластера
+  void set_size(double Lx, double Ly, double Lz);  //задание размеров кластера
+  void set_end_time(double t_end);  //задание времени окончания рассчета
+  void set_data_save_dtime(double data_dt);
+  //инициализация кластера(параметры:	ncx, ncy, ncz	- количество ячеек по
+  //координатам, np - уровень статистик, Kn - Кнудсен
+  bool initialazition(unsigned int ncx, unsigned int ncy, unsigned int ncz,
+                      double density, double Kn, double Cu,
+                      std::unique_ptr<geometry>&& body_, double S, double alpha,
+                      double T);
+  bool write_cell_file(const string& init_file);
+  bool WriteFile();  //запись данных в файл(плотность и энэргия), данные
+                     //собираються со всех кластеров
+  bool write_speed_file();  //запись данных в файл(скорость), данные собираються
+                            //со всех кластеров
+  bool WriteFile(const string& file_name);  //запись данных в файл(плотность и
+                                            //энэргия) с заданным именем, данные
+                                            //собираються со всех кластеров
+  bool write_speed_file(const char* file_name);
+  bool write_times();  //запись данных о врем ени выполнения каждой итерации
+  void set_boundary_condition(
+      boundary** a, int i);  //установка граничных условий a - указатель на
+                             //массив, i - количество элементов в массиве.
+  void set_boundary_condition(
+      boundary* a);  //установка граничных условий a - указатель на гр. условие
+  void computation(void);  //вычисления
+  void cells_fragmentation();
+  void cells_test();
+  void clean_inner_particle();
+
  private:
   int numproc;  //количество процессов(не путать с нитями), специально для MPI
   int proc_id;  //номер процесса
@@ -60,8 +84,8 @@ class cell_cluster {
   deque<double> sort_times;  //дэк с временами сортировки частиц по ячейкам
   deque<double>
       calc_times;  //дэк с временами расчета соударений между частицами
-  deque<cell*> cells;  //двусвязный список ячеек кластера.
-  deque<cell*>::iterator cell_iter;  //итератор для обхода ячеек
+  deque<cell> cells;  //двусвязный список ячеек кластера.
+  deque<cell>::iterator cell_iter;  //итератор для обхода ячеек
   deque<particle> partile_buffer;  //двусвязный список буфера кластера
   inline void boundary_condition(void);  //выполнение граничных условий
   deque<boundary*> boundary_cond_outer;  //дэк с внешними граничными условиями
@@ -73,73 +97,15 @@ class cell_cluster {
                             //возможно стоит удалить
   inline void sync_data();  //синхронизация данных между кластерами. замена для
                             //методов:  send_data(), recv_data()
-  inline bool
-  send_dt();  //передача шага по времени для синхронизации его на всех кластерах
-  inline bool recv_dt();  //прием шага по времени, и выбор наименьшего
   inline void sync_dt();  //синхронизация шага по времени. тоже самое что и
                           //методы: send_dt() и recv_dt(), только в одном методе
   ofstream log;  //переменная для вывода логов, пока не реализовано
-  std::unique_ptr<geometry> body;
+  std::unique_ptr<geometry> body_;
   double data_dt;
   double data_t;
   double density;
   double volume;
 
- public:
-  double* send_buffer_u;  //буфер для передачи частиц кластеру, скорость по x
-  double* send_buffer_v;  //буфер для передачи частиц кластеру, скорость по y
-  double* send_buffer_w;  //буфер для передачи частиц кластеру, скорость по z
-  double* send_buffer_x;  //буфер для передачи частиц кластеру, координата x
-  double* send_buffer_y;  //буфер для передачи частиц кластеру, координата y
-  double* send_buffer_z;  //буфер для передачи частиц кластеру, координата z
-  double* recv_buffer_u;  //буфер для приёма частиц кластером, скорость по x
-  double* recv_buffer_v;  //буфер для приёма частиц кластером, скорость по y
-  double* recv_buffer_w;  //буфер для приёма частиц кластером, скорость по z
-  double* recv_buffer_x;  //буфер для приёма частиц кластером, координата x
-  double* recv_buffer_y;  //буфер для приёма частиц кластером, координата y
-  double* recv_buffer_z;  //буфер для приёма частиц кластером, координата w
-  inline void calc_dt();  //вычисление шага по времени для данного кластера
-  inline void set_dt_in_cells(
-      double dt);  //установка шага по времени во все ячейки
-  inline bool time_step(
-      void);  //выполнение шага по времени(соударения, перемещения, сортировка и
-              //синхронизация частиц)
-  cell_cluster(void);   //конструктор по умолчанию
-  ~cell_cluster(void);  //деструктор
-  void set_apex(point apex);  //задание опорной точки кластера
-  void set_size(double Lx, double Ly, double Lz);  //задание размеров кластера
-  void set_end_time(double t_end);  //задание времени окончания рассчета
-  void set_data_save_dtime(double data_dt);
-  bool initialazition(unsigned int ncx, unsigned int ncy, unsigned int ncz,
-                      unsigned int np, double Kn, double Cu,
-                      std::unique_ptr<geometry>&& body);
-  //инициализация кластера(параметры:	ncx, ncy, ncz	- количество ячеек по
-  //координатам, np - уровень статистик, Kn - Кнудсен
-  bool initialazition(unsigned int ncx, unsigned int ncy, unsigned int ncz,
-                      double density, double Kn, double Cu,
-                      std::unique_ptr<geometry>&& body,
-                      double S, double alpha, double T);
-  bool initialazition(const char* init_file, double Kn, double Cu, double L,
-                      std::unique_ptr<geometry>&& body);
-  // bool read_cell_file(const char *init_file);
-  bool write_cell_file(const char* init_file);
-  bool write_file();  //запись данных в файл(плотность и энэргия), данные
-                      //собираються со всех кластеров
-  bool write_speed_file();  //запись данных в файл(скорость), данные собираються
-                            //со всех кластеров
-  bool write_file(const char* file_name);  //запись данных в файл(плотность и
-                                           //энэргия) с заданным именем, данные
-                                           //собираються со всех кластеров
-  bool write_speed_file(const char* file_name);
-  bool write_times();  //запись данных о врем ени выполнения каждой итерации
-  void set_boundary_condition(
-      boundary** a, int i);  //установка граничных условий a - указатель на
-                             //массив, i - количество элементов в массиве.
-  void set_boundary_condition(
-      boundary* a);  //установка граничных условий a - указатель на гр. условие
-  void computation(void);  //вычисления
-  void cells_fragmentation();
-  void cells_test();
-  void clean_inner_particle();
+  utils::ThreadPool thread_pool_;
 };
 };  // namespace mc3d

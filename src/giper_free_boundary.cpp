@@ -10,7 +10,7 @@ giper_free_boundary::giper_free_boundary(void) {}
 giper_free_boundary::giper_free_boundary(point pstn, point nrml,
                                          unsigned int np, double S, double T,
                                          double alpha)
-    : free_boundary(pstn, nrml, np, S, T, alpha) {}
+    : FreeBoundary(pstn, nrml, np, S, T, alpha) {}
 
 giper_free_boundary::~giper_free_boundary(void) {}
 
@@ -29,10 +29,6 @@ int giper_free_boundary::bondary_condition(
         (exp(-Vn * Vn / (2 * T)) +
          sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + erf(Vn / sqrt(2 * T)))) /
         abs(cell_size * nrml));
-
-    if (N > 10000) {
-      std::cout << "N inpu: " << N << "   " << std::endl;
-    }
 
     if (N > 2) (*cell_iter)->generate_giper_free_random(N, V, T);
 

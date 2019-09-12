@@ -27,7 +27,7 @@ struct point {
   void print();
   double mod() const;
   double volume() const;
-  point nrmlz();
+  point& nrmlz();
   point set(double x, double y, double z);
   double get_x();
   point get();

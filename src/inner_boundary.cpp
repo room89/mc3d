@@ -15,7 +15,7 @@ bool inner_boundary::add_poligon(geometry* body, point cell_center, double L) {
   eps = 0.00001;
 
   this->cell_center = cell_center;
-  
+  
   deque<poligon*>::iterator poligon_iter = bbody->poligons.begin();
 
   while(poligon_iter != bbody->poligons.end())
@@ -269,15 +269,14 @@ double inner_boundary::calc_cell_volume(
     return tot_vol;
   }
 
-  int N = 100000;
-  int outer_N = N;
+  size_t N = 100000;
+  size_t outer_N = N;
 
-  point* rand_point = new point[N];
+  std::vector<point> rand_points;
+  rand_points.reserve(N);
 
-  // int *outer_point_index = new int[N];
-
-  for (int i = 0; i < N; i++) {
-    rand_point[i] = cell_apex + size.rand_point();
+  for (size_t i = 0; i < N; i++) {
+    rand_points.emplace_back(cell_apex + size.rand_point());
   }
 
   auto poligon_col_iterator_x = poligon_ptrs.end();
@@ -288,7 +287,7 @@ double inner_boundary::calc_cell_volume(
   point collision_pstn_y;
   point collision_pstn_z;
 
-  for (int i = 0; i < N; i++) {
+  for (size_t i = 0; i < N; i++) {
     double dttx = size.x / 1;
     double dtty = size.y / 1;
     double dttz = size.z / 1;
@@ -306,11 +305,11 @@ double inner_boundary::calc_cell_volume(
       point c = (*poligon_iterator)->get_p1() - (*poligon_iterator)->get_p3();
 
       double Ax = point(1, 0, 0) * (*poligon_iterator)->get_normal();
-      double tcx = ((*poligon_iterator)->get_p1() - rand_point[i]) *
+      double tcx = ((*poligon_iterator)->get_p1() - rand_points[i]) *
                    (*poligon_iterator)->get_normal() / Ax;
 
       if (tcx < dttx && tcx > -dttx) {
-        point collision_pstn = rand_point[i] + point(1, 0, 0) * tcx;
+        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcx;
 
         point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
         point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
@@ -326,11 +325,11 @@ double inner_boundary::calc_cell_volume(
       }
 
       double Ay = point(0, 1, 0) * (*poligon_iterator)->get_normal();
-      double tcy = ((*poligon_iterator)->get_p1() - rand_point[i]) *
+      double tcy = ((*poligon_iterator)->get_p1() - rand_points[i]) *
                    (*poligon_iterator)->get_normal() / Ay;
 
       if (tcy < dtty && tcy > -dtty) {
-        point collision_pstn = rand_point[i] + point(1, 0, 0) * tcy;
+        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcy;
 
         point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
         point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
@@ -346,11 +345,11 @@ double inner_boundary::calc_cell_volume(
       }
 
       double Az = point(0, 0, 1) * (*poligon_iterator)->get_normal();
-      double tcz = ((*poligon_iterator)->get_p1() - rand_point[i]) *
+      double tcz = ((*poligon_iterator)->get_p1() - rand_points[i]) *
                    (*poligon_iterator)->get_normal() / Az;
 
       if (tcz < dttz && tcz > -dttz) {
-        point collision_pstn = rand_point[i] + point(1, 0, 0) * tcz;
+        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcz;
 
         point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
         point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
@@ -369,7 +368,7 @@ double inner_boundary::calc_cell_volume(
 
     if (poligon_col_iterator_x != poligon_ptrs.end()) {
       if ((*poligon_col_iterator_x)->get_normal() *
-              (collision_pstn_x - rand_point[i]) <=
+              (collision_pstn_x - rand_points[i]) <=
           0) {
         outer_N--;
         break;
@@ -378,7 +377,7 @@ double inner_boundary::calc_cell_volume(
 
     if (poligon_col_iterator_y != poligon_ptrs.end()) {
       if ((*poligon_col_iterator_y)->get_normal() *
-              (collision_pstn_y - rand_point[i]) <=
+              (collision_pstn_y - rand_points[i]) <=
           0) {
         outer_N--;
         break;
@@ -387,14 +386,14 @@ double inner_boundary::calc_cell_volume(
 
     if (poligon_col_iterator_z != poligon_ptrs.end()) {
       if ((*poligon_col_iterator_z)->get_normal() *
-              (collision_pstn_z - rand_point[i]) <=
+              (collision_pstn_z - rand_points[i]) <=
           0) {
         outer_N--;
         break;
       }
     }
 
-    mass_center += rand_point[i];
+    mass_center += rand_points[i];
   }
 
   volume = tot_vol * (double(outer_N) / double(N));
@@ -402,8 +401,6 @@ double inner_boundary::calc_cell_volume(
     mass_center /= outer_N;
     *mass_center_out = mass_center;
   }
-
-  delete[] rand_point;
 
   if (outer_N == N) {
     return -1;
@@ -415,4 +412,6 @@ double inner_boundary::calc_cell_volume(
 void inner_boundary::set_geometry(geometry* bbody) { this->body = bbody; }
 
 geometry* inner_boundary::get_geometry_ptr() { return body; }
+
+bool inner_boundary::Empty() const { return poligon_ptrs.empty(); }
 }  // namespace mc3d

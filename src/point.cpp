@@ -55,7 +55,7 @@ point operator!(point a) {
 }
 
 std::ostream& operator<<(std::ostream& o, const point c) {
-  o << c.x << "\t" << c.y << "\t" << c.z << "\t";
+  o << c.x << ", " << c.y << ", " << c.z;
   return o;
 }
 
@@ -65,11 +65,11 @@ point point::vec_mult(point a) {
   return point(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x);
 }
 
-point point::nrmlz() {
+point& point::nrmlz() {
   double m = mod();
   point a(x / m, y / m, z / m);
   *this = a;
-  return a;
+  return *this;
 }
 
 double point::get_x() { return x; }

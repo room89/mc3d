@@ -29,40 +29,35 @@ using namespace mc3d;
 namespace mc3d {
 class cell {
  private:
-  deque<particle> particles;  //частицы находящиеся внутри ячейки
-  deque<particle> particle_buffer;  //буффер частиц вылетевших из ячейки
-  point apex;         //опорная точка
-  double lx, ly, lz;  //размеры
-  double T;           //температура внутри ячейки
-  // double u;
-  // //средняя скорость частиц в ячейке, координата X double v;
-  // //средняя скорость частиц в ячейке, координата Y double w;
-  // //средняя скорость частиц в ячейке, координата Z
+  deque<particle> particles;
+  deque<particle> particle_buffer;  // particle that departing from the cell
+  point apex;
+  double lx, ly, lz;  // size of cell
+  double T;           // temperature in cell
   point velocity;
   point mass_center;
-  double volume;  //объем ячейки(пока не используеться)
-  size_t n;       //количество частиц в ячейке
+  double volume_;
   // unsigned int total_n;
   // //
-  double Kn_l;       //локальый кнутсен
-  double Kn;         //
-  double L;          //характерный размер
-  double dt;         //
-  double time;       //
-  double calc_time;  //время вычисления в ячейке за один временной шаг dt
+  double Kn_l;  //локальый кнутсен
+  double Kn;    //
+  double L;     //характерный размер
+  double dt;    //
+  double time;
+  double calc_time;
   double start_time;
-  bool body_mark;   //содержание тела внутри ячейки
-  unsigned int np;  //
+  bool body_mark;  // is body inside cell
+  unsigned int np;
   inner_boundary body_boundary;
   deque<cell*> neighbors;  //
   int* thread_mark;        //
  public:
-  cell(void);                        //
-  ~cell(void);                       //
+  cell(void);
+  ~cell(void);
   virtual void particle_move(void);  //перемещение частиц
   virtual void collisions(void);  //соударения между частицами
   void neighbor_sort(void);  //
-  unsigned int N(void);  //возвращает количство частиц в ячейке
+  unsigned int N(void) const;  //возвращает количство частиц в ячейке
   double t();                                      //
   void set_size(double lx, double ly, double lz);  //установка размера ячейки
   void set_size(point dl);
@@ -112,9 +107,9 @@ class cell {
   double get_energy();  //
   double get_L();
   bool get_body_mark();
-  cell* get_ptr();   //
-  point calc_vel();  //
-  double calc_T();   //
+  cell* get_ptr();         //
+  point calc_vel() const;  //
+  double calc_T();         //
   double calc_volume();
   void set_dt(double dt);                                 //
   double calc_dt();                                       //

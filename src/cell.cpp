@@ -1,11 +1,7 @@
-// File: cell.cpp
-// Program: MC3D
-// Author: Khokhlov "AAsad" Ivan
-// Version: 0.5.1
-// Last modified: 18.05.10.
-// Description: Program for calculation of rarefaid flows.
-
 #include "cell.h"
+
+#include <utils/logger.hpp>
+#include <utils/utils.hpp>
 
 namespace mc3d {
 namespace {
@@ -46,8 +42,7 @@ void cell::set_size(point dl) {
 void cell::set_apex(point a) { apex = a; }
 
 bool cell::initialazition(size_t N, const std::unique_ptr<geometry>& bbody) {
-  this->n = N;
-  this->generate_random(n);
+  this->generate_random(N);
 
   dt = 100000;
   calc_T();
@@ -62,13 +57,15 @@ bool cell::initialazition(size_t N, const std::unique_ptr<geometry>& bbody) {
   if (bbody) {
     body_mark = body_boundary.add_poligon(bbody.get(), get_center(), L);
     body_boundary.set_geometry(bbody.get());
+    //    if(body_boundary.Empty())
+    //      particles.clear();
   } else
     body_mark = false;
 
   return true;
 }
 
-unsigned int cell::N() { return n = particles.size(); }
+unsigned int cell::N() const { return particles.size(); }
 
 double cell::generate_random(size_t N) {
   point d(lx, ly, lz);
@@ -307,8 +304,8 @@ double cell::generate_free_random(unsigned int N, double T, point V,
   unsigned int i = 0;
 
   while (i < N) {
-    double rn1 = double(rand()) * rmt;
-    double rn2 = double(rand()) * rmt;
+    double rn1 = rand() * rmt;
+    double rn2 = rand() * rmt;
 
     if (rn1 <= 0) rn1 = 0.00001;
 
@@ -336,20 +333,19 @@ double cell::generate_free_random(unsigned int N, double T, point V,
 
   dvel *= nt;
   ti = (ti * nt - dvel * dvel) / 3;
-  /*
-                  double sf = sqrt(T / ti);
+
+  double sf = sqrt(T / ti);
   //		sf = 1;
 
-                  data = added_particles.begin();
+  data = added_particles.begin();
 
-                  for(i = 0; i < N; i++)
-                  {
-                          if(data == added_particles.end()) break;
-                          data->velocity = (data->velocity - dvel) * sf + V;
-                          if(data->velocity * nrml < 0) data->velocity = 2 * V -
-  data->velocity; // data++;
-                  }
-  */
+  for (i = 0; i < N; i++) {
+    if (data == added_particles.end()) break;
+    data->velocity = (data->velocity - dvel) * sf + V;
+    if (data->velocity * nrml < 0)
+      data->velocity = 2 * V - data->velocity;  // data++;
+  }
+
   data = added_particles.begin();
 
   for (i = 0; i < N; i++) {
@@ -413,21 +409,27 @@ double cell::generate_giper_free_random(unsigned int N, point V, double T) {
   double A = sqrt(3 * T);
 
   for (unsigned int i = 0; i < N; i++) {
-    double rnx = rand() * rmt;
-    double rny = rand() * rmt;
-    double rnz = rand() * rmt;
+    double rnx = utils::random(0, 1);
+    double rny = utils::random(0, 1);
+    double rnz = utils::random(0, 1);
 
     position = apex + point(d.x * rnx, d.y * rny, d.z * rnz);
 
     particle new_particle;
 
     new_particle.position = position;
-    point noise(A * (2 * rand() * rmt - 1), A * (2 * rand() * rmt - 1),
-                A * (2 * rand() * rmt - 1));
+    point noise(A * utils::random(-1, 1), A * utils::random(-1, 1),
+                A * utils::random(-1, 1));
     new_particle.velocity = V + noise;
 
     added_particles.push_back(new_particle);
   }
+
+  point av_velocity;
+  for (const auto& particle : added_particles) {
+    av_velocity += particle.velocity;
+  }
+  av_velocity /= particles.size();
 
   particles.insert(particles.end(), added_particles.begin(),
                    added_particles.end());
@@ -448,7 +450,6 @@ void cell::collisions() {
   double frequency_t = factor / g_max;
 
   double t = 0;
-  double tau_mean = 0;
 
   deque<particle>::iterator particle_1 = particles.begin();
   deque<particle>::iterator particle_2 = particles.begin();
@@ -705,11 +706,14 @@ void cell::collisions() {
 //				double r2 = double(std::rand()) * rmt;
 
 //				point g1(	g * sin(Pi * r1) * cos(2. * Pi *
-// r2), 							g * sin(Pi * r1) * sin(2. * Pi
+// r2), 							g * sin(Pi * r1)
+// * sin(2.
+// * Pi
 // * r2), g * cos(Pi * r1));
 
 //				double g1x = g * sin(Pi * r1) * cos(2. * Pi *
-// r2); 				double g1y = g * sin(Pi * r1) * sin(2. * Pi
+// r2); 				double g1y = g * sin(Pi * r1) * sin(2. *
+// Pi
 // * r2); double g1z = g * cos(Pi * r1);
 
 //				//cout << "g1 = " << point(g1x, g1y, g1z) <<
@@ -928,21 +932,15 @@ double cell::get_energy() {
     E += data->velocity * data->velocity;
     data++;
   }
-  this->n = particles.size();
-  E /= 2 * n;
+  E /= 2 * particles.size();
   return E;
 }
 
-point cell::calc_vel() {
-  deque<particle>::iterator data = particles.begin();
-
-  velocity = point(0, 0, 0);
-  while (data != particles.end()) {
-    velocity += data->velocity;
-    data++;
+point cell::calc_vel() const {
+  auto velocity = point(0, 0, 0);
+  for (const auto& particle : particles) {
+    velocity += particle.get_velocity();
   }
-
-  n = particles.size();
 
   velocity /= double(particles.size());
 
@@ -958,9 +956,8 @@ double cell::calc_T() {
     E += data->velocity * data->velocity;
     data++;
   }
-  this->n = particles.size();
-  av_vel /= double(n);
-  E /= double(n);
+  av_vel /= double(particles.size());
+  E /= double(particles.size());
   velocity = av_vel;
   T = (E - velocity * velocity) / 3;
   return T;
@@ -993,17 +990,11 @@ void cell::neighbor_sort() {
 }
 
 void cell::calc() {
-  //*thread_mark = 2;
-  //		double start_time = MPI_Wtime();
   collisions();
   if (body_mark)
-    body_boundary.bondary_condition(
-        &particles, dt);  //при выполнении граничных условий на теле выполняется
-                          //и передвижение частиц!!!
+    body_boundary.bondary_condition(&particles, dt);
   else
     particle_move();
-  //		calc_time += MPI_Wtime() - start_time;
-  //*thread_mark = 1;
 }
 
 void cell::attach_thread_mark(int& ptr) { thread_mark = &ptr; }
@@ -1068,7 +1059,7 @@ deque<cell*> cell::fragmentation(const std::unique_ptr<geometry>& body) {
   // new_cells[7]->add_particle(&particles);
 
   for (size_t i = 0; i < 8; i++) {
-    new_cells[i]->initialazition(n / 8, body);
+    new_cells[i]->initialazition(particles.size() / 8, body);
     // new_cells[i]->set_inner_boundary(body_boundary);
   }
 
@@ -1078,14 +1069,14 @@ deque<cell*> cell::fragmentation(const std::unique_ptr<geometry>& body) {
 void cell::set_inner_boundary(inner_boundary bound) { body_boundary = bound; }
 
 double cell::calc_volume() {
-  volume = body_boundary.calc_cell_volume(apex, get_size(), &mass_center);
-  if (volume < 0) {
-    return volume = get_size().volume();
+  volume_ = body_boundary.calc_cell_volume(apex, get_size(), &mass_center);
+  if (volume_ < 0) {
+    return volume_ = get_size().volume();
   }
-  return volume;
+  return volume_;
 }
 
-double cell::get_volume() const { return volume; }
+double cell::get_volume() const { return volume_; }
 
 bool cell::get_body_mark() { return body_mark; }
 
@@ -1096,7 +1087,6 @@ point cell::get_velocity() {
     velocity += data->velocity;
     data++;
   }
-  this->n = particles.size();
   velocity /= double(particles.size());
   return velocity;
 }
@@ -1108,7 +1098,6 @@ point cell::get_particle_mass_center() {
     particle_mass_center += data->position;
     data++;
   }
-  this->n = particles.size();
   particle_mass_center /= double(particles.size());
   return particle_mass_center;
 }
@@ -1147,7 +1136,7 @@ bool cell::_dbg_test_particle() {
   while (data != particles.end()) {
     if (this->body_boundary.get_geometry_ptr()->is_inner_point(
             data->get_position())) {
-      cout << data->get_position() << "\t" << data->get_velocity() << endl;
+      LOG_DEBUG() << data->get_position() << "\t" << data->get_velocity();
       this->body_boundary.get_geometry_ptr()->is_inner_point(
           data->get_position());
       i++;

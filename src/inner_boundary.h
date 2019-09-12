@@ -21,6 +21,7 @@ class inner_boundary : public boundary {
   // bool add_poligon(mc3d::geometry *bbody, double L);
   void set_geometry(geometry* bbody);
   geometry* get_geometry_ptr();
+  bool Empty() const;
   int bondary_condition(deque<particle>* cluster_particle, double dt);
   double calc_cell_volume(
       point cell_apex, point size,
