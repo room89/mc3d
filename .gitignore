@@ -1,0 +1,16 @@
+# CMake build directories and artifacts
+/build/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# Generated data/output
+data.dat
+
+# User-specific files
+.DS_Store
+Thumbs.db
+
