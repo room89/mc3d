@@ -25,7 +25,7 @@ class InnerBoundary : public Boundary {
   void SetGeometry(Geometry& geometry);
   Geometry* GetGeometryPtr();
   bool Empty() const;
-  int BoundaryCondition(deque<Particle>& cluster_particle, double dt);
+  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
   double CalcCellVolume(
       Point cell_apex, Point size,
       Point* mass_center =

@@ -8,7 +8,8 @@
 #include "particle.h"
 
 #include <cmath>
-#include <cstdlib>
+#include <numbers>
+#include <utils/utils.hpp>
 
 namespace mc3d {
 Particle::Particle() {
@@ -45,7 +46,6 @@ void Particle::Move(double dt) {
 }
 bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
                double factor) {
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
   const double Pi = std::numbers::pi;
 
   /*double u1 = a->u, v1 = a->v, w1 = a->w;
@@ -65,11 +65,11 @@ bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
     rtrn = false;
   }
 
-  double rr = std::rand() * rmt;
+  double rr = utils::Random01();
 
   if (g / g_max > rr) {
-    double r1 = std::rand() * rmt;
-    double r2 = std::rand() * rmt;
+    double r1 = utils::Random01();
+    double r2 = utils::Random01();
 
     double g1z = g * std::cos(Pi * r1);
     double g1y = g * std::sin(Pi * r1) * std::sin(2. * Pi * r2);

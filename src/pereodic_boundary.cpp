@@ -11,7 +11,8 @@ PeriodicBoundary::PeriodicBoundary() {}
 
 PeriodicBoundary::~PeriodicBoundary() {}
 
-int PeriodicBoundary::BoundaryCondition(deque<Particle>& particles, double dt) {
+int PeriodicBoundary::BoundaryCondition(std::vector<Particle>& particles,
+                                        double dt) {
   auto data = particles.begin();
   while (data != particles.end()) {
     while ((data->position - pstn) * nrml > 0) {

@@ -7,8 +7,8 @@
 #include "point.h"
 
 #include <cmath>
-#include <cstdlib>
 #include <iostream>
+#include <utils/utils.hpp>
 
 namespace mc3d {
 Point::Point() {}
@@ -123,11 +123,9 @@ Point Point::RandomPoint(
     Point size)  // возврощает рандомную точку с коорд.: x от 0 до size.x, y от
                  // 0 до size.y, z от 0 до size.z
 {
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
-
-  double rnx = std::rand() * rmt;
-  double rny = std::rand() * rmt;
-  double rnz = std::rand() * rmt;
+  double rnx = utils::RandomDouble(0.0, 1.0);
+  double rny = utils::RandomDouble(0.0, 1.0);
+  double rnz = utils::RandomDouble(0.0, 1.0);
 
   return Point(size.x * rnx, size.y * rny, size.z * rnz);
 }
@@ -135,11 +133,9 @@ Point Point::RandomPoint(
 Point Point::RandomPoint()  // возврощает рандомную точку с коорд.: x от 0 до
                             //  this->x, y от 0 до this->y, z от 0 до this->z
 {
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
-
-  double rnx = std::rand() * rmt;
-  double rny = std::rand() * rmt;
-  double rnz = std::rand() * rmt;
+  double rnx = utils::RandomDouble(0.0, 1.0);
+  double rny = utils::RandomDouble(0.0, 1.0);
+  double rnz = utils::RandomDouble(0.0, 1.0);
 
   return Point(x * rnx, y * rny, z * rnz);
 }

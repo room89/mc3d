@@ -15,6 +15,6 @@ class MirrorBoundary : public Boundary {
   MirrorBoundary();
   MirrorBoundary(Point pstn, Point nrml);
   ~MirrorBoundary();
-  int BoundaryCondition(deque<Particle>& cluster_particle, double dt);
+  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
 };
 };  // namespace mc3d

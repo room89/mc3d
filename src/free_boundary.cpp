@@ -60,7 +60,7 @@ void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
   }
 }
 
-int FreeBoundary::BoundaryCondition(std::deque<Particle>& /*cluster_particle*/,
+int FreeBoundary::BoundaryCondition(std::vector<Particle>& /*cluster_particle*/,
                                     double dt) {
   unsigned int N;
   for (Cell& cell : cells_) {

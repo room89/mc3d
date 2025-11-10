@@ -25,9 +25,9 @@ int main(int argc, char* argv[]) {
   // cone->Scale(-1);
   cone->Fragment(0.3);
 
-  double Kn = .05, Cu = 0.9, T = 0.5;
-  unsigned int ncx = 5, ncy = 5, ncz = 3;
-  unsigned int np = 20;
+  double Kn = .05, Cu = 0.9, T = 1.0;
+  unsigned int ncx = 50, ncy = 50, ncz = 5;
+  unsigned int np = 50;
   double S = 10;
   Point a(-0.5 * Lx, -0.5 * Ly, -0.5 * Lz);
 

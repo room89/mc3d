@@ -1,6 +1,7 @@
 #include "inner_boundary.h"
 
 #include <cmath>
+#include <utils/utils.hpp>
 
 namespace mc3d {
 const double Pi = 3.1415926535;
@@ -67,7 +68,7 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
   return !poligon_ptrs.empty();
 }
 
-int InnerBoundary::BoundaryCondition(deque<Particle>& cluster_particle,
+int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
                                      double dt) {
   // if(poligon_ptrs.size() <= 0) return 1;
 
@@ -145,14 +146,12 @@ int InnerBoundary::BoundaryCondition(deque<Particle>& cluster_particle,
 
         collision_poligon_iterator->get().force += particle_iter->velocity;
 
-        const double rmt = 1.0 / static_cast<double>(RAND_MAX);
+        double r1 = utils::Random01();
+        double r2 = utils::Random01();
+        double r3 = utils::Random01();
 
-        double r1 = std::rand() * rmt;
-        double r2 = std::rand() * rmt;
-        double r3 = std::rand() * rmt;
-
-        if (r1 == 0.) r1 = 0.00001;
-        if (r2 == 0.) r2 = 0.00001;
+        if (r1 <= 0.) r1 = 0.00001;
+        if (r2 <= 0.) r2 = 0.00001;
 
         Point vel = particle_iter->velocity;
 

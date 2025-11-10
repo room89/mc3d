@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <deque>
 #include <functional>
 #include <vector>
 
@@ -23,9 +24,9 @@ class FreeBoundary : public Boundary {
   Point V;
 
  public:
-  virtual void AddCell(deque<Cell>& cluster_cells);
+  virtual void AddCell(std::deque<Cell>& cluster_cells);
   virtual void SetNp(unsigned int np);
-  int BoundaryCondition(deque<Particle>& cluster_particle, double dt);
+  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
   FreeBoundary(Point pstn, Point nrml, unsigned int np, double S, double T,
                double alpha = 0);
   FreeBoundary();

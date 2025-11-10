@@ -1,6 +1,7 @@
 #include "cell_cluster.h"
 
 #include <cmath>
+#include <iterator>
 #include <utils/logger.hpp>
 #include <utils/stopwatch.hpp>
 
@@ -132,8 +133,9 @@ bool CellCluster::TimeStep() {
     cell.Sort();
     cell.SortNeighbors();
     auto& cell_buffer = cell.GetBuffer();
-    partile_buffer.insert(partile_buffer.end(), cell_buffer.begin(),
-                          cell_buffer.end());
+    partile_buffer.insert(partile_buffer.end(),
+                          std::make_move_iterator(cell_buffer.begin()),
+                          std::make_move_iterator(cell_buffer.end()));
     cell_buffer.clear();
   }
 

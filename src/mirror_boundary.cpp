@@ -37,22 +37,17 @@ MirrorBoundary::MirrorBoundary(Point pstn, Point nrml) {
 
 MirrorBoundary::~MirrorBoundary() {}
 
-int MirrorBoundary::BoundaryCondition(deque<Particle>& particles, double dt) {
+int MirrorBoundary::BoundaryCondition(std::vector<Particle>& particles,
+                                      double dt) {
   double t;
   auto data = particles.begin();
   const double Pi = 3.1415926535;
   while (data != particles.end()) {
-    // t = ((pstn.x - data->x) * nrml.x + (pstn.y - data->y) * nrml.y + (pstn.z
-    // - data->z) * nrml.z);
     t = (pstn - data->position) * nrml;
 
     if (t < 0) {
-      const double rmt = 1.0 / static_cast<double>(RAND_MAX);
       t /= nrml * nrml;
 
-      /*data->x += 2 * nrml.x * t;
-      data->y += 2 * nrml.y * t;
-      data->z += 2 * nrml.z * t;*/
       data->position += nrml * t * 2.;
       if (!(nrml * Point(0, 1, 1))) {
         data->velocity.x = -data->velocity.x;
@@ -62,16 +57,6 @@ int MirrorBoundary::BoundaryCondition(deque<Particle>& particles, double dt) {
         data->velocity.z = -data->velocity.z;
       } else
         return -1;
-      /*double v = sqrt(data->u * data->u + data->v * data->v + data->w *
-      data->w); double rn1 = double(std::rand()) * rmt; double rn2 =
-      double(std::rand()) * rmt; data->u = v * sin(Pi * rn1) * cos(2 * Pi *
-      rn2); data->v = v * sin(Pi * rn1) * sin(2 * Pi * rn2); data->w = v *
-      cos(Pi * rn1); Point vel(data->u, data->v, data->w); if(vel * nrml > 0)
-      {
-              data->u = -data->u;
-              data->v = -data->v;
-              data->w = -data->w;
-      }*/
     }
 
     ++data;

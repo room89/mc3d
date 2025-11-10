@@ -30,8 +30,9 @@ using namespace mc3d;
 namespace mc3d {
 class Cell {
  private:
-  deque<Particle> particles;
-  deque<Particle> particle_buffer;  // Particle that departing from the cell
+  std::vector<Particle> particles;
+  std::vector<Particle>
+      particle_buffer;  // Particle that departing from the cell
   Point apex;
   double lx, ly, lz;  // size of cell
   double T;           // temperature in cell
@@ -80,8 +81,8 @@ class Cell {
                                     Point normal);
   virtual double GenerateHyperFreeRandom(unsigned int N, Point V, double T);
   void Sort();
-  deque<Particle>& GetBuffer();
-  void AddParticle(deque<Particle>& particles);
+  std::vector<Particle>& GetBuffer();
+  void AddParticle(std::vector<Particle>& particles);
   void FixParticle(unsigned int N, double T, Point V);
   double CalculateKn();
   Point GetApex() const;

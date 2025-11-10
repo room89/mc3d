@@ -1,7 +1,9 @@
 #include "cell.h"
 
 #include <algorithm>
-#include <random>
+#include <array>
+#include <cmath>
+#include <iterator>
 #include <utils/logger.hpp>
 #include <utils/utils.hpp>
 
@@ -53,7 +55,7 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
                    : ly / (fabs(velocity.y) + c);
   dtt = dtt < lz / (fabs(velocity.z) + c) ? dtt : lz / (fabs(velocity.z) + c);
   this->dt = dtt;
-  static std::mt19937 rng(std::random_device{}());
+  auto& rng = utils::RandomEngine();
   std::shuffle(particles.begin(), particles.end(), rng);
 
   if (bbody) {
@@ -68,86 +70,84 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
 unsigned int Cell::GetParticleCount() const { return particles.size(); }
 
 double Cell::GenerateRandom(size_t N) {
+  if (N == 0) {
+    return 0;
+  }
+
   Point d(lx, ly, lz);
 
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
+  std::vector<Particle> new_particles;
+  new_particles.reserve(N);
+
   double ti = 0;
-  deque<Particle>::iterator data;
+  const size_t nn2 = N / 2;
 
-  size_t nn = N;
-  double nt = 1 / double(N);
+  for (size_t i = 0; i < nn2; ++i) {
+    double rn1 = utils::Random01();
+    double rn2 = utils::Random01();
 
-  data = particles.begin();
+    if (rn1 <= 0) rn1 = 1e-8;
 
-  size_t nn2 = (nn - nn % 2) / 2;
+    double slg = std::sqrt(2 * std::fabs(std::log(rn1)));
 
-  Particle p1, p2;
+    Particle p1;
+    Particle p2;
 
-  for (unsigned int i = 0; i < nn2; i++) {
-    double rn1 = double(std::rand()) * rmt;
-    double rn2 = double(std::rand()) * rmt;
+    const double cos_phi = std::cos(2 * Pi * rn2);
+    const double sin_phi = std::sin(2 * Pi * rn2);
 
-    if (rn1 <= 0) rn1 = 0.00000001;
+    p1.SetU(slg * cos_phi);
+    p1.SetV(slg * sin_phi);
 
-    double slg = sqrt(2 * fabs(log(rn1)));
+    p2.SetU(-slg * cos_phi);
+    p2.SetV(-slg * sin_phi);
 
-    p1.SetU(slg * cos(2 * Pi * rn2));
-    p1.SetV(slg * sin(2 * Pi * rn2));
+    double rn3 = utils::Random01();
+    double rn4 = utils::Random01();
 
-    p2.SetU(-slg * cos(2 * Pi * rn2));
-    p2.SetV(-slg * sin(2 * Pi * rn2));
+    if (rn3 <= 0) rn3 = 1e-8;
 
-    double rn3 = std::rand() * rmt;
-    double rn4 = std::rand() * rmt;
+    slg = std::sqrt(2 * std::fabs(std::log(rn3)));
 
-    if (rn3 <= 0) rn3 = 0.00000001;
+    const double cos_w = std::cos(2 * Pi * rn4);
 
-    slg = sqrt(2 * fabs(log(rn3)));
-
-    p1.SetW(slg * cos(2 * Pi * rn4));
-    p2.SetW(-slg * cos(2 * Pi * rn4));
-
-    particles.push_front(p1);
-    particles.push_front(p2);
+    p1.SetW(slg * cos_w);
+    p2.SetW(-slg * cos_w);
 
     ti += 2 * (p1.GetVelocity() * p1.GetVelocity());
-  }
 
-  data = particles.begin();
+    new_particles.push_back(p1);
+    new_particles.push_back(p2);
+  }
 
   if (N % 2 == 1) {
-    p1.SetVelocity(Point(0, 0, 0));
-    particles.push_front(p1);
+    Particle p;
+    p.SetVelocity(Point(0, 0, 0));
+    new_particles.push_back(p);
   }
 
-  ti = ti * nt / 3.;
-
-  double sf = sqrt(1 / ti);
-
-  data = particles.begin();
-
-  for (unsigned int i = 0; i < nn; i++) {
-    if (data == particles.end()) break;
-    data->velocity *= sf;
-    data++;
+  const double nt = 1.0 / static_cast<double>(N);
+  ti = ti * nt / 3.0;
+  if (ti <= 0) {
+    ti = 1.0;
   }
 
-  data = particles.begin();
+  const double sf = std::sqrt(1.0 / ti);
 
-  for (unsigned int i = 0; i < nn; i++) {
-    if (data == particles.end()) break;
-    data->velocity = data->velocity * sqrt(T) + velocity;
+  for (auto& particle : new_particles) {
+    particle.velocity *= sf;
+    particle.velocity = particle.velocity * std::sqrt(T) + velocity;
 
-    double rnx = std::rand() * rmt;
-    double rny = std::rand() * rmt;
-    double rnz = std::rand() * rmt;
+    const double rnx = utils::Random01();
+    const double rny = utils::Random01();
+    const double rnz = utils::Random01();
 
-    Point pos(d.x * rnx, d.y * rny, d.z * rnz);
-
-    data->position = apex + pos;
-
-    data++;
+    const Point pos(d.x * rnx, d.y * rny, d.z * rnz);
+    particle.position = apex + pos;
   }
+
+  particles.reserve(particles.size() + new_particles.size());
+  particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 
   CalculateTemperature();
 
@@ -155,168 +155,163 @@ double Cell::GenerateRandom(size_t N) {
 }
 
 double Cell::GenerateRandom(unsigned int N, double T, Point V) {
+  if (N == 0) {
+    return 0;
+  }
+
   Point d(lx, ly, lz);
 
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
   double ti = 0;
-  deque<Particle>::iterator data;
 
-  unsigned int nn = N;
-  double nt = 1 / double(N);
+  std::vector<Particle> new_particles;
+  new_particles.reserve(N);
 
-  data = particles.begin();
-
-  unsigned int nn2 = (nn - nn % 2) / 2;
-
-  Particle p1, p2;
+  const unsigned int nn2 = N / 2;
 
   for (unsigned int i = 0; i < nn2; i++) {
-    double rn1 = double(std::rand()) * rmt;
-    double rn2 = double(std::rand()) * rmt;
+    double rn1 = utils::Random01();
+    double rn2 = utils::Random01();
 
-    if (rn1 <= 0) rn1 = 0.00001;
+    if (rn1 <= 0) rn1 = 1e-5;
 
-    double slg = sqrt(2 * fabs(log(rn1)));
+    double slg = std::sqrt(2 * std::fabs(std::log(rn1)));
 
-    p1.SetU(slg * cos(2 * Pi * rn2));
-    p1.SetV(slg * sin(2 * Pi * rn2));
+    Particle p1;
+    Particle p2;
 
-    p2.SetU(-slg * cos(2 * Pi * rn2));
-    p2.SetV(-slg * sin(2 * Pi * rn2));
+    const double cos_phi = std::cos(2 * Pi * rn2);
+    const double sin_phi = std::sin(2 * Pi * rn2);
 
-    double rn3 = std::rand() * rmt;
-    double rn4 = std::rand() * rmt;
+    p1.SetU(slg * cos_phi);
+    p1.SetV(slg * sin_phi);
 
-    if (rn3 <= 0) rn3 = 0.00001;
+    p2.SetU(-slg * cos_phi);
+    p2.SetV(-slg * sin_phi);
 
-    slg = sqrt(2 * fabs(log(rn3)));
+    double rn3 = utils::Random01();
+    double rn4 = utils::Random01();
 
-    p1.SetW(slg * cos(2 * Pi * rn4));
-    p2.SetW(-slg * cos(2 * Pi * rn4));
+    if (rn3 <= 0) rn3 = 1e-5;
 
-    particles.push_front(p1);
-    particles.push_front(p2);
+    slg = std::sqrt(2 * std::fabs(std::log(rn3)));
+
+    const double cos_w = std::cos(2 * Pi * rn4);
+
+    p1.SetW(slg * cos_w);
+    p2.SetW(-slg * cos_w);
 
     ti += 2 * (p1.GetVelocity() * p1.GetVelocity());
-  }
 
-  data = particles.begin();
+    new_particles.push_back(p1);
+    new_particles.push_back(p2);
+  }
 
   if (N % 2 == 1) {
-    p1.SetVelocity(Point(0, 0, 0));
-    particles.push_front(p1);
+    Particle p;
+    p.SetVelocity(Point(0, 0, 0));
+    new_particles.push_back(p);
   }
 
-  ti = ti * nt / 3.;
+  const double nt = 1.0 / static_cast<double>(N);
+  ti = ti * nt / 3.0;
+  if (ti <= 0) ti = 1.0;
 
-  double sf = sqrt(1 / ti);
+  const double sf = std::sqrt(1.0 / ti);
+  const double sqrt_T = std::sqrt(T);
 
-  data = particles.begin();
+  for (auto& particle : new_particles) {
+    particle.velocity *= sf;
+    particle.velocity *= sqrt_T;
+    particle.velocity += V;
 
-  for (unsigned int i = 0; i < nn; i++) {
-    if (data == particles.end()) break;
-    data->velocity *= sf;
-    data++;
+    const double rnx = utils::Random01();
+    const double rny = utils::Random01();
+    const double rnz = utils::Random01();
+
+    particle.position = apex + Point(d.x * rnx, d.y * rny, d.z * rnz);
   }
 
-  data = particles.begin();
+  particles.reserve(particles.size() + new_particles.size());
+  particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 
-  for (unsigned int i = 0; i < nn; i++) {
-    if (data == particles.end()) break;
-    data->velocity *= sqrt(T);
-    data->velocity += V;
-
-    double rnx = std::rand() * rmt;
-    double rny = std::rand() * rmt;
-    double rnz = std::rand() * rmt;
-
-    data->position = apex + Point(d.x * rnx, d.y * rny, d.z * rnz);
-
-    data++;
-  }
-
-  static std::mt19937 rng(std::random_device{}());
+  auto& rng = utils::RandomEngine();
   std::shuffle(particles.begin(), particles.end(), rng);
 
   return 0;
 }
 
 double Cell::GenerateFreeRandom(unsigned int N, double T, Point V, Point nrml) {
+  if (N == 0) {
+    return 0;
+  }
+
   Point d(lx, ly, lz);
 
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
   double ti = 0;
-  deque<Particle>::iterator data;
-  deque<Particle> added_particles;
-
-  double nt = 1 / double(N);
-
-  data = added_particles.begin();
-  Particle p1;
+  std::vector<Particle> added_particles;
+  added_particles.reserve(N);
   Point dvel(0, 0, 0);
 
   unsigned int i = 0;
 
   while (i < N) {
-    double rn1 = rand() * rmt;
-    double rn2 = rand() * rmt;
+    double rn1 = utils::Random01();
+    double rn2 = utils::Random01();
 
-    if (rn1 <= 0) rn1 = 0.00001;
+    if (rn1 <= 0) rn1 = 1e-5;
 
-    double slg = sqrt(2 * T * fabs(log(rn1)));
+    double slg = std::sqrt(2 * T * std::fabs(std::log(rn1)));
 
-    p1.SetU(slg * cos(2 * Pi * rn2));
-    p1.SetV(slg * sin(2 * Pi * rn2));
+    Particle p1;
+    const double cos_phi = std::cos(2 * Pi * rn2);
+    const double sin_phi = std::sin(2 * Pi * rn2);
 
-    double rn3 = rand() * rmt;
-    double rn4 = rand() * rmt;
+    p1.SetU(slg * cos_phi);
+    p1.SetV(slg * sin_phi);
 
-    if (rn3 <= 0) rn3 = 0.00001;
+    double rn3 = utils::Random01();
+    double rn4 = utils::Random01();
 
-    slg = sqrt(2 * T * fabs(log(rn3)));
+    if (rn3 <= 0) rn3 = 1e-5;
 
-    p1.SetW(slg * cos(2 * Pi * rn4));
+    slg = std::sqrt(2 * T * std::fabs(std::log(rn3)));
+    const double cos_w = std::cos(2 * Pi * rn4);
+
+    p1.SetW(slg * cos_w);
 
     if ((p1.GetVelocity() + V) * nrml < 0) {
-      added_particles.push_front(p1);
+      added_particles.push_back(p1);
       ti += (p1.velocity * p1.velocity);
       dvel += p1.velocity;
-      i++;
+      ++i;
     }
   }
 
+  const double nt = 1.0 / static_cast<double>(N);
   dvel *= nt;
   ti = (ti * nt - dvel * dvel) / 3;
+  if (ti <= 0) ti = T;
 
-  double sf = sqrt(T / ti);
+  const double sf = std::sqrt(T / ti);
 
-  data = added_particles.begin();
-
-  for (i = 0; i < N; i++) {
-    if (data == added_particles.end()) break;
-    data->velocity = (data->velocity - dvel) * sf + V;
-    if (data->velocity * nrml < 0) data->velocity = 2 * V - data->velocity;
+  for (auto& particle : added_particles) {
+    particle.velocity = (particle.velocity - dvel) * sf + V;
+    if (particle.velocity * nrml < 0) {
+      particle.velocity = 2 * V - particle.velocity;
+    }
   }
 
-  data = added_particles.begin();
+  for (auto& particle : added_particles) {
+    particle.velocity += V;
 
-  for (i = 0; i < N; i++) {
-    if (data == added_particles.end()) break;
+    const double rnx = utils::Random01();
+    const double rny = utils::Random01();
+    const double rnz = utils::Random01();
 
-    data->velocity += V;  //
-
-    double rnx = rand() * rmt;
-    double rny = rand() * rmt;
-    double rnz = rand() * rmt;
-
-    data->position = apex + Point(d.x * rnx, d.y * rny, d.z * rnz);
-
-    data++;
+    particle.position = apex + Point(d.x * rnx, d.y * rny, d.z * rnz);
   }
 
-  //              random_shuffle(added_particles.begin(),
-  //              added_particles.end());
-
+  particles.reserve(particles.size() + added_particles.size());
   particles.insert(particles.end(), added_particles.begin(),
                    added_particles.end());
 
@@ -324,11 +319,12 @@ double Cell::GenerateFreeRandom(unsigned int N, double T, Point V, Point nrml) {
 }
 
 double Cell::GenerateHyperFreeRandom(unsigned int N, Point V, double T) {
-  deque<Particle> added_particles;
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
+  std::vector<Particle> added_particles;
   Point position;
   Point d(lx, ly, lz);
   double A = sqrt(3 * T);
+
+  added_particles.reserve(N);
 
   for (unsigned int i = 0; i < N; i++) {
     double rnx = utils::RandomDouble(0, 1);
@@ -348,11 +344,12 @@ double Cell::GenerateHyperFreeRandom(unsigned int N, Point V, double T) {
   }
 
   Point av_velocity;
-  for (const auto& Particle : added_particles) {
-    av_velocity += Particle.velocity;
+  for (const auto& particle : added_particles) {
+    av_velocity += particle.velocity;
   }
   av_velocity /= particles.size();
 
+  particles.reserve(particles.size() + added_particles.size());
   particles.insert(particles.end(), added_particles.begin(),
                    added_particles.end());
 
@@ -364,22 +361,21 @@ void Cell::Collisions() {
 
   CalculateKn();
 
-  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
   double g_max = 2 * sqrt(CalculateTemperature());
   double factor = 2 * sqrt(2.) * L * Kn_l / particles.size();
   double frequency_t = factor / g_max;
 
   double t = 0;
 
-  static std::mt19937 rng(std::random_device{}());
+  auto& rng = utils::RandomEngine();
 
-  deque<Particle>::iterator particle_1 = particles.begin();
-  deque<Particle>::iterator particle_2 = particles.begin();
+  auto particle_1 = particles.begin();
+  auto particle_2 = particles.begin();
 
   particle_2++;
 
   while (t <= dt) {
-    double r = rand() * rmt;
+    double r = utils::Random01();
 
     if (r <= 0) r = 3.e-5;
 
@@ -402,12 +398,12 @@ void Cell::Collisions() {
       continue;
     }
 
-    double rr = rand() * rmt;
+    double rr = utils::Random01();
 
     if (gmod / g_max > rr)  // g == gmod?
     {
-      double r1 = rand() * rmt;
-      double r2 = rand() * rmt;
+      double r1 = utils::Random01();
+      double r2 = utils::Random01();
 
       double Fi = 2. * Pi * r1;
       double Eta = 2. * acos(r2);
@@ -466,52 +462,59 @@ void Cell::Collisions() {
 }
 
 void Cell::MoveParticles() {
-  deque<Particle>::iterator a;
-  a = particles.begin();
-  velocity = Point(0, 0, 0);
-  while (a != particles.end()) {
-    a->position += a->velocity * dt;
-
-    a++;
+  for (auto& particle : particles) {
+    particle.position += particle.velocity * dt;
   }
 }
 
 void Cell::Sort() {
-  deque<Particle>::iterator data = particles.begin();
+  auto inside = [this](const Particle& particle) {
+    const bool inside_x =
+        (particle.position.x >= apex.x) && (particle.position.x <= apex.x + lx);
+    const bool inside_y =
+        (particle.position.y >= apex.y) && (particle.position.y <= apex.y + ly);
+    const bool inside_z =
+        (particle.position.z >= apex.z) && (particle.position.z <= apex.z + lz);
+    return inside_x && inside_y && inside_z;
+  };
 
-  while (data != particles.end()) {
-    if ((data->position.x < apex.x) || (data->position.x > apex.x + lx) ||
-        (data->position.y < apex.y) || (data->position.y > apex.y + ly) ||
-        (data->position.z < apex.z) || (data->position.z > apex.z + lz)) {
-      particle_buffer.insert(particle_buffer.end(), data, data + 1);
-      data = particles.erase(data);
-    } else
-      data++;
+  auto first_outside =
+      std::partition(particles.begin(), particles.end(), inside);
+
+  for (auto it = first_outside; it != particles.end(); ++it) {
+    particle_buffer.push_back(std::move(*it));
   }
+
+  particles.erase(first_outside, particles.end());
 }
 
 void Cell::SetCharacteristicLength(double L) { this->L = L; }
 
-void Cell::AddParticle(deque<Particle>& incoming) {
-  auto temp = incoming.begin();
-  while (temp != incoming.end()) {
+void Cell::AddParticle(std::vector<Particle>& incoming) {
+  auto write_it = incoming.begin();
+
+  for (auto it = incoming.begin(); it != incoming.end(); ++it) {
     const bool inside_x =
-        (temp->position.x > apex.x) && (temp->position.x < apex.x + lx);
+        (it->position.x > apex.x) && (it->position.x < apex.x + lx);
     const bool inside_y =
-        (temp->position.y > apex.y) && (temp->position.y < apex.y + ly);
+        (it->position.y > apex.y) && (it->position.y < apex.y + ly);
     const bool inside_z =
-        (temp->position.z > apex.z) && (temp->position.z < apex.z + lz);
+        (it->position.z > apex.z) && (it->position.z < apex.z + lz);
 
     if (inside_x && inside_y && inside_z) {
-      particles.push_back(*temp);
-      temp = incoming.erase(temp);
+      particles.push_back(std::move(*it));
     } else {
-      ++temp;
+      if (write_it != it) {
+        *write_it = std::move(*it);
+      }
+      ++write_it;
     }
   }
+
+  incoming.erase(write_it, incoming.end());
 }
 
-deque<Particle>& Cell::GetBuffer() { return particle_buffer; }
+std::vector<Particle>& Cell::GetBuffer() { return particle_buffer; }
 
 /*var Cell::get_var()
 {
@@ -557,71 +560,80 @@ double Cell::GetTemperature() {
 }
 
 double Cell::GetU() {
-  deque<Particle>::iterator data = particles.begin();
-  // double av_vel = 0;
   velocity = Point(0, 0, 0);
-  while (data != particles.end()) {
-    velocity += data->velocity;
-    data++;
+  for (const auto& particle : particles) {
+    velocity += particle.velocity;
   }
-  velocity /= double(particles.size());
+  if (!particles.empty()) {
+    velocity /= static_cast<double>(particles.size());
+  }
   return velocity.x;
 }
 
 double Cell::GetV() {
-  deque<Particle>::iterator data = particles.begin();
-  while (data != particles.end()) {
-    velocity += data->velocity;
-    data++;
+  velocity = Point(0, 0, 0);
+  for (const auto& particle : particles) {
+    velocity += particle.velocity;
   }
-  velocity /= double(particles.size());
+  if (!particles.empty()) {
+    velocity /= static_cast<double>(particles.size());
+  }
   return velocity.y;
 }
 
 double Cell::GetW() {
-  deque<Particle>::iterator data = particles.begin();
-  while (data != particles.end()) {
-    velocity += data->velocity;
-    data++;
+  velocity = Point(0, 0, 0);
+  for (const auto& particle : particles) {
+    velocity += particle.velocity;
   }
-  velocity /= double(particles.size());
+  if (!particles.empty()) {
+    velocity /= static_cast<double>(particles.size());
+  }
   return velocity.z;
 }
 
 double Cell::GetEnergy() {
   double E = 0;
-  deque<Particle>::iterator data = particles.begin();
-  while (data != particles.end()) {
-    /*E += data->u * data->u + data->w * data->w + data->v * data->v;*/
-    E += data->velocity * data->velocity;
-    data++;
+  for (const auto& particle : particles) {
+    E += particle.velocity * particle.velocity;
   }
-  E /= 2 * particles.size();
+  if (!particles.empty()) {
+    E /= 2 * particles.size();
+  }
   return E;
 }
 
 Point Cell::CalculateVelocity() const {
   auto velocity = Point(0, 0, 0);
-  for (const auto& Particle : particles) {
-    velocity += Particle.GetVelocity();
+  for (const auto& particle : particles) {
+    velocity += particle.GetVelocity();
   }
 
-  velocity /= double(particles.size());
+  if (!particles.empty()) {
+    velocity /= static_cast<double>(particles.size());
+  }
 
   return velocity;
 }
 
 double Cell::CalculateTemperature() {
-  deque<Particle>::iterator data = particles.begin();
-  double E = 0;
-  Point av_vel(0, 0, 0);
-  while (data != particles.end()) {
-    av_vel += data->velocity;
-    E += data->velocity * data->velocity;
-    data++;
+  if (particles.empty()) {
+    velocity = Point(0, 0, 0);
+    T = 0;
+    return T;
   }
-  av_vel /= double(particles.size());
-  E /= double(particles.size());
+
+  Point av_vel(0, 0, 0);
+  double E = 0;
+
+  for (const auto& particle : particles) {
+    av_vel += particle.velocity;
+    E += particle.velocity * particle.velocity;
+  }
+
+  const double inv_count = 1.0 / static_cast<double>(particles.size());
+  av_vel *= inv_count;
+  E *= inv_count;
   velocity = av_vel;
   T = (E - velocity * velocity) / 3;
   return T;
@@ -729,24 +741,24 @@ double Cell::GetVolume() const { return volume_; }
 bool Cell::GetBodyMark() { return body_mark; }
 
 Point Cell::GetVelocity() {
-  auto data = particles.begin();
   velocity = Point(0, 0, 0);
-  while (data != particles.end()) {
-    velocity += data->velocity;
-    data++;
+  for (const auto& particle : particles) {
+    velocity += particle.velocity;
   }
-  velocity /= double(particles.size());
+  if (!particles.empty()) {
+    velocity /= static_cast<double>(particles.size());
+  }
   return velocity;
 }
 
 Point Cell::GetParticleMassCenter() {
-  deque<Particle>::iterator data = particles.begin();
   Point particle_mass_center(0, 0, 0);
-  while (data != particles.end()) {
-    particle_mass_center += data->position;
-    data++;
+  for (const auto& particle : particles) {
+    particle_mass_center += particle.position;
   }
-  particle_mass_center /= double(particles.size());
+  if (!particles.empty()) {
+    particle_mass_center /= static_cast<double>(particles.size());
+  }
   return particle_mass_center;
 }
 
@@ -754,16 +766,40 @@ void Cell::CleanInnerParticles(const Geometry& body) {
   if (particles.size() < 100) {
     Point ad = Point(0, 0, 0);
   }
-  this->particle_buffer.swap(particles);
+  particle_buffer.insert(particle_buffer.end(),
+                         std::make_move_iterator(particles.begin()),
+                         std::make_move_iterator(particles.end()));
+  const size_t buffered_count = particle_buffer.size();
+  size_t removed_count = 0;
+  std::array<Point, 3> sample_positions;
+  std::array<Point, 3> sample_velocities;
+  size_t sample_count = 0;
 
-  deque<Particle>::iterator data = particle_buffer.begin();
-  while (data != particle_buffer.end()) {
-    if (!body.IsInnerPoint(data->position)) {
-      particles.push_back(*data);
+  particles.clear();
+
+  for (auto& particle : particle_buffer) {
+    if (!body.IsInnerPoint(particle.position)) {
+      particles.push_back(std::move(particle));
+    } else {
+      if (sample_count < sample_positions.size()) {
+        sample_positions[sample_count] = particle.position;
+        sample_velocities[sample_count] = particle.velocity;
+        ++sample_count;
+      }
+      ++removed_count;
     }
-    data++;
   }
-
+  if (removed_count > 0) {
+    LOG_WARNING() << "Removed " << removed_count
+                  << " particles that entered the body geometry. Cell center: "
+                  << GetCenter() << " size: " << GetSize()
+                  << " buffer size: " << buffered_count;
+    for (size_t idx = 0; idx < sample_count; ++idx) {
+      LOG_DEBUG() << "Removed particle #" << idx
+                  << " position=" << sample_positions[idx]
+                  << " velocity=" << sample_velocities[idx];
+    }
+  }
   particle_buffer.clear();
 }
 
@@ -778,21 +814,20 @@ bool operator<(const Cell& a, const Cell& b) {
 void Cell::SetBodyMark(bool mark) { this->body_mark = mark; }
 
 bool Cell::DebugTestParticle() {
-  deque<Particle>::iterator data = particles.begin();
   int i = 0;
 
-  while (data != particles.end()) {
-    if (this->body_boundary.GetGeometryPtr()->IsInnerPoint(
-            data->GetPosition())) {
-      LOG_DEBUG() << data->GetPosition() << "\t" << data->GetVelocity();
-      this->body_boundary.GetGeometryPtr()->IsInnerPoint(data->GetPosition());
+  auto* geometry = this->body_boundary.GetGeometryPtr();
+  if (!geometry) {
+    return false;
+  }
+
+  for (const auto& particle : particles) {
+    if (geometry->IsInnerPoint(particle.GetPosition())) {
+      LOG_DEBUG() << particle.GetPosition() << "\t" << particle.GetVelocity();
+      geometry->IsInnerPoint(particle.GetPosition());
       i++;
     }
-    data++;
   }
-  if (i > 0)
-    return true;
-  else
-    return false;
+  return i > 0;
 }
 }  // namespace mc3d

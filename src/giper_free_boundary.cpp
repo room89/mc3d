@@ -16,7 +16,7 @@ HyperFreeBoundary::HyperFreeBoundary(Point pstn, Point nrml, unsigned int np,
 HyperFreeBoundary::~HyperFreeBoundary() {}
 
 int HyperFreeBoundary::BoundaryCondition(
-    std::deque<Particle>& /*cluster_particle*/, double dt) {
+    std::vector<Particle>& /*cluster_particle*/, double dt) {
   if (Vn < 0) return 0;
 
   unsigned int N;

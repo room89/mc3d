@@ -44,3 +44,26 @@ cmake --build build
 - `src/warning.*`, `src/exception.*`, `src/exit_code.h` — обработка исключительных
   ситуаций;
 - `tools/clang-format.sh` — массовое форматирование.
+
+## Визуализация результатов
+
+Solver записывает результаты в текстовые файлы с разделителем `;`:
+`data.dat`, `data<t>.dat`, `speed.dat`, `time.dat`. Для их оперативного просмотра
+добавлены вспомогательные скрипты на Python 3 (`numpy`, `pandas`, `matplotlib`):
+
+- `tools/plot_snapshot.py` — строит срез по выбранной плоскости (`xy`, `xz`, `yz`)
+  и отображает выбранное поле (`ro`, `T`, `vx`, `vy`, `vz`, `E`):
+  ```bash
+  python3 tools/plot_snapshot.py --input build/data.dat --plane xy \
+      --z-value 0.0 --thickness 0.05 --field T --show-cbar --out plots/T_xy.png
+  ```
+- `tools/monitor_simulation.py` — следит за последним файлом `data<t>.dat` и
+  обновляет график каждые несколько секунд (удобно запускать параллельно расчёту):
+  ```bash
+  python3 tools/monitor_simulation.py --directory build --plane xy --coord 0.0
+  ```
+
+Необходимые пакеты:
+```bash
+python3 -m pip install numpy pandas matplotlib
+```

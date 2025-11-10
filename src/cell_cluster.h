@@ -84,9 +84,9 @@ class CellCluster {
   deque<double>
       calc_times;     // дэк с временами расчета соударений между частицами
   deque<Cell> cells;  // двусвязный список ячеек кластера.
-  deque<Cell>::iterator cell_iter;  // итератор для обхода ячеек
-  deque<Particle> partile_buffer;   // двусвязный список буфера кластера
-  inline void BoundaryCondition();  // выполнение граничных условий
+  deque<Cell>::iterator cell_iter;       // итератор для обхода ячеек
+  std::vector<Particle> partile_buffer;  // буфер кластера
+  inline void BoundaryCondition();       // выполнение граничных условий
   std::vector<std::unique_ptr<Boundary>>
       boundary_cond_outer;  // внешние граничные условия
   inline bool
