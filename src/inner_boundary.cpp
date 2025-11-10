@@ -3,41 +3,41 @@
 namespace mc3d {
 const double Pi = 3.1415926535;
 
-inner_boundary::inner_boundary(void) {
+InnerBoundary::InnerBoundary() {
   Tw = 1;
   eps = 0.00001;
 }
 
-inner_boundary::~inner_boundary(void) {}
+InnerBoundary::~InnerBoundary() {}
 
-bool inner_boundary::add_poligon(geometry* body, point cell_center, double L) {
+bool InnerBoundary::AddPolygon(Geometry* body, Point cell_center, double L) {
   /*Tw = 1;
   eps = 0.00001;
 
   this->cell_center = cell_center;
-  
-  deque<poligon*>::iterator poligon_iter = bbody->poligons.begin();
+
+  deque<Polygon*>::iterator poligon_iter = bbody->poligons.begin();
 
   while(poligon_iter != bbody->poligons.end())
   {
-          if(((*poligon_iter)->get_p1() - cell_center) *
-  (*poligon_iter)->get_normal() < L)
+          if(((*poligon_iter)->GetP1() - cell_center) *
+  (*poligon_iter)->GetNormal() < L)
   //проверка растояния до плоскости полигона
           {
-                  if( (((*poligon_iter)->get_gmt() - cell_center).mod() < 2 * L)
+                  if( (((*poligon_iter)->GetGmt() - cell_center).Mod() < 2 * L)
   ||
   //проверка растояния до ГМТ полигона(полигон - треугольник)
-                          (((*poligon_iter)->get_p1()  - cell_center).mod() < 2
+                          (((*poligon_iter)->GetP1()  - cell_center).Mod() < 2
   * L) ||
   //проверка растояния до первого угла полигона
-                          (((*poligon_iter)->get_p2()  - cell_center).mod() < 2
+                          (((*poligon_iter)->GetP2()  - cell_center).Mod() < 2
   * L) ||
   //проверка растояния до второго угла полигона
-                          (((*poligon_iter)->get_p3()  - cell_center).mod() < 2
+                          (((*poligon_iter)->GetP3()  - cell_center).Mod() < 2
   * L))
   //проверка растояния до третьего угла полигона
                   {
-                                  poligon_ptrs.push_back((*poligon_iter)->get_ptr());
+                                  poligon_ptrs.push_back((*poligon_iter)->GetPtr());
   //добавление указателя на полигон
                   }
           }
@@ -49,41 +49,41 @@ bool inner_boundary::add_poligon(geometry* body, point cell_center, double L) {
   else return false;*/
   this->cell_center = cell_center;
 
-  deque<poligon*>::iterator poligon_iter = body->poligons.begin();
+  deque<Polygon*>::iterator poligon_iter = body->poligons.begin();
 
   while (poligon_iter != body->poligons.end()) {
-    if ((((*poligon_iter)->get_gmt() - cell_center).mod() <
-         L) ||  //проверка растояния до ГМТ полигона(полигон - треугольник)
-        (((*poligon_iter)->get_p1() - cell_center).mod() <
-         L) ||  //проверка растояния до первого угла полигона
-        (((*poligon_iter)->get_p2() - cell_center).mod() <
-         L) ||  //проверка растояния до второго угла полигона
-        (((*poligon_iter)->get_p3() - cell_center).mod() <
-         L))  //проверка растояния до третьего угла полигона
+    if ((((*poligon_iter)->GetGmt() - cell_center).Mod() <
+         L) ||  // проверка растояния до ГМТ полигона(полигон - треугольник)
+        (((*poligon_iter)->GetP1() - cell_center).Mod() <
+         L) ||  // проверка растояния до первого угла полигона
+        (((*poligon_iter)->GetP2() - cell_center).Mod() <
+         L) ||  // проверка растояния до второго угла полигона
+        (((*poligon_iter)->GetP3() - cell_center).Mod() <
+         L))  // проверка растояния до третьего угла полигона
     {
       poligon_ptrs.push_back(
-          (*poligon_iter)->get_ptr());  //добавление указателя на полигон
+          (*poligon_iter)->GetPtr());  // добавление указателя на полигон
     } else {
       double dist =
-          (cell_center - (*poligon_iter)->get_gmt()) * (*poligon_iter)->normal;
+          (cell_center - (*poligon_iter)->GetGmt()) * (*poligon_iter)->normal;
       if ((dist < L) && (dist > -L)) {
-        point point_on_poligon = cell_center + (*poligon_iter)->normal * dist;
+        Point point_on_poligon = cell_center + (*poligon_iter)->normal * dist;
 
-        (*poligon_iter)->fix();
+        (*poligon_iter)->Fix();
 
-        point a = (*poligon_iter)->get_p2() - (*poligon_iter)->get_p1();
-        point b = (*poligon_iter)->get_p3() - (*poligon_iter)->get_p2();
-        point c = (*poligon_iter)->get_p1() - (*poligon_iter)->get_p3();
+        Point a = (*poligon_iter)->GetP2() - (*poligon_iter)->GetP1();
+        Point b = (*poligon_iter)->GetP3() - (*poligon_iter)->GetP2();
+        Point c = (*poligon_iter)->GetP1() - (*poligon_iter)->GetP3();
 
-        point d1 = (*poligon_iter)->get_p1() - point_on_poligon;
-        point d2 = (*poligon_iter)->get_p2() - point_on_poligon;
-        point d3 = (*poligon_iter)->get_p3() - point_on_poligon;
+        Point d1 = (*poligon_iter)->GetP1() - point_on_poligon;
+        Point d2 = (*poligon_iter)->GetP2() - point_on_poligon;
+        Point d3 = (*poligon_iter)->GetP3() - point_on_poligon;
 
-        if ((*poligon_iter)->get_normal() * d1.vec_mult(a) > 0. &&
-            (*poligon_iter)->get_normal() * d2.vec_mult(b) > 0. &&
-            (*poligon_iter)->get_normal() * d3.vec_mult(c) > 0.) {
+        if ((*poligon_iter)->GetNormal() * d1.Cross(a) > 0. &&
+            (*poligon_iter)->GetNormal() * d2.Cross(b) > 0. &&
+            (*poligon_iter)->GetNormal() * d3.Cross(c) > 0.) {
           poligon_ptrs.push_back(
-              (*poligon_iter)->get_ptr());  //добавление указателя на полигон
+              (*poligon_iter)->GetPtr());  // добавление указателя на полигон
         }
       }
     }
@@ -97,15 +97,15 @@ bool inner_boundary::add_poligon(geometry* body, point cell_center, double L) {
     return false;
 }
 
-int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
-                                      double dt) {
+int InnerBoundary::BoundaryCondition(deque<Particle>* cluster_particle,
+                                     double dt) {
   // if(poligon_ptrs.size() <= 0) return 1;
 
-  deque<particle>::iterator particle_iter = cluster_particle->begin();
+  deque<Particle>::iterator particle_iter = cluster_particle->begin();
 
   while (particle_iter != cluster_particle->end()) {
-    deque<poligon*>::iterator poligon_iterator = this->poligon_ptrs.begin();
-    deque<poligon*>::iterator collision_poligon_iterator =
+    deque<Polygon*>::iterator poligon_iterator = this->poligon_ptrs.begin();
+    deque<Polygon*>::iterator collision_poligon_iterator =
         this->poligon_ptrs.end();
 
     double dtt = dt;
@@ -116,21 +116,21 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
     while (particle_dt > 0) {
       while (poligon_iterator !=
              poligon_ptrs
-                 .end())  //ищем полигон с которым будет соударятся
-                          //частица(полигон к которому частица прелетит первой)
+                 .end())  // ищем полигон с которым будет соударятся
+                          // частица(полигон к которому частица прелетит первой)
       {
-        if ((*poligon_iterator)->get_normal() * particle_iter->get_velocity() <
-            0)  //проверка направления скорости частицы на возможность
-                //соударения
+        if ((*poligon_iterator)->GetNormal() * particle_iter->GetVelocity() <
+            0)  // проверка направления скорости частицы на возможность
+                // соударения
         {
-          point poligon_gmt = (*poligon_iterator)->get_gmt();
+          Point poligon_gmt = (*poligon_iterator)->GetGmt();
 
           double A =
-              particle_iter->get_velocity() * (*poligon_iterator)->get_normal();
+              particle_iter->GetVelocity() * (*poligon_iterator)->GetNormal();
 
           double tc =
-              ((*poligon_iterator)->get_p1() - particle_iter->get_position()) *
-              (*poligon_iterator)->get_normal() / A;
+              ((*poligon_iterator)->GetP1() - particle_iter->GetPosition()) *
+              (*poligon_iterator)->GetNormal() / A;
 
           if (tc <= 0) {
             poligon_iterator++;
@@ -141,23 +141,23 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
           }
           // else if(tc > min_dt) continue;
           else {
-            point collision_pstn = particle_iter->get_position() +
-                                   particle_iter->get_velocity() * tc;
+            Point collision_pstn = particle_iter->GetPosition() +
+                                   particle_iter->GetVelocity() * tc;
 
-            point a =
-                (*poligon_iterator)->get_p2() - (*poligon_iterator)->get_p1();
-            point b =
-                (*poligon_iterator)->get_p3() - (*poligon_iterator)->get_p2();
-            point c =
-                (*poligon_iterator)->get_p1() - (*poligon_iterator)->get_p3();
+            Point a =
+                (*poligon_iterator)->GetP2() - (*poligon_iterator)->GetP1();
+            Point b =
+                (*poligon_iterator)->GetP3() - (*poligon_iterator)->GetP2();
+            Point c =
+                (*poligon_iterator)->GetP1() - (*poligon_iterator)->GetP3();
 
-            point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
-            point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
-            point d3 = (*poligon_iterator)->get_p3() - collision_pstn;
+            Point d1 = (*poligon_iterator)->GetP1() - collision_pstn;
+            Point d2 = (*poligon_iterator)->GetP2() - collision_pstn;
+            Point d3 = (*poligon_iterator)->GetP3() - collision_pstn;
 
-            if ((*poligon_iterator)->get_normal() * d1.vec_mult(a) > 0. &&
-                (*poligon_iterator)->get_normal() * d2.vec_mult(b) > 0. &&
-                (*poligon_iterator)->get_normal() * d3.vec_mult(c) > 0.) {
+            if ((*poligon_iterator)->GetNormal() * d1.Cross(a) > 0. &&
+                (*poligon_iterator)->GetNormal() * d2.Cross(b) > 0. &&
+                (*poligon_iterator)->GetNormal() * d3.Cross(c) > 0.) {
               dtt = tc;
               collision_poligon_iterator = poligon_iterator;
               collision_mark = true;
@@ -169,14 +169,14 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
       }  // while(poligon_iterator != poligon_ptrs.end())
 
       if (collision_mark) {
-        point normal = (*collision_poligon_iterator)->get_normal();
+        Point normal = (*collision_poligon_iterator)->GetNormal();
         // particle_iter->position += particle_iter->velocity * dtt + normal *
         // 0.000001;
         particle_iter->position += particle_iter->velocity * dtt;
 
         (*collision_poligon_iterator)->force += particle_iter->velocity;
 
-        double rmt = 1 / double(RAND_MAX);
+        const double rmt = 1.0 / static_cast<double>(RAND_MAX);
 
         double r1 = std::rand() * rmt;
         double r2 = std::rand() * rmt;
@@ -185,20 +185,20 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
         if (r1 == 0.) r1 = 0.00001;
         if (r2 == 0.) r2 = 0.00001;
 
-        point vel = particle_iter->velocity;
+        Point vel = particle_iter->velocity;
 
         double sp = vel * normal;
         double r = sqrt(2. * Tw * fabs(log(r1)));
 
-        point vn;
+        Point vn;
         vn = normal * r;
 
-        point vni;
+        Point vni;
         vni = normal * sp;
 
-        point vt;
+        Point vt;
         vt = vel - vni;
-        double lvt = vt.mod();
+        double lvt = vt.Mod();
         if (lvt < eps) lvt = eps;
         vt /= lvt;
 
@@ -207,11 +207,11 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
         double vt1m = r * cos(teta);
         double vt2m = r * sin(teta);
 
-        point vt1, vt2;
+        Point vt1, vt2;
 
         vt1 *= vt1m;
 
-        vt2 = normal.vec_mult(vt);
+        vt2 = normal.Cross(vt);
 
         vt2 *= vt2m;
 
@@ -220,7 +220,7 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
         (*collision_poligon_iterator)->force -= particle_iter->velocity;
 
         /*
-                                                deque<particle>::iterator
+                                                deque<Particle>::iterator
            particle_iter2 = cluster_particle->begin(); while(particle_iter2 !=
            cluster_particle->end())
                                                 {
@@ -249,12 +249,12 @@ int inner_boundary::bondary_condition(deque<particle>* cluster_particle,
   return 0;
 }
 
-double inner_boundary::calc_cell_volume(
-    point cell_apex, point size,
-    point* mass_center_out)  //вычисление отсеченного обёма ячейки, аргументы:
-                             //входные параметры:cell_apex - опорный угол
-                             //ячейки, size - размеры ячейки, выходные
-                             //параметры: mass_center - центр мас ячейки.
+double InnerBoundary::CalcCellVolume(
+    Point cell_apex, Point size,
+    Point* mass_center_out)  // вычисление отсеченного обёма ячейки, аргументы:
+                             // входные параметры:cell_apex - опорный угол
+                             // ячейки, size - размеры ячейки, выходные
+                             // параметры: mass_center - центр мас ячейки.
 {
   double volume = 0;
   double tot_vol = size.x * size.y * size.z;
@@ -262,30 +262,30 @@ double inner_boundary::calc_cell_volume(
   double dty = size.y / 1;
   double dtz = size.z / 1;
 
-  point mass_center(0, 0, 0);
+  Point mass_center(0, 0, 0);
 
   if (poligon_ptrs.size() == 0) {
-    //Заглушка!!!
+    // Заглушка!!!
     return tot_vol;
   }
 
   size_t N = 100000;
   size_t outer_N = N;
 
-  std::vector<point> rand_points;
+  std::vector<Point> rand_points;
   rand_points.reserve(N);
 
   for (size_t i = 0; i < N; i++) {
-    rand_points.emplace_back(cell_apex + size.rand_point());
+    rand_points.emplace_back(cell_apex + size.RandomPoint());
   }
 
   auto poligon_col_iterator_x = poligon_ptrs.end();
   auto poligon_col_iterator_y = poligon_ptrs.end();
   auto poligon_col_iterator_z = poligon_ptrs.end();
 
-  point collision_pstn_x;
-  point collision_pstn_y;
-  point collision_pstn_z;
+  Point collision_pstn_x;
+  Point collision_pstn_y;
+  Point collision_pstn_z;
 
   for (size_t i = 0; i < N; i++) {
     double dttx = size.x / 1;
@@ -295,69 +295,69 @@ double inner_boundary::calc_cell_volume(
     auto poligon_iterator = poligon_ptrs.begin();
 
     while (poligon_iterator !=
-           poligon_ptrs.end())  //ищем полигон с которым будет соударятся
-                                //виртуальная частица
+           poligon_ptrs.end())  // ищем полигон с которым будет соударятся
+                                // виртуальная частица
     {
-      point poligon_gmt = (*poligon_iterator)->get_gmt();
+      Point poligon_gmt = (*poligon_iterator)->GetGmt();
 
-      point a = (*poligon_iterator)->get_p2() - (*poligon_iterator)->get_p1();
-      point b = (*poligon_iterator)->get_p3() - (*poligon_iterator)->get_p2();
-      point c = (*poligon_iterator)->get_p1() - (*poligon_iterator)->get_p3();
+      Point a = (*poligon_iterator)->GetP2() - (*poligon_iterator)->GetP1();
+      Point b = (*poligon_iterator)->GetP3() - (*poligon_iterator)->GetP2();
+      Point c = (*poligon_iterator)->GetP1() - (*poligon_iterator)->GetP3();
 
-      double Ax = point(1, 0, 0) * (*poligon_iterator)->get_normal();
-      double tcx = ((*poligon_iterator)->get_p1() - rand_points[i]) *
-                   (*poligon_iterator)->get_normal() / Ax;
+      double Ax = Point(1, 0, 0) * (*poligon_iterator)->GetNormal();
+      double tcx = ((*poligon_iterator)->GetP1() - rand_points[i]) *
+                   (*poligon_iterator)->GetNormal() / Ax;
 
       if (tcx < dttx && tcx > -dttx) {
-        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcx;
+        Point collision_pstn = rand_points[i] + Point(1, 0, 0) * tcx;
 
-        point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
-        point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
-        point d3 = (*poligon_iterator)->get_p3() - collision_pstn;
+        Point d1 = (*poligon_iterator)->GetP1() - collision_pstn;
+        Point d2 = (*poligon_iterator)->GetP2() - collision_pstn;
+        Point d3 = (*poligon_iterator)->GetP3() - collision_pstn;
 
-        if ((*poligon_iterator)->get_normal() * d1.vec_mult(a) > 0. &&
-            (*poligon_iterator)->get_normal() * d2.vec_mult(b) > 0. &&
-            (*poligon_iterator)->get_normal() * d3.vec_mult(c) > 0.) {
+        if ((*poligon_iterator)->GetNormal() * d1.Cross(a) > 0. &&
+            (*poligon_iterator)->GetNormal() * d2.Cross(b) > 0. &&
+            (*poligon_iterator)->GetNormal() * d3.Cross(c) > 0.) {
           poligon_col_iterator_x = poligon_iterator;
           collision_pstn_x = collision_pstn;
           dttx = tcx;
         }
       }
 
-      double Ay = point(0, 1, 0) * (*poligon_iterator)->get_normal();
-      double tcy = ((*poligon_iterator)->get_p1() - rand_points[i]) *
-                   (*poligon_iterator)->get_normal() / Ay;
+      double Ay = Point(0, 1, 0) * (*poligon_iterator)->GetNormal();
+      double tcy = ((*poligon_iterator)->GetP1() - rand_points[i]) *
+                   (*poligon_iterator)->GetNormal() / Ay;
 
       if (tcy < dtty && tcy > -dtty) {
-        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcy;
+        Point collision_pstn = rand_points[i] + Point(1, 0, 0) * tcy;
 
-        point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
-        point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
-        point d3 = (*poligon_iterator)->get_p3() - collision_pstn;
+        Point d1 = (*poligon_iterator)->GetP1() - collision_pstn;
+        Point d2 = (*poligon_iterator)->GetP2() - collision_pstn;
+        Point d3 = (*poligon_iterator)->GetP3() - collision_pstn;
 
-        if ((*poligon_iterator)->get_normal() * d1.vec_mult(a) > 0. &&
-            (*poligon_iterator)->get_normal() * d2.vec_mult(b) > 0. &&
-            (*poligon_iterator)->get_normal() * d3.vec_mult(c) > 0.) {
+        if ((*poligon_iterator)->GetNormal() * d1.Cross(a) > 0. &&
+            (*poligon_iterator)->GetNormal() * d2.Cross(b) > 0. &&
+            (*poligon_iterator)->GetNormal() * d3.Cross(c) > 0.) {
           poligon_col_iterator_y = poligon_iterator;
           collision_pstn_y = collision_pstn;
           dtty = tcy;
         }
       }
 
-      double Az = point(0, 0, 1) * (*poligon_iterator)->get_normal();
-      double tcz = ((*poligon_iterator)->get_p1() - rand_points[i]) *
-                   (*poligon_iterator)->get_normal() / Az;
+      double Az = Point(0, 0, 1) * (*poligon_iterator)->GetNormal();
+      double tcz = ((*poligon_iterator)->GetP1() - rand_points[i]) *
+                   (*poligon_iterator)->GetNormal() / Az;
 
       if (tcz < dttz && tcz > -dttz) {
-        point collision_pstn = rand_points[i] + point(1, 0, 0) * tcz;
+        Point collision_pstn = rand_points[i] + Point(1, 0, 0) * tcz;
 
-        point d1 = (*poligon_iterator)->get_p1() - collision_pstn;
-        point d2 = (*poligon_iterator)->get_p2() - collision_pstn;
-        point d3 = (*poligon_iterator)->get_p3() - collision_pstn;
+        Point d1 = (*poligon_iterator)->GetP1() - collision_pstn;
+        Point d2 = (*poligon_iterator)->GetP2() - collision_pstn;
+        Point d3 = (*poligon_iterator)->GetP3() - collision_pstn;
 
-        if ((*poligon_iterator)->get_normal() * d1.vec_mult(a) > 0. &&
-            (*poligon_iterator)->get_normal() * d2.vec_mult(b) > 0. &&
-            (*poligon_iterator)->get_normal() * d3.vec_mult(c) > 0.) {
+        if ((*poligon_iterator)->GetNormal() * d1.Cross(a) > 0. &&
+            (*poligon_iterator)->GetNormal() * d2.Cross(b) > 0. &&
+            (*poligon_iterator)->GetNormal() * d3.Cross(c) > 0.) {
           poligon_col_iterator_z = poligon_iterator;
           collision_pstn_z = collision_pstn;
           dttz = tcz;
@@ -367,7 +367,7 @@ double inner_boundary::calc_cell_volume(
     }  // while(poligon_iterator != poligon_ptrs.end())
 
     if (poligon_col_iterator_x != poligon_ptrs.end()) {
-      if ((*poligon_col_iterator_x)->get_normal() *
+      if ((*poligon_col_iterator_x)->GetNormal() *
               (collision_pstn_x - rand_points[i]) <=
           0) {
         outer_N--;
@@ -376,7 +376,7 @@ double inner_boundary::calc_cell_volume(
     }
 
     if (poligon_col_iterator_y != poligon_ptrs.end()) {
-      if ((*poligon_col_iterator_y)->get_normal() *
+      if ((*poligon_col_iterator_y)->GetNormal() *
               (collision_pstn_y - rand_points[i]) <=
           0) {
         outer_N--;
@@ -385,7 +385,7 @@ double inner_boundary::calc_cell_volume(
     }
 
     if (poligon_col_iterator_z != poligon_ptrs.end()) {
-      if ((*poligon_col_iterator_z)->get_normal() *
+      if ((*poligon_col_iterator_z)->GetNormal() *
               (collision_pstn_z - rand_points[i]) <=
           0) {
         outer_N--;
@@ -409,9 +409,9 @@ double inner_boundary::calc_cell_volume(
   return volume;
 }
 
-void inner_boundary::set_geometry(geometry* bbody) { this->body = bbody; }
+void InnerBoundary::SetGeometry(Geometry* bbody) { this->body = bbody; }
 
-geometry* inner_boundary::get_geometry_ptr() { return body; }
+Geometry* InnerBoundary::GetGeometryPtr() { return body; }
 
-bool inner_boundary::Empty() const { return poligon_ptrs.empty(); }
+bool InnerBoundary::Empty() const { return poligon_ptrs.empty(); }
 }  // namespace mc3d

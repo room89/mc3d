@@ -4,6 +4,6 @@
 
 namespace utils {
 
-double random(double max, double min);
+double RandomDouble(double max, double min);
 
-}
+}  // namespace utils

@@ -8,9 +8,9 @@
 #include "mirror_boundary.h"
 
 namespace mc3d {
-mirror_boundary::mirror_boundary(void) {}
+MirrorBoundary::MirrorBoundary() {}
 
-mirror_boundary::mirror_boundary(point pstn, point nrml) {
+MirrorBoundary::MirrorBoundary(Point pstn, Point nrml) {
   if ((abs(pstn.x) >= abs(pstn.y)) && (abs(pstn.x) >= abs(pstn.z))) {
     pstn.y = 0;
     pstn.z = 0;
@@ -30,16 +30,16 @@ mirror_boundary::mirror_boundary(point pstn, point nrml) {
     nrml.y = 0;
     if (nrml.z == 0) exit(-1);
   }
-  nrml.nrmlz();
+  nrml.Normalize();
   this->nrml = nrml;
   this->pstn = pstn;
 }
 
-mirror_boundary::~mirror_boundary(void) {}
+MirrorBoundary::~MirrorBoundary() {}
 
-int mirror_boundary::bondary_condition(deque<particle>* particles, double dt) {
+int MirrorBoundary::BoundaryCondition(deque<Particle>* particles, double dt) {
   double t;
-  deque<particle>::iterator data = particles->begin();
+  deque<Particle>::iterator data = particles->begin();
   const double Pi = 3.1415926535;
   while (data != particles->end()) {
     // t = ((pstn.x - data->x) * nrml.x + (pstn.y - data->y) * nrml.y + (pstn.z
@@ -47,18 +47,18 @@ int mirror_boundary::bondary_condition(deque<particle>* particles, double dt) {
     t = (pstn - data->position) * nrml;
 
     if (t < 0) {
-      double rmt = 1 / double(RAND_MAX);
+      const double rmt = 1.0 / static_cast<double>(RAND_MAX);
       t /= nrml * nrml;
 
       /*data->x += 2 * nrml.x * t;
       data->y += 2 * nrml.y * t;
       data->z += 2 * nrml.z * t;*/
       data->position += nrml * t * 2.;
-      if (!(nrml * point(0, 1, 1))) {
+      if (!(nrml * Point(0, 1, 1))) {
         data->velocity.x = -data->velocity.x;
-      } else if (!(nrml * point(1, 0, 1))) {
+      } else if (!(nrml * Point(1, 0, 1))) {
         data->velocity.y = -data->velocity.y;
-      } else if (!(nrml * point(1, 1, 0))) {
+      } else if (!(nrml * Point(1, 1, 0))) {
         data->velocity.z = -data->velocity.z;
       } else
         return -1;
@@ -66,7 +66,7 @@ int mirror_boundary::bondary_condition(deque<particle>* particles, double dt) {
       data->w); double rn1 = double(std::rand()) * rmt; double rn2 =
       double(std::rand()) * rmt; data->u = v * sin(Pi * rn1) * cos(2 * Pi *
       rn2); data->v = v * sin(Pi * rn1) * sin(2 * Pi * rn2); data->w = v *
-      cos(Pi * rn1); point vel(data->u, data->v, data->w); if(vel * nrml > 0)
+      cos(Pi * rn1); Point vel(data->u, data->v, data->w); if(vel * nrml > 0)
       {
               data->u = -data->u;
               data->v = -data->v;

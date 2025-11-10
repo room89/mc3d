@@ -4,7 +4,8 @@
 
 namespace utils {
 
-Stopwatch::Stopwatch(const std::string& name) : name_(name), start_time_(Clock::now()) {}
+Stopwatch::Stopwatch(const std::string& name)
+    : name_(name), start_time_(Clock::now()) {}
 
 Stopwatch::~Stopwatch() {
   using namespace std::chrono;

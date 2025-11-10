@@ -10,25 +10,23 @@
 #include "cell.h"
 
 namespace mc3d {
-class FreeBoundary : public boundary {
+class FreeBoundary : public Boundary {
  protected:
-  deque<mc3d::cell*> cells_ptr;
-  deque<mc3d::cell*>::iterator cell_iter;
+  deque<mc3d::Cell*> cells_ptr;
+  deque<mc3d::Cell*>::iterator cell_iter;
   unsigned int np;
   double Vn;
   double T;
   double S;
-  point V;
+  Point V;
 
  public:
-  virtual void add_cell(deque<cell>& cluster_cells);
-  virtual void set_np(unsigned int np);
-  int bondary_condition(deque<particle>* cluster_particle, double dt);
-  FreeBoundary(point pstn, point nrml, unsigned int np, double S, double T,
+  virtual void AddCell(deque<Cell>& cluster_cells);
+  virtual void SetNp(unsigned int np);
+  int BoundaryCondition(deque<Particle>* cluster_particle, double dt);
+  FreeBoundary(Point pstn, Point nrml, unsigned int np, double S, double T,
                double alpha = 0);
-  FreeBoundary(void);
-  ~FreeBoundary(void);
+  FreeBoundary();
+  ~FreeBoundary();
 };
-
-inline double erf(double x);
 }  // namespace mc3d

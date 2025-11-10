@@ -1,7 +1,7 @@
 #include "cellnet.h"
 
 namespace mc3d {
-cellnet::cellnet(void) {}
+CellNet::CellNet() {}
 
-cellnet::~cellnet(void) {}
+CellNet::~CellNet() {}
 }  // namespace mc3d

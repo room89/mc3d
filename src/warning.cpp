@@ -4,22 +4,20 @@
 // Last modified: 12.04.11.
 // Description: Program for calculation of rarefied flows.
 
-#pragma once
-
 #include "warning.h"
 
 namespace mc3d {
 namespace unusual_situations {
 
-warning::warning() {
+Warning::Warning() {
   this->log_message = 0;
   this->warning_message = 0;
-  this->code = warning::UNKNOWN_WARNING;
+  this->code = Warning::UNKNOWN_WARNING;
 }
 
-warning::warning(int code) { this->code = code; }
+Warning::Warning(int code) { this->code = code; }
 
-warning::~warning() {
+Warning::~Warning() {
   delete[] warning_message;
   delete[] log_message;
 }

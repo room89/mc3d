@@ -10,9 +10,9 @@
 #include "cell.h"
 
 namespace mc3d {
-class inner_cell : public cell {
+class InnerCell : public Cell {
  public:
-  inner_cell(void);
-  ~inner_cell(void);
+  InnerCell();
+  ~InnerCell();
 };
 }  // namespace mc3d

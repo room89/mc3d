@@ -9,23 +9,22 @@
 
 #include <fstream>
 #include <iostream>
+
 #include "cell.h"
 #include "point.h"
 
-using namespace std;
-
 namespace mc3d {
-struct var {
-  point apex;
-  point size;
-  point N;
-  point velocity;
+struct Var {
+  Point apex;
+  Point size;
+  Point N;
+  Point velocity;
   double S;
   double alpha;
   double T;
 
  public:
-  friend ostream& operator<<(ostream&, var);
-  cell* make_cell();
+  friend std::ostream& operator<<(std::ostream&, const Var&);
+  Cell* MakeCell();
 };
 }  // namespace mc3d

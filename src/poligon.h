@@ -1,11 +1,11 @@
-// File: poligon.h
+// File: Polygon.h
 // Program: MC3D
 // Author: Khokhlov "AAsad" Ivan
 // Version: 0.4.0
 // Last modified: 11.10.10.
 // Description: Program for calculation of rarefied flows.
 
-// File: poligon.cpp
+// File: Polygon.cpp
 // Program: MC3D
 // Author: Khokhlov "AAsad" Ivan
 // Last modified: 12.10.10.
@@ -14,37 +14,36 @@
 #pragma once
 
 #include <utility>
-#include "exception.h"
-#include "particle.h"
+
 #include "point.h"
 
 namespace mc3d {
-struct poligon {
-  point p1;
-  point p2;
-  point p3;
-  point normal;
-  point force;
+struct Polygon {
+  Point p1;
+  Point p2;
+  Point p3;
+  Point normal;
+  Point force;
   double flux;
   double S;
-  // double colision(particle a, double dt);
-  poligon(void);
-  poligon(point p1, point p2, point p3, point nrml);
-  poligon(point p1, point p2, point p3);
-  ~poligon(void);
-  void set(point p1, point p2, point p3, point nrml);
-  point get_p1() const;
-  point get_p2() const;
-  point get_p3();
-  point get_normal();
-  point get_gmt() const;
-  poligon* get_ptr();
-  double get_Lmax();
-  std::pair<poligon*, poligon*> divide();
-  void print();
-  void move(point a);
-  void scaling(double e);
-  bool fix();
-  double dist_to_point(point p);
+  // double colision(Particle a, double dt);
+  Polygon();
+  Polygon(Point p1, Point p2, Point p3, Point nrml);
+  Polygon(Point p1, Point p2, Point p3);
+  ~Polygon();
+  void Set(Point p1, Point p2, Point p3, Point nrml);
+  Point GetP1() const;
+  Point GetP2() const;
+  Point GetP3() const;
+  Point GetNormal() const;
+  Point GetGmt() const;
+  Polygon* GetPtr();
+  double GetLmax() const;
+  std::pair<Polygon*, Polygon*> Divide();
+  void Print();
+  void Move(const Point& a);
+  void Scale(double e);
+  bool Fix();
+  double DistanceToPoint(Point p);
 };
 };  // namespace mc3d

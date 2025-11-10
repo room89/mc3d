@@ -1,36 +1,37 @@
 #include "giper_free_boundary.h"
 
+#include <cmath>
+
 namespace mc3d {
 namespace {
 const double Pi = 3.14159265358979;
 }
 
-giper_free_boundary::giper_free_boundary(void) {}
+HyperFreeBoundary::HyperFreeBoundary() {}
 
-giper_free_boundary::giper_free_boundary(point pstn, point nrml,
-                                         unsigned int np, double S, double T,
-                                         double alpha)
+HyperFreeBoundary::HyperFreeBoundary(Point pstn, Point nrml, unsigned int np,
+                                     double S, double T, double alpha)
     : FreeBoundary(pstn, nrml, np, S, T, alpha) {}
 
-giper_free_boundary::~giper_free_boundary(void) {}
+HyperFreeBoundary::~HyperFreeBoundary() {}
 
-int giper_free_boundary::bondary_condition(
-    std::deque<particle>* cluster_particle, double dt) {
+int HyperFreeBoundary::BoundaryCondition(std::deque<Particle>* cluster_particle,
+                                         double dt) {
   if (Vn < 0) return 0;
 
-  std::deque<cell*>::iterator cell_iter = this->cells_ptr.begin();
+  std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();
 
   unsigned int N;
   while (cell_iter != cells_ptr.end()) {
-    point cell_size = (*cell_iter)->get_size();
+    Point cell_size = (*cell_iter)->GetSize();
 
     N = static_cast<unsigned int>(
         dt * np * sqrt(T / (Pi * 2)) *
         (exp(-Vn * Vn / (2 * T)) +
-         sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + erf(Vn / sqrt(2 * T)))) /
+         sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
         abs(cell_size * nrml));
 
-    if (N > 2) (*cell_iter)->generate_giper_free_random(N, V, T);
+    if (N > 2) (*cell_iter)->GenerateHyperFreeRandom(N, V, T);
 
     cell_iter++;
   }

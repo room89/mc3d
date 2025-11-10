@@ -2,9 +2,9 @@
 #pragma once
 
 namespace mc3d {
-class cellnet {
+class CellNet {
  public:
-  cellnet(void);
-  ~cellnet(void);
+  CellNet();
+  ~CellNet();
 };
 }  // namespace mc3d

@@ -7,124 +7,115 @@
 
 #pragma once
 
-#include <algorithm>
-#include <complex>
 #include <cstdlib>
 #include <deque>
 #include <fstream>
 #include <iostream>
-//#include "free_boundary.h"
-#include "exception.h"
+#include <memory>
+// #include "free_boundary.h"
 #include "geometry.h"
 #include "inner_boundary.h"
 #include "particle.h"
 #include "point.h"
-//#include <mpi.h>
-//#include "free_boundary.h
-//#include "Header.h"
+// #include <mpi.h>
+// #include "free_boundary.h
+// #include "Header.h"
 
 using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
-class cell {
+class Cell {
  private:
-  deque<particle> particles;
-  deque<particle> particle_buffer;  // particle that departing from the cell
-  point apex;
+  deque<Particle> particles;
+  deque<Particle> particle_buffer;  // Particle that departing from the cell
+  Point apex;
   double lx, ly, lz;  // size of cell
   double T;           // temperature in cell
-  point velocity;
-  point mass_center;
+  Point velocity;
+  Point mass_center;
   double volume_;
-  // unsigned int total_n;
-  // //
-  double Kn_l;  //локальый кнутсен
-  double Kn;    //
-  double L;     //характерный размер
-  double dt;    //
+  double Kn_l;  // локальый кнутсен
+  double Kn;
+  double L;   // характерный размер
+  double dt;  //
   double time;
   double calc_time;
   double start_time;
   bool body_mark;  // is body inside cell
   unsigned int np;
-  inner_boundary body_boundary;
-  deque<cell*> neighbors;  //
-  int* thread_mark;        //
+  InnerBoundary body_boundary;
+  deque<Cell*> neighbors;
+  int* thread_mark;
+
  public:
-  cell(void);
-  ~cell(void);
-  virtual void particle_move(void);  //перемещение частиц
-  virtual void collisions(void);  //соударения между частицами
-  void neighbor_sort(void);  //
-  unsigned int N(void) const;  //возвращает количство частиц в ячейке
-  double t();                                      //
-  void set_size(double lx, double ly, double lz);  //установка размера ячейки
-  void set_size(point dl);
-  void set_apex(point a);  //установка "опорной" точки
-  void set_L(double L);  //установка характерного размера ячейки(одинаковый для
-                         //всех 3х измерений)
-  void set_t(double t);  //
-  void set_param(double S, double alpha, double T);  //
-  void set_vel(point velocity);
-  void set_Kn(double Kn);  //
-  void set_inner_boundary(inner_boundary bound);
-  void set_body_mark(bool mark);
-  virtual bool initialazition(
+  Cell();
+  virtual ~Cell();
+
+  virtual void MoveParticles();  // перемещение частиц
+  virtual void Collisions();     // соударения между частицами
+  void SortNeighbors();
+  unsigned int GetParticleCount() const;  // возвращает количество частиц
+  double GetTemperatureRaw();
+  void SetSize(double lx, double ly, double lz);  // установка размера ячейки
+  void SetSize(Point dl);
+  void SetApex(Point a);  // установка "опорной" точки
+  void SetCharacteristicLength(double length);
+  void SetTemperature(double t);
+  void SetParameters(double S, double alpha, double T);
+  void SetVelocity(Point velocity);
+  void SetKn(double Kn);
+  void SetInnerBoundary(InnerBoundary bound);
+  void SetBodyMark(bool mark);
+  virtual bool Initialize(
       size_t N,
-      const std::unique_ptr<geometry>&
-          bbody);  //инициализация ячейки (N-количество частиц)
-  virtual double generate_random(size_t N);                           //
-  virtual double generate_random(unsigned int N, double T, point V);  //
-  virtual double generate_free_random(
-      unsigned int N, double T, point V,
-      point nrml);  //генерация частиц для свободной границы
-  virtual double generate_giper_free_random(
-      unsigned int N, point V,
-      double T);  //генерация частиц для свободной границы
-  void sort(void);  //перемешение вылетевштх изячейки частиц в буфер
-  deque<particle>* get_buffer(void);  //возвращает буфер ячейки
-  void add_particle(
-      deque<particle>* a);  //забирает частицы находящиеся внутри ячейки
-  // void add_particle_nb(deque<particle> *a);
-  // //
-  void add_particle(particle* a, int n);                 //
-  void fix_particle(unsigned int N, double T, point V);  //
-  double calc_Kn();                                      //													//
-  point get_apex() const;                                //
-  point get_center() const;                              //
-  point get_mass_center() const;
-  point get_size() const;  //
-  double get_Kn();         //
-  double get_dt();         //
-  double get_t();          //
-  double get_u();          //
-  double get_v();          //
-  double get_w();          //
-  double get_volume() const;
-  point get_particle_mass_center();
-  point get_velocity();
-  double get_energy();  //
-  double get_L();
-  bool get_body_mark();
-  cell* get_ptr();         //
-  point calc_vel() const;  //
-  double calc_T();         //
-  double calc_volume();
-  void set_dt(double dt);                                 //
-  double calc_dt();                                       //
-  void add_neighbor(cell* neighbor);                      //
-  friend ostream& operator<<(ostream& o, const cell& c);  //
-  bool write_file(ofstream* file);                        //
-  bool write_file();                                      //
-  void calc();                                            //
-  void attach_thread_mark(int& ptr);                      //
-  deque<cell*> fragmentation(const std::unique_ptr<geometry>& body);
-  void clean_inner_particle(const geometry& body);
+      const std::unique_ptr<Geometry>&
+          body);  // инициализация ячейки (N-количество частиц)
+  virtual double GenerateRandom(size_t N);
+  virtual double GenerateRandom(unsigned int N, double T, Point V);
+  virtual double GenerateFreeRandom(unsigned int N, double T, Point V,
+                                    Point normal);
+  virtual double GenerateHyperFreeRandom(unsigned int N, Point V, double T);
+  void Sort();
+  deque<Particle>* GetBuffer();
+  void AddParticle(deque<Particle>* particles);
+  void AddParticle(Particle* particles, int count);
+  void FixParticle(unsigned int N, double T, Point V);
+  double CalculateKn();
+  Point GetApex() const;
+  Point GetCenter() const;
+  Point GetMassCenter() const;
+  Point GetSize() const;
+  double GetKn();
+  double GetDt();
+  double GetTemperature();
+  double GetU();
+  double GetV();
+  double GetW();
+  double GetVolume() const;
+  Point GetParticleMassCenter();
+  Point GetVelocity();
+  double GetEnergy();
+  double GetCharacteristicLength();
+  bool GetBodyMark();
+  Cell* GetPtr();
+  Point CalculateVelocity() const;
+  double CalculateTemperature();
+  double CalculateVolume();
+  void SetDt(double dt);
+  double CalculateDt();
+  void AddNeighbor(Cell* neighbor);
+  friend ostream& operator<<(ostream& o, const Cell& c);
+  bool WriteFile(ofstream* file);
+  bool WriteFile();
+  void Calculate();
+  void AttachThreadMark(int& ptr);
+  deque<Cell*> Fragment(const std::unique_ptr<Geometry>& body);
+  void CleanInnerParticles(const Geometry& body);
 
-  bool _dbg_test_particle();
+  bool DebugTestParticle();
 
-  friend bool operator>(const cell& a, const cell& b);
-  friend bool operator<(const cell& a, const cell& b);
+  friend bool operator>(const Cell& a, const Cell& b);
+  friend bool operator<(const Cell& a, const Cell& b);
 };
 }  // namespace mc3d

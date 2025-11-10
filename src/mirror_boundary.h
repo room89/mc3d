@@ -10,11 +10,11 @@
 #include "point.h"
 
 namespace mc3d {
-class mirror_boundary : public boundary {
+class MirrorBoundary : public Boundary {
  public:
-  mirror_boundary(void);
-  mirror_boundary(point pstn, point nrml);
-  ~mirror_boundary(void);
-  int bondary_condition(deque<particle>* cluster_particle, double dt);
+  MirrorBoundary();
+  MirrorBoundary(Point pstn, Point nrml);
+  ~MirrorBoundary();
+  int BoundaryCondition(deque<Particle>* cluster_particle, double dt);
 };
 };  // namespace mc3d

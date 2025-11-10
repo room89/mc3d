@@ -8,15 +8,15 @@
 #include "boundary.h"
 
 namespace mc3d {
-class pereodic_boundary : public boundary {
+class PeriodicBoundary : public Boundary {
  private:
-  point mixing;
+  Point mixing;
 
  public:
-  pereodic_boundary(point pstn, point nrml, point mixing);
-  void set_mixing(point b);
-  int bondary_condition(deque<particle>* cluster_particle, double dt);
-  pereodic_boundary(void);
-  ~pereodic_boundary(void);
+  PeriodicBoundary(Point pstn, Point nrml, Point mixing);
+  void SetMixing(Point b);
+  int BoundaryCondition(deque<Particle>* cluster_particle, double dt);
+  PeriodicBoundary();
+  ~PeriodicBoundary();
 };
 }  // namespace mc3d

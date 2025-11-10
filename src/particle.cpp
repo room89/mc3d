@@ -1,4 +1,4 @@
-// File: particle.cpp
+// File: Particle.cpp
 // Program: MC3D
 // Author: Khokhlov "AAsad" Ivan
 // Version: 0.2.1
@@ -6,63 +6,56 @@
 // Description: Program for calculation of rarefaid flows.
 
 #include "particle.h"
-#include <stdlib.h>
-#include <complex>
-#include <iostream>
+
+#include <cmath>
+#include <cstdlib>
 
 namespace mc3d {
-particle::particle(void) {
+Particle::Particle() {
   // this->r = 0.001;
   // this->u = this->v = this->w = this->x = this->y = this->z = 0;
-  position.set(0, 0, 0);
-  velocity.set(0, 0, 0);
+  position.Set(0, 0, 0);
+  velocity.Set(0, 0, 0);
 }
 
-particle::particle(double x, double y, double z, double u, double v, double w) {
-  // this->r = 0.001;
-  // this->u = u;
-  // this->v = v;
-  // this->w = w;
-  // this->x = x;
-  // this->y = y;
-  // this->z = z;
-  position.set(x, y, z);
-  velocity.set(u, v, w);
+Particle::Particle(double x, double y, double z, double u, double v, double w) {
+  position.Set(x, y, z);
+  velocity.Set(u, v, w);
 }
 
-particle::particle(point position, point velocity) {
+Particle::Particle(Point position, Point velocity) {
   this->position = position;
   this->velocity = velocity;
 }
 
-particle::~particle(void) {}
+Particle::~Particle() {}
 
-/*void particle::print()
+/*void Particle::print()
 {
         std::cout<<" x = "<<x<<" y = "<<y<<" z = "<<z<<" u = "<<u<<" v = "<<v<<"
 w = "<<w<<std::endl;
 }*/
 
-void particle::move(double dt) {
+void Particle::Move(double dt) {
   position += velocity * dt;
 
   /*x += dt * u;
   y += dt * v;
   z += dt * w;*/
 }
-bool collision(particle* a, particle* b, double& g_max, double& frequency_t,
+bool Collision(Particle* a, Particle* b, double& g_max, double& frequency_t,
                double factor) {
-  double rmt = 1 / RAND_MAX;
-  double Pi = 3.1415923565;
+  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
+  const double Pi = std::numbers::pi;
 
   /*double u1 = a->u, v1 = a->v, w1 = a->w;
   double u2 = b->u, v2 = b->v, w2 = b->w;
   double gx = u2 - u1, gy = v2 - v1, gz = w2 - w1;
   double g = sqrt(gx * gx + gy * gy + gz * gz);*/
 
-  point vel_1 = a->get_velocity();
-  point vel_2 = b->get_velocity();
-  double g = (vel_2 - vel_1).mod();
+  Point vel_1 = a->GetVelocity();
+  Point vel_2 = b->GetVelocity();
+  double g = (vel_2 - vel_1).Mod();
 
   bool rtrn = true;
 
@@ -78,53 +71,53 @@ bool collision(particle* a, particle* b, double& g_max, double& frequency_t,
     double r1 = std::rand() * rmt;
     double r2 = std::rand() * rmt;
 
-    double g1z = g * cos(Pi * r1), g1y = g * sin(Pi * r1) * sin(2. * Pi * r2),
-           g1x = g * sin(Pi * r1) * cos(2. * Pi * r2);
+    double g1z = g * std::cos(Pi * r1);
+    double g1y = g * std::sin(Pi * r1) * std::sin(2. * Pi * r2);
+    double g1x = g * std::sin(Pi * r1) * std::cos(2. * Pi * r2);
 
-    point g1(g * sin(Pi * r1) * cos(2. * Pi * r2),
-             g * sin(Pi * r1) * sin(2. * Pi * r2), g * cos(Pi * r1));
+    Point g1(g1x, g1y, g1z);
 
     /*a->u = 0.5 * (u1 + u2) - 0.5 * g1x;
     a->v = 0.5 * (v1 + v2) - 0.5 * g1y;
     a->w = 0.5 * (w1 + w2) - 0.5 * g1z;*/
 
-    a->set_velocity(0.5 * (vel_1 + vel_2 - g1));
+    a->SetVelocity(0.5 * (vel_1 + vel_2 - g1));
 
     /*b->u = 0.5 * (u1 + u2) + 0.5 * g1x;
     b->v = 0.5 * (v1 + v2) + 0.5 * g1y;
     b->w = 0.5 * (w1 + w2) + 0.5 * g1z;*/
 
-    b->set_velocity(0.5 * (vel_1 + vel_2 + g1));
+    b->SetVelocity(0.5 * (vel_1 + vel_2 + g1));
   }
 
   return rtrn;
 }
 
-double particle::get_u() { return velocity.x; }
+double Particle::GetU() const { return velocity.x; }
 
-double particle::get_v() { return velocity.y; }
+double Particle::GetV() const { return velocity.y; }
 
-double particle::get_w() { return velocity.z; }
+double Particle::GetW() const { return velocity.z; }
 
-double particle::get_x() { return position.x; }
+double Particle::GetX() const { return position.x; }
 
-double particle::get_y() { return position.y; }
+double Particle::GetY() const { return position.y; }
 
-double particle::get_z() { return position.z; }
+double Particle::GetZ() const { return position.z; }
 
-void particle::set_position(point position) { this->position = position; }
+void Particle::SetPosition(Point position) { this->position = position; }
 
-void particle::set_velocity(point velocity) { this->velocity = velocity; }
+void Particle::SetVelocity(Point velocity) { this->velocity = velocity; }
 
-void particle::set_x(double x) { this->position.x = x; }
+void Particle::SetX(double x) { this->position.x = x; }
 
-void particle::set_y(double y) { this->position.y = y; }
+void Particle::SetY(double y) { this->position.y = y; }
 
-void particle::set_z(double z) { this->position.z = z; }
+void Particle::SetZ(double z) { this->position.z = z; }
 
-void particle::set_u(double u) { this->velocity.x = u; }
+void Particle::SetU(double u) { this->velocity.x = u; }
 
-void particle::set_v(double v) { this->velocity.y = v; }
+void Particle::SetV(double v) { this->velocity.y = v; }
 
-void particle::set_w(double w) { this->velocity.z = w; }
+void Particle::SetW(double w) { this->velocity.z = w; }
 }  // namespace mc3d

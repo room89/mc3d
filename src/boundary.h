@@ -8,20 +8,21 @@
 
 #include <complex>
 #include <deque>
+
 #include "exit_code.h"
 #include "particle.h"
 #include "point.h"
 
 namespace mc3d {
-class boundary {
+class Boundary {
  protected:
   // char type[6];
-  point nrml;  //направление граничного условия
-  point pstn;  //положение граничного условия
+  Point nrml;  // направление граничного условия
+  Point pstn;  // положение граничного условия
  public:
-  virtual int bondary_condition(deque<particle>* a, double dt = 0) = 0;
-  virtual ~boundary() {}
-  void set_position(point a);  //установка места граничных условий
-  void set_normal(point a);  //установка направления граничных условий
+  virtual int BoundaryCondition(deque<Particle>* a, double dt = 0) = 0;
+  virtual ~Boundary() {}
+  void SetPosition(Point a);  // установка места граничных условий
+  void SetNormal(Point a);    // установка направления граничных условий
 };
 }  // namespace mc3d

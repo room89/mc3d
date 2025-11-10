@@ -1,4 +1,6 @@
 #include "free_boundary.h"
+
+#include <cmath>
 #include <utils/logger.hpp>
 
 namespace mc3d {
@@ -6,11 +8,11 @@ namespace {
 const double Pi = 3.14159265358979;
 }
 
-FreeBoundary::FreeBoundary(void) {}
+FreeBoundary::FreeBoundary() {}
 
-FreeBoundary::~FreeBoundary(void) {}
+FreeBoundary::~FreeBoundary() {}
 
-FreeBoundary::FreeBoundary(point pstn, point nrml, unsigned int np, double S,
+FreeBoundary::FreeBoundary(Point pstn, Point nrml, unsigned int np, double S,
                            double T, double alpha) {
   if ((abs(pstn.x) >= abs(pstn.y)) && (abs(pstn.x) >= abs(pstn.z))) {
     pstn.y = 0;
@@ -34,13 +36,13 @@ FreeBoundary::FreeBoundary(point pstn, point nrml, unsigned int np, double S,
     if (nrml.z == 0)
       exit(unusual_situations::exit_code::BOUNDARY_CONSTRUCTOR_ERROR);
   }
-  nrml.nrmlz();
+  nrml.Normalize();
   this->nrml = nrml;
   this->pstn = pstn;
 
   this->np = np;
   this->T = T;
-  this->V.set(S * sqrt(2 * T) * cos(alpha), S * sqrt(2 * T) * sin(alpha), 0);
+  this->V.Set(S * sqrt(2 * T) * cos(alpha), S * sqrt(2 * T) * sin(alpha), 0);
   this->S = S;
 
   Vn = -(V * nrml);
@@ -49,12 +51,12 @@ FreeBoundary::FreeBoundary(point pstn, point nrml, unsigned int np, double S,
               << ") Vn: " << Vn << " pstn " << pstn;
 }
 
-void FreeBoundary::add_cell(std::deque<cell>& cluster_cells) {
+void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
   auto cell_iter = cluster_cells.begin();
 
   while (cell_iter != cluster_cells.end()) {
-    if (abs(nrml * (cell_iter->get_center() - pstn)) <
-        0.6 * abs(nrml * cell_iter->get_size())) {
+    if (abs(nrml * (cell_iter->GetCenter() - pstn)) <
+        0.6 * abs(nrml * cell_iter->GetSize())) {
       this->cells_ptr.push_back(&(*cell_iter));
     }
 
@@ -62,21 +64,21 @@ void FreeBoundary::add_cell(std::deque<cell>& cluster_cells) {
   }
 }
 
-int FreeBoundary::bondary_condition(std::deque<particle>* cluster_particle,
+int FreeBoundary::BoundaryCondition(std::deque<Particle>* cluster_particle,
                                     double dt) {
-  std::deque<cell*>::iterator cell_iter = this->cells_ptr.begin();
+  std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();
 
   unsigned int N;
   while (cell_iter != cells_ptr.end()) {
-    point cell_size = (*cell_iter)->get_size();
+    Point cell_size = (*cell_iter)->GetSize();
 
     N = static_cast<unsigned int>(
         dt * np * sqrt(T / (Pi * 2)) *
         (exp(-Vn * Vn / (2 * T)) +
-         sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + erf(Vn / sqrt(2 * T)))) /
+         sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
         abs(cell_size * nrml));
 
-    if (N > 2) (*cell_iter)->generate_free_random(N, T, V, nrml);
+    if (N > 2) (*cell_iter)->GenerateFreeRandom(N, T, V, nrml);
 
     cell_iter++;
   }
@@ -84,42 +86,6 @@ int FreeBoundary::bondary_condition(std::deque<particle>* cluster_particle,
   return 1;
 }
 
-void FreeBoundary::set_np(unsigned int np) { this->np = np; }
+void FreeBoundary::SetNp(unsigned int np) { this->np = np; }
 
-// double free_boundary::erf(double x0)
-//{
-//	if(x0 < 0.00001) return 0;
-//	double x = 0, I = 0, dx = x0 / 100;
-//	while(x <= x0)
-//	{
-//		I += exp(-(x + dx / 2) * (x + dx / 2)) * dx;
-//		x += dx;
-//	}
-//	return I;
-//}
-
-inline double erf(double x) {
-  const double Pi = 3.1415926536, Pit = 1. / Pi, Pi2 = Pi * Pi, Pi2t = 1. / Pi2,
-               SPi = sqrt(Pi), SPit = 1. / SPi;
-  double xx = fabs(x);
-  double x2 = x * x;
-  double w;
-
-  if (xx <= 0.4) {
-    w = 2. * SPit * x *
-        (1. + x2 * (-0.33333333 +
-                    x2 * (0.1 + x2 * (-0.02380952 + 0.00462963 * x2))));
-  } else {
-    double t = 1. / (1. + 0.3275911 * xx);
-    w = 1. -
-        t *
-            (0.254829592 +
-             t * (-0.284496736 +
-                  t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) *
-            exp(-x * x);
-    x >= 0. ? w = w : w = -w;
-  }
-
-  return w;
-}
 }  // namespace mc3d

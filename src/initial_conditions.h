@@ -9,13 +9,14 @@
 #include <deque>
 #include <fstream>
 #include <typeinfo>
+
 #include "boundary.h"
 #include "cell_cluster.h"
 
 namespace mc3d {
 class initial_conditions {
  private:
-  std::deque<boundary> boundary;
+  std::deque<Boundary> boundary;
   // friend cell_cluster;
  public:
   initial_conditions(void);

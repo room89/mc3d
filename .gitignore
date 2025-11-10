@@ -1,0 +1,32 @@
+# Build artifacts
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/*.o
+/*.obj
+/*.a
+/*.so
+/*.dylib
+/*.dll
+/compile_commands.json
+/compile_flags.txt
+
+# Tooling
+/.cache/
+/.clangd/
+/.clang-format
+
+# IDE settings
+/.idea/
+/.vscode/
+/*.code-workspace
+
+# Logs and misc
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+

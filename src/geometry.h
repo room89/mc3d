@@ -1,4 +1,4 @@
-// File: geometry.h
+// File: Geometry.h
 // Program: MC3D
 // Author: Khokhlov "AAsad" Ivan
 // Version: 0.4.0
@@ -12,43 +12,44 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+
 #include "boundary.h"
 #include "exception.h"
 #include "poligon.h"
-//#include "inner_boundary.h"
+// #include "inner_boundary.h"
 
 namespace mc3d {
 namespace {
 // const double Pi = 3.141592654;
 }
 
-class geometry {
+class Geometry {
  protected:
-  deque<poligon*> poligons;
+  deque<Polygon*> poligons;
 
  public:
-  geometry(void);
-  geometry(const char* file_name);
-  ~geometry(void);
-  void write_geometry_file(const char* file_name, const char* boby_name);
-  void fragmentation(double Lmax);
-  // void create_cone(point apex1, point apex2, double H);
-  void create_wedge(double x = -.25, double width = .5, double length = .5,
-                    double alpha = 3.141592654 / 18);
-  void create_pyramid(double x = -.25, double width = .5, double length = .5,
-                      double H = .16);
-  void create_cube(double x = -.25, double width = .5, double length = .5,
-                   double H = .5);
-  point mass_center();
-  void move(point a);
-  void scaling(double e);
-  bool is_inner_point(point test_point) const;
-  pair<point, point> size();
-  double dist_to_point(point p);
-  int fix_poligons();
+  Geometry();
+  Geometry(const char* file_name);
+  ~Geometry();
+  void WriteGeometryFile(const char* file_name, const char* boby_name);
+  void Fragment(double Lmax);
+  // void CreateCone(Point apex1, Point apex2, double H);
+  void CreateWedge(double x = -.25, double width = .5, double length = .5,
+                   double alpha = 3.141592654 / 18);
+  void CreatePyramid(double x = -.25, double width = .5, double length = .5,
+                     double H = .16);
+  void CreateCube(double x = -.25, double width = .5, double length = .5,
+                  double H = .5);
+  Point MassCenter();
+  void Move(Point a);
+  void Scale(double e);
+  bool IsInnerPoint(Point test_point) const;
+  pair<Point, Point> Size();
+  double DistanceToPoint(Point p);
+  int FixPolygons();
 
-  void rev_nrml();
+  void ReverseNormals();
 
-  friend class inner_boundary;
+  friend class InnerBoundary;
 };
 }  // namespace mc3d

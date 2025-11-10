@@ -1,5 +1,9 @@
 #include "inner_cell.h"
 
-inner_cell::inner_cell(void) {}
+namespace mc3d {
 
-inner_cell::~inner_cell(void) {}
+InnerCell::InnerCell() = default;
+
+InnerCell::~InnerCell() = default;
+
+}  // namespace mc3d

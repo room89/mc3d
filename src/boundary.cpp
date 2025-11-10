@@ -7,7 +7,7 @@
 #include "boundary.h"
 
 namespace mc3d {
-void boundary::set_normal(point a) { nrml = a; }
+void Boundary::SetNormal(Point a) { nrml = a; }
 
-void boundary::set_position(point a) { pstn = a; }
+void Boundary::SetPosition(Point a) { pstn = a; }
 }  // namespace mc3d

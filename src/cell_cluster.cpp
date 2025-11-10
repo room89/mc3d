@@ -13,7 +13,7 @@ namespace mc3d {
 / R;
 }*/
 
-CellCluster::CellCluster(void) : thread_pool_(NUM_CPU, "move_and_collisions") {
+CellCluster::CellCluster() : thread_pool_(NUM_CPU, "move_and_collisions") {
   Kn = 0;
   np = 0;
   ncx = 0;
@@ -28,12 +28,12 @@ CellCluster::CellCluster(void) : thread_pool_(NUM_CPU, "move_and_collisions") {
   step = 0;
 }
 
-CellCluster::~CellCluster(void) { cells.clear(); }
+CellCluster::~CellCluster() { cells.clear(); }
 
-bool CellCluster::initialazition(unsigned int ncx, unsigned int ncy,
-                                 unsigned int ncz, double density, double Kn,
-                                 double Cu, std::unique_ptr<geometry>&& body,
-                                 double S, double alpha, double T) {
+bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
+                             unsigned int ncz, double density, double Kn,
+                             double Cu, std::unique_ptr<Geometry>&& body,
+                             double S, double alpha, double T) {
   LOG_DEBUG() << bool(body);
   body_ = std::move(body);
 
@@ -61,28 +61,28 @@ bool CellCluster::initialazition(unsigned int ncx, unsigned int ncy,
   for (size_t i = 0; i < ncx; i++) {
     for (size_t j = 0; j < ncy; j++) {
       for (size_t k = 0; k < ncz; k++) {
-        cell temp_cell;
+        Cell temp_cell;
 
         size_t N_ = 0;
-        point a;
+        Point a;
         a.x = apex.x + i * dx;
         a.y = apex.y + j * dy;
         a.z = apex.z + k * dz;
 
         if (i == ncx - 1)
           N_ = static_cast<unsigned int>(density * dx * dy * dz);
-        temp_cell.set_param(S, alpha, T);
+        temp_cell.SetParameters(S, alpha, T);
 
-        temp_cell.set_apex(a);
-        temp_cell.set_size(dx, dy, dz);
+        temp_cell.SetApex(a);
+        temp_cell.SetSize(dx, dy, dz);
 
-        temp_cell.initialazition(N_, body_);
+        temp_cell.Initialize(N_, body_);
 
-        temp_cell.set_L(Lx);
-        temp_cell.set_Kn(Kn);
+        temp_cell.SetCharacteristicLength(Lx);
+        temp_cell.SetKn(Kn);
 
         N += N_;
-        double dtt = temp_cell.get_dt();
+        double dtt = temp_cell.GetDt();
         dt = min(dt, dtt);
 
         cells.emplace_back(std::move(temp_cell));
@@ -98,25 +98,25 @@ bool CellCluster::initialazition(unsigned int ncx, unsigned int ncy,
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    cell.clean_inner_particle(*body_);
+    cell.CleanInnerParticles(*body_);
   }
 
-  this->sync_dt();
+  this->SyncDt();
   cout << "Cluster initialize is done" << endl;
 
   return true;
 }
 
-void CellCluster::set_apex(point apex) { this->apex = apex; }
+void CellCluster::SetApex(Point apex) { this->apex = apex; }
 
-void CellCluster::set_size(double Lx, double Ly, double Lz) {
+void CellCluster::SetSize(double Lx, double Ly, double Lz) {
   this->Lx = Lx;
   this->Ly = Ly;
   this->Lz = Lz;
 }
 
-bool CellCluster::time_step() {
-  sync_dt();
+bool CellCluster::TimeStep() {
+  SyncDt();
 
   LOG_INFO() << "dt = " << dt << " t = " << t;
 
@@ -125,41 +125,30 @@ bool CellCluster::time_step() {
   std::vector<std::future<void>> futures;
   futures.reserve(cells.size());
   for (auto& cell : cells) {
-    futures.emplace_back(thread_pool_.Execute([&cell]() { cell.calc(); }));
+    futures.emplace_back(thread_pool_.Execute([&cell]() { cell.Calculate(); }));
   }
   for (auto& fut : futures) {
     fut.get();
   }
-  //  while (cell_iter != cells.end()) {
-  //    std::vector<std::thread> threads;
-  //    threads.reserve(NUM_CPU);
-  //    for (size_t i = 0; i < NUM_CPU; i++) {
-  //      if (cell_iter == cells.end()) break;
-  //      threads.emplace_back([cell_iter]() { cell_iter->calc(); });
-  //      cell_iter++;
-  //    }
-  //    for (auto& thread : threads) thread.join();
-  //  }
 
   for (auto& cell : cells) {
-    //(*cell_iter)->_dbg_test_particle();
-    cell.calc_vel();
-    cell.sort();
-    cell.neighbor_sort();
-    auto cell_buffer = cell.get_buffer();
+    cell.CalculateVelocity();
+    cell.Sort();
+    cell.SortNeighbors();
+    auto cell_buffer = cell.GetBuffer();
     partile_buffer.insert(partile_buffer.end(), cell_buffer->begin(),
                           cell_buffer->end());
     cell_buffer->clear();
   }
 
   for (auto& cell : cells) {
-    cell.add_particle(&partile_buffer);
+    cell.AddParticle(&partile_buffer);
   }
 
-  boundary_condition();
+  BoundaryCondition();
 
   for (auto& cell : cells) {
-    cell.add_particle(&partile_buffer);
+    cell.AddParticle(&partile_buffer);
   }
   t += dt;
 
@@ -178,51 +167,51 @@ bool CellCluster::time_step() {
     return false;
 }
 
-void CellCluster::boundary_condition() {
-  deque<boundary*>::iterator a = boundary_cond_outer.begin();
+void CellCluster::BoundaryCondition() {
+  deque<Boundary*>::iterator a = boundary_cond_outer.begin();
   while (a != boundary_cond_outer.end()) {
-    (*a)->bondary_condition(&partile_buffer, dt);
+    (*a)->BoundaryCondition(&partile_buffer, dt);
     a++;
   }
 }
 
-bool CellCluster::send_data() { return true; }
+bool CellCluster::SendData() { return true; }
 
-bool CellCluster::recv_data() { return true; }
+bool CellCluster::RecvData() { return true; }
 
 bool CellCluster::WriteFile(const std::string& file_name) {
   std::ofstream file1(file_name);
   cell_iter = cells.begin();
-  point ap;
+  Point ap;
   unsigned int N;
   file1 << "x;y;z;N;ro;T;vx;vy;vz;E" << endl;
   for (auto& cell : cells) {
-    auto ap = cell.get_center();
-    auto vel = cell.get_velocity();
-    N = cell.N();
+    auto ap = cell.GetCenter();
+    auto vel = cell.GetVelocity();
+    N = cell.GetParticleCount();
     file1 << ap.x << ";" << ap.y << ";" << ap.z << ";" << N << ";"
-          << double(N) / (cell.get_volume() * density) << ";" << cell.get_t()
-          << ";" << vel.x << ";" << vel.y << ";" << vel.z << ";"
-          << cell.get_energy() << endl;
+          << double(N) / (cell.GetVolume() * density) << ";"
+          << cell.GetTemperature() << ";" << vel.x << ";" << vel.y << ";"
+          << vel.z << ";" << cell.GetEnergy() << endl;
     cell_iter++;
   }
   file1.close();
   return true;
 }
 
-bool CellCluster::write_speed_file(const char* file_name) {
+bool CellCluster::WriteSpeedFile(const char* file_name) {
   std::ofstream file1(file_name);
   cell_iter = cells.begin();
-  point ap;
+  Point ap;
   unsigned int N;
   for (auto& cell : cells) {
-    ap = cell.get_center();
-    N = cell.N();
-    if (double(N) / (cell.get_volume() * density) < 0) {
-      bool a = body_->is_inner_point(ap);
-      a = body_->is_inner_point(cell.get_apex());
+    ap = cell.GetCenter();
+    N = cell.GetParticleCount();
+    if (double(N) / (cell.GetVolume() * density) < 0) {
+      bool a = body_->IsInnerPoint(ap);
+      a = body_->IsInnerPoint(cell.GetApex());
     }
-    file1 << ap << cell.get_velocity() << endl;
+    file1 << ap << cell.GetVelocity() << endl;
     cell_iter++;
   }
   file1.close();
@@ -234,30 +223,31 @@ bool CellCluster::WriteFile() {
   cell_iter = cells.begin();
   unsigned int N;
   double av_den = 0;
-  point cell_size;
+  Point cell_size;
   double volume = 1;
   for (auto& cell : cells) {
-    auto ap = cell.get_center();
+    auto ap = cell.GetCenter();
     av_den += double(N) / np;
-    file1 << ap << "\t" << double(cell.N()) / (cell.get_volume() * density)
-          << "\t" << cell.get_t() << endl;
+    file1 << ap << "\t"
+          << double(cell.GetParticleCount()) / (cell.GetVolume() * density)
+          << "\t" << cell.GetTemperature() << endl;
     cell_iter++;
   }
   file1.close();
   return true;
 }
 
-bool CellCluster::write_speed_file() {
+bool CellCluster::WriteSpeedFile() {
   std::ofstream file1("speed.dat");
   cell_iter = cells.begin();
-  point ap;
+  Point ap;
   unsigned int N;
   double av_den = 0;
   for (auto& cell : cells) {
-    ap = cell.get_center();
-    N = cell.N();
+    ap = cell.GetCenter();
+    N = cell.GetParticleCount();
     av_den += double(N) / np;
-    file1 << ap << "\t" << cell.get_velocity() << endl;
+    file1 << ap << "\t" << cell.GetVelocity() << endl;
     cell_iter++;
   }
 
@@ -265,7 +255,7 @@ bool CellCluster::write_speed_file() {
   return true;
 }
 
-bool CellCluster::write_times() {
+bool CellCluster::WriteTimes() {
   if (proc_id == 0) {
     std::ofstream times_file("time.dat");
 
@@ -287,79 +277,74 @@ bool CellCluster::write_times() {
   return 0;
 }
 
-void CellCluster::set_boundary_condition(boundary** a, int n) {
+void CellCluster::SetBoundaryCondition(Boundary** a, int n) {
   for (int i = 0; i < n; i++) {
     boundary_cond_outer.push_back(a[i]);
   }
 
-  //добавляем ссылки на ячейки в свободные границы
-  deque<boundary*>::iterator bc = boundary_cond_outer.begin();
+  // добавляем ссылки на ячейки в свободные границы
+  deque<Boundary*>::iterator bc = boundary_cond_outer.begin();
   while (bc != boundary_cond_outer.end()) {
-    if (typeid(**bc) == typeid(FreeBoundary)) {
-      FreeBoundary* b = dynamic_cast<FreeBoundary*>(*bc);
-      b->add_cell(cells);
-      // b->set_np(np);
-    } else if (typeid(**bc) == typeid(giper_free_boundary)) {
-      FreeBoundary* b = dynamic_cast<FreeBoundary*>(*bc);
-      b->add_cell(cells);
-      // b->set_np(np);
+    if (auto* boundary = dynamic_cast<FreeBoundary*>(*bc)) {
+      boundary->AddCell(cells);
+      // boundary->SetNp(np);
     }
 
     bc++;
   }
 }
 
-void CellCluster::set_boundary_condition(boundary* a) {
-  if (typeid(a) == typeid(FreeBoundary)) {
-    FreeBoundary* b = dynamic_cast<FreeBoundary*>(a);
-    b->add_cell(cells);
+void CellCluster::SetBoundaryCondition(Boundary* a) {
+  if (auto* boundary = dynamic_cast<FreeBoundary*>(a)) {
+    boundary->AddCell(cells);
   }
 
   boundary_cond_outer.push_back(a);
 }
 
-void CellCluster::computation(void) {
+void CellCluster::Compute() {
   size_t step = 0;
   while (t < t_end) {
     LOG_INFO() << "Time step:" << ++step;
-    utils::Stopwatch("ClusterStep"), this->time_step();
+    utils::Stopwatch stopwatch("ClusterStep");
+    this->TimeStep();
   }
 }
 
-void CellCluster::set_end_time(double t_end) {
+void CellCluster::SetEndTime(double t_end) {
   this->data_t = 0;
   this->data_dt = t_end / 100 + 0.000001;
   this->t_end = t_end;
 }
-void CellCluster::calc_dt() {
+void CellCluster::CalculateDt() {
   dt = 1000000.;
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    double dtt = cell.calc_dt();
+    double dtt = cell.CalculateDt();
     if (dtt < dt) dt = dtt;
   }
   dt *= Cu;
   if (t + dt > t_end) dt = t_end - t + 0.000000001;
 }
 
-void CellCluster::set_dt_in_cells(double dt) {
+void CellCluster::SetDtInCells(double dt) {
   for (auto& cell : cells) {
-    cell.set_dt(dt);
+    cell.SetDt(dt);
   }
 }
 
-void CellCluster::sync_dt() {
-  calc_dt();
-  set_dt_in_cells(dt);
+void CellCluster::SyncDt() {
+  CalculateDt();
+  SetDtInCells(dt);
 }
 
-void CellCluster::sync_data() {}
+void CellCluster::SyncData() {}
 
-void CellCluster::cells_fragmentation() {}
+void CellCluster::FragmentCells() {}
 
-void CellCluster::cells_test() {
-  deque<cell*> cells_swap;
+void CellCluster::TestCells() {
+  deque<Cell*> cells_swap;
 
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
@@ -367,7 +352,7 @@ void CellCluster::cells_test() {
   }
 }
 
-bool CellCluster::write_cell_file(const std::string& init_file) {
+bool CellCluster::WriteCellFile(const std::string& init_file) {
   std::ofstream file(init_file);
   if (!file.is_open()) {
     LOG_ERROR() << "Can't open file: " << init_file;
@@ -378,8 +363,8 @@ bool CellCluster::write_cell_file(const std::string& init_file) {
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    point V = cell.get_velocity();
-    double S = sqrt((V.x * V.x + V.y * V.y) / 2 * cell.get_t());
+    Point V = cell.GetVelocity();
+    double S = sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
     double alpha = 3.141592654 / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
@@ -387,19 +372,19 @@ bool CellCluster::write_cell_file(const std::string& init_file) {
 
     file << "\tcell" << endl;
 
-    file << "\t\tapex\t" << cell.get_apex() << endl;
+    file << "\t\tapex\t" << cell.GetApex() << endl;
 
-    file << "\t\tsize\t" << cell.get_size() << endl;
+    file << "\t\tsize\t" << cell.GetSize() << endl;
 
     file << "\t\tS\t" << S << endl;
 
     file << "\t\talpha\t" << alpha << endl;
 
-    file << "\t\tparticles\t" << cell.N() << endl;
+    file << "\t\tparticles\t" << cell.GetParticleCount() << endl;
 
-    file << "\t\ttemperature\t" << cell.get_t() << endl;
+    file << "\t\ttemperature\t" << cell.GetTemperature() << endl;
 
-    file << "\t\tL\t" << cell.get_L() << endl;
+    file << "\t\tL\t" << cell.GetCharacteristicLength() << endl;
 
     file << "\tendcell" << endl;
 
@@ -409,13 +394,11 @@ bool CellCluster::write_cell_file(const std::string& init_file) {
   return true;
 }
 
-void CellCluster::set_data_save_dtime(double data_dt) {
-  this->data_dt = data_dt;
-}
+void CellCluster::SetDataSaveDtime(double data_dt) { this->data_dt = data_dt; }
 
-void CellCluster::clean_inner_particle() {
+void CellCluster::CleanInnerParticles() {
   for (auto& cell : cells) {
-    cell.clean_inner_particle(*body_);
+    cell.CleanInnerParticles(*body_);
   }
 }
 }  // namespace mc3d

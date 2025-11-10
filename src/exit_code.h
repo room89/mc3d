@@ -5,7 +5,7 @@
 // Last modified: 11.10.10.
 // Description: Program for calculation of rarefied flows.
 
-//В данном файле обявляются коды возврата ошибок
+// В данном файле обявляются коды возврата ошибок
 
 #pragma once
 

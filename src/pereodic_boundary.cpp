@@ -7,13 +7,12 @@
 #include "pereodic_boundary.h"
 
 namespace mc3d {
-pereodic_boundary::pereodic_boundary(void) {}
+PeriodicBoundary::PeriodicBoundary() {}
 
-pereodic_boundary::~pereodic_boundary(void) {}
+PeriodicBoundary::~PeriodicBoundary() {}
 
-int pereodic_boundary::bondary_condition(deque<particle>* particles,
-                                         double dt) {
-  deque<particle>::iterator data = particles->begin();
+int PeriodicBoundary::BoundaryCondition(deque<Particle>* particles, double dt) {
+  deque<Particle>::iterator data = particles->begin();
   while (data != particles->end()) {
     while ((data->position - pstn) * nrml > 0) {
       data->position += mixing;
@@ -23,11 +22,11 @@ int pereodic_boundary::bondary_condition(deque<particle>* particles,
   return 0;
 }
 
-pereodic_boundary::pereodic_boundary(point pstn, point nrml, point mixing) {
+PeriodicBoundary::PeriodicBoundary(Point pstn, Point nrml, Point mixing) {
   this->nrml = nrml;
   this->pstn = pstn;
   this->mixing = mixing;
 }
 
-void pereodic_boundary::set_mixing(point b) { mixing = b; }
+void PeriodicBoundary::SetMixing(Point b) { mixing = b; }
 }  // namespace mc3d

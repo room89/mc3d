@@ -5,104 +5,105 @@
 // Description: Program for calculation of freemolecular flows.
 
 #include "point.h"
-#include <complex>
-#include <fstream>
+
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 namespace mc3d {
-point::point(void) {}
+Point::Point() {}
 
-point::~point(void) {}
+Point::~Point() {}
 
-point::point(double x, double y, double z) {
+Point::Point(double x, double y, double z) {
   this->x = x;
   this->y = y;
   this->z = z;
 }
 
-void point::print() {
+void Point::Print() {
   std::cout << "(" << x << "," << y << "," << this->z << ")" << std::endl;
 }
 
-point point::set(double x, double y, double z) {
+Point Point::Set(double x, double y, double z) {
   this->x = x;
   this->y = y;
   this->z = z;
-  return point(x, y, z);
+  return Point(x, y, z);
 }
 
-point operator+(const point a, const point b) {
-  return point(a.x + b.x, a.y + b.y, a.z + b.z);
+Point operator+(const Point a, const Point b) {
+  return Point(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-double operator*(const point a, const point b) {
+double operator*(const Point a, const Point b) {
   return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-point operator*(point a, double b) { return point(a.x * b, a.y * b, a.z * b); }
+Point operator*(Point a, double b) { return Point(a.x * b, a.y * b, a.z * b); }
 
-point operator*(double a, point b) { return point(b.x * a, b.y * a, b.z * a); }
+Point operator*(double a, Point b) { return Point(b.x * a, b.y * a, b.z * a); }
 
-point operator/(point a, double b) { return a.set(a.x / b, a.y / b, a.z / b); }
+Point operator/(Point a, double b) { return a.Set(a.x / b, a.y / b, a.z / b); }
 
-point operator-(const point a, const point b) {
-  return point(a.x - b.x, a.y - b.y, a.z - b.z);
+Point operator-(const Point a, const Point b) {
+  return Point(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-point operator!(point a) {
-  return point(a.x < 0.0000001 ? 1 : 0, a.y < 0.0000001 ? 1 : 0,
+Point operator!(Point a) {
+  return Point(a.x < 0.0000001 ? 1 : 0, a.y < 0.0000001 ? 1 : 0,
                a.z < 0.0000001 ? 1 : 0);
 }
 
-std::ostream& operator<<(std::ostream& o, const point c) {
+std::ostream& operator<<(std::ostream& o, const Point c) {
   o << c.x << ", " << c.y << ", " << c.z;
   return o;
 }
 
-double point::mod() const { return std::sqrt(x * x + y * y + z * z); }
+double Point::Mod() const { return std::sqrt(x * x + y * y + z * z); }
 
-point point::vec_mult(point a) {
-  return point(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x);
+Point Point::Cross(Point a) {
+  return Point(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x);
 }
 
-point& point::nrmlz() {
-  double m = mod();
-  point a(x / m, y / m, z / m);
+Point& Point::Normalize() {
+  double m = Mod();
+  Point a(x / m, y / m, z / m);
   *this = a;
   return *this;
 }
 
-double point::get_x() { return x; }
+double Point::GetX() { return x; }
 
-point point::operator+=(point a) {
+Point Point::operator+=(Point a) {
   x += a.x;
   y += a.y;
   z += a.z;
   return *this;
 }
 
-point point::operator-=(point a) {
+Point Point::operator-=(Point a) {
   x -= a.x;
   y -= a.y;
   z -= a.z;
   return *this;
 }
 
-point point::operator/=(double a) {
+Point Point::operator/=(double a) {
   x /= a;
   y /= a;
   z /= a;
   return *this;
 }
 
-point point::operator*=(double a) {
+Point Point::operator*=(double a) {
   x *= a;
   y *= a;
   z *= a;
   return *this;
 }
 
-/*point& point::operator=(const point &a)
+/*Point& Point::operator=(const Point &a)
 {
         x = a.x;
         y = a.y;
@@ -110,38 +111,38 @@ point point::operator*=(double a) {
         return *this;
 }*/
 
-point point::get() {
-  point a;
+Point Point::Get() {
+  Point a;
   a.x = x;
   a.y = y;
   a.z = z;
   return a;
 }
 
-point point::rand_point(
-    point size)  //возврощает рандомную точку с коорд.: x от 0 до size.x, y от 0
-                 //до size.y, z от 0 до size.z
+Point Point::RandomPoint(
+    Point size)  // возврощает рандомную точку с коорд.: x от 0 до size.x, y от
+                 // 0 до size.y, z от 0 до size.z
 {
-  double rmt = 1 / double(RAND_MAX);
+  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
 
   double rnx = std::rand() * rmt;
   double rny = std::rand() * rmt;
   double rnz = std::rand() * rmt;
 
-  return point(size.x * rnx, size.y * rny, size.z * rnz);
+  return Point(size.x * rnx, size.y * rny, size.z * rnz);
 }
 
-point point::rand_point()  //возврощает рандомную точку с коорд.: x от 0 до
-                           // this->x, y от 0 до this->y, z от 0 до this->z
+Point Point::RandomPoint()  // возврощает рандомную точку с коорд.: x от 0 до
+                            //  this->x, y от 0 до this->y, z от 0 до this->z
 {
-  double rmt = 1 / double(RAND_MAX);
+  const double rmt = 1.0 / static_cast<double>(RAND_MAX);
 
   double rnx = std::rand() * rmt;
   double rny = std::rand() * rmt;
   double rnz = std::rand() * rmt;
 
-  return point(x * rnx, y * rny, z * rnz);
+  return Point(x * rnx, y * rny, z * rnz);
 }
 
-double point::volume() const { return x * y * z; }
+double Point::Volume() const { return x * y * z; }
 }  // namespace mc3d
