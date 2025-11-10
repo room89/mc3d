@@ -10,8 +10,11 @@
 #include <cstdlib>
 #include <deque>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <memory>
+#include <optional>
+#include <vector>
 // #include "free_boundary.h"
 #include "geometry.h"
 #include "inner_boundary.h"
@@ -45,8 +48,8 @@ class Cell {
   bool body_mark;  // is body inside cell
   unsigned int np;
   InnerBoundary body_boundary;
-  deque<Cell*> neighbors;
-  int* thread_mark;
+  std::vector<std::reference_wrapper<Cell>> neighbors;
+  std::optional<std::reference_wrapper<int>> thread_mark;
 
  public:
   Cell();
@@ -97,13 +100,12 @@ class Cell {
   double GetEnergy();
   double GetCharacteristicLength();
   bool GetBodyMark();
-  Cell* GetPtr();
   Point CalculateVelocity() const;
   double CalculateTemperature();
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();
-  void AddNeighbor(Cell* neighbor);
+  void AddNeighbor(Cell& neighbor);
   friend ostream& operator<<(ostream& o, const Cell& c);
   bool WriteFile(ofstream* file);
   bool WriteFile();

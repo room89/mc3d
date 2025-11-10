@@ -6,14 +6,16 @@
 
 #pragma once
 
+#include <functional>
+#include <vector>
+
 #include "boundary.h"
 #include "cell.h"
 
 namespace mc3d {
 class FreeBoundary : public Boundary {
  protected:
-  deque<mc3d::Cell*> cells_ptr;
-  deque<mc3d::Cell*>::iterator cell_iter;
+  std::vector<std::reference_wrapper<Cell>> cells_;
   unsigned int np;
   double Vn;
   double T;

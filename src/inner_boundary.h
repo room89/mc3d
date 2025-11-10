@@ -1,5 +1,9 @@
 #pragma once
 
+#include <functional>
+#include <optional>
+#include <vector>
+
 #include "boundary.h"
 #include "geometry.h"
 #include "poligon.h"
@@ -7,19 +11,18 @@
 namespace mc3d {
 class InnerBoundary : public Boundary {
  private:
-  std::deque<Polygon*> poligon_ptrs;
+  std::vector<std::reference_wrapper<Polygon>> poligon_ptrs;
   Point cell_center;
   double Tw;
   double eps;
-  Geometry* body;
+  std::optional<std::reference_wrapper<Geometry>> geometry_;
 
  public:
   InnerBoundary();
-  InnerBoundary(mc3d::Geometry* bbody, Point cell_center, double L);
+  InnerBoundary(mc3d::Geometry& geometry, Point cell_center, double L);
   ~InnerBoundary();
-  bool AddPolygon(mc3d::Geometry* bbody, Point cell_center, double L);
-  // bool add_poligon(mc3d::Geometry *bbody, double L);
-  void SetGeometry(Geometry* bbody);
+  bool AddPolygon(mc3d::Geometry& body, Point cell_center, double L);
+  void SetGeometry(Geometry& geometry);
   Geometry* GetGeometryPtr();
   bool Empty() const;
   int BoundaryCondition(deque<Particle>& cluster_particle, double dt);

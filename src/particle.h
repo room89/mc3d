@@ -43,6 +43,6 @@ struct Particle {
   void SetW(double w);
 };
 
-bool Collision(Particle* a, Particle* b, double& g_max_ch,
+bool Collision(Particle& a, Particle& b, double& g_max_ch,
                double& frequency_t_ch, double factor);
 }  // namespace mc3d

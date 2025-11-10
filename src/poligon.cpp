@@ -73,8 +73,6 @@ void Polygon::Scale(double e) {
 
 Point Polygon::GetGmt() const { return (p1 + p2 + p3) / 3; }
 
-Polygon* Polygon::GetPtr() { return this; }
-
 double Polygon::GetLmax() const {
   double L1 = (p1 - p2).Mod();
   double L2 = (p3 - p2).Mod();

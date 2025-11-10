@@ -38,7 +38,6 @@ struct Polygon {
   Point GetP3() const;
   Point GetNormal() const;
   Point GetGmt() const;
-  Polygon* GetPtr();
   double GetLmax() const;
   std::pair<std::unique_ptr<Polygon>, std::unique_ptr<Polygon>> Divide() const;
   void Print();

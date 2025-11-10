@@ -1,5 +1,7 @@
 #include "geometry.h"
 
+#include <cmath>
+
 namespace mc3d {
 Geometry::Geometry() {}
 

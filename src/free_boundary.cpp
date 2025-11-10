@@ -52,25 +52,19 @@ FreeBoundary::FreeBoundary(Point pstn, Point nrml, unsigned int np, double S,
 }
 
 void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
-  auto cell_iter = cluster_cells.begin();
-
-  while (cell_iter != cluster_cells.end()) {
-    if (abs(nrml * (cell_iter->GetCenter() - pstn)) <
-        0.6 * abs(nrml * cell_iter->GetSize())) {
-      this->cells_ptr.push_back(&(*cell_iter));
+  for (auto& cell : cluster_cells) {
+    if (abs(nrml * (cell.GetCenter() - pstn)) <
+        0.6 * abs(nrml * cell.GetSize())) {
+      cells_.emplace_back(cell);
     }
-
-    cell_iter++;
   }
 }
 
 int FreeBoundary::BoundaryCondition(std::deque<Particle>& /*cluster_particle*/,
                                     double dt) {
-  std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();
-
   unsigned int N;
-  while (cell_iter != cells_ptr.end()) {
-    Point cell_size = (*cell_iter)->GetSize();
+  for (Cell& cell : cells_) {
+    Point cell_size = cell.GetSize();
 
     N = static_cast<unsigned int>(
         dt * np * sqrt(T / (Pi * 2)) *
@@ -78,9 +72,7 @@ int FreeBoundary::BoundaryCondition(std::deque<Particle>& /*cluster_particle*/,
          sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
         abs(cell_size * nrml));
 
-    if (N > 2) (*cell_iter)->GenerateFreeRandom(N, T, V, nrml);
-
-    cell_iter++;
+    if (N > 2) cell.GenerateFreeRandom(N, T, V, nrml);
   }
 
   return 1;

@@ -19,11 +19,9 @@ int HyperFreeBoundary::BoundaryCondition(
     std::deque<Particle>& /*cluster_particle*/, double dt) {
   if (Vn < 0) return 0;
 
-  std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();
-
   unsigned int N;
-  while (cell_iter != cells_ptr.end()) {
-    Point cell_size = (*cell_iter)->GetSize();
+  for (Cell& cell : cells_) {
+    Point cell_size = cell.GetSize();
 
     N = static_cast<unsigned int>(
         dt * np * sqrt(T / (Pi * 2)) *
@@ -31,9 +29,7 @@ int HyperFreeBoundary::BoundaryCondition(
          sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
         abs(cell_size * nrml));
 
-    if (N > 2) (*cell_iter)->GenerateHyperFreeRandom(N, V, T);
-
-    cell_iter++;
+    if (N > 2) cell.GenerateHyperFreeRandom(N, V, T);
   }
 
   return 1;

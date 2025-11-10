@@ -43,7 +43,7 @@ void Particle::Move(double dt) {
   y += dt * v;
   z += dt * w;*/
 }
-bool Collision(Particle* a, Particle* b, double& g_max, double& frequency_t,
+bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
                double factor) {
   const double rmt = 1.0 / static_cast<double>(RAND_MAX);
   const double Pi = std::numbers::pi;
@@ -53,8 +53,8 @@ bool Collision(Particle* a, Particle* b, double& g_max, double& frequency_t,
   double gx = u2 - u1, gy = v2 - v1, gz = w2 - w1;
   double g = sqrt(gx * gx + gy * gy + gz * gz);*/
 
-  Point vel_1 = a->GetVelocity();
-  Point vel_2 = b->GetVelocity();
+  Point vel_1 = a.GetVelocity();
+  Point vel_2 = b.GetVelocity();
   double g = (vel_2 - vel_1).Mod();
 
   bool rtrn = true;
@@ -81,13 +81,13 @@ bool Collision(Particle* a, Particle* b, double& g_max, double& frequency_t,
     a->v = 0.5 * (v1 + v2) - 0.5 * g1y;
     a->w = 0.5 * (w1 + w2) - 0.5 * g1z;*/
 
-    a->SetVelocity(0.5 * (vel_1 + vel_2 - g1));
+    a.SetVelocity(0.5 * (vel_1 + vel_2 - g1));
 
     /*b->u = 0.5 * (u1 + u2) + 0.5 * g1x;
     b->v = 0.5 * (v1 + v2) + 0.5 * g1y;
     b->w = 0.5 * (w1 + w2) + 0.5 * g1z;*/
 
-    b->SetVelocity(0.5 * (vel_1 + vel_2 + g1));
+    b.SetVelocity(0.5 * (vel_1 + vel_2 + g1));
   }
 
   return rtrn;

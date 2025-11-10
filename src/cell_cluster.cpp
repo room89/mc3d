@@ -1,5 +1,6 @@
 #include "cell_cluster.h"
 
+#include <cmath>
 #include <utils/logger.hpp>
 #include <utils/stopwatch.hpp>
 
@@ -331,8 +332,6 @@ void CellCluster::SyncData() {}
 void CellCluster::FragmentCells() {}
 
 void CellCluster::TestCells() {
-  deque<Cell*> cells_swap;
-
   cell_iter = cells.begin();
   while (cell_iter != cells.end()) {
     cell_iter++;
@@ -351,8 +350,8 @@ bool CellCluster::WriteCellFile(const std::string& init_file) {
   cell_iter = cells.begin();
   for (auto& cell : cells) {
     Point V = cell.GetVelocity();
-    double S = sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
-    double alpha = 3.141592654 / 2 - std::atan(V.x / V.y);
+    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
+    double alpha = M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
     }

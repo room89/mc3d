@@ -57,8 +57,8 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   std::shuffle(particles.begin(), particles.end(), rng);
 
   if (bbody) {
-    body_mark = body_boundary.AddPolygon(bbody.get(), GetCenter(), L);
-    body_boundary.SetGeometry(bbody.get());
+    body_boundary.SetGeometry(*bbody);
+    body_mark = body_boundary.AddPolygon(*bbody, GetCenter(), L);
   } else
     body_mark = false;
 
@@ -640,16 +640,10 @@ double Cell::CalculateDt() {
 
 void Cell::SetKn(double Kn) { this->Kn = Kn; }
 
-void Cell::AddNeighbor(Cell* neighbor) { this->neighbors.push_back(neighbor); }
-Cell* Cell::GetPtr() { return this; }
-
+void Cell::AddNeighbor(Cell& neighbor) { neighbors.emplace_back(neighbor); }
 void Cell::SortNeighbors() {
-  deque<Cell*>::iterator cell_iter = neighbors.begin();
-
-  while (cell_iter != neighbors.end()) {
-    Cell* a = *cell_iter;
-    a->AddParticle(particle_buffer);
-    ++cell_iter;
+  for (Cell& neighbor : neighbors) {
+    neighbor.AddParticle(particle_buffer);
   }
 }
 
@@ -661,7 +655,7 @@ void Cell::Calculate() {
     MoveParticles();
 }
 
-void Cell::AttachThreadMark(int& ptr) { thread_mark = &ptr; }
+void Cell::AttachThreadMark(int& ptr) { thread_mark = ptr; }
 
 Point Cell::GetSize() const { return Point(abs(lx), abs(ly), abs(lz)); }
 
@@ -735,7 +729,7 @@ double Cell::GetVolume() const { return volume_; }
 bool Cell::GetBodyMark() { return body_mark; }
 
 Point Cell::GetVelocity() {
-  deque<Particle>::iterator data = particles.begin();
+  auto data = particles.begin();
   velocity = Point(0, 0, 0);
   while (data != particles.end()) {
     velocity += data->velocity;
