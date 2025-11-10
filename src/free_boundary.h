@@ -23,7 +23,7 @@ class FreeBoundary : public Boundary {
  public:
   virtual void AddCell(deque<Cell>& cluster_cells);
   virtual void SetNp(unsigned int np);
-  int BoundaryCondition(deque<Particle>* cluster_particle, double dt);
+  int BoundaryCondition(deque<Particle>& cluster_particle, double dt);
   FreeBoundary(Point pstn, Point nrml, unsigned int np, double S, double T,
                double alpha = 0);
   FreeBoundary();

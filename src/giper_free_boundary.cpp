@@ -15,8 +15,8 @@ HyperFreeBoundary::HyperFreeBoundary(Point pstn, Point nrml, unsigned int np,
 
 HyperFreeBoundary::~HyperFreeBoundary() {}
 
-int HyperFreeBoundary::BoundaryCondition(std::deque<Particle>* cluster_particle,
-                                         double dt) {
+int HyperFreeBoundary::BoundaryCondition(
+    std::deque<Particle>& /*cluster_particle*/, double dt) {
   if (Vn < 0) return 0;
 
   std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();

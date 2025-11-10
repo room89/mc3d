@@ -16,7 +16,6 @@ class Exception {
   Exception();
   Exception(int code);
   Exception(int code, std::string error_message);
-  Exception(int code, void* error_object_ptr);
   virtual void PrintErrorMessage();
   ~Exception();
 };

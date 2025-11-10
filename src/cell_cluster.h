@@ -13,7 +13,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <memory>
 #include <utils/threadpool.hpp>
+#include <vector>
 
 const int NUM_CPU = 8;
 
@@ -49,11 +51,9 @@ class CellCluster {
   bool WriteSpeedFile(const char* file_name);
   bool WriteTimes();  // запись данных о времени выполнения каждой итерации
   void SetBoundaryCondition(
-      Boundary** a, int i);  // установка граничных условий a - указатель на
-                             // массив, i - количество элементов в массиве.
-  void SetBoundaryCondition(
-      Boundary* a);  // установка граничных условий a - указатель на гр. условие
-  void Compute();    // вычисления
+      std::vector<std::unique_ptr<Boundary>>&& boundaries);
+  void SetBoundaryCondition(std::unique_ptr<Boundary> boundary);
+  void Compute();  // вычисления
   void FragmentCells();
   void TestCells();
   void CleanInnerParticles();
@@ -84,12 +84,11 @@ class CellCluster {
   deque<double>
       calc_times;     // дэк с временами расчета соударений между частицами
   deque<Cell> cells;  // двусвязный список ячеек кластера.
-  deque<Cell>::iterator cell_iter;       // итератор для обхода ячеек
-  deque<Particle> partile_buffer;        // двусвязный список буфера кластера
-  inline void BoundaryCondition();       // выполнение граничных условий
-  deque<Boundary*> boundary_cond_outer;  // дэк с внешними граничными условиями
-  deque<Boundary*> boundary_cond_inner;  // дэк с внутреними граничными
-                                         // условиями
+  deque<Cell>::iterator cell_iter;  // итератор для обхода ячеек
+  deque<Particle> partile_buffer;   // двусвязный список буфера кластера
+  inline void BoundaryCondition();  // выполнение граничных условий
+  std::vector<std::unique_ptr<Boundary>>
+      boundary_cond_outer;  // внешние граничные условия
   inline bool
   SendData();  // посылка данных на все класстеры за исключением кластера из
                // которого посылают. не используется, возможно стоит удалить

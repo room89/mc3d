@@ -11,13 +11,13 @@ PeriodicBoundary::PeriodicBoundary() {}
 
 PeriodicBoundary::~PeriodicBoundary() {}
 
-int PeriodicBoundary::BoundaryCondition(deque<Particle>* particles, double dt) {
-  deque<Particle>::iterator data = particles->begin();
-  while (data != particles->end()) {
+int PeriodicBoundary::BoundaryCondition(deque<Particle>& particles, double dt) {
+  auto data = particles.begin();
+  while (data != particles.end()) {
     while ((data->position - pstn) * nrml > 0) {
       data->position += mixing;
     }
-    data++;
+    ++data;
   }
   return 0;
 }

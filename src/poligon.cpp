@@ -84,37 +84,29 @@ double Polygon::GetLmax() const {
   return Lmax;
 }
 
-pair<Polygon*, Polygon*> Polygon::Divide() {
+std::pair<std::unique_ptr<Polygon>, std::unique_ptr<Polygon>> Polygon::Divide()
+    const {
   double a1 = (p1 - p2).Mod();
   double a2 = (p2 - p3).Mod();
   double a3 = (p3 - p1).Mod();
   if ((a1 >= a2) && (a1 >= a3)) {
     Point new_pt = (p1 + p2) / 2;
-    pair<Polygon*, Polygon*> new_poligon_pair;
-    new_poligon_pair.first = new Polygon(p1, new_pt, p3, normal);
-    new_poligon_pair.second = new Polygon(new_pt, p2, p3, normal);
-    return new_poligon_pair;
+    return {std::make_unique<Polygon>(p1, new_pt, p3, normal),
+            std::make_unique<Polygon>(new_pt, p2, p3, normal)};
   }
   if ((a2 >= a1) && (a2 >= a3)) {
     Point new_pt = (p2 + p3) / 2;
-    pair<Polygon*, Polygon*> new_poligon_pair;
-    new_poligon_pair.first = new Polygon(p2, new_pt, p1, normal);
-    new_poligon_pair.second = new Polygon(new_pt, p3, p1, normal);
-    return new_poligon_pair;
+    return {std::make_unique<Polygon>(p2, new_pt, p1, normal),
+            std::make_unique<Polygon>(new_pt, p3, p1, normal)};
   }
   if ((a3 >= a1) && (a3 >= a2)) {
     Point new_pt = (p3 + p1) / 2;
-    pair<Polygon*, Polygon*> new_poligon_pair;
-    new_poligon_pair.first = new Polygon(p1, p2, new_pt, normal);
-    new_poligon_pair.second = new Polygon(new_pt, p2, p3, normal);
-    return new_poligon_pair;
+    return {std::make_unique<Polygon>(p1, p2, new_pt, normal),
+            std::make_unique<Polygon>(new_pt, p2, p3, normal)};
   }
   throw unusual_situations::Exception(
-      unusual_situations::exit_code::BOUNDARY_CONSTRUCTOR_ERROR, this);
-  Polygon* null_poligon_ptr = NULL;
-  pair<Polygon*, Polygon*> error_poligon_pair(null_poligon_ptr,
-                                              null_poligon_ptr);
-  return error_poligon_pair;
+      unusual_situations::exit_code::BOUNDARY_CONSTRUCTOR_ERROR);
+  return {std::unique_ptr<Polygon>(), std::unique_ptr<Polygon>()};
 }
 
 bool Polygon::Fix() {

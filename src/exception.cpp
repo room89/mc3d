@@ -13,11 +13,6 @@ Exception::Exception(int code, std::string error_message) {
   this->error_message = error_message;
 }
 
-Exception::Exception(int code, void* error_object_ptr) {
-  std::cout << "Exception is throwing. Error code: " << code
-            << "Class: " << typeid(error_object_ptr).name() << std::endl;
-}
-
 void Exception::PrintErrorMessage() { std::clog << error_message << std::endl; }
 
 Exception::~Exception() {}

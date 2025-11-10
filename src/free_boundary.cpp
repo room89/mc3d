@@ -64,7 +64,7 @@ void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
   }
 }
 
-int FreeBoundary::BoundaryCondition(std::deque<Particle>* cluster_particle,
+int FreeBoundary::BoundaryCondition(std::deque<Particle>& /*cluster_particle*/,
                                     double dt) {
   std::deque<Cell*>::iterator cell_iter = this->cells_ptr.begin();
 

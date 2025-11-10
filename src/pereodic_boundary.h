@@ -15,7 +15,7 @@ class PeriodicBoundary : public Boundary {
  public:
   PeriodicBoundary(Point pstn, Point nrml, Point mixing);
   void SetMixing(Point b);
-  int BoundaryCondition(deque<Particle>* cluster_particle, double dt);
+  int BoundaryCondition(deque<Particle>& cluster_particle, double dt);
   PeriodicBoundary();
   ~PeriodicBoundary();
 };

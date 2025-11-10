@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <memory>
 #include <utility>
 
 #include "point.h"
@@ -39,7 +40,7 @@ struct Polygon {
   Point GetGmt() const;
   Polygon* GetPtr();
   double GetLmax() const;
-  std::pair<Polygon*, Polygon*> Divide();
+  std::pair<std::unique_ptr<Polygon>, std::unique_ptr<Polygon>> Divide() const;
   void Print();
   void Move(const Point& a);
   void Scale(double e);

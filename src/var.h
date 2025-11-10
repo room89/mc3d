@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <fstream>
 #include <iostream>
+#include <memory>
 
 #include "cell.h"
 #include "point.h"
@@ -25,6 +25,6 @@ struct Var {
 
  public:
   friend std::ostream& operator<<(std::ostream&, const Var&);
-  Cell* MakeCell();
+  std::unique_ptr<Cell> MakeCell();
 };
 }  // namespace mc3d

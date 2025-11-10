@@ -6,14 +6,13 @@ Geometry::Geometry() {}
 Geometry::Geometry(const char* file_name) {
   std::cout << endl
             << "...reading Geometry from file " << file_name << "... " << endl;
-  // unsigned int n = 0;
   string word;
   vector<string> v;
   std::ifstream file(file_name);
   if (!file.is_open()) {
     std::cout << endl << "Can't open file!!!" << endl;
     throw unusual_situations::Exception(
-        mc3d::unusual_situations::exit_code::BOUNDARY_CONSTRUCTOR_ERROR, this);
+        mc3d::unusual_situations::exit_code::BOUNDARY_CONSTRUCTOR_ERROR);
   }
   while (file >> word) {
     v.push_back(word);
@@ -29,7 +28,7 @@ Geometry::Geometry(const char* file_name) {
       if (v[i] == "facet" && v[i + 1] == "normal" && v[i + 6] == "loop" &&
           v[i + 19] == "endloop" && v[i + 20] == "endfacet") {
         if (v[i] == "endsolid") break;
-        mc3d::Polygon* temp = new Polygon;
+        auto temp = std::make_unique<Polygon>();
         mc3d::Point p1, p2, p3, normal;
 
         p1.x = std::atof(v[i + 8].c_str());
@@ -52,7 +51,7 @@ Geometry::Geometry(const char* file_name) {
 
         temp->Set(p1, p2, p3, normal);
 
-        poligons.push_back(temp);
+        poligons.push_back(std::move(temp));
 
         i += 21;
       } else {
@@ -64,59 +63,7 @@ Geometry::Geometry(const char* file_name) {
   file.close();
 }
 
-Geometry::~Geometry() {
-  deque<Polygon*>::iterator iter = poligons.begin();
-  while (iter != poligons.end()) {
-    delete (*iter);
-    iter++;
-  }
-  poligons.clear();
-}
-
-// заготовка
-//  int Geometry::bondary_condition(deque<Particle> *cluster_particle, double
-//  dt)
-//{
-//	deque<Particle>::iterator particle_iter = cluster_particle->begin();
-//
-//	while(particle_iter != cluster_particle->end())
-//	{
-//		deque<Polygon>::iterator poligon_iterator = poligons.begin();
-//
-//		double dtt = dt;
-//
-//		while(dtt > 0)
-//		{
-//			while(poligon_iterator != poligons.end())
-//			{
-//				if((*poligon_iterator)->GetNormal() *
-//  particle_iter->GetVelocity() < 0)	//проверка направления скорости частицы
-// на возможность соударения
-//				{
-//					Point poligon_gmt =
-//(*poligon_iterator)->GetGmt();
-//
-//					double A = particle_iter->GetVelocity()
-//*
-//(*poligon_iterator)->GetNormal();
-//
-//					double tc =
-//((*poligon_iterator)->GetP1()
-//- particle_iter->GetPosition()) * (*poligon_iterator)->GetNormal() / A;
-//
-//					if(tc <= 0) continue;
-//					if(tc > dt) continue;
-//				}
-//
-//				poligon_iterator++;
-//			}
-//		}
-//
-//		particle_iter++;
-//	}
-//
-//	return 0;
-// }
+Geometry::~Geometry() = default;
 
 void Geometry::WriteGeometryFile(const char* file_name, const char* body_name) {
   std::ofstream file(file_name);
@@ -125,22 +72,21 @@ void Geometry::WriteGeometryFile(const char* file_name, const char* body_name) {
 
   file << "solid " << body_name << std::endl;
 
-  std::deque<Polygon*>::iterator i = poligons.begin();
-
-  while (i != poligons.end()) {
-    file << "facet normal " << std::setw(15) << (*i)->GetNormal().x
-         << std::setw(15) << (*i)->GetNormal().y << std::setw(15)
-         << (*i)->GetNormal().z << std::endl;
+  for (const auto& polygon : poligons) {
+    file << "facet normal " << std::setw(15) << polygon->GetNormal().x
+         << std::setw(15) << polygon->GetNormal().y << std::setw(15)
+         << polygon->GetNormal().z << std::endl;
     file << "\touter loop" << std::endl;
-    file << "\t\tvertex" << std::setw(15) << (*i)->GetP1().x << std::setw(15)
-         << (*i)->GetP1().y << std::setw(15) << (*i)->GetP1().z << std::endl;
-    file << "\t\tvertex" << std::setw(15) << (*i)->GetP2().x << std::setw(15)
-         << (*i)->GetP2().y << std::setw(15) << (*i)->GetP2().z << std::endl;
-    file << "\t\tvertex" << std::setw(15) << (*i)->GetP3().x << std::setw(15)
-         << (*i)->GetP3().y << std::setw(15) << (*i)->GetP3().z << std::endl;
+    file << "\t\tvertex" << std::setw(15) << polygon->GetP1().x << std::setw(15)
+         << polygon->GetP1().y << std::setw(15) << polygon->GetP1().z
+         << std::endl;
+    file << "\t\tvertex" << std::setw(15) << polygon->GetP2().x << std::setw(15)
+         << polygon->GetP2().y << std::setw(15) << polygon->GetP2().z
+         << std::endl;
+    file << "\t\tvertex" << std::setw(15) << polygon->GetP3().x << std::setw(15)
+         << polygon->GetP3().y << std::setw(15) << polygon->GetP3().z
+         << std::endl;
     file << "\tendloop" << std::endl << "endfacet" << std::endl;
-
-    i++;
   }
 
   file << "endsolid" << body_name << std::endl;
@@ -153,18 +99,14 @@ Point Geometry::MassCenter() {
 
   double Stot = 0;
 
-  std::deque<Polygon*>::iterator i = poligons.begin();
-
-  while (i != poligons.end()) {
-    Point a = (*i)->GetP2() - (*i)->GetP1();
-    Point b = (*i)->GetP3() - (*i)->GetP2();
+  for (const auto& polygon : poligons) {
+    Point a = polygon->GetP2() - polygon->GetP1();
+    Point b = polygon->GetP3() - polygon->GetP2();
 
     double S = 0.5 * a.Cross(b).Mod();
 
     Stot += S;
-    mc += S * ((*i)->GetP1() + (*i)->GetP2() + (*i)->GetP3()) / 3;
-
-    i++;
+    mc += S * (polygon->GetP1() + polygon->GetP2() + polygon->GetP3()) / 3;
   }
 
   if (Stot > 0) {
@@ -175,243 +117,29 @@ Point Geometry::MassCenter() {
 }
 
 void Geometry::Move(Point a) {
-  std::deque<Polygon*>::iterator i = poligons.begin();
-
-  while (i != poligons.end()) {
-    (*i)->Move(a);
-    i++;
+  for (auto& polygon : poligons) {
+    polygon->Move(a);
   }
 }
 
 void Geometry::Scale(double e) {
-  std::deque<Polygon*>::iterator i = poligons.begin();
-
-  while (i != poligons.end()) {
-    (*i)->Scale(e);
-
-    i++;
+  for (auto& polygon : poligons) {
+    polygon->Scale(e);
   }
 }
 
 bool Geometry::IsInnerPoint(Point test_point) const {
   size_t n = 0;
-  bool res = false;
 
-  auto poligon_iter = poligons.begin();
-
-  while (poligon_iter != poligons.end()) {
-    /*if(dist == (*poligon_iter)->DistanceToPoint(test_point))
-    {
-            res = res;
-    }*/
-    /*if(dist > (*poligon_iter)->DistanceToPoint(test_point))
-    {
-            dist = (*poligon_iter)->DistanceToPoint(test_point);
-            poligon_col = poligon_iter;
-    }*/
-
-    Point gmt = (*poligon_iter)->GetGmt();
-    Point asd = test_point - (*poligon_iter)->GetGmt();
-    if ((*poligon_iter)->GetNormal() *
-            (test_point - (*poligon_iter)->GetGmt()) <
-        0) {
+  for (const auto& polygon : poligons) {
+    if (polygon->GetNormal() * (test_point - polygon->GetGmt()) < 0) {
       n++;
     }
-
-    poligon_iter++;
   }
 
-  if (n == poligons.size()) {
-    return true;
-  }
-
-  return res;
+  return n == poligons.size();
 }
 
-/*bool Geometry::IsInnerPoint(Point test_point)
-{
-        deque<Polygon*>::iterator poligon_col_iterator_x = poligons.end();
-        deque<Polygon*>::iterator poligon_col_iterator_y = poligons.end();
-        deque<Polygon*>::iterator poligon_col_iterator_z = poligons.end();
-
-        Point collision_pstn_x(0, 0, 0);
-        Point collision_pstn_y(0, 0, 0);
-        Point collision_pstn_z(0, 0, 0);
-
-        deque<Polygon*>::iterator poligon_iterator = poligons.begin();
-
-        double dttx = 100000;
-        double dtty = 100000;
-        double dttz = 100000;
-
-        while(poligon_iterator != poligons.end())
-//ищем полигон с которым будет соударятся виртуальная частица
-        {
-                Point poligon_gmt = (*poligon_iterator)->GetGmt();
-
-                Point a = (*poligon_iterator)->GetP2() -
-(*poligon_iterator)->GetP1(); Point b = (*poligon_iterator)->GetP3() -
-(*poligon_iterator)->GetP2(); Point c = (*poligon_iterator)->GetP1() -
-(*poligon_iterator)->GetP3();
-
-                double Ax = Point(1, 0, 0) * (*poligon_iterator)->GetNormal();
-                double tcx = 0;
-                if(Ax != 0) tcx	 = ((*poligon_iterator)->GetP1() - test_point)
-* (*poligon_iterator)->GetNormal() / Ax;
-
-                if(tcx < dttx && tcx > -dttx)
-                {
-                        Point collision_pstn = test_point + Point(1, 0, 0) *
-tcx;
-
-                        Point d1 = (*poligon_iterator)->GetP1() -
-collision_pstn; Point d2 = (*poligon_iterator)->GetP2() - collision_pstn; Point
-d3 = (*poligon_iterator)->GetP3() - collision_pstn;
-
-                        if( (*poligon_iterator)->GetNormal() * d1.Cross(a) >
-0. &&
-                                (*poligon_iterator)->GetNormal() *
-d2.Cross(b) > 0. &&
-                                (*poligon_iterator)->GetNormal() *
-d3.Cross(c) > 0.)
-                        {
-                                poligon_col_iterator_x = poligon_iterator;
-                                collision_pstn_x = 	collision_pstn;
-                                dttx = tcx;
-                        }
-                }
-
-
-                double Ay = Point(0, 1, 0) * (*poligon_iterator)->GetNormal();
-                double tcy = ((*poligon_iterator)->GetP1() - test_point) *
-(*poligon_iterator)->GetNormal() / Ay;
-
-                if(tcy < dtty && tcy > -dtty)
-                {
-                        Point collision_pstn = test_point + Point(1, 0, 0) *
-tcy;
-
-                        Point d1 = (*poligon_iterator)->GetP1() -
-collision_pstn; Point d2 = (*poligon_iterator)->GetP2() - collision_pstn; Point
-d3 = (*poligon_iterator)->GetP3() - collision_pstn;
-
-                        if( (*poligon_iterator)->GetNormal() * d1.Cross(a) >
-0. &&
-                                (*poligon_iterator)->GetNormal() *
-d2.Cross(b) > 0. &&
-                                (*poligon_iterator)->GetNormal() *
-d3.Cross(c) > 0.)
-                        {
-                                poligon_col_iterator_y = poligon_iterator;
-                                collision_pstn_y = 	collision_pstn;
-                                dtty = tcy;
-                        }
-                }
-
-                double Az = Point(0, 0, 1) * (*poligon_iterator)->GetNormal();
-                double tcz = ((*poligon_iterator)->GetP1() - test_point) *
-(*poligon_iterator)->GetNormal() / Az;
-
-                if(tcz < dttz && tcz > -dttz)
-                {
-                        Point collision_pstn = test_point + Point(1, 0, 0) *
-tcz;
-
-                        Point d1 = (*poligon_iterator)->GetP1() -
-collision_pstn; Point d2 = (*poligon_iterator)->GetP2() - collision_pstn; Point
-d3 = (*poligon_iterator)->GetP3() - collision_pstn;
-
-                        if( (*poligon_iterator)->GetNormal() * d1.Cross(a) >
-0. &&
-                                (*poligon_iterator)->GetNormal() *
-d2.Cross(b) > 0. &&
-                                (*poligon_iterator)->GetNormal() *
-d3.Cross(c) > 0.)
-                        {
-                                poligon_col_iterator_z = poligon_iterator;
-                                collision_pstn_z = 	collision_pstn;
-                                dttz = tcz;
-                        }
-                }
-                poligon_iterator++;
-        }//while(poligon_iterator != poligon_ptrs.end())
-
-        if(poligon_col_iterator_x != poligons.end())
-        {
-                if((*poligon_col_iterator_x)->GetNormal() * (collision_pstn_x -
-test_point) < 0)
-                {
-                        return true;
-                }
-        }
-
-        if(poligon_col_iterator_y != poligons.end())
-        {
-                if((*poligon_col_iterator_y)->GetNormal() * (collision_pstn_y -
-test_point) < 0)
-                {
-                        return true;
-                }
-        }
-
-        if(poligon_col_iterator_z != poligons.end())
-        {
-                if((*poligon_col_iterator_z)->GetNormal() * (collision_pstn_z -
-test_point) < 0)
-                {
-                        return true;
-                }
-        }
-        if((poligon_col_iterator_x == poligons.end()) && (poligon_col_iterator_y
-== poligons.end()) && (poligon_col_iterator_z == poligons.end()))
-        {
-                return true;
-        }
-        return false;
-}*/
-
-/*void Geometry::create_cone(Point apex1, Point apex2, double H)
-{
-        poligons.clear();
-        Point vertices[6];
-
-        vertices[0] = apex1;
-        vertices[1] = apex2;
-        vertices[2] = Point(apex1.x, apex1.y, apex2.z);
-        vertices[3] = Point(apex2.x, apex2.y, apex1.z);
-        vertices[4] = apex2 - Point(0, 0, H);
-        vertices[5] = vertices[3] - Point(0, 0, H);
-
-        Polygon *temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[0], vertices[1], vertices[2], (vertices[1] -
-vertices[0]).Cross(vertices[2] - vertices[1]).Normalize());
-        poligons.push_back(temp_poligon);
-
-        temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[0], vertices[1], vertices[3], (vertices[3] -
-vertices[1]).Cross(vertices[1] - vertices[0]).Normalize());
-        poligons.push_back(temp_poligon);
-
-        temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[2], vertices[1], vertices[4], (vertices[1] -
-vertices[2]).Cross(vertices[4] - vertices[2]).Normalize());
-        poligons.push_back(temp_poligon);
-
-        temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[0], vertices[3], vertices[5], (vertices[5] -
-vertices[0]).Cross(vertices[3] - vertices[0]).Normalize());
-        poligons.push_back(temp_poligon);
-
-        temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[0], vertices[2], vertices[4], (vertices[0] -
-vertices[2]).Cross(vertices[4] - vertices[2]).Normalize());
-        poligons.push_back(temp_poligon);
-
-        temp_poligon = new Polygon;
-        temp_poligon->Set(vertices[0], vertices[4], vertices[5], (vertices[5] -
-vertices[0]).Cross(vertices[4] - vertices[0]).Normalize());
-        poligons.push_back(temp_poligon);
-}*/
 void Geometry::CreateWedge(double x, double width, double length,
                            double alpha) {
   Point vertices[6];
@@ -424,95 +152,63 @@ void Geometry::CreateWedge(double x, double width, double length,
   vertices[4].Set(x + length, length * sin(alpha), width / 2);
   vertices[5].Set(x + length, -length * sin(alpha), width / 2);
 
-  Polygon* temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[0], vertices[1], vertices[2],
-                    -1 * (vertices[0] - vertices[1])
-                             .Cross(vertices[2] - vertices[1])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
+  auto add_polygon = [&](const Point& p1, const Point& p2, const Point& p3,
+                         const Point& normal) {
+    auto polygon = std::make_unique<Polygon>(p1, p2, p3, normal);
+    polygon->flux = 0;
+    polygon->force = Point(0, 0, 0);
+    poligons.push_back(std::move(polygon));
+  };
 
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[3], vertices[4], vertices[5],
-                    -1 * (vertices[4] - vertices[3])
-                             .Cross(vertices[5] - vertices[4])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[0], vertices[1], vertices[3],
-                    -1 * (vertices[1] - vertices[0])
-                             .Cross(vertices[3] - vertices[0])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[1], vertices[4], vertices[3],
-                    -1 * (vertices[4] - vertices[1])
-                             .Cross(vertices[3] - vertices[1])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[0], vertices[2], vertices[3],
-                    -1 * (vertices[3] - vertices[0])
-                             .Cross(vertices[2] - vertices[0])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[2], vertices[3], vertices[5],
-                    -1 * (vertices[3] - vertices[2])
-                             .Cross(vertices[5] - vertices[2])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[1], vertices[2], vertices[5],
-                    -1 * (vertices[2] - vertices[1])
-                             .Cross(vertices[4] - vertices[1])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->Set(vertices[1], vertices[5], vertices[4],
-                    -1 * (vertices[5] - vertices[1])
-                             .Cross(vertices[4] - vertices[1])
-                             .Normalize());
-  temp_poligon->flux = 0;
-  temp_poligon->force = Point(0, 0, 0);
-  poligons.push_back(temp_poligon);
+  add_polygon(vertices[0], vertices[1], vertices[2],
+              -1 * (vertices[0] - vertices[1])
+                       .Cross(vertices[2] - vertices[1])
+                       .Normalize());
+  add_polygon(vertices[3], vertices[4], vertices[5],
+              -1 * (vertices[4] - vertices[3])
+                       .Cross(vertices[5] - vertices[4])
+                       .Normalize());
+  add_polygon(vertices[0], vertices[1], vertices[3],
+              -1 * (vertices[1] - vertices[0])
+                       .Cross(vertices[3] - vertices[0])
+                       .Normalize());
+  add_polygon(vertices[1], vertices[4], vertices[3],
+              -1 * (vertices[4] - vertices[1])
+                       .Cross(vertices[3] - vertices[1])
+                       .Normalize());
+  add_polygon(vertices[0], vertices[2], vertices[3],
+              -1 * (vertices[3] - vertices[0])
+                       .Cross(vertices[2] - vertices[0])
+                       .Normalize());
+  add_polygon(vertices[2], vertices[3], vertices[5],
+              -1 * (vertices[3] - vertices[2])
+                       .Cross(vertices[5] - vertices[2])
+                       .Normalize());
+  add_polygon(vertices[1], vertices[2], vertices[5],
+              -1 * (vertices[2] - vertices[1])
+                       .Cross(vertices[4] - vertices[1])
+                       .Normalize());
+  add_polygon(vertices[1], vertices[5], vertices[4],
+              -1 * (vertices[5] - vertices[1])
+                       .Cross(vertices[4] - vertices[1])
+                       .Normalize());
 }
 
 void Geometry::Fragment(double Lmax) {
   double max_Lmax = 10000.;
   while (max_Lmax > Lmax) {
     max_Lmax = 0;
-    std::deque<Polygon*>::iterator poligon_iter = poligons.begin();
+    auto poligon_iter = poligons.begin();
 
     while (poligon_iter != poligons.end()) {
       if ((*poligon_iter)->GetLmax() > Lmax) {
         max_Lmax > (*poligon_iter)->GetLmax()
             ? max_Lmax = max_Lmax
             : max_Lmax = (*poligon_iter)->GetLmax();
-        std::pair<Polygon*, Polygon*> new_poligon = (*poligon_iter)->Divide();
-        delete *poligon_iter;
+        auto new_poligon = (*poligon_iter)->Divide();
         poligon_iter = poligons.erase(poligon_iter);
-        poligons.push_back(new_poligon.first);
-        poligons.push_back(new_poligon.second);
+        poligons.push_back(std::move(new_poligon.first));
+        poligons.push_back(std::move(new_poligon.second));
         poligon_iter = poligons.begin();
         continue;
       }
@@ -525,7 +221,7 @@ void Geometry::Fragment(double Lmax) {
 std::pair<Point, Point> Geometry::Size() {
   Point p1(0, 0, 0), p2(0, 0, 0);
 
-  std::deque<Polygon*>::iterator poligon_iter = poligons.begin();
+  auto poligon_iter = poligons.begin();
 
   while (poligon_iter != poligons.end()) {
     p1.x = std::max(p1.x, (*poligon_iter)->p1.x);
@@ -563,7 +259,7 @@ void Geometry::CreatePyramid(double x, double width, double length, double H) {}
 double Geometry::DistanceToPoint(Point p) {
   double dist = 100000.;
 
-  std::deque<Polygon*>::iterator poligon_iter = poligons.begin();
+  auto poligon_iter = poligons.begin();
 
   while (poligon_iter != poligons.end()) {
     dist = std::min(dist, (*poligon_iter)->DistanceToPoint(p));
@@ -586,115 +282,41 @@ void Geometry::CreateCube(double x, double width, double length, double H) {
   p[0].z = p[1].z = p[4].z = p[5].z = width / 2;
   p[2].z = p[3].z = p[6].z = p[7].z = -width / 2;
 
-  Polygon* temp_poligon;
+  auto add_polygon = [&](const Point& p1, const Point& p2, const Point& p3,
+                         const Point& normal) {
+    auto polygon = std::make_unique<Polygon>(p1, p2, p3, normal);
+    polygon->flux = 0;
+    polygon->force = Point(0, 0, 0);
+    poligons.push_back(std::move(polygon));
+  };
 
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[1];
-  temp_poligon->p3 = p[2];
-  temp_poligon->normal = Point(-1, 0, 0);
-  poligons.push_back(temp_poligon);
+  add_polygon(p[0], p[1], p[2], Point(-1, 0, 0));
+  add_polygon(p[0], p[2], p[3], Point(-1, 0, 0));
+  add_polygon(p[4], p[5], p[6], Point(1, 0, 0));
+  add_polygon(p[4], p[6], p[7], Point(1, 0, 0));
 
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[2];
-  temp_poligon->p3 = p[3];
-  temp_poligon->normal = Point(-1, 0, 0);
-  poligons.push_back(temp_poligon);
+  add_polygon(p[1], p[2], p[6], Point(0, 1, 0));
+  add_polygon(p[1], p[6], p[5], Point(0, 1, 0));
+  add_polygon(p[0], p[3], p[7], Point(0, -1, 0));
+  add_polygon(p[0], p[7], p[4], Point(0, -1, 0));
 
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[4];
-  temp_poligon->p2 = p[5];
-  temp_poligon->p3 = p[6];
-  temp_poligon->normal = Point(1, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[4];
-  temp_poligon->p2 = p[6];
-  temp_poligon->p3 = p[7];
-  temp_poligon->normal = Point(1, 0, 0);
-  poligons.push_back(temp_poligon);
-
-  /////////////////////////////////////////
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[1];
-  temp_poligon->p2 = p[2];
-  temp_poligon->p3 = p[6];
-  temp_poligon->normal = Point(0, 1, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[1];
-  temp_poligon->p2 = p[6];
-  temp_poligon->p3 = p[5];
-  temp_poligon->normal = Point(0, 1, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[3];
-  temp_poligon->p3 = p[7];
-  temp_poligon->normal = Point(0, -1, 0);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[7];
-  temp_poligon->p3 = p[4];
-  temp_poligon->normal = Point(0, -1, 0);
-  poligons.push_back(temp_poligon);
-
-  /////////////////////////////////////////
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[1];
-  temp_poligon->p3 = p[5];
-  temp_poligon->normal = Point(0, 0, -1);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[0];
-  temp_poligon->p2 = p[5];
-  temp_poligon->p3 = p[4];
-  temp_poligon->normal = Point(0, 0, -1);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[3];
-  temp_poligon->p2 = p[2];
-  temp_poligon->p3 = p[6];
-  temp_poligon->normal = Point(0, 0, 1);
-  poligons.push_back(temp_poligon);
-
-  temp_poligon = new Polygon;
-  temp_poligon->p1 = p[3];
-  temp_poligon->p2 = p[6];
-  temp_poligon->p3 = p[7];
-  temp_poligon->normal = Point(0, 0, 1);
-  poligons.push_back(temp_poligon);
+  add_polygon(p[0], p[1], p[5], Point(0, 0, -1));
+  add_polygon(p[0], p[5], p[4], Point(0, 0, -1));
+  add_polygon(p[3], p[2], p[6], Point(0, 0, 1));
+  add_polygon(p[3], p[6], p[7], Point(0, 0, 1));
 }
 
 int Geometry::FixPolygons() {
   int res = 0;
-  deque<Polygon*>::iterator poligon_iter = poligons.begin();
-
-  while (poligon_iter != poligons.end()) {
-    if ((*poligon_iter)->Fix()) res++;
-    poligon_iter++;
+  for (auto& polygon : poligons) {
+    if (polygon->Fix()) res++;
   }
-
   return res;
 }
 
 void Geometry::ReverseNormals() {
-  deque<Polygon*>::iterator poligon_iter = poligons.begin();
-
-  while (poligon_iter != poligons.end()) {
-    (*poligon_iter)->normal = (*poligon_iter)->normal * -1.;
-    poligon_iter++;
+  for (auto& polygon : poligons) {
+    polygon->normal = polygon->normal * -1.;
   }
 }
 }  // namespace mc3d

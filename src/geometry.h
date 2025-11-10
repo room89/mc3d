@@ -10,6 +10,7 @@
 #include <deque>
 #include <fstream>
 #include <iomanip>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -25,7 +26,7 @@ namespace {
 
 class Geometry {
  protected:
-  deque<Polygon*> poligons;
+  std::deque<std::unique_ptr<Polygon>> poligons;
 
  public:
   Geometry();

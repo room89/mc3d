@@ -49,7 +49,7 @@ bool InnerBoundary::AddPolygon(Geometry* body, Point cell_center, double L) {
   else return false;*/
   this->cell_center = cell_center;
 
-  deque<Polygon*>::iterator poligon_iter = body->poligons.begin();
+  auto poligon_iter = body->poligons.begin();
 
   while (poligon_iter != body->poligons.end()) {
     if ((((*poligon_iter)->GetGmt() - cell_center).Mod() <
@@ -97,13 +97,13 @@ bool InnerBoundary::AddPolygon(Geometry* body, Point cell_center, double L) {
     return false;
 }
 
-int InnerBoundary::BoundaryCondition(deque<Particle>* cluster_particle,
+int InnerBoundary::BoundaryCondition(deque<Particle>& cluster_particle,
                                      double dt) {
   // if(poligon_ptrs.size() <= 0) return 1;
 
-  deque<Particle>::iterator particle_iter = cluster_particle->begin();
+  auto particle_iter = cluster_particle.begin();
 
-  while (particle_iter != cluster_particle->end()) {
+  while (particle_iter != cluster_particle.end()) {
     deque<Polygon*>::iterator poligon_iterator = this->poligon_ptrs.begin();
     deque<Polygon*>::iterator collision_poligon_iterator =
         this->poligon_ptrs.end();
@@ -219,21 +219,6 @@ int InnerBoundary::BoundaryCondition(deque<Particle>* cluster_particle,
 
         (*collision_poligon_iterator)->force -= particle_iter->velocity;
 
-        /*
-                                                deque<Particle>::iterator
-           particle_iter2 = cluster_particle->begin(); while(particle_iter2 !=
-           cluster_particle->end())
-                                                {
-                                                        if(particle_iter2 !=
-           particle_iter)
-                                                        {
-                                                                particle_iter2->position
-           += particle_iter2->velocity * dtt;
-                                                        }
-
-                                                        particle_iter2++;
-                                                }*/
-
         particle_dt -= dtt;
       } else {
         particle_iter->position += particle_iter->velocity * dtt;
@@ -243,7 +228,7 @@ int InnerBoundary::BoundaryCondition(deque<Particle>* cluster_particle,
       collision_mark = false;
     }  // while(dt > 0)
 
-    particle_iter++;
+    ++particle_iter;
   }
 
   return 0;

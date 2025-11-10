@@ -10,12 +10,11 @@
 #include <iostream>
 
 namespace mc3d {
-Cell* Var::MakeCell() {
-  Cell* new_cell = new Cell;
-
-  new_cell->SetTemperature(T);
-  new_cell->SetVelocity(velocity);
-  return nullptr;
+std::unique_ptr<Cell> Var::MakeCell() {
+  auto cell = std::make_unique<Cell>();
+  cell->SetTemperature(T);
+  cell->SetVelocity(velocity);
+  return cell;
 }
 
 std::ostream& operator<<(std::ostream& o, const Var& c) {

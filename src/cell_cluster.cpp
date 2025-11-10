@@ -7,11 +7,6 @@ using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
-/*double V(double x, double y, double R)
-{
-  return 0.3 * (x * x + y * y) * std::exp(0.5 * (1 - (x * x + y * y) / (R * R)))
-/ R;
-}*/
 
 CellCluster::CellCluster() : thread_pool_(NUM_CPU, "move_and_collisions") {
   Kn = 0;
@@ -135,20 +130,20 @@ bool CellCluster::TimeStep() {
     cell.CalculateVelocity();
     cell.Sort();
     cell.SortNeighbors();
-    auto cell_buffer = cell.GetBuffer();
-    partile_buffer.insert(partile_buffer.end(), cell_buffer->begin(),
-                          cell_buffer->end());
-    cell_buffer->clear();
+    auto& cell_buffer = cell.GetBuffer();
+    partile_buffer.insert(partile_buffer.end(), cell_buffer.begin(),
+                          cell_buffer.end());
+    cell_buffer.clear();
   }
 
   for (auto& cell : cells) {
-    cell.AddParticle(&partile_buffer);
+    cell.AddParticle(partile_buffer);
   }
 
   BoundaryCondition();
 
   for (auto& cell : cells) {
-    cell.AddParticle(&partile_buffer);
+    cell.AddParticle(partile_buffer);
   }
   t += dt;
 
@@ -168,10 +163,8 @@ bool CellCluster::TimeStep() {
 }
 
 void CellCluster::BoundaryCondition() {
-  deque<Boundary*>::iterator a = boundary_cond_outer.begin();
-  while (a != boundary_cond_outer.end()) {
-    (*a)->BoundaryCondition(&partile_buffer, dt);
-    a++;
+  for (auto& boundary : boundary_cond_outer) {
+    boundary->BoundaryCondition(partile_buffer, dt);
   }
 }
 
@@ -277,29 +270,23 @@ bool CellCluster::WriteTimes() {
   return 0;
 }
 
-void CellCluster::SetBoundaryCondition(Boundary** a, int n) {
-  for (int i = 0; i < n; i++) {
-    boundary_cond_outer.push_back(a[i]);
-  }
-
-  // добавляем ссылки на ячейки в свободные границы
-  deque<Boundary*>::iterator bc = boundary_cond_outer.begin();
-  while (bc != boundary_cond_outer.end()) {
-    if (auto* boundary = dynamic_cast<FreeBoundary*>(*bc)) {
-      boundary->AddCell(cells);
-      // boundary->SetNp(np);
-    }
-
-    bc++;
+void CellCluster::SetBoundaryCondition(
+    std::vector<std::unique_ptr<Boundary>>&& boundaries) {
+  for (auto& boundary : boundaries) {
+    SetBoundaryCondition(std::move(boundary));
   }
 }
 
-void CellCluster::SetBoundaryCondition(Boundary* a) {
-  if (auto* boundary = dynamic_cast<FreeBoundary*>(a)) {
-    boundary->AddCell(cells);
+void CellCluster::SetBoundaryCondition(std::unique_ptr<Boundary> boundary) {
+  if (!boundary) {
+    return;
   }
 
-  boundary_cond_outer.push_back(a);
+  if (auto* free_boundary = dynamic_cast<FreeBoundary*>(boundary.get())) {
+    free_boundary->AddCell(cells);
+  }
+
+  boundary_cond_outer.push_back(std::move(boundary));
 }
 
 void CellCluster::Compute() {

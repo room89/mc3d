@@ -37,11 +37,11 @@ MirrorBoundary::MirrorBoundary(Point pstn, Point nrml) {
 
 MirrorBoundary::~MirrorBoundary() {}
 
-int MirrorBoundary::BoundaryCondition(deque<Particle>* particles, double dt) {
+int MirrorBoundary::BoundaryCondition(deque<Particle>& particles, double dt) {
   double t;
-  deque<Particle>::iterator data = particles->begin();
+  auto data = particles.begin();
   const double Pi = 3.1415926535;
-  while (data != particles->end()) {
+  while (data != particles.end()) {
     // t = ((pstn.x - data->x) * nrml.x + (pstn.y - data->y) * nrml.y + (pstn.z
     // - data->z) * nrml.z);
     t = (pstn - data->position) * nrml;
@@ -74,7 +74,7 @@ int MirrorBoundary::BoundaryCondition(deque<Particle>* particles, double dt) {
       }*/
     }
 
-    data++;
+    ++data;
   }
   return 1;
 }

@@ -77,9 +77,8 @@ class Cell {
                                     Point normal);
   virtual double GenerateHyperFreeRandom(unsigned int N, Point V, double T);
   void Sort();
-  deque<Particle>* GetBuffer();
-  void AddParticle(deque<Particle>* particles);
-  void AddParticle(Particle* particles, int count);
+  deque<Particle>& GetBuffer();
+  void AddParticle(deque<Particle>& particles);
   void FixParticle(unsigned int N, double T, Point V);
   double CalculateKn();
   Point GetApex() const;
@@ -110,7 +109,8 @@ class Cell {
   bool WriteFile();
   void Calculate();
   void AttachThreadMark(int& ptr);
-  deque<Cell*> Fragment(const std::unique_ptr<Geometry>& body);
+  std::deque<std::unique_ptr<Cell>> Fragment(
+      const std::unique_ptr<Geometry>& body);
   void CleanInnerParticles(const Geometry& body);
 
   bool DebugTestParticle();

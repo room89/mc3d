@@ -6,10 +6,8 @@
 
 #pragma once
 
-#include <complex>
 #include <deque>
 
-#include "exit_code.h"
 #include "particle.h"
 #include "point.h"
 
@@ -20,7 +18,7 @@ class Boundary {
   Point nrml;  // направление граничного условия
   Point pstn;  // положение граничного условия
  public:
-  virtual int BoundaryCondition(deque<Particle>* a, double dt = 0) = 0;
+  virtual int BoundaryCondition(deque<Particle>& particles, double dt = 0) = 0;
   virtual ~Boundary() {}
   void SetPosition(Point a);  // установка места граничных условий
   void SetNormal(Point a);    // установка направления граничных условий
