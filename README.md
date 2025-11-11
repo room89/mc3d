@@ -52,11 +52,15 @@ Solver записывает результаты в текстовые файл�
 добавлены вспомогательные скрипты на Python 3 (`numpy`, `pandas`, `matplotlib`):
 
 - `tools/plot_snapshot.py` — строит срез по выбранной плоскости (`xy`, `xz`, `yz`)
-  и отображает выбранное поле (`ro`, `T`, `vx`, `vy`, `vz`, `E`):
+  и отображает выбранное поле (`ro`, `T`, `vx`, `vy`, `vz`, `E`), при желании
+  накладывая векторную карту скоростей:
   ```bash
   python3 tools/plot_snapshot.py --input build/data.dat --plane xy \
-      --z-value 0.0 --thickness 0.05 --field T --show-cbar --out plots/T_xy.png
+      --z-value 0.0 --thickness 0.05 --field T --show-cbar \
+      --show-velocity --quiver-step 3 --quiver-color white
   ```
+  Аргументы `--show-velocity`, `--quiver-step`, `--quiver-scale` и
+  `--quiver-color` управляют наложением стрелок скорости на выбранной плоскости.
 - `tools/monitor_simulation.py` — следит за последним файлом `data<t>.dat` и
   обновляет график каждые несколько секунд (удобно запускать параллельно расчёту):
   ```bash

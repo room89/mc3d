@@ -55,6 +55,28 @@ def parse_args() -> argparse.Namespace:
         help="Field to visualise.",
     )
     parser.add_argument(
+        "--show-velocity",
+        action="store_true",
+        help="Overlay velocity vectors corresponding to the selected plane.",
+    )
+    parser.add_argument(
+        "--quiver-step",
+        type=int,
+        default=1,
+        help="Plot every N-th cell velocity vector (use >1 to declutter).",
+    )
+    parser.add_argument(
+        "--quiver-scale",
+        type=float,
+        default=None,
+        help="Scale factor passed to matplotlib.quiver (smaller values draw longer arrows).",
+    )
+    parser.add_argument(
+        "--quiver-color",
+        default="k",
+        help="Colour of the velocity arrows.",
+    )
+    parser.add_argument(
         "--show-cbar",
         action="store_true",
         help="Show colour bar on the plot.",
@@ -79,6 +101,12 @@ PLANE_AXES = {
     "yz": ("y", "z", "x"),
 }
 
+PLANE_VELOCITY_COMPONENTS = {
+    "xy": ("vx", "vy"),
+    "xz": ("vx", "vz"),
+    "yz": ("vy", "vz"),
+}
+
 
 def load_snapshot(path: Path) -> pd.DataFrame:
     if not path.exists():
@@ -99,7 +127,17 @@ def filter_slice(df: pd.DataFrame, plane: str, centre: float, thickness: float) 
     return filtered[[axis_a, axis_b, axis_c, "N", "ro", "T", "vx", "vy", "vz", "E"]]
 
 
-def draw_plot(df: pd.DataFrame, plane: str, field: str, title: str | None, show_cbar: bool) -> plt.Figure:
+def draw_plot(
+    df: pd.DataFrame,
+    plane: str,
+    field: str,
+    title: str | None,
+    show_cbar: bool,
+    show_velocity: bool,
+    quiver_step: int,
+    quiver_scale: float | None,
+    quiver_color: str,
+) -> plt.Figure:
     axis_a, axis_b, axis_c = PLANE_AXES[plane]
     fig, ax = plt.subplots(figsize=(7, 5.5))
     x = df[axis_a].to_numpy()
@@ -129,6 +167,26 @@ def draw_plot(df: pd.DataFrame, plane: str, field: str, title: str | None, show_
     if show_cbar:
         fig.colorbar(mappable, ax=ax, fraction=0.046, pad=0.04, label=field)
 
+    if show_velocity:
+        if quiver_step <= 0:
+            raise ValueError("--quiver-step must be a positive integer.")
+        vel_a, vel_b = PLANE_VELOCITY_COMPONENTS[plane]
+        u = df[vel_a].to_numpy()
+        v = df[vel_b].to_numpy()
+
+        step = slice(None, None, quiver_step)
+        quiver_kwargs = {
+            "angles": "xy",
+            "scale_units": "xy",
+            "color": quiver_color,
+            "pivot": "mid",
+            "linewidths": 0.4,
+        }
+        if quiver_scale is not None:
+            quiver_kwargs["scale"] = quiver_scale
+
+        ax.quiver(x[step], y[step], u[step], v[step], **quiver_kwargs)
+
     return fig
 
 
@@ -136,7 +194,17 @@ def main() -> None:
     args = parse_args()
     snapshot = load_snapshot(args.input)
     filtered = filter_slice(snapshot, args.plane, args.z_value, args.thickness)
-    fig = draw_plot(filtered, args.plane, args.field, args.title, args.show_cbar)
+    fig = draw_plot(
+        filtered,
+        args.plane,
+        args.field,
+        args.title,
+        args.show_cbar,
+        args.show_velocity,
+        args.quiver_step,
+        args.quiver_scale,
+        args.quiver_color,
+    )
 
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
