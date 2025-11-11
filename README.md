@@ -61,6 +61,16 @@ Solver записывает результаты в текстовые файл�
   ```
   Аргументы `--show-velocity`, `--quiver-step`, `--quiver-scale` и
   `--quiver-color` управляют наложением стрелок скорости на выбранной плоскости.
+- `tools/generate_gif.py` — собирает последовательность файлов `data*.dat`
+  в анимированный GIF. Поддерживает те же настройки среза и отображения, что и
+  `plot_snapshot.py`. Пример:
+  ```bash
+  python3 tools/generate_gif.py --pattern "build/data*.dat" --plane xy \
+      --z-value 0.0 --thickness 0.05 --field T --show-velocity \
+      --quiver-step 3 --fps 8 --out plots/run.gif
+  ```
+  Дополнительно можно задать `--frame-step`, `--max-frames`, `--vmin/--vmax` для
+  контроля длительности и цветовой шкалы.
 - `tools/monitor_simulation.py` — следит за последним файлом `data<t>.dat` и
   обновляет график каждые несколько секунд (удобно запускать параллельно расчёту):
   ```bash
@@ -69,5 +79,5 @@ Solver записывает результаты в текстовые файл�
 
 Необходимые пакеты:
 ```bash
-python3 -m pip install numpy pandas matplotlib
+python3 -m pip install numpy pandas matplotlib pillow
 ```

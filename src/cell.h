@@ -14,6 +14,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <mutex>
 #include <vector>
 // #include "free_boundary.h"
 #include "geometry.h"
@@ -51,6 +52,7 @@ class Cell {
   InnerBoundary body_boundary;
   std::vector<std::reference_wrapper<Cell>> neighbors;
   std::optional<std::reference_wrapper<int>> thread_mark;
+  std::shared_ptr<std::mutex> particles_mutex_;
 
  public:
   Cell();
@@ -83,6 +85,7 @@ class Cell {
   void Sort();
   std::vector<Particle>& GetBuffer();
   void AddParticle(std::vector<Particle>& particles);
+  bool TryAcceptParticle(Particle& particle);
   void FixParticle(unsigned int N, double T, Point V);
   double CalculateKn();
   Point GetApex() const;

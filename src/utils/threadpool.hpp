@@ -1,7 +1,11 @@
 #pragma once
 
+#include <condition_variable>
+#include <functional>
 #include <future>
+#include <mutex>
 #include <queue>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -21,6 +25,8 @@ class ThreadPool {
 
   size_t GetQueueSize() const;
 
+  size_t GetThreadCount() const;
+
  private:
   void Run();
 
@@ -29,7 +35,7 @@ class ThreadPool {
   std::queue<Task> tasks_;
 
   std::condition_variable event_;
-  std::mutex eventMutex_;
+  mutable std::mutex eventMutex_;
   bool stopping_ = false;
 };
 

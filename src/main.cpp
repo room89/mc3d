@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
   // cone->Scale(-1);
   cone->Fragment(0.3);
 
-  double Kn = .05, Cu = 0.9, T = 1.0;
-  unsigned int ncx = 50, ncy = 50, ncz = 5;
+  double Kn = .05, Cu = 0.7, T = 1.0;
+  unsigned int ncx = 200, ncy = 200, ncz = 5;
   unsigned int np = 50;
   double S = 10;
   Point a(-0.5 * Lx, -0.5 * Ly, -0.5 * Lz);
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
   cluster.SetSize(Lx, Ly, Lz);
 
   cluster.Initialize(ncx, ncy, ncz, np * ncx * ncy * ncz, Kn, Cu,
-                     std::move(cone), S, 0, 1);
+                     std::move(cone), S, 0, 0.1);
 
   cluster.WriteFile();
 

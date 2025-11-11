@@ -1,6 +1,8 @@
 #include "cell_cluster.h"
 
+#include <algorithm>
 #include <cmath>
+#include <future>
 #include <iterator>
 #include <utils/logger.hpp>
 #include <utils/stopwatch.hpp>
@@ -50,6 +52,10 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   double dx = Lx / double(ncx);
   double dy = Ly / double(ncy);
   double dz = Lz / double(ncz);
+  cell_dx_ = dx;
+  cell_dy_ = dy;
+  cell_dz_ = dz;
+  cell_lookup_.clear();
 
   this->t = 0;
   this->dt = 1000000000;
@@ -91,6 +97,12 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
 
   this->N = N;
 
+  cell_lookup_.clear();
+  cell_lookup_.reserve(cells.size());
+  for (auto& cell : cells) {
+    cell_lookup_.push_back(&cell);
+  }
+
   this->density = N;
 
   cell_iter = cells.begin();
@@ -119,34 +131,47 @@ bool CellCluster::TimeStep() {
 
   //  auto cell_iter = cells.begin();
 
-  std::vector<std::future<void>> futures;
-  futures.reserve(cells.size());
-  for (auto& cell : cells) {
-    futures.emplace_back(thread_pool_.Execute([&cell]() { cell.Calculate(); }));
-  }
-  for (auto& fut : futures) {
-    fut.get();
-  }
-
-  for (auto& cell : cells) {
-    cell.CalculateVelocity();
-    cell.Sort();
-    cell.SortNeighbors();
-    auto& cell_buffer = cell.GetBuffer();
-    partile_buffer.insert(partile_buffer.end(),
-                          std::make_move_iterator(cell_buffer.begin()),
-                          std::make_move_iterator(cell_buffer.end()));
-    cell_buffer.clear();
+  {
+    utils::Stopwatch sw("TimeStep::CalculateCells");
+    std::vector<std::future<void>> futures;
+    futures.reserve(cells.size());
+    for (auto& cell : cells) {
+      futures.emplace_back(thread_pool_.Execute(
+          [cell_ptr = &cell]() { cell_ptr->Calculate(); }));
+    }
+    for (auto& fut : futures) {
+      fut.get();
+    }
   }
 
-  for (auto& cell : cells) {
-    cell.AddParticle(partile_buffer);
+  {
+    utils::Stopwatch sw("TimeStep::GatherParticles");
+    for (auto& cell : cells) {
+      cell.CalculateVelocity();
+      cell.Sort();
+      cell.SortNeighbors();
+      auto& cell_buffer = cell.GetBuffer();
+      partile_buffer.insert(partile_buffer.end(),
+                            std::make_move_iterator(cell_buffer.begin()),
+                            std::make_move_iterator(cell_buffer.end()));
+      cell_buffer.clear();
+    }
+    LOG_INFO() << "particle_buffer_size:" << partile_buffer.size();
   }
 
-  BoundaryCondition();
+  {
+    utils::Stopwatch sw("TimeStep::AddParticlesBeforeBoundary");
+    DistributeParticles(partile_buffer);
+  }
 
-  for (auto& cell : cells) {
-    cell.AddParticle(partile_buffer);
+  {
+    utils::Stopwatch sw("TimeStep::BoundaryConditions");
+    BoundaryCondition();
+  }
+
+  {
+    utils::Stopwatch sw("TimeStep::AddParticlesAfterBoundary");
+    DistributeParticles(partile_buffer);
   }
   t += dt;
 
@@ -157,7 +182,10 @@ bool CellCluster::TimeStep() {
   ost << t << ".dat";
   file_name += ost.str();
   data_t += data_dt;
-  WriteFile(file_name);
+  {
+    utils::Stopwatch sw("TimeStep::WriteFile");
+    WriteFile(file_name);
+  }
 
   if (t >= t_end)
     return true;
@@ -168,6 +196,91 @@ bool CellCluster::TimeStep() {
 void CellCluster::BoundaryCondition() {
   for (auto& boundary : boundary_cond_outer) {
     boundary->BoundaryCondition(partile_buffer, dt);
+  }
+}
+
+bool CellCluster::FindCellIndex(const Point& position,
+                                size_t& cell_index) const {
+  if (cell_lookup_.empty() || cell_dx_ <= 0.0 || cell_dy_ <= 0.0 ||
+      cell_dz_ <= 0.0 || ncx == 0 || ncy == 0 || ncz == 0) {
+    return false;
+  }
+
+  if (position.x <= apex.x || position.x >= apex.x + Lx ||
+      position.y <= apex.y || position.y >= apex.y + Ly ||
+      position.z <= apex.z || position.z >= apex.z + Lz) {
+    return false;
+  }
+
+  const double rel_x = (position.x - apex.x) / cell_dx_;
+  const double rel_y = (position.y - apex.y) / cell_dy_;
+  const double rel_z = (position.z - apex.z) / cell_dz_;
+
+  unsigned int ix = static_cast<unsigned int>(rel_x);
+  unsigned int iy = static_cast<unsigned int>(rel_y);
+  unsigned int iz = static_cast<unsigned int>(rel_z);
+
+  if (ix >= ncx) ix = ncx - 1;
+  if (iy >= ncy) iy = ncy - 1;
+  if (iz >= ncz) iz = ncz - 1;
+
+  cell_index = (static_cast<size_t>(ix) * ncy + iy) * ncz + iz;
+  return cell_index < cell_lookup_.size();
+}
+
+void CellCluster::DistributeParticles(std::vector<Particle>& buffer) {
+  if (buffer.empty()) {
+    return;
+  }
+
+  const size_t thread_count = std::max<size_t>(1, thread_pool_.GetThreadCount());
+  const size_t chunk_size =
+      std::max<size_t>(1024, (buffer.size() + thread_count - 1) / thread_count);
+  const size_t chunk_count =
+      (buffer.size() + chunk_size - 1) / chunk_size;
+
+  std::vector<std::future<void>> futures;
+  futures.reserve(chunk_count);
+  std::vector<std::vector<Particle>> leftovers(chunk_count);
+
+  size_t chunk_idx = 0;
+  for (size_t start = 0; start < buffer.size(); start += chunk_size, ++chunk_idx) {
+    const size_t end = std::min(buffer.size(), start + chunk_size);
+    auto& chunk_leftovers = leftovers[chunk_idx];
+    chunk_leftovers.reserve(end - start);
+    futures.emplace_back(thread_pool_.Execute(
+        [this, &buffer, start, end, &chunk_leftovers]() {
+          for (size_t idx = start; idx < end; ++idx) {
+            Particle particle = std::move(buffer[idx]);
+            size_t cell_index = 0;
+            bool accepted = false;
+            if (FindCellIndex(particle.position, cell_index)) {
+              Cell* cell_ptr = cell_lookup_[cell_index];
+              if (cell_ptr != nullptr) {
+                accepted = cell_ptr->TryAcceptParticle(particle);
+              }
+            }
+            if (!accepted) {
+              chunk_leftovers.push_back(std::move(particle));
+            }
+          }
+        }));
+  }
+
+  for (auto& future : futures) {
+    future.get();
+  }
+
+  buffer.clear();
+  size_t total_remaining = 0;
+  for (auto& chunk_leftovers : leftovers) {
+    total_remaining += chunk_leftovers.size();
+  }
+  buffer.reserve(total_remaining);
+  for (auto& chunk_leftovers : leftovers) {
+    buffer.insert(buffer.end(),
+                  std::make_move_iterator(chunk_leftovers.begin()),
+                  std::make_move_iterator(chunk_leftovers.end()));
   }
 }
 

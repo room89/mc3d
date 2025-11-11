@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <iterator>
+#include <mutex>
 #include <utils/logger.hpp>
 #include <utils/utils.hpp>
 
@@ -12,7 +13,7 @@ namespace {
 const double Pi = 3.14159265358979;
 }
 
-Cell::Cell() {
+Cell::Cell() : particles_mutex_(std::make_shared<std::mutex>()) {
   this->calc_time = 0;
   np = 1;
   body_mark = false;
@@ -512,6 +513,29 @@ void Cell::AddParticle(std::vector<Particle>& incoming) {
   }
 
   incoming.erase(write_it, incoming.end());
+}
+
+bool Cell::TryAcceptParticle(Particle& particle) {
+  const bool inside_x =
+      (particle.position.x > apex.x) && (particle.position.x < apex.x + lx);
+  const bool inside_y =
+      (particle.position.y > apex.y) && (particle.position.y < apex.y + ly);
+  const bool inside_z =
+      (particle.position.z > apex.z) && (particle.position.z < apex.z + lz);
+
+  if (!(inside_x && inside_y && inside_z)) {
+    return false;
+  }
+
+  auto mutex_ptr = particles_mutex_;
+  if (!mutex_ptr) {
+    mutex_ptr = std::make_shared<std::mutex>();
+    particles_mutex_ = mutex_ptr;
+  }
+
+  std::lock_guard<std::mutex> lock(*mutex_ptr);
+  particles.push_back(std::move(particle));
+  return true;
 }
 
 std::vector<Particle>& Cell::GetBuffer() { return particle_buffer; }

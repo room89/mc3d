@@ -99,6 +99,8 @@ class CellCluster {
   inline void SyncDt();    // синхронизация шага по времени. тоже самое что и
                          // методы: send_dt() и recv_dt(), только в одном методе
   ofstream log;  // переменная для вывода логов, пока не реализовано
+  void DistributeParticles(std::vector<Particle>& buffer);
+  bool FindCellIndex(const Point& position, size_t& cell_index) const;
   std::unique_ptr<Geometry> body_;
   double data_dt;
   double data_t;
@@ -106,5 +108,9 @@ class CellCluster {
   double volume;
 
   utils::ThreadPool thread_pool_;
+  std::vector<Cell*> cell_lookup_;
+  double cell_dx_ = 0.0;
+  double cell_dy_ = 0.0;
+  double cell_dz_ = 0.0;
 };
 };  // namespace mc3d
