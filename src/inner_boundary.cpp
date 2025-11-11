@@ -29,6 +29,7 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
 
   while (poligon_iter != body.poligons.end()) {
     Polygon& polygon = *(*poligon_iter);
+    polygon.Fix();
     const auto& distance_to_gmt = (polygon.GetGmt() - cell_center).Mod();
     const auto& distance_to_p1 = (polygon.GetP1() - cell_center).Mod();
     const auto& distance_to_p2 = (polygon.GetP2() - cell_center).Mod();
@@ -54,9 +55,9 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
         Point d2 = polygon.GetP2() - point_on_poligon;
         Point d3 = polygon.GetP3() - point_on_poligon;
 
-        if (polygon.GetNormal() * d1.Cross(a) > 0. &&
-            polygon.GetNormal() * d2.Cross(b) > 0. &&
-            polygon.GetNormal() * d3.Cross(c) > 0.) {
+        if (polygon.GetNormal() * d1.Cross(a) >= -eps &&
+            polygon.GetNormal() * d2.Cross(b) >= -eps &&
+            polygon.GetNormal() * d3.Cross(c) >= -eps) {
           poligon_ptrs.emplace_back(polygon);
         }
       }
@@ -75,15 +76,12 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
   auto particle_iter = cluster_particle.begin();
 
   while (particle_iter != cluster_particle.end()) {
-    auto poligon_iterator = poligon_ptrs.begin();
-    auto collision_poligon_iterator = poligon_ptrs.end();
-
-    double dtt = dt;
     double particle_dt = dt;
-
-    bool collision_mark = false;
-
     while (particle_dt > 0) {
+      double dtt = particle_dt;
+      auto poligon_iterator = poligon_ptrs.begin();
+      auto collision_poligon_iterator = poligon_ptrs.end();
+      bool collision_mark = false;
       while (poligon_iterator !=
              poligon_ptrs
                  .end())  // ищем полигон с которым будет соударятся
@@ -125,9 +123,9 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
             Point d2 = poligon_iterator->get().GetP2() - collision_pstn;
             Point d3 = poligon_iterator->get().GetP3() - collision_pstn;
 
-            if (poligon_iterator->get().GetNormal() * d1.Cross(a) > 0. &&
-                poligon_iterator->get().GetNormal() * d2.Cross(b) > 0. &&
-                poligon_iterator->get().GetNormal() * d3.Cross(c) > 0.) {
+            if (poligon_iterator->get().GetNormal() * d1.Cross(a) >= -eps &&
+                poligon_iterator->get().GetNormal() * d2.Cross(b) >= -eps &&
+                poligon_iterator->get().GetNormal() * d3.Cross(c) >= -eps) {
               dtt = tc;
               collision_poligon_iterator = poligon_iterator;
               collision_mark = true;
@@ -140,6 +138,14 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
       if (collision_mark) {
         Point normal = collision_poligon_iterator->get().GetNormal();
+        double normal_length = normal.Mod();
+        Point unit_normal = normal;
+        if (normal_length > eps) {
+          unit_normal /= normal_length;
+        } else {
+          unit_normal = Point(1.0, 0.0, 0.0);
+          normal_length = 1.0;
+        }
         // particle_iter->position += particle_iter->velocity * dtt + normal *
         // 0.000001;
         particle_iter->position += particle_iter->velocity * dtt;
@@ -155,35 +161,72 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
         Point vel = particle_iter->velocity;
 
-        double sp = vel * normal;
+        double sp = vel * unit_normal;
         double r = sqrt(2. * Tw * fabs(log(r1)));
 
         Point vn;
-        vn = normal * r;
+        vn = unit_normal * r;
 
         Point vni;
-        vni = normal * sp;
+        vni = unit_normal * sp;
 
         Point vt;
         vt = vel - vni;
         double lvt = vt.Mod();
-        if (lvt < eps) lvt = eps;
-        vt /= lvt;
+        Point tangent1;
+        if (lvt < eps) {
+          if (std::abs(unit_normal.x) < 0.9) {
+            tangent1 = unit_normal.Cross(Point(1.0, 0.0, 0.0));
+          } else {
+            tangent1 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
+          }
+          double tangent1_length = tangent1.Mod();
+          if (tangent1_length < eps) {
+            tangent1 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
+            tangent1_length = tangent1.Mod();
+            if (tangent1_length < eps) {
+              tangent1 = Point(0.0, 1.0, 0.0);
+              tangent1_length = tangent1.Mod();
+            }
+          }
+          tangent1 /= tangent1_length;
+        } else {
+          vt /= lvt;
+          tangent1 = vt;
+        }
 
         r = sqrt(2. * Tw * fabs(log(r2)));
         double teta = 2. * Pi * r3;
         double vt1m = r * cos(teta);
         double vt2m = r * sin(teta);
 
-        Point vt1, vt2;
+        Point vt1 = tangent1;
+        Point vt2;
 
         vt1 *= vt1m;
 
-        vt2 = normal.Cross(vt);
-
+        vt2 = unit_normal.Cross(tangent1);
+        double tangent2_length = vt2.Mod();
+        if (tangent2_length < eps) {
+          if (std::abs(unit_normal.z) < 0.9) {
+            vt2 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
+          } else {
+            vt2 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
+          }
+          tangent2_length = vt2.Mod();
+          if (tangent2_length < eps) {
+            vt2 = Point(1.0, 0.0, 0.0);
+            tangent2_length = vt2.Mod();
+          }
+        }
+        vt2 /= tangent2_length;
         vt2 *= vt2m;
 
         particle_iter->velocity = vt1 + vt2 + vn;
+        double outgoing_component = particle_iter->velocity * unit_normal;
+        if (outgoing_component <= 0.0) {
+          particle_iter->velocity -= unit_normal * (2.0 * outgoing_component);
+        }
 
         collision_poligon_iterator->get().force -= particle_iter->velocity;
 
@@ -193,7 +236,6 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
         particle_dt = 0;
       }
 
-      collision_mark = false;
     }  // while(dt > 0)
 
     ++particle_iter;
