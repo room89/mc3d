@@ -21,8 +21,11 @@ const int NUM_CPU = 4;
 
 namespace mc3d {
 
+class CellClusterTestAccess;
+
 class CellCluster {
  public:
+  friend class CellClusterTestAccess;
   inline void CalculateDt();  // вычисление шага по времени для данного кластера
   inline void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
@@ -117,6 +120,7 @@ class CellCluster {
   double cell_dx_ = 0.0;
   double cell_dy_ = 0.0;
   double cell_dz_ = 0.0;
+  bool UpdateSnapshotSchedule();
   bool WriteTextSnapshot(std::ofstream& file);
   bool WriteBinarySnapshot(std::ofstream& file);
 };

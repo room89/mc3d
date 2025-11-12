@@ -13,8 +13,8 @@
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <optional>
 #include <mutex>
+#include <optional>
 #include <vector>
 // #include "free_boundary.h"
 #include "geometry.h"
@@ -94,6 +94,7 @@ class Cell {
   Point GetSize() const;
   double GetKn();
   double GetDt();
+  double PeekDt() const;
   double GetTemperature();
   double GetU();
   double GetV();

@@ -10,4 +10,8 @@ namespace mc3d {
 void Boundary::SetNormal(Point a) { nrml = a; }
 
 void Boundary::SetPosition(Point a) { pstn = a; }
+
+const Point& Boundary::GetNormal() const { return nrml; }
+
+const Point& Boundary::GetPosition() const { return pstn; }
 }  // namespace mc3d

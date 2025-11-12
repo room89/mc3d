@@ -130,6 +130,12 @@ void Geometry::Scale(double e) {
   }
 }
 
+std::size_t Geometry::PolygonCount() const { return poligons.size(); }
+
+const Polygon& Geometry::GetPolygon(std::size_t index) const {
+  return *poligons.at(index);
+}
+
 bool Geometry::IsInnerPoint(Point test_point) const {
   if (poligons.empty()) {
     return false;

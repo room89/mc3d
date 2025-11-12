@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <deque>
 #include <fstream>
 #include <iomanip>
@@ -44,6 +45,8 @@ class Geometry {
   Point MassCenter();
   void Move(Point a);
   void Scale(double e);
+  std::size_t PolygonCount() const;
+  const Polygon& GetPolygon(std::size_t index) const;
   bool IsInnerPoint(Point test_point) const;
   pair<Point, Point> Size();
   double DistanceToPoint(Point p);

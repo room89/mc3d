@@ -192,6 +192,25 @@ void CellCluster::SetSnapshotInterval(double interval) {
   }
 }
 
+bool CellCluster::UpdateSnapshotSchedule() {
+  if (snapshot_interval_ <= 0.0) {
+    return true;
+  }
+
+  if (next_snapshot_time_ <= 0.0) {
+    next_snapshot_time_ = snapshot_interval_;
+  }
+
+  if (t + kSnapshotTolerance >= next_snapshot_time_) {
+    while (t + kSnapshotTolerance >= next_snapshot_time_) {
+      next_snapshot_time_ += snapshot_interval_;
+    }
+    return true;
+  }
+
+  return false;
+}
+
 bool CellCluster::TimeStep() {
   SyncDt();
 
@@ -245,20 +264,7 @@ bool CellCluster::TimeStep() {
 
   partile_buffer.clear();
 
-  bool should_write_snapshot = false;
-  if (snapshot_interval_ <= 0.0) {
-    should_write_snapshot = true;
-  } else {
-    if (next_snapshot_time_ <= 0.0) {
-      next_snapshot_time_ = snapshot_interval_;
-    }
-    if (t + kSnapshotTolerance >= next_snapshot_time_) {
-      should_write_snapshot = true;
-      while (t + kSnapshotTolerance >= next_snapshot_time_) {
-        next_snapshot_time_ += snapshot_interval_;
-      }
-    }
-  }
+  const bool should_write_snapshot = UpdateSnapshotSchedule();
 
   if (should_write_snapshot) {
     std::string file_name = "data";

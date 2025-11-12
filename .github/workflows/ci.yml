@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-13 g++-13 cmake ninja-build
+
+      - name: Configure CMake
+        run: >
+          cmake
+          -S .
+          -B build
+          -G Ninja
+          -DCMAKE_CXX_COMPILER=$(which g++-13)
+          -DCMAKE_C_COMPILER=$(which gcc-13)
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+

@@ -30,4 +30,6 @@ PeriodicBoundary::PeriodicBoundary(Point pstn, Point nrml, Point mixing) {
 }
 
 void PeriodicBoundary::SetMixing(Point b) { mixing = b; }
+
+const Point& PeriodicBoundary::GetMixing() const { return mixing; }
 }  // namespace mc3d

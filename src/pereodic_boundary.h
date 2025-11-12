@@ -15,6 +15,7 @@ class PeriodicBoundary : public Boundary {
  public:
   PeriodicBoundary(Point pstn, Point nrml, Point mixing);
   void SetMixing(Point b);
+  const Point& GetMixing() const;
   int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
   PeriodicBoundary();
   ~PeriodicBoundary();

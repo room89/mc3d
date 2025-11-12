@@ -39,12 +39,26 @@ if(BUILD_TESTING)
   add_executable(mc3d_tests
     tests/point_test.cpp
     tests/collision_test.cpp
+    tests/cell_cluster_test.cpp
+    tests/solver_setup_test.cpp
+    tests/cell_cluster_test.cpp
+    src/boundary.cpp
+    src/cell_cluster.cpp
+    src/cell.cpp
     src/exception.cpp
+    src/free_boundary.cpp
     src/geometry.cpp
+    src/giper_free_boundary.cpp
     src/inner_boundary.cpp
+    src/mirror_boundary.cpp
     src/particle.cpp
+    src/pereodic_boundary.cpp
     src/poligon.cpp
     src/point.cpp
+    src/solver_setup.cpp
+    src/utils/logger.cpp
+    src/utils/stopwatch.cpp
+    src/utils/threadpool.cpp
     src/utils/utils.cpp
   )
 

@@ -562,6 +562,8 @@ double Cell::GetDt() {
   return dt;
 }
 
+double Cell::PeekDt() const { return dt; }
+
 void Cell::SetDt(double dt) { this->dt = dt; }
 
 double Cell::GetTemperatureRaw() { return T; }

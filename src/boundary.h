@@ -23,5 +23,7 @@ class Boundary {
   virtual ~Boundary() {}
   void SetPosition(Point a);  // установка места граничных условий
   void SetNormal(Point a);    // установка направления граничных условий
+  const Point& GetPosition() const;
+  const Point& GetNormal() const;
 };
 }  // namespace mc3d
