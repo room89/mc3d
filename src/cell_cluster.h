@@ -17,21 +17,21 @@
 #include <utils/threadpool.hpp>
 #include <vector>
 
-const int NUM_CPU = 4;
-
 namespace mc3d {
 
 class CellClusterTestAccess;
 
 class CellCluster {
  public:
+  inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
   inline void CalculateDt();  // вычисление шага по времени для данного кластера
   inline void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
   inline bool TimeStep();
-  CellCluster();             // конструктор по умолчанию
-  ~CellCluster();            // деструктор
+  explicit CellCluster(std::size_t thread_pool_size =
+                           kDefaultThreadPoolSize);  // конструктор по умолчанию
+  ~CellCluster();                                    // деструктор
   void SetApex(Point apex);  // задание опорной точки кластера
   void SetSize(double Lx, double Ly, double Lz);  // задание размеров кластера
   void SetEndTime(double t_end);  // задание времени окончания рассчета

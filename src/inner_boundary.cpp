@@ -55,9 +55,10 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
         Point d2 = polygon.GetP2() - point_on_poligon;
         Point d3 = polygon.GetP3() - point_on_poligon;
 
-        if (polygon.GetNormal() * d1.Cross(a) >= -eps &&
-            polygon.GetNormal() * d2.Cross(b) >= -eps &&
-            polygon.GetNormal() * d3.Cross(c) >= -eps) {
+        // Более строгая проверка принадлежности точки полигону
+        if (polygon.GetNormal() * d1.Cross(a) > -eps * 10.0 &&
+            polygon.GetNormal() * d2.Cross(b) > -eps * 10.0 &&
+            polygon.GetNormal() * d3.Cross(c) > -eps * 10.0) {
           poligon_ptrs.emplace_back(polygon);
         }
       }
@@ -123,9 +124,15 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
             Point d2 = poligon_iterator->get().GetP2() - collision_pstn;
             Point d3 = poligon_iterator->get().GetP3() - collision_pstn;
 
-            if (poligon_iterator->get().GetNormal() * d1.Cross(a) >= -eps &&
-                poligon_iterator->get().GetNormal() * d2.Cross(b) >= -eps &&
-                poligon_iterator->get().GetNormal() * d3.Cross(c) >= -eps) {
+            // Более строгая проверка принадлежности точки полигону
+            // Используем строгое неравенство > 0 вместо >= -eps для
+            // предотвращения проникновения
+            if (poligon_iterator->get().GetNormal() * d1.Cross(a) >
+                    -eps * 10.0 &&
+                poligon_iterator->get().GetNormal() * d2.Cross(b) >
+                    -eps * 10.0 &&
+                poligon_iterator->get().GetNormal() * d3.Cross(c) >
+                    -eps * 10.0) {
               dtt = tc;
               collision_poligon_iterator = poligon_iterator;
               collision_mark = true;
@@ -146,9 +153,10 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
           unit_normal = Point(1.0, 0.0, 0.0);
           normal_length = 1.0;
         }
-        // particle_iter->position += particle_iter->velocity * dtt + normal *
-        // 0.000001;
-        particle_iter->position += particle_iter->velocity * dtt;
+        // Перемещаем частицу на поверхность полигона с небольшим смещением
+        // наружу чтобы избежать проникновения внутрь из-за численных ошибок
+        particle_iter->position +=
+            particle_iter->velocity * dtt + unit_normal * eps * 10.0;
 
         collision_poligon_iterator->get().force += particle_iter->velocity;
 
@@ -229,6 +237,22 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
         }
 
         collision_poligon_iterator->get().force -= particle_iter->velocity;
+
+        // Дополнительная проверка: если частица оказалась внутри геометрии,
+        // перемещаем её наружу по нормали
+        Geometry* geometry_ptr = GetGeometryPtr();
+        if (geometry_ptr &&
+            geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
+          // Частица внутри геометрии - перемещаем её наружу
+          particle_iter->position += unit_normal * eps * 100.0;
+          // Если всё ещё внутри, продолжаем перемещать
+          int max_iterations = 10;
+          while (geometry_ptr->IsInnerPoint(particle_iter->GetPosition()) &&
+                 max_iterations > 0) {
+            particle_iter->position += unit_normal * eps * 100.0;
+            max_iterations--;
+          }
+        }
 
         particle_dt -= dtt;
       } else {

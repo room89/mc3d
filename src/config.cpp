@@ -220,6 +220,13 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.cells_z = ParseUnsigned(prepared_value, raw_key, ctx);
   } else if (key == "np" || key == "particles_per_cell" || key == "particles") {
     config.particles_per_cell = ParseUnsigned(prepared_value, raw_key, ctx);
+  } else if (key == "thread_pool_size" || key == "thread_count" ||
+             key == "threads") {
+    const auto parsed = ParseUnsigned(prepared_value, raw_key, ctx);
+    if (parsed == 0) {
+      ThrowOptionError(raw_key, ctx, "thread pool size must be positive");
+    }
+    config.thread_pool_size = parsed;
   } else if (key == "s" || key == "sigma") {
     config.S = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "end_time" || key == "t_end") {
@@ -674,6 +681,7 @@ void PrintUsage(const char* program) {
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"
+      << "  --thread-pool-size COUNT         Number of worker threads\n"
       << "  --snapshots-binary               Enable binary snapshot output\n"
       << "  --boundary-x-neg TYPE            Boundary type (none, mirror, "
          "periodic, free, hyperfree)\n"

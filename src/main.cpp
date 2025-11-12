@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
                          config.apex_y.value_or(-0.5 * config.Ly),
                          config.apex_z.value_or(-0.5 * config.Lz));
 
-  mc3d::CellCluster cluster;
+  mc3d::CellCluster cluster(config.thread_pool_size);
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 

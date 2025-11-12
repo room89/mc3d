@@ -49,7 +49,9 @@ void AppendDouble(std::string& out, double value) {
 
 }  // namespace
 
-CellCluster::CellCluster() : thread_pool_(NUM_CPU, "move_and_collisions") {
+CellCluster::CellCluster(std::size_t thread_pool_size)
+    : thread_pool_(std::max<std::size_t>(1, thread_pool_size),
+                   "move_and_collisions") {
   Kn = 0;
   np = 0;
   ncx = 0;
