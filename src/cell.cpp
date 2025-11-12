@@ -17,6 +17,7 @@ Cell::Cell() : particles_mutex_(std::make_shared<std::mutex>()) {
   this->calc_time = 0;
   np = 1;
   body_mark = false;
+  volume_ = 0.0;
 }
 
 Cell::~Cell() {
@@ -32,6 +33,7 @@ void Cell::SetSize(double lx, double ly, double lz) {
   this->lz = lz;
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
+  volume_ = std::abs(lx * ly * lz);
 }
 
 void Cell::SetSize(Point dl) {
@@ -41,6 +43,7 @@ void Cell::SetSize(Point dl) {
   lz = dl.z;
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
+  volume_ = std::abs(lx * ly * lz);
 }
 
 void Cell::SetApex(Point a) { apex = a; }
@@ -62,8 +65,12 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   if (bbody) {
     body_boundary.SetGeometry(*bbody);
     body_mark = body_boundary.AddPolygon(*bbody, GetCenter(), L);
-  } else
+    if (body_mark) {
+      CalculateVolume();
+    }
+  } else {
     body_mark = false;
+  }
 
   return true;
 }
@@ -303,8 +310,6 @@ double Cell::GenerateFreeRandom(unsigned int N, double T, Point V, Point nrml) {
   }
 
   for (auto& particle : added_particles) {
-    particle.velocity += V;
-
     const double rnx = utils::Random01();
     const double rny = utils::Random01();
     const double rnz = utils::Random01();
@@ -760,7 +765,12 @@ double Cell::CalculateVolume() {
   return volume_;
 }
 
-double Cell::GetVolume() const { return volume_; }
+double Cell::GetVolume() const {
+  if (volume_ > 0.0) {
+    return volume_;
+  }
+  return std::abs(lx * ly * lz);
+}
 
 bool Cell::GetBodyMark() { return body_mark; }
 

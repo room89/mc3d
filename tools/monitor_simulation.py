@@ -86,12 +86,14 @@ def list_data_files(directory: Path) -> Iterable[Path]:
 
 
 def load_latest(directory: Path) -> pd.DataFrame | None:
+    from snapshot_loader import SnapshotFormatError, load_snapshot
+
     files = list_data_files(directory)
     if not files:
         return None
     try:
-        return pd.read_csv(files[-1], sep=";", engine="python")
-    except Exception as exc:  # pragma: no cover - best-effort monitoring
+        return load_snapshot(files[-1])
+    except (SnapshotFormatError, Exception) as exc:  # pragma: no cover - best-effort monitoring
         print(f"Failed to read {files[-1]}: {exc}")
         return None
 

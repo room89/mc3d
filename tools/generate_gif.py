@@ -12,15 +12,27 @@ import argparse
 import glob
 import re
 from pathlib import Path
-from typing import Iterable, List
+from typing import List
 
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
 from PIL import Image
 
-import matplotlib.pyplot as plt
+from snapshot_loader import load_snapshot
 
-import plot_snapshot
+PLANE_AXES = {
+    "xy": ("x", "y", "z"),
+    "xz": ("x", "z", "y"),
+    "yz": ("y", "z", "x"),
+}
 
+PLANE_VELOCITY_COMPONENTS = {
+    "xy": ("vx", "vy"),
+    "xz": ("vx", "vz"),
+    "yz": ("vy", "vz"),
+}
 
 DATA_ORDER_PATTERN = re.compile(r"([0-9]+(?:\.[0-9]+)?)")
 
@@ -109,6 +121,14 @@ def parse_args() -> argparse.Namespace:
         help="DPI for the rendered frames (controls resolution).",
     )
     parser.add_argument(
+        "--figsize",
+        type=float,
+        nargs=2,
+        metavar=("WIDTH", "HEIGHT"),
+        default=None,
+        help="Figure size in inches for each frame (width height). Defaults to 7 5.5.",
+    )
+    parser.add_argument(
         "--out",
         type=Path,
         required=True,
@@ -145,6 +165,84 @@ def find_snapshot_files(pattern: str) -> List[Path]:
         return (-1.0, path.name)
 
     return sorted(paths, key=sort_key)
+
+def filter_slice(
+    df: pd.DataFrame, plane: str, centre: float, thickness: float, *, allow_empty: bool = False
+) -> pd.DataFrame:
+    axis_a, axis_b, axis_c = PLANE_AXES[plane]
+    half = thickness * 0.5
+    mask = np.abs(df[axis_c] - centre) <= half
+    columns = [axis_a, axis_b, axis_c, "N", "ro", "T", "vx", "vy", "vz", "E"]
+    filtered = df.loc[mask, columns]
+    if filtered.empty and not allow_empty:
+        raise ValueError(
+            f"No cells fall within ±{half:g} of {axis_c}={centre:g}. Adjust --z-value/--thickness."
+        )
+    return filtered
+
+
+def draw_plot(
+    df: pd.DataFrame,
+    plane: str,
+    field: str,
+    title: str | None,
+    show_cbar: bool,
+    show_velocity: bool,
+    quiver_step: int,
+    quiver_scale: float | None,
+    quiver_color: str,
+    figsize: tuple[float, float] | None = None,
+) -> plt.Figure:
+    axis_a, axis_b, axis_c = PLANE_AXES[plane]
+    fig, ax = plt.subplots(figsize=figsize or (7, 5.5))
+    x = df[axis_a].to_numpy()
+    y = df[axis_b].to_numpy()
+    values = df[field].to_numpy()
+
+    contour = None
+    if x.size >= 3:
+        try:
+            triang = mtri.Triangulation(x, y)
+            contour = ax.tricontourf(triang, values, levels=40, cmap="plasma")
+            ax.tricontour(triang, values, levels=15, colors="k", linewidths=0.2, alpha=0.3)
+        except (ValueError, RuntimeError):
+            contour = None
+
+    if contour is None:
+        scatter = ax.scatter(x, y, c=values, cmap="plasma", s=40, lw=0.0)
+        mappable = scatter
+    else:
+        mappable = contour
+
+    ax.set_xlabel(axis_a)
+    ax.set_ylabel(axis_b)
+    ax.set_aspect("equal")
+    ax.set_title(title or f"{field} on {plane.upper()} plane ({axis_c}≈{df[axis_c].mean():.3f})")
+
+    if show_cbar:
+        fig.colorbar(mappable, ax=ax, fraction=0.046, pad=0.04, label=field)
+
+    if show_velocity:
+        if quiver_step <= 0:
+            raise ValueError("--quiver-step must be a positive integer.")
+        vel_a, vel_b = PLANE_VELOCITY_COMPONENTS[plane]
+        u = df[vel_a].to_numpy()
+        v = df[vel_b].to_numpy()
+
+        step = slice(None, None, quiver_step)
+        quiver_kwargs = {
+            "angles": "xy",
+            "scale_units": "xy",
+            "color": quiver_color,
+            "pivot": "mid",
+            "linewidths": 0.4,
+        }
+        if quiver_scale is not None:
+            quiver_kwargs["scale"] = quiver_scale
+
+        ax.quiver(x[step], y[step], u[step], v[step], **quiver_kwargs)
+
+    return fig
 
 
 def dataframe_to_image(fig: plt.Figure, dpi: int) -> Image.Image:
@@ -188,14 +286,17 @@ def create_gif(args: argparse.Namespace) -> None:
         raise ValueError("No files selected for GIF generation after applying filters.")
 
     frames: List[Image.Image] = []
+    figsize = tuple(args.figsize) if args.figsize else None
     for idx, path in enumerate(files, start=1):
-        snapshot = plot_snapshot.load_snapshot(path)
-        filtered = plot_snapshot.filter_slice(snapshot, args.plane, args.z_value, args.thickness)
+        snapshot = load_snapshot(path)
+        filtered = filter_slice(
+            snapshot, args.plane, args.z_value, args.thickness, allow_empty=True
+        )
         if filtered.empty:
             print(f"[{idx}/{len(files)}] Skipping {path.name}: slice contains no cells.")
             continue
 
-        fig = plot_snapshot.draw_plot(
+        fig = draw_plot(
             filtered,
             args.plane,
             args.field,
@@ -205,6 +306,7 @@ def create_gif(args: argparse.Namespace) -> None:
             quiver_step=args.quiver_step,
             quiver_scale=args.quiver_scale,
             quiver_color=args.quiver_color,
+            figsize=figsize,
         )
 
         apply_color_limits(fig, args.vmin, args.vmax)

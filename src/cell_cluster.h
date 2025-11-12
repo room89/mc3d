@@ -17,7 +17,7 @@
 #include <utils/threadpool.hpp>
 #include <vector>
 
-const int NUM_CPU = 8;
+const int NUM_CPU = 4;
 
 namespace mc3d {
 
@@ -40,6 +40,7 @@ class CellCluster {
                   std::unique_ptr<Geometry>&& body_, double S, double alpha,
                   double T);
   bool WriteCellFile(const string& init_file);
+  void SetBinaryOutput(bool enabled);
   bool WriteFile();       // запись данных в файл(плотность и энэргия), данные
                           // собираються со всех кластеров
   bool WriteSpeedFile();  // запись данных в файл(скорость), данные
@@ -49,6 +50,7 @@ class CellCluster {
                                  // энэргия) с заданным именем, данные
                                  // собираются со всех кластеров
   bool WriteSpeedFile(const char* file_name);
+  void SetSnapshotInterval(double interval);
   bool WriteTimes();  // запись данных о времени выполнения каждой итерации
   void SetBoundaryCondition(
       std::vector<std::unique_ptr<Boundary>>&& boundaries);
@@ -106,11 +108,16 @@ class CellCluster {
   double data_t;
   double density;
   double volume;
+  bool binary_output_ = false;
+  double snapshot_interval_ = 0.0;
+  double next_snapshot_time_ = 0.0;
 
   utils::ThreadPool thread_pool_;
   std::vector<Cell*> cell_lookup_;
   double cell_dx_ = 0.0;
   double cell_dy_ = 0.0;
   double cell_dz_ = 0.0;
+  bool WriteTextSnapshot(std::ofstream& file);
+  bool WriteBinarySnapshot(std::ofstream& file);
 };
 };  // namespace mc3d

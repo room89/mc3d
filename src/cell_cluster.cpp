@@ -1,9 +1,13 @@
 #include "cell_cluster.h"
 
 #include <algorithm>
+#include <charconv>
 #include <cmath>
+#include <cstdint>
 #include <future>
 #include <iterator>
+#include <sstream>
+#include <string>
 #include <utils/logger.hpp>
 #include <utils/stopwatch.hpp>
 
@@ -11,6 +15,39 @@ using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
+namespace {
+
+constexpr std::size_t kEstimatedRowSize = 90;
+constexpr int kOutputPrecision = 8;
+constexpr double kSnapshotTolerance = 1e-9;
+
+template <typename Int>
+void AppendIntegral(std::string& out, Int value) {
+  char buffer[32];
+  auto result = std::to_chars(std::begin(buffer), std::end(buffer), value);
+  if (result.ec == std::errc()) {
+    out.append(buffer, static_cast<std::size_t>(result.ptr - buffer));
+  } else {
+    out.append(std::to_string(value));
+  }
+}
+
+void AppendDouble(std::string& out, double value) {
+  char buffer[64];
+  auto result = std::to_chars(std::begin(buffer), std::end(buffer), value,
+                              std::chars_format::general, kOutputPrecision);
+  if (result.ec == std::errc()) {
+    out.append(buffer, static_cast<std::size_t>(result.ptr - buffer));
+  } else {
+    std::ostringstream fallback;
+    fallback.setf(std::ios::scientific);
+    fallback.precision(kOutputPrecision > 0 ? kOutputPrecision - 1 : 0);
+    fallback << value;
+    out.append(fallback.str());
+  }
+}
+
+}  // namespace
 
 CellCluster::CellCluster() : thread_pool_(NUM_CPU, "move_and_collisions") {
   Kn = 0;
@@ -60,6 +97,15 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   this->t = 0;
   this->dt = 1000000000;
 
+  const size_t total_cells = static_cast<size_t>(ncx) *
+                             static_cast<size_t>(ncy) *
+                             static_cast<size_t>(ncz);
+  size_t initialized_cells = 0;
+  size_t next_progress_percent = 1;
+  if (total_cells > 0) {
+    LOG_INFO() << "Initializing " << total_cells << " cells";
+  }
+
   auto cell_iter = cells.begin();
   for (size_t i = 0; i < ncx; i++) {
     for (size_t j = 0; j < ncy; j++) {
@@ -72,8 +118,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         a.y = apex.y + j * dy;
         a.z = apex.z + k * dz;
 
-        if (i == ncx - 1)
-          N_ = static_cast<unsigned int>(density * dx * dy * dz);
+        N_ = static_cast<unsigned int>(density * dx * dy * dz);
         temp_cell.SetParameters(S, alpha, T);
 
         temp_cell.SetApex(a);
@@ -89,6 +134,17 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         dt = min(dt, dtt);
 
         cells.emplace_back(std::move(temp_cell));
+        ++initialized_cells;
+        if (total_cells > 0) {
+          size_t completed_percent = (initialized_cells * 100) / total_cells;
+          while (next_progress_percent <= 100 &&
+                 completed_percent >= next_progress_percent) {
+            LOG_INFO() << "Cell initialization progress: "
+                       << next_progress_percent << "% (" << initialized_cells
+                       << "/" << total_cells << ")";
+            ++next_progress_percent;
+          }
+        }
       }
     }
   }
@@ -122,6 +178,18 @@ void CellCluster::SetSize(double Lx, double Ly, double Lz) {
   this->Lx = Lx;
   this->Ly = Ly;
   this->Lz = Lz;
+}
+
+void CellCluster::SetBinaryOutput(bool enabled) { binary_output_ = enabled; }
+
+void CellCluster::SetSnapshotInterval(double interval) {
+  if (interval > 0.0) {
+    snapshot_interval_ = interval;
+    next_snapshot_time_ = interval;
+  } else {
+    snapshot_interval_ = 0.0;
+    next_snapshot_time_ = 0.0;
+  }
 }
 
 bool CellCluster::TimeStep() {
@@ -177,14 +245,30 @@ bool CellCluster::TimeStep() {
 
   partile_buffer.clear();
 
-  std::string file_name = "data";
-  std::ostringstream ost;
-  ost << t << ".dat";
-  file_name += ost.str();
-  data_t += data_dt;
-  {
-    utils::Stopwatch sw("TimeStep::WriteFile");
-    WriteFile(file_name);
+  bool should_write_snapshot = false;
+  if (snapshot_interval_ <= 0.0) {
+    should_write_snapshot = true;
+  } else {
+    if (next_snapshot_time_ <= 0.0) {
+      next_snapshot_time_ = snapshot_interval_;
+    }
+    if (t + kSnapshotTolerance >= next_snapshot_time_) {
+      should_write_snapshot = true;
+      while (t + kSnapshotTolerance >= next_snapshot_time_) {
+        next_snapshot_time_ += snapshot_interval_;
+      }
+    }
+  }
+
+  if (should_write_snapshot) {
+    std::string file_name = "data";
+    std::ostringstream ost;
+    ost << t << ".dat";
+    file_name += ost.str();
+    {
+      utils::Stopwatch sw("TimeStep::WriteFile");
+      WriteFile(file_name);
+    }
   }
 
   if (t >= t_end)
@@ -233,23 +317,24 @@ void CellCluster::DistributeParticles(std::vector<Particle>& buffer) {
     return;
   }
 
-  const size_t thread_count = std::max<size_t>(1, thread_pool_.GetThreadCount());
+  const size_t thread_count =
+      std::max<size_t>(1, thread_pool_.GetThreadCount());
   const size_t chunk_size =
       std::max<size_t>(1024, (buffer.size() + thread_count - 1) / thread_count);
-  const size_t chunk_count =
-      (buffer.size() + chunk_size - 1) / chunk_size;
+  const size_t chunk_count = (buffer.size() + chunk_size - 1) / chunk_size;
 
   std::vector<std::future<void>> futures;
   futures.reserve(chunk_count);
   std::vector<std::vector<Particle>> leftovers(chunk_count);
 
   size_t chunk_idx = 0;
-  for (size_t start = 0; start < buffer.size(); start += chunk_size, ++chunk_idx) {
+  for (size_t start = 0; start < buffer.size();
+       start += chunk_size, ++chunk_idx) {
     const size_t end = std::min(buffer.size(), start + chunk_size);
     auto& chunk_leftovers = leftovers[chunk_idx];
     chunk_leftovers.reserve(end - start);
-    futures.emplace_back(thread_pool_.Execute(
-        [this, &buffer, start, end, &chunk_leftovers]() {
+    futures.emplace_back(
+        thread_pool_.Execute([this, &buffer, start, end, &chunk_leftovers]() {
           for (size_t idx = start; idx < end; ++idx) {
             Particle particle = std::move(buffer[idx]);
             size_t cell_index = 0;
@@ -289,23 +374,113 @@ bool CellCluster::SendData() { return true; }
 bool CellCluster::RecvData() { return true; }
 
 bool CellCluster::WriteFile(const std::string& file_name) {
-  std::ofstream file1(file_name);
-  cell_iter = cells.begin();
-  Point ap;
-  unsigned int N;
-  file1 << "x;y;z;N;ro;T;vx;vy;vz;E" << endl;
-  for (auto& cell : cells) {
-    auto ap = cell.GetCenter();
-    auto vel = cell.GetVelocity();
-    N = cell.GetParticleCount();
-    file1 << ap.x << ";" << ap.y << ";" << ap.z << ";" << N << ";"
-          << double(N) / (cell.GetVolume() * density) << ";"
-          << cell.GetTemperature() << ";" << vel.x << ";" << vel.y << ";"
-          << vel.z << ";" << cell.GetEnergy() << endl;
-    cell_iter++;
+  std::ofstream file(file_name, std::ios::out | std::ios::binary);
+  if (!file) {
+    LOG_ERROR() << "Failed to open output file: " << file_name;
+    return false;
   }
-  file1.close();
-  return true;
+
+  if (binary_output_) {
+    return WriteBinarySnapshot(file);
+  }
+
+  return WriteTextSnapshot(file);
+}
+
+bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
+  const std::size_t cell_count = cells.size();
+  std::string buffer;
+  buffer.reserve(1 + kEstimatedRowSize * cell_count);
+  buffer.append("x;y;z;N;ro;T;vx;vy;vz;E\n");
+
+  for (auto& cell : cells) {
+    const auto center = cell.GetCenter();
+    const auto velocity = cell.GetVelocity();
+    const unsigned int particle_count = cell.GetParticleCount();
+    const double density_value =
+        cell.GetVolume() > 0 && density != 0.0
+            ? static_cast<double>(particle_count) / (cell.GetVolume() * density)
+            : 0.0;
+
+    AppendDouble(buffer, center.x);
+    buffer.push_back(';');
+    AppendDouble(buffer, center.y);
+    buffer.push_back(';');
+    AppendDouble(buffer, center.z);
+    buffer.push_back(';');
+    AppendIntegral(buffer, particle_count);
+    buffer.push_back(';');
+    AppendDouble(buffer, density_value);
+    buffer.push_back(';');
+    AppendDouble(buffer, cell.GetTemperature());
+    buffer.push_back(';');
+    AppendDouble(buffer, velocity.x);
+    buffer.push_back(';');
+    AppendDouble(buffer, velocity.y);
+    buffer.push_back(';');
+    AppendDouble(buffer, velocity.z);
+    buffer.push_back(';');
+    AppendDouble(buffer, cell.GetEnergy());
+    buffer.push_back('\n');
+  }
+
+  file.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
+  file.flush();
+  return file.good();
+}
+
+bool CellCluster::WriteBinarySnapshot(std::ofstream& file) {
+  static constexpr char kMagic[4] = {'M', 'C', '3', 'D'};
+  file.write(kMagic, sizeof(kMagic));
+
+  const std::uint32_t version = 1;
+  file.write(reinterpret_cast<const char*>(&version), sizeof(version));
+
+  const std::uint64_t record_count = static_cast<std::uint64_t>(cells.size());
+  file.write(reinterpret_cast<const char*>(&record_count),
+             sizeof(record_count));
+
+  const double density_reference = density;
+  file.write(reinterpret_cast<const char*>(&density_reference),
+             sizeof(density_reference));
+
+  if (!file) {
+    return false;
+  }
+
+  for (auto& cell : cells) {
+    const auto center = cell.GetCenter();
+    const auto velocity = cell.GetVelocity();
+    const std::uint32_t particle_count =
+        static_cast<std::uint32_t>(cell.GetParticleCount());
+    const double density_value =
+        cell.GetVolume() > 0 && density != 0.0
+            ? static_cast<double>(particle_count) / (cell.GetVolume() * density)
+            : 0.0;
+    const double temperature = cell.GetTemperature();
+    const double energy = cell.GetEnergy();
+
+    file.write(reinterpret_cast<const char*>(&center.x), sizeof(center.x));
+    file.write(reinterpret_cast<const char*>(&center.y), sizeof(center.y));
+    file.write(reinterpret_cast<const char*>(&center.z), sizeof(center.z));
+    file.write(reinterpret_cast<const char*>(&particle_count),
+               sizeof(particle_count));
+    file.write(reinterpret_cast<const char*>(&density_value),
+               sizeof(density_value));
+    file.write(reinterpret_cast<const char*>(&temperature),
+               sizeof(temperature));
+    file.write(reinterpret_cast<const char*>(&velocity.x), sizeof(velocity.x));
+    file.write(reinterpret_cast<const char*>(&velocity.y), sizeof(velocity.y));
+    file.write(reinterpret_cast<const char*>(&velocity.z), sizeof(velocity.z));
+    file.write(reinterpret_cast<const char*>(&energy), sizeof(energy));
+
+    if (!file) {
+      return false;
+    }
+  }
+
+  file.flush();
+  return file.good();
 }
 
 bool CellCluster::WriteSpeedFile(const char* file_name) {
@@ -320,7 +495,7 @@ bool CellCluster::WriteSpeedFile(const char* file_name) {
       bool a = body_->IsInnerPoint(ap);
       a = body_->IsInnerPoint(cell.GetApex());
     }
-    file1 << ap << cell.GetVelocity() << endl;
+    file1 << ap << cell.GetVelocity() << '\n';
     cell_iter++;
   }
   file1.close();
@@ -339,7 +514,7 @@ bool CellCluster::WriteFile() {
     av_den += double(N) / np;
     file1 << ap << "\t"
           << double(cell.GetParticleCount()) / (cell.GetVolume() * density)
-          << "\t" << cell.GetTemperature() << endl;
+          << "\t" << cell.GetTemperature() << '\n';
     cell_iter++;
   }
   file1.close();
@@ -356,7 +531,7 @@ bool CellCluster::WriteSpeedFile() {
     ap = cell.GetCenter();
     N = cell.GetParticleCount();
     av_den += double(N) / np;
-    file1 << ap << "\t" << cell.GetVelocity() << endl;
+    file1 << ap << "\t" << cell.GetVelocity() << '\n';
     cell_iter++;
   }
 

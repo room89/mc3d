@@ -1,0 +1,26 @@
+{
+  "lx": 1.5,
+  "ly": 1.0,
+  "lz": 0.6,
+  "ncx": 32,
+  "ncy": 16,
+  "ncz": 8,
+  "np": 60,
+  "kn": 0.04,
+  "cu": 0.6,
+  "temperature": 1.2,
+  "alpha": 0.05,
+  "end_time": 2.5,
+  "boundary_x_neg": "mirror",
+  "boundary_x_pos": "mirror",
+  "boundary_y_neg": "periodic",
+  "boundary_y_pos": "periodic",
+  "boundary_z_neg": "hyperfree",
+  "boundary_z_pos": "hyperfree",
+  "geometry_type": "cube",
+  "geometry_cube_x": -0.2,
+  "geometry_cube_width": 0.4,
+  "geometry_cube_length": 0.4,
+  "geometry_cube_height": 0.4
+}
+

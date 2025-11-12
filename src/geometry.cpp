@@ -131,6 +131,9 @@ void Geometry::Scale(double e) {
 }
 
 bool Geometry::IsInnerPoint(Point test_point) const {
+  if (poligons.empty()) {
+    return false;
+  }
   size_t n = 0;
 
   for (const auto& polygon : poligons) {
