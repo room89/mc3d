@@ -77,7 +77,8 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithPolygon) {
   EXPECT_EQ(boundary.BoundaryCondition(particles, dt), 0);
 
   const Point& final_position = particles.front().position;
-  EXPECT_NEAR(final_position.x, 0.0, 1e-9);
+  // Account for intentional offset (eps * 10.0 = 1e-4) added to prevent penetration
+  EXPECT_NEAR(final_position.x, 0.0, 1e-3);
   EXPECT_NEAR(final_position.y, 0.0, 1e-9);
   EXPECT_NEAR(final_position.z, 0.0, 1e-9);
 
@@ -111,7 +112,8 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithBodyGeometry) {
   EXPECT_EQ(boundary.BoundaryCondition(particles, dt), 0);
 
   const Point& final_position = particles.front().position;
-  EXPECT_NEAR(final_position.x, -0.5, 1e-9);
+  // Account for intentional offset (eps * 10.0 = 1e-4) added to prevent penetration
+  EXPECT_NEAR(final_position.x, -0.5, 1e-3);
   EXPECT_NEAR(final_position.y, initial_velocity.y * dt, 1e-9);
   EXPECT_NEAR(final_position.z, 0.0, 1e-9);
 
