@@ -76,6 +76,41 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
   auto particle_iter = cluster_particle.begin();
 
+  // Проверяем начальные позиции частиц - если частица уже внутри геометрии,
+  // перемещаем её наружу перед обработкой столкновений
+  Geometry* geometry_ptr = GetGeometryPtr();
+  if (geometry_ptr) {
+    for (auto& particle : cluster_particle) {
+      if (geometry_ptr->IsInnerPoint(particle.GetPosition())) {
+        // Находим ближайший полигон и его нормаль
+        Point normal = Point(1.0, 0.0, 0.0);
+        double min_dist = 1e10;
+
+        for (const auto& poly_ref : poligon_ptrs) {
+          const Polygon& poly = poly_ref.get();
+          Point poly_gmt = poly.GetGmt();
+          Point to_particle = particle.GetPosition() - poly_gmt;
+          double dist_to_plane = std::abs(to_particle * poly.GetNormal());
+
+          if (dist_to_plane < min_dist) {
+            min_dist = dist_to_plane;
+            normal = poly.GetNormal();
+            normal.Normalize();
+          }
+        }
+
+        // Перемещаем частицу наружу
+        const double escape_step = eps * 10000.0;
+        int max_iterations = 50;
+        while (geometry_ptr->IsInnerPoint(particle.GetPosition()) &&
+               max_iterations > 0) {
+          particle.position += normal * escape_step;
+          max_iterations--;
+        }
+      }
+    }
+  }
+
   while (particle_iter != cluster_particle.end()) {
     double particle_dt = dt;
     while (particle_dt > 0) {
@@ -125,14 +160,11 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
             Point d3 = poligon_iterator->get().GetP3() - collision_pstn;
 
             // Более строгая проверка принадлежности точки полигону
-            // Используем строгое неравенство > 0 вместо >= -eps для
-            // предотвращения проникновения
-            if (poligon_iterator->get().GetNormal() * d1.Cross(a) >
-                    -eps * 10.0 &&
-                poligon_iterator->get().GetNormal() * d2.Cross(b) >
-                    -eps * 10.0 &&
-                poligon_iterator->get().GetNormal() * d3.Cross(c) >
-                    -eps * 10.0) {
+            // Используем более строгий порог для предотвращения проникновения
+            // Частица должна быть строго внутри полигона (не на границе)
+            if (poligon_iterator->get().GetNormal() * d1.Cross(a) > -eps &&
+                poligon_iterator->get().GetNormal() * d2.Cross(b) > -eps &&
+                poligon_iterator->get().GetNormal() * d3.Cross(c) > -eps) {
               dtt = tc;
               collision_poligon_iterator = poligon_iterator;
               collision_mark = true;
@@ -153,10 +185,12 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
           unit_normal = Point(1.0, 0.0, 0.0);
           normal_length = 1.0;
         }
-        // Перемещаем частицу на поверхность полигона с небольшим смещением
+        // Перемещаем частицу на поверхность полигона с достаточным смещением
         // наружу чтобы избежать проникновения внутрь из-за численных ошибок
+        // Используем большее смещение для гарантированного выхода за границу
+        const double safety_offset = eps * 1.0;
         particle_iter->position +=
-            particle_iter->velocity * dtt + unit_normal * eps * 10.0;
+            particle_iter->velocity * dtt + unit_normal * safety_offset;
 
         collision_poligon_iterator->get().force += particle_iter->velocity;
 
@@ -239,24 +273,81 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
         collision_poligon_iterator->get().force -= particle_iter->velocity;
 
         // Дополнительная проверка: если частица оказалась внутри геометрии,
-        // перемещаем её наружу по нормали
+        // перемещаем её наружу по нормали с более агрессивным шагом
         Geometry* geometry_ptr = GetGeometryPtr();
-        if (geometry_ptr &&
-            geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
-          // Частица внутри геометрии - перемещаем её наружу
-          particle_iter->position += unit_normal * eps * 100.0;
-          // Если всё ещё внутри, продолжаем перемещать
-          int max_iterations = 10;
+        if (geometry_ptr) {
+          // Используем больший шаг для выхода из геометрии
+          const double escape_step =
+              eps * 10000.0;        // Значительно увеличенный шаг
+          int max_iterations = 50;  // Увеличено количество итераций
+
           while (geometry_ptr->IsInnerPoint(particle_iter->GetPosition()) &&
                  max_iterations > 0) {
-            particle_iter->position += unit_normal * eps * 100.0;
+            particle_iter->position += unit_normal * escape_step;
             max_iterations--;
+          }
+
+          // Если частица всё ещё внутри после всех попыток, перемещаем её
+          // на значительное расстояние наружу
+          if (geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
+            // Находим ближайшую точку на поверхности и перемещаем частицу туда
+            double min_dist = 1e10;
+            Point best_position = particle_iter->GetPosition();
+
+            for (const auto& poly_ref : poligon_ptrs) {
+              const Polygon& poly = poly_ref.get();
+              Point poly_gmt = poly.GetGmt();
+              Point to_particle = particle_iter->GetPosition() - poly_gmt;
+              double dist_to_plane = to_particle * poly.GetNormal();
+
+              if (dist_to_plane < min_dist) {
+                min_dist = dist_to_plane;
+                best_position =
+                    poly_gmt + poly.GetNormal() * (dist_to_plane + escape_step);
+              }
+            }
+
+            particle_iter->position = best_position;
           }
         }
 
         particle_dt -= dtt;
       } else {
-        particle_iter->position += particle_iter->velocity * dtt;
+        // Проверяем, что частица не находится уже внутри геометрии перед
+        // движением
+        Geometry* geometry_ptr = GetGeometryPtr();
+        if (geometry_ptr &&
+            geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
+          // Частица уже внутри - перемещаем её наружу
+          Point normal = Point(1.0, 0.0, 0.0);  // Начальное направление
+          double min_dist = 1e10;
+
+          // Находим ближайший полигон и его нормаль
+          for (const auto& poly_ref : poligon_ptrs) {
+            const Polygon& poly = poly_ref.get();
+            Point poly_gmt = poly.GetGmt();
+            Point to_particle = particle_iter->GetPosition() - poly_gmt;
+            double dist_to_plane = std::abs(to_particle * poly.GetNormal());
+
+            if (dist_to_plane < min_dist) {
+              min_dist = dist_to_plane;
+              normal = poly.GetNormal();
+              normal.Normalize();
+            }
+          }
+
+          // Перемещаем частицу наружу
+          const double escape_step = eps * 10000.0;
+          int max_iterations = 50;
+          while (geometry_ptr->IsInnerPoint(particle_iter->GetPosition()) &&
+                 max_iterations > 0) {
+            particle_iter->position += normal * escape_step;
+            max_iterations--;
+          }
+        } else {
+          // Частица снаружи - нормальное движение
+          particle_iter->position += particle_iter->velocity * dtt;
+        }
         particle_dt = 0;
       }
 

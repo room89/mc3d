@@ -1,6 +1,7 @@
 #include "geometry.h"
 
 #include <cmath>
+#include <vector>
 
 namespace mc3d {
 Geometry::Geometry() {}
@@ -315,6 +316,71 @@ void Geometry::CreateCube(double x, double width, double length, double H) {
   add_polygon(p[0], p[5], p[4], Point(0, 0, -1));
   add_polygon(p[3], p[2], p[6], Point(0, 0, 1));
   add_polygon(p[3], p[6], p[7], Point(0, 0, 1));
+}
+
+void Geometry::CreateCylinder(double x, double radius, double length,
+                              int segments) {
+  const double Pi = 3.14159265358979323846;
+
+  // Generate points for the front and back circles
+  std::vector<Point> front_circle(segments);
+  std::vector<Point> back_circle(segments);
+
+  for (int i = 0; i < segments; i++) {
+    double angle = 2.0 * Pi * i / segments;
+    double y = radius * cos(angle);
+    double z = radius * sin(angle);
+
+    front_circle[i].Set(x, y, z);
+    back_circle[i].Set(x + length, y, z);
+  }
+
+  // Center points for the circular faces
+  Point front_center(x, 0, 0);
+  Point back_center(x + length, 0, 0);
+
+  auto add_polygon = [&](const Point& p1, const Point& p2, const Point& p3,
+                         const Point& normal) {
+    auto polygon = std::make_unique<Polygon>(p1, p2, p3, normal);
+    polygon->flux = 0;
+    polygon->force = Point(0, 0, 0);
+    poligons.push_back(std::move(polygon));
+  };
+
+  // Create front circular face (triangles from center to edge)
+  for (int i = 0; i < segments; i++) {
+    int next_i = (i + 1) % segments;
+    Point normal = Point(-1, 0, 0);  // Normal pointing inward
+    add_polygon(front_center, front_circle[next_i], front_circle[i], normal);
+  }
+
+  // Create back circular face (triangles from center to edge)
+  for (int i = 0; i < segments; i++) {
+    int next_i = (i + 1) % segments;
+    Point normal = Point(1, 0, 0);  // Normal pointing inward
+    add_polygon(back_center, back_circle[i], back_circle[next_i], normal);
+  }
+
+  // Create cylindrical surface (rectangular segments)
+  for (int i = 0; i < segments; i++) {
+    int next_i = (i + 1) % segments;
+
+    // Each rectangle is divided into two triangles
+    Point p1 = front_circle[i];
+    Point p2 = front_circle[next_i];
+    Point p3 = back_circle[next_i];
+    Point p4 = back_circle[i];
+
+    // Calculate normal for the cylindrical surface (pointing inward)
+    Point center_to_edge = p1 - front_center;
+    center_to_edge.Normalize();
+    Point normal = center_to_edge;
+
+    // First triangle
+    add_polygon(p1, p2, p3, normal);
+    // Second triangle
+    add_polygon(p1, p3, p4, normal);
+  }
 }
 
 int Geometry::FixPolygons() {

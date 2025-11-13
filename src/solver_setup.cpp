@@ -99,6 +99,10 @@ std::unique_ptr<Geometry> BuildGeometry(const SimulationConfig& cfg) {
   } else if (cfg.geometry_type == "cube") {
     body->CreateCube(cfg.geometry_cube_x, cfg.geometry_cube_width,
                      cfg.geometry_cube_length, cfg.geometry_cube_height);
+  } else if (cfg.geometry_type == "cylinder") {
+    body->CreateCylinder(cfg.geometry_cylinder_x, cfg.geometry_cylinder_radius,
+                         cfg.geometry_cylinder_length,
+                         cfg.geometry_cylinder_segments);
   }
 
   ApplyGeometryPostProcessing(cfg, *body);

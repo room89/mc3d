@@ -42,6 +42,8 @@ class Geometry {
                      double H = .16);
   void CreateCube(double x = -.25, double width = .5, double length = .5,
                   double H = .5);
+  void CreateCylinder(double x = -.25, double radius = .25, double length = .5,
+                      int segments = 32);
   Point MassCenter();
   void Move(Point a);
   void Scale(double e);

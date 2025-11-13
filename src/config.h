@@ -84,6 +84,11 @@ struct SimulationConfig {
   double geometry_cube_length = 0.5;
   double geometry_cube_height = 0.5;
 
+  double geometry_cylinder_x = -0.25;
+  double geometry_cylinder_radius = 0.25;
+  double geometry_cylinder_length = 0.5;
+  int geometry_cylinder_segments = 32;
+
   std::array<BoundaryType, 6> boundary_types{
       BoundaryType::HyperFree, BoundaryType::HyperFree,
       BoundaryType::HyperFree, BoundaryType::HyperFree,

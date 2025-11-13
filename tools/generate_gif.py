@@ -9,10 +9,11 @@ consistent with static figures.
 from __future__ import annotations
 
 import argparse
+import gc
 import glob
 import re
 from pathlib import Path
-from typing import List
+from typing import List, Iterator
 
 import numpy as np
 import pandas as pd
@@ -21,6 +22,13 @@ import matplotlib.tri as mtri
 from PIL import Image
 
 from snapshot_loader import load_snapshot
+
+# Try to import imageio for streaming GIF writing (more memory efficient)
+try:
+    import imageio
+    HAS_IMAGEIO = True
+except ImportError:
+    HAS_IMAGEIO = False
 
 PLANE_AXES = {
     "xy": ("x", "y", "z"),
@@ -245,18 +253,44 @@ def draw_plot(
     return fig
 
 
-def dataframe_to_image(fig: plt.Figure, dpi: int) -> Image.Image:
+def dataframe_to_image(fig: plt.Figure, dpi: int, use_rgb: bool = True) -> Image.Image:
+    """
+    Convert matplotlib figure to PIL Image.
+
+    Args:
+        fig: Matplotlib figure to convert
+        dpi: Resolution for rendering
+        use_rgb: If True, convert to RGB (saves ~25% memory). If False, use RGBA.
+
+    Returns:
+        PIL Image object
+    """
     fig.set_dpi(dpi)
     fig.canvas.draw()
     width, height = fig.canvas.get_width_height()
     buffer = np.frombuffer(fig.canvas.tostring_argb(), dtype=np.uint8).reshape((height, width, 4))
-    # Convert ARGB -> RGBA for Pillow.
-    rgba = np.empty_like(buffer)
-    rgba[..., 0] = buffer[..., 1]
-    rgba[..., 1] = buffer[..., 2]
-    rgba[..., 2] = buffer[..., 3]
-    rgba[..., 3] = buffer[..., 0]
-    image = Image.fromarray(rgba, "RGBA")
+
+    if use_rgb:
+        # Convert ARGB -> RGB for Pillow (more memory efficient, no alpha channel needed for GIF)
+        rgb = np.empty((height, width, 3), dtype=np.uint8)
+        rgb[..., 0] = buffer[..., 1]  # R
+        rgb[..., 1] = buffer[..., 2]  # G
+        rgb[..., 2] = buffer[..., 3]  # B
+        image = Image.fromarray(rgb, "RGB")
+        # Explicitly delete intermediate arrays to free memory immediately
+        del rgb
+    else:
+        # Convert ARGB -> RGBA for Pillow.
+        rgba = np.empty_like(buffer)
+        rgba[..., 0] = buffer[..., 1]
+        rgba[..., 1] = buffer[..., 2]
+        rgba[..., 2] = buffer[..., 3]
+        rgba[..., 3] = buffer[..., 0]
+        image = Image.fromarray(rgba, "RGBA")
+        del rgba
+
+    # Free memory from buffer and close figure
+    del buffer
     plt.close(fig)
     return image
 
@@ -274,24 +308,25 @@ def apply_color_limits(fig: plt.Figure, vmin: float | None, vmax: float | None) 
             mappable.set_clim(vmin, vmax)
 
 
-def create_gif(args: argparse.Namespace) -> None:
-    files = find_snapshot_files(args.pattern)
-    if args.frame_step <= 0:
-        raise ValueError("--frame-step must be a positive integer.")
-    files = files[:: args.frame_step]
-    if args.max_frames is not None:
-        files = files[: args.max_frames]
+def generate_frames(
+    files: List[Path],
+    args: argparse.Namespace,
+    figsize: tuple[float, float] | None,
+) -> Iterator[Image.Image]:
+    """
+    Generator that yields frames one at a time to avoid storing all in memory.
+    """
+    use_rgb = True
 
-    if not files:
-        raise ValueError("No files selected for GIF generation after applying filters.")
-
-    frames: List[Image.Image] = []
-    figsize = tuple(args.figsize) if args.figsize else None
     for idx, path in enumerate(files, start=1):
         snapshot = load_snapshot(path)
         filtered = filter_slice(
             snapshot, args.plane, args.z_value, args.thickness, allow_empty=True
         )
+
+        # Free snapshot data immediately after filtering
+        del snapshot
+
         if filtered.empty:
             print(f"[{idx}/{len(files)}] Skipping {path.name}: slice contains no cells.")
             continue
@@ -310,15 +345,62 @@ def create_gif(args: argparse.Namespace) -> None:
         )
 
         apply_color_limits(fig, args.vmin, args.vmax)
-        frame = dataframe_to_image(fig, dpi=args.dpi)
-        frames.append(frame)
-        print(f"[{idx}/{len(files)}] Added frame from {path.name}")
+        frame = dataframe_to_image(fig, dpi=args.dpi, use_rgb=use_rgb)
 
+        # Free filtered data after creating the plot
+        del filtered
+
+        print(f"[{idx}/{len(files)}] Generated frame from {path.name}")
+
+        # Periodic garbage collection for large frame counts
+        if idx % 10 == 0:
+            gc.collect()
+
+        yield frame
+
+
+def create_gif_streaming(args: argparse.Namespace, frames: Iterator[Image.Image]) -> None:
+    """
+    Create GIF using imageio with streaming (memory efficient).
+    """
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    duration = 1.0 / max(args.fps, 0.1)
+
+    # Convert PIL Images to numpy arrays on-the-fly and write directly
+    print("Writing GIF with streaming (memory efficient)...")
+    frame_count = 0
+
+    with imageio.get_writer(
+        args.out,
+        mode="I",
+        duration=duration,
+        loop=0,
+    ) as writer:
+        for frame in frames:
+            # Convert PIL Image to numpy array
+            frame_array = np.array(frame)
+            writer.append_data(frame_array)
+            frame_count += 1
+            # Free frame immediately after writing
+            del frame
+            if frame_count % 10 == 0:
+                gc.collect()
+
+    print(f"GIF written to {args.out} ({frame_count} frames, {args.fps} fps)")
+
+
+def create_gif_legacy(args: argparse.Namespace, frames: List[Image.Image]) -> None:
+    """
+    Create GIF using PIL (requires all frames in memory).
+    """
     if not frames:
         raise RuntimeError("No frames were generated. Check slice parameters or input pattern.")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     duration_ms = 1000.0 / max(args.fps, 0.1)
+
+    num_frames = len(frames)
+    print(f"Writing GIF with {num_frames} frames (all frames in memory)...")
     frames[0].save(
         args.out,
         save_all=True,
@@ -327,7 +409,39 @@ def create_gif(args: argparse.Namespace) -> None:
         loop=0,
         disposal=2,
     )
-    print(f"GIF written to {args.out} ({len(frames)} frames, {args.fps} fps)")
+
+    # Clear frames from memory after writing
+    del frames
+    gc.collect()
+
+    print(f"GIF written to {args.out} ({num_frames} frames, {args.fps} fps)")
+
+
+def create_gif(args: argparse.Namespace) -> None:
+    files = find_snapshot_files(args.pattern)
+    if args.frame_step <= 0:
+        raise ValueError("--frame-step must be a positive integer.")
+    files = files[:: args.frame_step]
+    if args.max_frames is not None:
+        files = files[: args.max_frames]
+
+    if not files:
+        raise ValueError("No files selected for GIF generation after applying filters.")
+
+    figsize = tuple(args.figsize) if args.figsize else None
+
+    # Use streaming approach if imageio is available (much more memory efficient)
+    if HAS_IMAGEIO:
+        frames_generator = generate_frames(files, args, figsize)
+        create_gif_streaming(args, frames_generator)
+    else:
+        # Fallback to legacy method (requires all frames in memory)
+        print("Warning: imageio not available. Using legacy method (all frames in memory).")
+        print("Install imageio for memory-efficient streaming: pip install imageio")
+        frames: List[Image.Image] = []
+        for frame in generate_frames(files, args, figsize):
+            frames.append(frame)
+        create_gif_legacy(args, frames)
 
 
 def main() -> None:
