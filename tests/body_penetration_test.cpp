@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cmath>
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <thread>
@@ -12,6 +14,38 @@
 #include "particle.h"
 #include "poligon.h"
 #include "utils/utils.hpp"
+
+TEST(BodyCollisionTest, DiffuseWallTemperatureControlsOutgoingFluxMoments) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  EXPECT_THROW(boundary.SetWallTemperature(0), std::invalid_argument);
+  EXPECT_THROW(boundary.SetWallTemperature(-1), std::invalid_argument);
+  EXPECT_THROW(boundary.SetWallTemperature(std::numeric_limits<double>::infinity()), std::invalid_argument);
+  for (double temperature : {1., 10.}) {
+    boundary.SetWallTemperature(temperature);
+    utils::RandomEngine().seed(54321);
+    std::vector<mc3d::Particle> particles(30000, {{-0.6,0,0},{10,0,0}});
+    boundary.BoundaryCondition(particles, 0.02);
+    mc3d::Point mean(0,0,0), squares(0,0,0);
+    for (const auto& p : particles) {
+      ASSERT_LT(p.velocity.x, 0);
+      ASSERT_LT(p.position.x, -0.5);
+      mean += p.velocity;
+      squares += mc3d::Point(p.velocity.x*p.velocity.x,
+                            p.velocity.y*p.velocity.y, p.velocity.z*p.velocity.z);
+    }
+    mean /= double(particles.size());
+    squares /= double(particles.size());
+    EXPECT_NEAR(mean.x, -std::sqrt(std::acos(-1.)*temperature/2), 0.025*std::sqrt(temperature));
+    EXPECT_NEAR(mean.y, 0, 0.025*std::sqrt(temperature));
+    EXPECT_NEAR(mean.z, 0, 0.025*std::sqrt(temperature));
+    EXPECT_NEAR(squares.x, 2*temperature, 0.05*temperature);
+    EXPECT_NEAR(squares.y, temperature, 0.04*temperature);
+    EXPECT_NEAR(squares.z, temperature, 0.04*temperature);
+  }
+}
 
 namespace {
 

@@ -69,6 +69,7 @@ class Cell {
   void SetApex(Point a);  // установка "опорной" точки
   void SetCharacteristicLength(double length);
   void SetTemperature(double t);
+  void SetWallTemperature(double t) { body_boundary.SetWallTemperature(t); }
   void SetParameters(double S, double alpha, double T);
   void SetVelocity(Point velocity);
   void SetKn(double Kn);

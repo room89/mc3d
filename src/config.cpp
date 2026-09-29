@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <cctype>
+#include <cmath>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -210,6 +211,10 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.Cu = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature" || key == "t") {
     config.temperature = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "wall_temperature") {
+    config.wall_temperature = ParseDouble(prepared_value, raw_key, ctx);
+    if (!(config.wall_temperature > 0) || !std::isfinite(config.wall_temperature))
+      throw std::invalid_argument("Wall temperature must be finite and positive");
   } else if (key == "alpha") {
     config.alpha = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "ncx" || key == "cells_x") {
@@ -678,6 +683,7 @@ void PrintUsage(const char* program) {
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
+      << "  --wall-temperature VALUE        Diffuse body temperature (default 1)\n"
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"

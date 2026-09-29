@@ -32,6 +32,7 @@ struct SimulationConfig {
   double Kn = 0.05;
   double Cu = 0.7;
   double temperature = 1.0;
+  double wall_temperature = 1.0;
   double alpha = 0.0;
 
   unsigned int cells_x = 20;

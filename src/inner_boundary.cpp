@@ -22,6 +22,12 @@ InnerBoundary::InnerBoundary(mc3d::Geometry& geometry, Point cell_center,
 
 InnerBoundary::~InnerBoundary() {}
 
+void InnerBoundary::SetWallTemperature(double temperature) {
+  if (!(temperature > 0) || !std::isfinite(temperature))
+    throw std::invalid_argument("Wall temperature must be finite and positive");
+  Tw = temperature;
+}
+
 bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
   this->cell_center = cell_center;
 

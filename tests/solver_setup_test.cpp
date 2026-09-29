@@ -1,6 +1,7 @@
 #include "solver_setup.h"
 
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 #include "free_boundary.h"
 #include "giper_free_boundary.h"
@@ -9,6 +10,18 @@
 #include "poligon.h"
 
 namespace {
+
+TEST(SimulationConfigTest, ParsesAndValidatesWallTemperature) {
+  char program[] = "solver";
+  char option[] = "--wall-temperature";
+  char valid[] = "10";
+  char invalid[] = "0";
+  char* args[] = {program, option, valid};
+  EXPECT_DOUBLE_EQ(mc3d::LoadSimulationConfig(1, args).wall_temperature, 1);
+  EXPECT_DOUBLE_EQ(mc3d::LoadSimulationConfig(3, args).wall_temperature, 10);
+  args[2] = invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(3, args), std::invalid_argument);
+}
 
 constexpr double kTolerance = 1e-9;
 

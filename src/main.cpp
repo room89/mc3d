@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
   cluster.Initialize(config.cells_x, config.cells_y, config.cells_z,
                      total_particles, config.Kn, config.Cu, std::move(geometry),
-                     config.S, config.alpha, config.temperature);
+                     config.S, config.alpha, config.temperature, config.wall_temperature);
   cluster.SetBinaryOutput(config.snapshots_binary);
   cluster.SetSnapshotInterval(config.snapshot_interval);
 
