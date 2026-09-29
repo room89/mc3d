@@ -7,29 +7,64 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GCC 14 Release
+            cc: gcc-14
+            cxx: g++-14
+            build_type: Release
+            sanitizer_flags: ''
+          - name: Clang 18 Debug + ASan/UBSan
+            cc: clang-18
+            cxx: clang++-18
+            build_type: Debug
+            sanitizer_flags: -fsanitize=address,undefined -fno-omit-frame-pointer
+          - name: GCC 14 Debug + TSan
+            cc: gcc-14
+            cxx: g++-14
+            build_type: Debug
+            sanitizer_flags: -fsanitize=thread -fno-omit-frame-pointer
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install toolchain
+      - name: Verify toolchain
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-13 g++-13 cmake ninja-build
+          ${{ matrix.cc }} --version
+          ${{ matrix.cxx }} --version
+          cmake --version
+          ninja --version
 
       - name: Configure CMake
-        run: >
-          cmake
-          -S .
-          -B build
-          -G Ninja
-          -DCMAKE_CXX_COMPILER=$(which g++-13)
-          -DCMAKE_C_COMPILER=$(which gcc-13)
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+          BUILD_TYPE: ${{ matrix.build_type }}
+          SANITIZER_FLAGS: ${{ matrix.sanitizer_flags }}
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DCMAKE_CXX_FLAGS="$SANITIZER_FLAGS" \
+            -DCMAKE_EXE_LINKER_FLAGS="$SANITIZER_FLAGS"
 
       - name: Build
         run: cmake --build build
 
       - name: Run tests
-        run: ctest --test-dir build --output-on-failure
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+          TSAN_OPTIONS: halt_on_error=1
+        run: ctest --test-dir build --output-on-failure --parallel 2
 
+      - name: Repeat collision and concurrent tests
+        if: matrix.build_type == 'Release'
+        run: >
+          ctest --test-dir build --output-on-failure
+          --repeat until-fail:3
+          -R '^(BodyCollisionTest|BodyReviewRegressionTest|CellClusterIntegrationTest)\.'
