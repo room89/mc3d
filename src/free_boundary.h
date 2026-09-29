@@ -16,7 +16,13 @@
 namespace mc3d {
 class FreeBoundary : public Boundary {
  protected:
-  std::vector<std::reference_wrapper<Cell>> cells_;
+  struct InflowCell {
+    std::reference_wrapper<Cell> cell;
+    double pending_particles = 0;
+  };
+  std::vector<InflowCell> cells_;
+  unsigned int AccumulateInflow(InflowCell& entry, double dt,
+                               unsigned int minimum_batch);
   unsigned int np;
   double Vn;
   double T;

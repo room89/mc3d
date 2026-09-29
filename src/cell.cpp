@@ -356,12 +356,6 @@ double Cell::GenerateHyperFreeRandom(unsigned int N, Point V, double T) {
     added_particles.push_back(new_particle);
   }
 
-  Point av_velocity;
-  for (const auto& particle : added_particles) {
-    av_velocity += particle.velocity;
-  }
-  av_velocity /= particles.size();
-
   particles.reserve(particles.size() + added_particles.size());
   particles.insert(particles.end(), added_particles.begin(),
                    added_particles.end());
