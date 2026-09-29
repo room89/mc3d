@@ -82,7 +82,9 @@ class Cell {
   virtual double GenerateRandom(unsigned int N, double T, Point V);
   virtual double GenerateFreeRandom(unsigned int N, double T, Point V,
                                     Point normal);
-  virtual double GenerateHyperFreeRandom(unsigned int N, Point V, double T);
+  virtual void GenerateHyperFreeRandom(unsigned int N, Point V, double T,
+                                      Point normal, double dt,
+                                      std::vector<Particle>& arrivals);
   void Sort();
   std::vector<Particle>& GetBuffer();
   void AddParticle(std::vector<Particle>& particles);

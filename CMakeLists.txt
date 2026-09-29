@@ -45,6 +45,7 @@ if(BUILD_TESTING)
     tests/conservation_test.cpp
     tests/body_penetration_test.cpp
     tests/open_boundary_test.cpp
+    tests/hyperfree_test.cpp
     src/boundary.cpp
     src/cell_cluster.cpp
     src/cell.cpp

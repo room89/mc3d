@@ -668,9 +668,10 @@ TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
 }
 
 TEST(CellClusterIntegrationTest, HyperFreeInflowRepopulatesEmptyDomain) {
+  utils::RandomEngine().seed(101);
   mc3d::SimulationConfig cfg;
   cfg.Lx = cfg.Ly = cfg.Lz = 1;
-  cfg.particles_per_cell = 60;
+  cfg.particles_per_cell = 600;
   cfg.temperature = 1.2;
   cfg.S = 0;
   // This duration admits 2.25 particles through one face. The old boundary
@@ -695,4 +696,42 @@ TEST(CellClusterIntegrationTest, HyperFreeInflowRepopulatesEmptyDomain) {
   EXPECT_EQ(cells.front()->GetParticleCount(), 2U);
   EXPECT_TRUE(std::isfinite(cells.front()->GetEnergy()));
   EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), duration);
+}
+
+TEST(CellClusterIntegrationTest, HyperFreeAllFacesPreserveUniformReservoir) {
+  for (double speed_ratio : {0., 2., 5.}) {
+    SCOPED_TRACE(speed_ratio);
+    utils::RandomEngine().seed(813);
+    utils::SeedRandom(813);
+    mc3d::SimulationConfig cfg;
+    cfg.Lx = 2; cfg.Ly = 1; cfg.Lz = 0.5;
+    cfg.particles_per_cell = 100;
+    cfg.S = speed_ratio;
+    cfg.temperature = 1;
+    mc3d::CellCluster cluster(1);
+    cluster.SetApex({-1,-0.5,-0.25});
+    cluster.SetSize(2,1,0.5);
+    cluster.SetEndTime(0.6);
+    cluster.SetSnapshotInterval(10);
+    ASSERT_TRUE(cluster.Initialize(8,4,2,6400,kKn,0.3,
+        std::make_unique<mc3d::Geometry>(),cfg.S,0,1));
+    for (int face = 0; face < 6; ++face)
+      cluster.SetBoundaryCondition(mc3d::MakeBoundary(
+          mc3d::MakeBoundaryDescriptor(static_cast<mc3d::BoundaryFace>(face),cfg),
+          mc3d::BoundaryType::HyperFree,cfg));
+    cluster.Compute();
+    double count = 0, temperature = 0;
+    mc3d::Point velocity(0,0,0);
+    for (auto* cell : mc3d::CellClusterTestAccess::GetLookup(cluster)) {
+      const double n = cell->GetParticleCount();
+      count += n;
+      temperature += n * cell->GetTemperature();
+      velocity += cell->GetVelocity() * n;
+    }
+    EXPECT_NEAR(count,6400,320);
+    EXPECT_NEAR(temperature / count,1,0.08);
+    EXPECT_NEAR(velocity.x / count,speed_ratio * std::sqrt(2.),0.06);
+    EXPECT_NEAR(velocity.y / count,0,0.06);
+    EXPECT_NEAR(velocity.z / count,0,0.06);
+  }
 }
