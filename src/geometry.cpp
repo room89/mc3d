@@ -1,9 +1,37 @@
 #include "geometry.h"
 
+#include <algorithm>
+#include <array>
 #include <cmath>
+#include <limits>
+#include <optional>
 #include <vector>
 
 namespace mc3d {
+namespace {
+
+// Returns the fraction of a ray needed to reach a triangle. The ray direction
+// can be a velocity step or an arbitrary direction for point-in-mesh queries.
+std::optional<double> RayTriangle(Point start, Point direction,
+                                  const Polygon& polygon) {
+  const Point e1 = polygon.GetP2() - polygon.GetP1();
+  const Point e2 = polygon.GetP3() - polygon.GetP1();
+  const Point p = direction.Cross(e2);
+  const double det = e1 * p;
+  if (std::abs(det) <= 1e-14 * e1.Mod() * e2.Mod() * direction.Mod()) {
+    return std::nullopt;
+  }
+  const double inverse_det = 1.0 / det;
+  Point from_vertex = start - polygon.GetP1();
+  const double u = (from_vertex * p) * inverse_det;
+  if (u < -1e-10 || u > 1.0 + 1e-10) return std::nullopt;
+  const Point q = from_vertex.Cross(e1);
+  const double v = (direction * q) * inverse_det;
+  if (v < -1e-10 || u + v > 1.0 + 1e-10) return std::nullopt;
+  return (e2 * q) * inverse_det;
+}
+
+}  // namespace
 Geometry::Geometry() {}
 
 Geometry::Geometry(const char* file_name) {
@@ -138,18 +166,133 @@ const Polygon& Geometry::GetPolygon(std::size_t index) const {
 }
 
 bool Geometry::IsInnerPoint(Point test_point) const {
-  if (poligons.empty()) {
+  // A single surface triangle has no enclosed volume; at least four faces
+  // are needed for a closed three-dimensional body.
+  if (poligons.size() < 4) {
     return false;
   }
-  size_t n = 0;
+  // A parity test works for closed concave meshes as well as convex bodies.
+  // Three non-axis-aligned rays avoid most edge and vertex degeneracies.
+  const std::array<Point, 3> directions{
+      {Point(1, 0.371, 0.529), Point(0.271, 1, 0.419), Point(0.379, 0.233, 1)}};
+  const double tolerance =
+      std::max(SurfaceTolerance(),
+               16 * std::numeric_limits<double>::epsilon() *
+                   std::max({std::abs(test_point.x), std::abs(test_point.y),
+                             std::abs(test_point.z)}));
+  int inside_votes = 0;
+  for (const Point& direction : directions) {
+    std::vector<double> distances;
+    distances.reserve(poligons.size());
+    for (const auto& polygon : poligons) {
+      const auto fraction = RayTriangle(test_point, direction, *polygon);
+      if (!fraction) continue;
+      if (std::abs(*fraction) * direction.Mod() <= tolerance) return false;
+      if (*fraction > 0) distances.push_back(*fraction);
+    }
+    std::sort(distances.begin(), distances.end());
+    std::size_t crossings = 0;
+    double previous = -std::numeric_limits<double>::infinity();
+    for (double distance : distances) {
+      if ((distance - previous) * direction.Mod() > tolerance) {
+        ++crossings;
+        previous = distance;
+      }
+    }
+    inside_votes += crossings % 2;
+  }
+  return inside_votes >= 2;
+}
 
+std::optional<Geometry::SurfaceHit> Geometry::FirstIntersection(
+    Point start, Point displacement) {
+  std::optional<SurfaceHit> first;
   for (const auto& polygon : poligons) {
-    if (polygon->GetNormal() * (test_point - polygon->GetGmt()) < 0) {
-      n++;
+    const auto fraction = RayTriangle(start, displacement, *polygon);
+    // A positive fraction is a real hit even for a very long segment.
+    if (!fraction || *fraction < 0 || *fraction > 1.0) continue;
+    if (*fraction == 0) {
+      const double distance = displacement.Mod();
+      if (distance == 0 ||
+          !IsInnerPoint(start +
+                        displacement *
+                            std::min(1.0, 8 * SurfaceTolerance() / distance))) {
+        continue;
+      }
+    }
+    if (!first || *fraction < first->fraction) {
+      first = SurfaceHit{polygon.get(), *fraction};
     }
   }
+  return first;
+}
 
-  return n == poligons.size();
+std::optional<Point> Geometry::ExteriorPoint(Point interior) const {
+  if (!IsInnerPoint(interior)) return interior;
+  const std::array<Point, 6> directions{{Point(1, 0, 0), Point(-1, 0, 0),
+                                         Point(0, 1, 0), Point(0, -1, 0),
+                                         Point(0, 0, 1), Point(0, 0, -1)}};
+  double nearest = std::numeric_limits<double>::infinity();
+  Point exit;
+  Point direction_to_exit;
+  for (const Point& direction : directions) {
+    for (const auto& polygon : poligons) {
+      const auto distance = RayTriangle(interior, direction, *polygon);
+      if (distance && *distance > 0 && *distance < nearest) {
+        nearest = *distance;
+        exit = interior + direction * *distance;
+        direction_to_exit = direction;
+      }
+    }
+  }
+  if (!std::isfinite(nearest)) return std::nullopt;
+  // Use a geometry-scaled offset that is representable at these coordinates;
+  // check the result before accepting the recovery.
+  double offset = 8 * SurfaceTolerance();
+  for (int attempt = 0; attempt < 12; ++attempt) {
+    Point candidate = exit + direction_to_exit * offset;
+    if (!IsInnerPoint(candidate)) return candidate;
+    offset *= 2;
+  }
+  return std::nullopt;
+}
+
+void Geometry::AccumulateForce(Polygon& polygon, Point impulse) {
+  std::lock_guard<std::mutex> lock(force_mutex_);
+  polygon.force += impulse;
+}
+
+std::pair<Point, Point> Geometry::Bounds() const {
+  Point lower(std::numeric_limits<double>::infinity(),
+              std::numeric_limits<double>::infinity(),
+              std::numeric_limits<double>::infinity());
+  Point upper(-std::numeric_limits<double>::infinity(),
+              -std::numeric_limits<double>::infinity(),
+              -std::numeric_limits<double>::infinity());
+  for (const auto& polygon : poligons) {
+    for (const Point& vertex :
+         {polygon->GetP1(), polygon->GetP2(), polygon->GetP3()}) {
+      lower.x = std::min(lower.x, vertex.x);
+      lower.y = std::min(lower.y, vertex.y);
+      lower.z = std::min(lower.z, vertex.z);
+      upper.x = std::max(upper.x, vertex.x);
+      upper.y = std::max(upper.y, vertex.y);
+      upper.z = std::max(upper.z, vertex.z);
+    }
+  }
+  return {lower, upper};
+}
+
+double Geometry::SurfaceTolerance() const {
+  if (poligons.empty()) return 0;
+  const auto [lower, upper] = Bounds();
+  const Point extent = upper - lower;
+  const double scale = std::max({extent.x, extent.y, extent.z});
+  const double coordinate =
+      std::max({std::abs(lower.x), std::abs(lower.y), std::abs(lower.z),
+                std::abs(upper.x), std::abs(upper.y), std::abs(upper.z)});
+  return std::max(1e-12 * scale,
+                  16 * std::numeric_limits<double>::epsilon() * coordinate);
 }
 
 void Geometry::CreateWedge(double x, double width, double length,

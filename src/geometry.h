@@ -12,7 +12,10 @@
 #include <fstream>
 #include <iomanip>
 #include <memory>
+#include <mutex>
+#include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "boundary.h"
@@ -28,8 +31,13 @@ namespace {
 class Geometry {
  protected:
   std::deque<std::unique_ptr<Polygon>> poligons;
+  std::mutex force_mutex_;
 
  public:
+  struct SurfaceHit {
+    Polygon* polygon;
+    double fraction;
+  };
   Geometry();
   Geometry(const char* file_name);
   ~Geometry();
@@ -50,6 +58,11 @@ class Geometry {
   std::size_t PolygonCount() const;
   const Polygon& GetPolygon(std::size_t index) const;
   bool IsInnerPoint(Point test_point) const;
+  std::optional<SurfaceHit> FirstIntersection(Point start, Point displacement);
+  std::optional<Point> ExteriorPoint(Point interior) const;
+  std::pair<Point, Point> Bounds() const;
+  double SurfaceTolerance() const;
+  void AccumulateForce(Polygon& polygon, Point impulse);
   pair<Point, Point> Size();
   double DistanceToPoint(Point p);
   int FixPolygons();

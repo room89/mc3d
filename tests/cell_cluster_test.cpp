@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -597,4 +598,58 @@ TEST(CellClusterIntegrationTest,
   EXPECT_DOUBLE_EQ(momentum.y, 2);
   EXPECT_DOUBLE_EQ(momentum.z, 2);
   EXPECT_DOUBLE_EQ(energy, 3);
+}
+
+TEST(CellClusterIntegrationTest, BodyCollisionKeepsParticlesOutsideEveryStep) {
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-0.2, 0.4, 0.4, 0.4);
+  const auto* body_ptr = body.get();
+  mc3d::CellCluster cluster(2);
+  cluster.SetApex({-5, -5, -5});
+  cluster.SetSize(10, 10, 10);
+  cluster.SetEndTime(1.6);
+  cluster.SetSnapshotInterval(10);
+  ASSERT_TRUE(
+      cluster.Initialize(2, 1, 1, 0, kKn, 0.2, std::move(body), 0, 0, 1));
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  mc3d::Particle left({-0.5, 0, 0}, {1, 0, 0});
+  mc3d::Particle right({0.5, 0, 0}, {-1, 0, 0});
+  ASSERT_TRUE(cells.front()->TryAcceptParticle(left));
+  ASSERT_TRUE(cells.back()->TryAcceptParticle(right));
+  bool finished = false;
+  for (int step = 0; step < 20 && !finished; ++step) {
+    SCOPED_TRACE(step);
+    finished = mc3d::CellClusterTestAccess::RunTimeStep(cluster);
+    std::size_t count = 0;
+    std::size_t inside = 0;
+    for (const auto* cell : cells) {
+      count += cell->GetParticleCount();
+      inside += cell->CountInnerParticles(*body_ptr);
+    }
+    EXPECT_EQ(count, 2U);
+    EXPECT_EQ(inside, 0U);
+  }
+  EXPECT_TRUE(finished);
+}
+
+
+TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-1, 100, 1, 100);
+  body->CreateCube(1e-4, 100, 1, 100);
+  mc3d::CellCluster cluster(2);
+  cluster.SetApex({-1, -50, -50});
+  cluster.SetSize(2.0001, 100, 100);
+  cluster.SetEndTime(1);
+  cluster.SetSnapshotInterval(10);
+  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1, std::move(body), 0, 0, 1));
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  mc3d::Particle left({5e-5, -0.1, 0}, {1, 0, 0});
+  mc3d::Particle right({5e-5, 0.1, 0}, {1, 0, 0});
+  ASSERT_TRUE(cells.front()->TryAcceptParticle(left));
+  ASSERT_TRUE(cells.back()->TryAcceptParticle(right));
+  EXPECT_THROW(cluster.Compute(), std::runtime_error);
+  EXPECT_EQ(cells.front()->GetParticleCount(), 1U);
+  EXPECT_EQ(cells.back()->GetParticleCount(), 1U);
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 0);
 }

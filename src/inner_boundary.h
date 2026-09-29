@@ -16,6 +16,9 @@ class InnerBoundary : public Boundary {
   double Tw;
   double eps;
   std::optional<std::reference_wrapper<Geometry>> geometry_;
+  Point bounds_min_;
+  Point bounds_max_;
+  bool SegmentMayReachBody(Point start, Point end) const;
 
  public:
   InnerBoundary();
