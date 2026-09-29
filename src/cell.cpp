@@ -476,11 +476,11 @@ void Cell::MoveParticles() {
 void Cell::Sort() {
   auto inside = [this](const Particle& particle) {
     const bool inside_x =
-        (particle.position.x >= apex.x) && (particle.position.x <= apex.x + lx);
+        (particle.position.x >= apex.x) && (particle.position.x < apex.x + lx);
     const bool inside_y =
-        (particle.position.y >= apex.y) && (particle.position.y <= apex.y + ly);
+        (particle.position.y >= apex.y) && (particle.position.y < apex.y + ly);
     const bool inside_z =
-        (particle.position.z >= apex.z) && (particle.position.z <= apex.z + lz);
+        (particle.position.z >= apex.z) && (particle.position.z < apex.z + lz);
     return inside_x && inside_y && inside_z;
   };
 
@@ -501,11 +501,11 @@ void Cell::AddParticle(std::vector<Particle>& incoming) {
 
   for (auto it = incoming.begin(); it != incoming.end(); ++it) {
     const bool inside_x =
-        (it->position.x > apex.x) && (it->position.x < apex.x + lx);
+        (it->position.x >= apex.x) && (it->position.x < apex.x + lx);
     const bool inside_y =
-        (it->position.y > apex.y) && (it->position.y < apex.y + ly);
+        (it->position.y >= apex.y) && (it->position.y < apex.y + ly);
     const bool inside_z =
-        (it->position.z > apex.z) && (it->position.z < apex.z + lz);
+        (it->position.z >= apex.z) && (it->position.z < apex.z + lz);
 
     if (inside_x && inside_y && inside_z) {
       particles.push_back(std::move(*it));
@@ -522,11 +522,11 @@ void Cell::AddParticle(std::vector<Particle>& incoming) {
 
 bool Cell::TryAcceptParticle(Particle& particle) {
   const bool inside_x =
-      (particle.position.x > apex.x) && (particle.position.x < apex.x + lx);
+      (particle.position.x >= apex.x) && (particle.position.x < apex.x + lx);
   const bool inside_y =
-      (particle.position.y > apex.y) && (particle.position.y < apex.y + ly);
+      (particle.position.y >= apex.y) && (particle.position.y < apex.y + ly);
   const bool inside_z =
-      (particle.position.z > apex.z) && (particle.position.z < apex.z + lz);
+      (particle.position.z >= apex.z) && (particle.position.z < apex.z + lz);
 
   if (!(inside_x && inside_y && inside_z)) {
     return false;
@@ -674,7 +674,7 @@ double Cell::CalculateDt() {
   CalculateTemperature();
   dt = 1000000;
   double c = sqrt(2 * T);
-  double dtt = min(lx / (fabs(velocity.x) + c), ly / fabs(velocity.y) + c);
+  double dtt = min(lx / (fabs(velocity.x) + c), ly / (fabs(velocity.y) + c));
   dtt = min(dtt, lz / (fabs(velocity.z) + c));
   if (dtt < dt) dt = dtt;
   // if(dt < 0.00001) cin>>c;

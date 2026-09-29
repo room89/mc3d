@@ -7,6 +7,9 @@
 
 #include "mirror_boundary.h"
 
+#include <cmath>
+#include <limits>
+
 namespace mc3d {
 MirrorBoundary::MirrorBoundary() {}
 
@@ -45,7 +48,7 @@ int MirrorBoundary::BoundaryCondition(std::vector<Particle>& particles,
   while (data != particles.end()) {
     t = (pstn - data->position) * nrml;
 
-    if (t < 0) {
+    if (t < 0 || (t == 0 && data->velocity * nrml > 0)) {
       t /= nrml * nrml;
 
       data->position += nrml * t * 2.;
@@ -59,6 +62,13 @@ int MirrorBoundary::BoundaryCondition(std::vector<Particle>& particles,
         return -1;
     }
 
+    // Keep exact upper-face hits inside the half-open cell domain.
+    if (t == 0) {
+      const double inward = -std::numeric_limits<double>::infinity();
+      if (nrml.x > 0) data->position.x = std::nextafter(data->position.x, inward);
+      if (nrml.y > 0) data->position.y = std::nextafter(data->position.y, inward);
+      if (nrml.z > 0) data->position.z = std::nextafter(data->position.z, inward);
+    }
     ++data;
   }
   return 1;

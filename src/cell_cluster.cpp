@@ -298,9 +298,9 @@ bool CellCluster::FindCellIndex(const Point& position,
     return false;
   }
 
-  if (position.x <= apex.x || position.x >= apex.x + Lx ||
-      position.y <= apex.y || position.y >= apex.y + Ly ||
-      position.z <= apex.z || position.z >= apex.z + Lz) {
+  if (position.x < apex.x || position.x >= apex.x + Lx ||
+      position.y < apex.y || position.y >= apex.y + Ly ||
+      position.z < apex.z || position.z >= apex.z + Lz) {
     return false;
   }
 
@@ -611,7 +611,7 @@ void CellCluster::CalculateDt() {
     if (dtt < dt) dt = dtt;
   }
   dt *= Cu;
-  if (t + dt > t_end) dt = t_end - t + 0.000000001;
+  if (t + dt > t_end) dt = t_end - t;
 }
 
 void CellCluster::SetDtInCells(double dt) {

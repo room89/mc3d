@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <limits>
 #include <memory>
 #include <utils/threadpool.hpp>
 #include <vector>
@@ -28,7 +29,7 @@ class CellCluster {
   inline void CalculateDt();  // вычисление шага по времени для данного кластера
   inline void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
-  inline bool TimeStep();
+  bool TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
                            kDefaultThreadPoolSize);  // конструктор по умолчанию
   ~CellCluster();                                    // деструктор
@@ -77,7 +78,8 @@ class CellCluster {
   double Kn;          // Кнудсен
   double Cu;          // число Куранта
   double t;           // время с начала расчёта(физическое)
-  double t_end;       // время окончания рассчета
+  // No end-time limit until SetEndTime is called (including during Initialize).
+  double t_end = std::numeric_limits<double>::infinity();
   double dt;          // шаг по времени(должен быть равен во всех кластерах)
   double begin_time;  // время начала расчета(для вычисления времени работы)
   double begin_iter_time;  // время начала выполнения шага по времени
