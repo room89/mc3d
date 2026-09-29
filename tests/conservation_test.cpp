@@ -9,6 +9,7 @@
 #include "cell.h"
 #include "mirror_boundary.h"
 #include "solver_setup.h"
+#include "utils/utils.hpp"
 
 namespace {
 
@@ -67,6 +68,7 @@ TEST(CellTimeStepTest, BulkVelocityLimitsEachAxisIncludingNegativeVelocities) {
 
 TEST(CellCollisionTest,
      RepeatedCollisionsConserveParticleCountMomentumAndEnergy) {
+  utils::SeedRandom(20260929u);
   mc3d::Cell cell;
   cell.SetApex({0, 0, 0});
   cell.SetSize(1, 1, 1);

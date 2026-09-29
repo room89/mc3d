@@ -118,6 +118,7 @@ TEST(BodyCollisionTest, AdjacentCellDetectsSurfaceOutsideLocalPolygonList) {
 }
 
 TEST(BodyCollisionTest, RepeatedCrossingsKeepEveryParticleOutside) {
+  utils::SeedRandom(20260929u);
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;

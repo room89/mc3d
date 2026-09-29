@@ -3,6 +3,9 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -19,7 +22,7 @@
 #include "particle.h"
 #include "point.h"
 #include "solver_setup.h"
-#include <cmath>
+#include "utils/utils.hpp"
 
 namespace mc3d {
 
@@ -70,10 +73,9 @@ constexpr double kTemperature = 1.0;
 
 class ScopedWorkingDirectory {
  public:
-  explicit ScopedWorkingDirectory(const std::filesystem::path& target)
-      : original_(std::filesystem::current_path()), target_(target) {
-    std::filesystem::remove_all(target_);
-    std::filesystem::create_directories(target_);
+  explicit ScopedWorkingDirectory(const std::string& name)
+      : original_(std::filesystem::current_path()),
+        target_(CreateUniqueDirectory(name)) {
     std::filesystem::current_path(target_);
   }
 
@@ -86,7 +88,24 @@ class ScopedWorkingDirectory {
     std::filesystem::remove_all(target_, ec);
   }
 
+  const std::filesystem::path& Path() const { return target_; }
+
  private:
+  static std::filesystem::path CreateUniqueDirectory(const std::string& name) {
+    static std::atomic<unsigned> counter{0};
+    const auto temp_root = std::filesystem::temp_directory_path();
+    while (true) {
+      const auto stamp =
+          std::chrono::steady_clock::now().time_since_epoch().count();
+      const auto candidate =
+          temp_root / (name + "_" + std::to_string(stamp) + "_" +
+                       std::to_string(counter.fetch_add(1)));
+      if (std::filesystem::create_directory(candidate)) {
+        return candidate;
+      }
+    }
+  }
+
   std::filesystem::path original_;
   std::filesystem::path target_;
 };
@@ -246,9 +265,7 @@ TEST(CellClusterSnapshotTest, PositiveIntervalInitialisesNextTime) {
 }
 
 TEST(CellClusterSnapshotTest, TimeStepHonoursSnapshotSchedule) {
-  const auto temp_dir =
-      std::filesystem::temp_directory_path() / "mc3d_cluster_snapshot_test";
-  ScopedWorkingDirectory guard(temp_dir);
+  ScopedWorkingDirectory guard("mc3d_cluster_snapshot_test");
 
   auto geometry = std::make_unique<mc3d::Geometry>();
 
@@ -272,7 +289,7 @@ TEST(CellClusterSnapshotTest, TimeStepHonoursSnapshotSchedule) {
   constexpr std::string_view kSnapshotPrefix = "data";
   constexpr std::string_view kSnapshotExtension = ".dat";
   std::vector<double> snapshot_times;
-  for (const auto& entry : std::filesystem::directory_iterator(temp_dir)) {
+  for (const auto& entry : std::filesystem::directory_iterator(guard.Path())) {
     if (entry.is_regular_file()) {
       const auto filename = entry.path().filename().string();
       if (filename.rfind(kSnapshotPrefix, 0) == 0 &&
@@ -301,9 +318,7 @@ TEST(CellClusterSnapshotTest, TimeStepHonoursSnapshotSchedule) {
 }
 
 TEST(CellClusterSnapshotWriters, WriteTextSnapshotProducesExpectedColumns) {
-  const auto temp_dir =
-      std::filesystem::temp_directory_path() / "mc3d_snapshot_text_test";
-  ScopedWorkingDirectory guard(temp_dir);
+  ScopedWorkingDirectory guard("mc3d_snapshot_text_test");
 
   auto geometry = std::make_unique<mc3d::Geometry>();
 
@@ -315,7 +330,7 @@ TEST(CellClusterSnapshotWriters, WriteTextSnapshotProducesExpectedColumns) {
                                  kS, kAlpha, kTemperature));
   cluster.SetBinaryOutput(false);
 
-  const auto snapshot_path = temp_dir / "snapshot.dat";
+  const auto snapshot_path = guard.Path() / "snapshot.dat";
   ASSERT_TRUE(cluster.WriteFile(snapshot_path.string()));
 
   std::ifstream input(snapshot_path);
@@ -354,9 +369,7 @@ TEST(CellClusterSnapshotWriters, WriteTextSnapshotProducesExpectedColumns) {
 }
 
 TEST(CellClusterSnapshotWriters, WriteBinarySnapshotProducesExpectedLayout) {
-  const auto temp_dir =
-      std::filesystem::temp_directory_path() / "mc3d_snapshot_binary_test";
-  ScopedWorkingDirectory guard(temp_dir);
+  ScopedWorkingDirectory guard("mc3d_snapshot_binary_test");
 
   auto geometry = std::make_unique<mc3d::Geometry>();
 
@@ -368,7 +381,7 @@ TEST(CellClusterSnapshotWriters, WriteBinarySnapshotProducesExpectedLayout) {
                                  kS, kAlpha, kTemperature));
   cluster.SetBinaryOutput(true);
 
-  const auto snapshot_path = temp_dir / "snapshot.bin";
+  const auto snapshot_path = guard.Path() / "snapshot.bin";
   ASSERT_TRUE(cluster.WriteFile(snapshot_path.string()));
 
   std::ifstream input(snapshot_path, std::ios::binary);
@@ -431,9 +444,7 @@ TEST(CellClusterSnapshotWriters, WriteBinarySnapshotProducesExpectedLayout) {
 }
 
 TEST(CellClusterIntegrationTest, RunsComputeAndInvokesBoundary) {
-  const auto temp_dir =
-      std::filesystem::temp_directory_path() / "mc3d_cluster_integration_test";
-  ScopedWorkingDirectory guard(temp_dir);
+  ScopedWorkingDirectory guard("mc3d_cluster_integration_test");
 
   auto geometry = std::make_unique<mc3d::Geometry>();
 
@@ -480,6 +491,7 @@ TEST(CellClusterDistributionTest,
 TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
   for (const auto threads : {1U, 4U}) {
     SCOPED_TRACE(threads);
+    utils::SeedRandom(20260929u);
     mc3d::SimulationConfig cfg;
     cfg.Lx = 2;
     cfg.Ly = 3;

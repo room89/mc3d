@@ -28,6 +28,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
 if(BUILD_TESTING)
   include(FetchContent)
+  include(GoogleTest)
   FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
@@ -73,5 +74,5 @@ if(BUILD_TESTING)
       GTest::gtest_main
   )
 
-  add_test(NAME mc3d_tests COMMAND mc3d_tests)
+  gtest_discover_tests(mc3d_tests)
 endif()
