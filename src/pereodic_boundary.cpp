@@ -13,9 +13,12 @@ PeriodicBoundary::~PeriodicBoundary() {}
 
 int PeriodicBoundary::BoundaryCondition(std::vector<Particle>& particles,
                                         double dt) {
+  // Cells own [lower, upper): wrap an exact upper-face hit to the lower face.
+  const bool upper_face = nrml.x > 0 || nrml.y > 0 || nrml.z > 0;
   auto data = particles.begin();
   while (data != particles.end()) {
-    while ((data->position - pstn) * nrml > 0) {
+    while ((data->position - pstn) * nrml > 0 ||
+           (upper_face && (data->position - pstn) * nrml == 0)) {
       data->position += mixing;
     }
     ++data;

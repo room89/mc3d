@@ -45,16 +45,19 @@ double SignedOrientation(const mc3d::Polygon& polygon) {
 
 TEST(SolverSetupTest, MakeBoundaryDescriptorProducesExpectedValues) {
   mc3d::SimulationConfig cfg;
+  cfg.Lx = 2;
+  cfg.Ly = 3;
+  cfg.Lz = 5;
 
   const DescriptorExpectation expectations[] = {
       {mc3d::BoundaryFace::XNeg, mc3d::Point(-0.5 * cfg.Lx, 0.0, 0.0),
-       mc3d::Point(-1.0, 0.0, 0.0), mc3d::Point(cfg.Ly, 0.0, 0.0)},
+       mc3d::Point(-1.0, 0.0, 0.0), mc3d::Point(cfg.Lx, 0.0, 0.0)},
       {mc3d::BoundaryFace::XPos, mc3d::Point(0.5 * cfg.Lx, 0.0, 0.0),
-       mc3d::Point(1.0, 0.0, 0.0), mc3d::Point(-cfg.Ly, 0.0, 0.0)},
+       mc3d::Point(1.0, 0.0, 0.0), mc3d::Point(-cfg.Lx, 0.0, 0.0)},
       {mc3d::BoundaryFace::YNeg, mc3d::Point(0.0, -0.5 * cfg.Ly, 0.0),
-       mc3d::Point(0.0, -1.0, 0.0), mc3d::Point(0.0, cfg.Lz, 0.0)},
+       mc3d::Point(0.0, -1.0, 0.0), mc3d::Point(0.0, cfg.Ly, 0.0)},
       {mc3d::BoundaryFace::YPos, mc3d::Point(0.0, 0.5 * cfg.Ly, 0.0),
-       mc3d::Point(0.0, 1.0, 0.0), mc3d::Point(0.0, -cfg.Lz, 0.0)},
+       mc3d::Point(0.0, 1.0, 0.0), mc3d::Point(0.0, -cfg.Ly, 0.0)},
       {mc3d::BoundaryFace::ZNeg, mc3d::Point(0.0, 0.0, -0.5 * cfg.Lz),
        mc3d::Point(0.0, 0.0, -1.0), mc3d::Point(0.0, 0.0, cfg.Lz)},
       {mc3d::BoundaryFace::ZPos, mc3d::Point(0.0, 0.0, 0.5 * cfg.Lz),
@@ -90,7 +93,7 @@ TEST(SolverSetupTest, MakeBoundaryReturnsCorrectSubtype) {
     ASSERT_NE(boundary, nullptr);
     auto* typed = dynamic_cast<mc3d::PeriodicBoundary*>(boundary.get());
     ASSERT_NE(typed, nullptr);
-    ExpectPointEqual(typed->GetMixing(), mc3d::Point(cfg.Ly, 0.0, 0.0));
+    ExpectPointEqual(typed->GetMixing(), mc3d::Point(cfg.Lx, 0.0, 0.0));
   }
 
   {

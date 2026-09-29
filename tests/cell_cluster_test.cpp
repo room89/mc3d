@@ -17,6 +17,8 @@
 #include "geometry.h"
 #include "particle.h"
 #include "point.h"
+#include "solver_setup.h"
+#include <cmath>
 
 namespace mc3d {
 
@@ -172,7 +174,7 @@ TEST(CellClusterInitializeTest, CleansParticleBufferAndMarksBodyCells) {
   EXPECT_TRUE(cell->GetBodyMark());
 }
 
-TEST(CellClusterGridTest, FindCellIndexRejectsBoundaryPoints) {
+TEST(CellClusterGridTest, FindCellIndexUsesHalfOpenDomain) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
@@ -183,7 +185,7 @@ TEST(CellClusterGridTest, FindCellIndexRejectsBoundaryPoints) {
                                  kS, kAlpha, kTemperature));
 
   std::size_t index = std::numeric_limits<std::size_t>::max();
-  EXPECT_FALSE(mc3d::CellClusterTestAccess::FindCellIndex(
+  EXPECT_TRUE(mc3d::CellClusterTestAccess::FindCellIndex(
       cluster, mc3d::Point(0.0, 0.5, 0.5), index));
   EXPECT_FALSE(mc3d::CellClusterTestAccess::FindCellIndex(
       cluster, mc3d::Point(1.0, 0.5, 0.5), index));
@@ -454,4 +456,145 @@ TEST(CellClusterIntegrationTest, RunsComputeAndInvokesBoundary) {
   ASSERT_NE(boundary_ptr, nullptr);
   EXPECT_GT(boundary_ptr->call_count, 0);
   EXPECT_GT(boundary_ptr->last_dt, 0.0);
+}
+
+TEST(CellClusterDistributionTest,
+     AcceptsExactInternalFacesAndLowerDomainCorner) {
+  mc3d::CellCluster cluster(2);
+  cluster.SetApex({0, 0, 0});
+  cluster.SetSize(2, 2, 2);
+  cluster.SetEndTime(1);
+  ASSERT_TRUE(cluster.Initialize(2, 2, 2, 0, kKn, kCu,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  std::vector<mc3d::Particle> particles;
+  particles.emplace_back(mc3d::Point(0, 0, 0), mc3d::Point(1, 2, 3));
+  particles.emplace_back(mc3d::Point(1, 1, 1), mc3d::Point(1, 2, 3));
+  mc3d::CellClusterTestAccess::DistributeParticles(cluster, particles);
+  EXPECT_TRUE(particles.empty());
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  EXPECT_EQ(cells.front()->GetParticleCount(), 1U);
+  EXPECT_EQ(cells.back()->GetParticleCount(), 1U);
+}
+
+TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
+  for (const auto threads : {1U, 4U}) {
+    SCOPED_TRACE(threads);
+    mc3d::SimulationConfig cfg;
+    cfg.Lx = 2;
+    cfg.Ly = 3;
+    cfg.Lz = 5;
+    cfg.apex_x = 4;
+    cfg.apex_y = -7;
+    cfg.apex_z = 2;
+    mc3d::CellCluster cluster(threads);
+    cluster.SetApex({4, -7, 2});
+    cluster.SetSize(cfg.Lx, cfg.Ly, cfg.Lz);
+    cluster.SetEndTime(2);
+    cluster.SetSnapshotInterval(3);
+    ASSERT_TRUE(cluster.Initialize(
+        2, 3, 5, 0, kKn, 0.4, std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+    const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+    for (auto* cell : cells) {
+      for (int i = 0; i < 24; ++i) {
+        mc3d::Particle particle(
+            cell->GetCenter(),
+            {double(i % 5) - 1, double(i % 7) - 2, double(i % 3) - 0.5});
+        ASSERT_TRUE(cell->TryAcceptParticle(particle));
+      }
+    }
+    for (int face = 0; face < 6; ++face) {
+      cluster.SetBoundaryCondition(
+          mc3d::MakeBoundary(mc3d::MakeBoundaryDescriptor(
+                                 static_cast<mc3d::BoundaryFace>(face), cfg),
+                             mc3d::BoundaryType::Periodic, cfg));
+    }
+    auto totals = [&] {
+      std::array<double, 5> result{};
+      for (auto* cell : cells) {
+        const double n = cell->GetParticleCount();
+        const auto momentum = cell->GetVelocity() * n;
+        result[0] += n;
+        result[1] += momentum.x;
+        result[2] += momentum.y;
+        result[3] += momentum.z;
+        result[4] += cell->GetEnergy() * n;
+      }
+      return result;
+    };
+    const auto initial = totals();
+    ASSERT_EQ(initial[0], 720);
+    bool finished = false;
+    int steps = 0;
+    while (!finished && steps < 1000) {
+      SCOPED_TRACE(steps);
+      const double previous_time =
+          mc3d::CellClusterTestAccess::GetTime(cluster);
+      finished = mc3d::CellClusterTestAccess::RunTimeStep(cluster);
+      const double dt = mc3d::CellClusterTestAccess::GetDt(cluster);
+      ASSERT_TRUE(std::isfinite(dt));
+      ASSERT_GT(dt, 0);
+      EXPECT_LE(dt, 2 - previous_time);
+      const auto actual = totals();
+      ASSERT_EQ(actual[0], initial[0]);
+      for (int i = 1; i < 5; ++i) {
+        EXPECT_NEAR(actual[i], initial[i], 1e-10 * initial[4]);
+      }
+      ++steps;
+    }
+    EXPECT_TRUE(finished);
+    EXPECT_GT(steps, 10);
+    EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 2);
+  }
+}
+
+TEST(CellClusterIntegrationTest,
+     ExactFaceHitsSurviveMovementAndPeriodicWrapping) {
+  mc3d::SimulationConfig cfg;
+  cfg.Lx = 2;
+  cfg.Ly = 3;
+  cfg.Lz = 5;
+  cfg.apex_x = cfg.apex_y = cfg.apex_z = 0;
+  mc3d::CellCluster cluster(1);
+  cluster.SetApex({0, 0, 0});
+  cluster.SetSize(2, 3, 5);
+  cluster.SetEndTime(0.5);
+  cluster.SetSnapshotInterval(1);
+  ASSERT_TRUE(cluster.Initialize(2, 3, 5, 0, kKn, 1,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  for (auto* cell : {cells.front(), cells.back()}) {
+    mc3d::Particle particle(cell->GetCenter(), {1, 1, 1});
+    ASSERT_TRUE(cell->TryAcceptParticle(particle));
+  }
+  for (int face = 0; face < 6; ++face) {
+    cluster.SetBoundaryCondition(
+        mc3d::MakeBoundary(mc3d::MakeBoundaryDescriptor(
+                               static_cast<mc3d::BoundaryFace>(face), cfg),
+                           mc3d::BoundaryType::Periodic, cfg));
+  }
+  EXPECT_TRUE(mc3d::CellClusterTestAccess::RunTimeStep(cluster));
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetDt(cluster), 0.5);
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 0.5);
+  // The last cell's particle reaches the domain corner and wraps to (0,0,0).
+  ASSERT_EQ(cells.front()->GetParticleCount(), 1U);
+  EXPECT_DOUBLE_EQ(cells.front()->GetParticleMassCenter().Mod(), 0);
+  // The first cell's particle reaches the internal corner (1,1,1).
+  auto* destination = cells[(1 * 3 + 1) * 5 + 1];
+  ASSERT_EQ(destination->GetParticleCount(), 1U);
+  EXPECT_DOUBLE_EQ(destination->GetParticleMassCenter().x, 1);
+  EXPECT_DOUBLE_EQ(destination->GetParticleMassCenter().y, 1);
+  EXPECT_DOUBLE_EQ(destination->GetParticleMassCenter().z, 1);
+  std::size_t count = 0;
+  mc3d::Point momentum{0, 0, 0};
+  double energy = 0;
+  for (auto* cell : cells) {
+    count += cell->GetParticleCount();
+    momentum += cell->GetVelocity() * cell->GetParticleCount();
+    energy += cell->GetEnergy() * cell->GetParticleCount();
+  }
+  EXPECT_EQ(count, 2U);
+  EXPECT_DOUBLE_EQ(momentum.x, 2);
+  EXPECT_DOUBLE_EQ(momentum.y, 2);
+  EXPECT_DOUBLE_EQ(momentum.z, 2);
+  EXPECT_DOUBLE_EQ(energy, 3);
 }

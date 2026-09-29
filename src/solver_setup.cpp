@@ -11,25 +11,28 @@ namespace mc3d {
 
 BoundaryDescriptor MakeBoundaryDescriptor(BoundaryFace face,
                                           const SimulationConfig& cfg) {
+  const Point apex(cfg.apex_x.value_or(-0.5 * cfg.Lx),
+                   cfg.apex_y.value_or(-0.5 * cfg.Ly),
+                   cfg.apex_z.value_or(-0.5 * cfg.Lz));
   switch (face) {
     case BoundaryFace::XNeg:
-      return {Point(-0.5 * cfg.Lx, 0.0, 0.0), Point(-1.0, 0.0, 0.0),
-              Point(cfg.Ly, 0.0, 0.0)};
+      return {Point(apex.x, 0, 0), Point(-1, 0, 0),
+              Point(cfg.Lx, 0, 0)};
     case BoundaryFace::XPos:
-      return {Point(0.5 * cfg.Lx, 0.0, 0.0), Point(1.0, 0.0, 0.0),
-              Point(-cfg.Ly, 0.0, 0.0)};
+      return {Point(apex.x + cfg.Lx, 0, 0), Point(1, 0, 0),
+              Point(-cfg.Lx, 0, 0)};
     case BoundaryFace::YNeg:
-      return {Point(0.0, -0.5 * cfg.Ly, 0.0), Point(0.0, -1.0, 0.0),
-              Point(0.0, cfg.Lz, 0.0)};
+      return {Point(0, apex.y, 0), Point(0, -1, 0),
+              Point(0, cfg.Ly, 0)};
     case BoundaryFace::YPos:
-      return {Point(0.0, 0.5 * cfg.Ly, 0.0), Point(0.0, 1.0, 0.0),
-              Point(0.0, -cfg.Lz, 0.0)};
+      return {Point(0, apex.y + cfg.Ly, 0), Point(0, 1, 0),
+              Point(0, -cfg.Ly, 0)};
     case BoundaryFace::ZNeg:
-      return {Point(0.0, 0.0, -0.5 * cfg.Lz), Point(0.0, 0.0, -1.0),
-              Point(0.0, 0.0, cfg.Lz)};
+      return {Point(0, 0, apex.z), Point(0, 0, -1),
+              Point(0, 0, cfg.Lz)};
     case BoundaryFace::ZPos:
-      return {Point(0.0, 0.0, 0.5 * cfg.Lz), Point(0.0, 0.0, 1.0),
-              Point(0.0, 0.0, -cfg.Lz)};
+      return {Point(0, 0, apex.z + cfg.Lz), Point(0, 0, 1),
+              Point(0, 0, -cfg.Lz)};
   }
   return {};
 }
