@@ -3,7 +3,6 @@
 /CMakeFiles/
 /CMakeCache.txt
 /cmake_install.cmake
-/Makefile
 /*.o
 /*.obj
 /*.a
@@ -29,4 +28,3 @@
 *.swp
 *.swo
 *.DS_Store
-

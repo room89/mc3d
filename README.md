@@ -17,11 +17,25 @@ MC3D — экспериментальный решатель разреженн�
 
 ## Сборка
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+make build
 ```
 
 Исполняемый файл `MC3dSolver` находится в директории `build/`.
+
+Доступные команды Makefile:
+```bash
+make help
+make test
+make run-example
+make run CONFIG=configs/example.json ARGS="--end-time 0.1"
+make run-smoke
+make clean
+```
+
+`make run` запускает расчёт с выбранным конфигурационным файлом; дополнительные
+параметры командной строки можно передать через `ARGS`. `make run-example`
+использует демонстрационный набор `configs/example.json`, а `make run-smoke`
+запускает короткий расчёт на маленькой сетке без геометрии тела.
 
 Проверки запускаются командой `ctest --test-dir build --output-on-failure`.
 Тесты проверяют ограничение шага времени по каждой оси, периодический перенос
