@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <thread>
 #include <vector>
 
 #include "cell.h"
@@ -182,4 +183,124 @@ TEST(BodyCollisionTest, SurfaceStartReflectsInsteadOfBeingRecoveredInside) {
   ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1), 0);
   EXPECT_FALSE(body.IsInnerPoint(particles.front().position));
   EXPECT_LT(particles.front().velocity.x, 0);
+}
+
+TEST(BodyGeometryTest, SegmentChoosesFirstFaceAndRejectsOutgoingStart) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  const auto hit = body.FirstIntersection({-1, 0, 0}, {2, 0, 0});
+  ASSERT_TRUE(hit.has_value());
+  EXPECT_NEAR(hit->fraction, 0.25, 1e-12);
+  EXPECT_NEAR(hit->polygon->GetNormal().x, -1, 1e-12);
+  EXPECT_FALSE(body.FirstIntersection({-0.5, 0, 0}, {-1, 0, 0}));
+}
+
+TEST(BodyGeometryTest, BoundsIncludeNegativeCoordinatesAndTranslatedBody) {
+  mc3d::Geometry body;
+  body.CreateCube(-3, 1, 1, 1);
+  body.Move({-1, -2, -3});
+  const auto [lower, upper] = body.Bounds();
+  EXPECT_DOUBLE_EQ(lower.x, -4);
+  EXPECT_DOUBLE_EQ(upper.x, -3);
+  EXPECT_DOUBLE_EQ(lower.y, -2.5);
+  EXPECT_DOUBLE_EQ(upper.y, -1.5);
+  EXPECT_DOUBLE_EQ(lower.z, -3.5);
+  EXPECT_DOUBLE_EQ(upper.z, -2.5);
+}
+
+TEST(BodyCollisionTest,
+     StartingInsideIsRecoveredByBoundaryWithoutParticleLoss) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  std::vector<mc3d::Particle> particles{{{0, 0, 0}, {0, 0, 0}}};
+  ASSERT_TRUE(body.IsInnerPoint(particles.front().position));
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1), 0);
+  ASSERT_EQ(particles.size(), 1U);
+  EXPECT_FALSE(body.IsInnerPoint(particles.front().position));
+  EXPECT_DOUBLE_EQ(particles.front().velocity.Mod(), 0);
+}
+
+TEST(BodyCollisionTest, DistantTrajectoryKeepsVelocityAndCreatesNoForce) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  std::vector<mc3d::Particle> particles{{{2, 2, 2}, {1, -0.25, 0.5}}};
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2), 0);
+  EXPECT_NEAR(particles.front().position.x, 2.2, 1e-12);
+  EXPECT_NEAR(particles.front().position.y, 1.95, 1e-12);
+  EXPECT_NEAR(particles.front().position.z, 2.1, 1e-12);
+  EXPECT_DOUBLE_EQ(particles.front().velocity.x, 1);
+  EXPECT_DOUBLE_EQ(particles.front().velocity.y, -0.25);
+  EXPECT_DOUBLE_EQ(particles.front().velocity.z, 0.5);
+  for (std::size_t i = 0; i < body.PolygonCount(); ++i) {
+    EXPECT_DOUBLE_EQ(body.GetPolygon(i).force.Mod(), 0);
+  }
+}
+
+TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  constexpr int kThreads = 8;
+  constexpr int kParticlesPerThread = 100;
+  std::array<mc3d::Point, kThreads> expected;
+  std::array<bool, kThreads> stayed_outside{};
+  std::vector<std::thread> workers;
+  for (int thread_index = 0; thread_index < kThreads; ++thread_index) {
+    workers.emplace_back([&, thread_index] {
+      std::vector<mc3d::Particle> particles;
+      for (int j = 0; j < kParticlesPerThread; ++j) {
+        particles.emplace_back(mc3d::Point(-1, 0.1, 0.1), mc3d::Point(2, 0, 0));
+      }
+      boundary.BoundaryCondition(particles, 0.3);
+      mc3d::Point impulse(0, 0, 0);
+      bool outside = particles.size() == kParticlesPerThread;
+      for (const auto& particle : particles) {
+        impulse += mc3d::Point(2, 0, 0) - particle.velocity;
+        outside &= !body.IsInnerPoint(particle.position);
+      }
+      expected[thread_index] = impulse;
+      stayed_outside[thread_index] = outside;
+    });
+  }
+  for (auto& worker : workers) worker.join();
+  mc3d::Point total_expected(0, 0, 0);
+  mc3d::Point total_force(0, 0, 0);
+  for (int i = 0; i < kThreads; ++i) {
+    EXPECT_TRUE(stayed_outside[i]);
+    total_expected += expected[i];
+  }
+  for (std::size_t i = 0; i < body.PolygonCount(); ++i) {
+    total_force += body.GetPolygon(i).force;
+  }
+  EXPECT_NEAR(total_force.x, total_expected.x, 1e-8);
+  EXPECT_NEAR(total_force.y, total_expected.y, 1e-8);
+  EXPECT_NEAR(total_force.z, total_expected.z, 1e-8);
+}
+
+TEST(BodyCollisionTest, RecoversFromConcaveInteriorTowardNotch) {
+  auto body = MakeConcavePrism();
+  const mc3d::Point start(0.9, 1.5, 0.5);
+  ASSERT_TRUE(body->IsInnerPoint(start));
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(*body);
+  std::vector<mc3d::Particle> particles{{start, {0, 0, 0}}};
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2), 0);
+  ASSERT_EQ(particles.size(), 1U);
+  EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
+  EXPECT_GT(particles.front().position.x, 1);
+}
+
+TEST(BodyCollisionTest, ConcaveCornerHitDoesNotLeaveParticleInside) {
+  auto body = MakeConcavePrism();
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(*body);
+  std::vector<mc3d::Particle> particles{{{1.5, 1.5, 0.5}, {-1, -1, 0}}};
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 1), 0);
+  ASSERT_EQ(particles.size(), 1U);
+  EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
 }
