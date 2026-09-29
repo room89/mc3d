@@ -152,13 +152,15 @@ def main():
     summary={"reference":reference(cfg),"wedge":{},"cube":{}}
     for name,color in [("coarse","#2879a2"),("fine","#d4683c")]:
         c,_,_,mean=runs[name]; summary["wedge"][name]={}
+        label="×".join(str(c[k]) for k in ["ncx","ncy","ncz"])
         for j,d in enumerate([.2,.3,.4]):
             q,wall=transect(mean,c,d)
             q.to_csv(a.out/f"{name}_transect_{d}.csv")
             summary["wedge"][name][str(d)]={"wall_y":wall,"density_1_5_gap":front_distance(q,wall,c)}
             for i,field in enumerate(["density","temperature"]):
-                axes[i,j].plot(q.index-wall,q[field],".-",label=name,color=color)
-                axes[i,j].set(xlim=(0,.22),xlabel="y − yстенки",title=f"x − xвершины = {d}; {field}")
+                axes[i,j].plot(q.index-wall,q[field],".-",label=label,color=color)
+                title="Плотность N/np" if field=="density" else "Температура T/T₀"
+                axes[i,j].set(xlim=(0,.22),xlabel="y − yстенки",title=f"x − xвершины = {d}; {title}")
                 axes[i,j].grid(alpha=.2)
     axes[0,0].legend();fig.suptitle("КЛИН · поперечные профили на двух сетках; координата 0 — поверхность")
     fig.savefig(a.out/"wedge_profiles.png",dpi=160);plt.close(fig)
@@ -175,7 +177,8 @@ def main():
             "nearest_cell_nT":float(q.pressure.iloc[-1])}
         for ax,field in zip(axes,["density","temperature","pressure"]):
             ax.plot(c["geometry_cube_x"]-q.index,q[field],".-",label=f'Tw={c.get("wall_temperature",1)}')
-            ax.set(xlabel="Расстояние перед кубом",title=field);ax.grid(alpha=.2)
+            title={"density":"Плотность n/n₀","temperature":"Температура T/T₀","pressure":"Величина nT/(n₀T₀)"}[field]
+            ax.set(xlabel="Расстояние перед кубом",title=title);ax.grid(alpha=.2)
     axes[0].legend();fig.suptitle("КУБ · влияние температуры диффузной стенки; одинаковая сетка 80×40×20")
     fig.savefig(a.out/"cube_wall_temperature.png",dpi=160);plt.close(fig)
     for field in ["density","temperature"]:
@@ -183,7 +186,8 @@ def main():
         for i,t in enumerate(times):
             f=fields(sum_frames(frames[max(0,i-2):i+1]),cfg)
             fig,ax=plt.subplots(figsize=(10,6),layout="constrained")
-            im=panel(ax,f,cfg,field,f"Клин · {field} · t={t:.3f} · среднее до 3 снимков")
+            title="плотность N/np" if field=="density" else "температура T/T₀"
+            im=panel(ax,f,cfg,field,f"Клин · {title} · t={t:.3f} · среднее до 3 снимков")
             fig.colorbar(im,ax=ax,shrink=.8,extend="max")
             buf=io.BytesIO();fig.savefig(buf,format="png",dpi=100);plt.close(fig);buf.seek(0)
             with Image.open(buf) as image: images.append(image.convert("RGB").copy())
