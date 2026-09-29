@@ -4,6 +4,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdint>
+#include <exception>
 #include <future>
 #include <iterator>
 #include <sstream>
@@ -66,7 +67,10 @@ CellCluster::CellCluster(std::size_t thread_pool_size)
   step = 0;
 }
 
-CellCluster::~CellCluster() { cells.clear(); }
+CellCluster::~CellCluster() {
+  thread_pool_.Stop();
+  cells.clear();
+}
 
 bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              unsigned int ncz, double density, double Kn,
@@ -228,9 +232,17 @@ bool CellCluster::TimeStep() {
       futures.emplace_back(thread_pool_.Execute(
           [cell_ptr = &cell]() { cell_ptr->Calculate(); }));
     }
+    // A failing cell must not leave other tasks using cells after the caller
+    // catches the error or destroys the cluster.
+    std::exception_ptr failure;
     for (auto& fut : futures) {
-      fut.get();
+      try {
+        fut.get();
+      } catch (...) {
+        if (!failure) failure = std::current_exception();
+      }
     }
+    if (failure) std::rethrow_exception(failure);
   }
 
   {

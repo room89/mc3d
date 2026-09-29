@@ -14,8 +14,8 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <utility>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "boundary.h"
@@ -61,6 +61,7 @@ class Geometry {
   std::optional<SurfaceHit> FirstIntersection(Point start, Point displacement);
   std::optional<Point> ExteriorPoint(Point interior) const;
   std::pair<Point, Point> Bounds() const;
+  double SurfaceTolerance() const;
   void AccumulateForce(Polygon& polygon, Point impulse);
   pair<Point, Point> Size();
   double DistanceToPoint(Point p);

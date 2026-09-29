@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -629,4 +630,26 @@ TEST(CellClusterIntegrationTest, BodyCollisionKeepsParticlesOutsideEveryStep) {
     EXPECT_EQ(inside, 0U);
   }
   EXPECT_TRUE(finished);
+}
+
+
+TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-1, 100, 1, 100);
+  body->CreateCube(1e-4, 100, 1, 100);
+  mc3d::CellCluster cluster(2);
+  cluster.SetApex({-1, -50, -50});
+  cluster.SetSize(2.0001, 100, 100);
+  cluster.SetEndTime(1);
+  cluster.SetSnapshotInterval(10);
+  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1, std::move(body), 0, 0, 1));
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  mc3d::Particle left({5e-5, -0.1, 0}, {1, 0, 0});
+  mc3d::Particle right({5e-5, 0.1, 0}, {1, 0, 0});
+  ASSERT_TRUE(cells.front()->TryAcceptParticle(left));
+  ASSERT_TRUE(cells.back()->TryAcceptParticle(right));
+  EXPECT_THROW(cluster.Compute(), std::runtime_error);
+  EXPECT_EQ(cells.front()->GetParticleCount(), 1U);
+  EXPECT_EQ(cells.back()->GetParticleCount(), 1U);
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 0);
 }

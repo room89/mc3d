@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include <utils/utils.hpp>
-#include <utils/logger.hpp>
 
 namespace mc3d {
 const double Pi = 3.1415926535;
@@ -76,6 +76,7 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
                                      double dt) {
   Geometry* geometry_ptr = GetGeometryPtr();
   if (!geometry_ptr) return 0;
+  const double surface_offset = 8 * geometry_ptr->SurfaceTolerance();
 
   for (auto& particle : cluster_particle) {
     if (!SegmentMayReachBody(particle.position,
@@ -86,6 +87,8 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
     if (geometry_ptr->IsInnerPoint(particle.position)) {
       if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
         particle.position = *exterior;
+      } else {
+        throw std::runtime_error("Cannot recover particle from body interior");
       }
     }
 
@@ -108,18 +111,19 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
       Polygon* collision_polygon = hit->polygon;
       const double dtt = particle_dt * hit->fraction;
-      Point unit_normal = collision_polygon->GetNormal();
+      Point edge1 = collision_polygon->GetP2() - collision_polygon->GetP1();
+      Point edge2 = collision_polygon->GetP3() - collision_polygon->GetP1();
+      Point unit_normal = edge1.Cross(edge2);
       const double normal_length = unit_normal.Mod();
-      if (normal_length <= 1e-14) {
-        particle.position += particle.velocity * particle_dt;
-        particle_dt = 0;
-        break;
+      if (!std::isfinite(normal_length) || normal_length == 0) {
+        throw std::runtime_error("Invalid triangle at particle collision");
       }
       unit_normal /= normal_length;
       // The mesh normal may be reversed; an entering particle must leave the
       // collision along the side from which it approached the triangle.
       if (unit_normal * particle.velocity > 0) unit_normal *= -1;
-      particle.position += particle.velocity * dtt + unit_normal * eps;
+      particle.position +=
+          particle.velocity * dtt + unit_normal * surface_offset;
 
       const Point incoming_velocity = particle.velocity;
 
@@ -205,20 +209,22 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
       if (geometry_ptr->IsInnerPoint(particle.position)) {
         if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
           particle.position = *exterior;
+        } else {
+          throw std::runtime_error(
+              "Cannot recover particle from body interior");
         }
       }
       particle_dt -= dtt;
     }
     if (particle_dt > 0) {
-      LOG_WARNING() << "Particle reached the 32-collision limit at "
-                    << particle.position << "; remaining dt=" << particle_dt;
+      throw std::runtime_error(
+          "Body collision limit reached with unprocessed step time; reduce Cu");
     }
     if (geometry_ptr->IsInnerPoint(particle.position)) {
       if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
         particle.position = *exterior;
       } else {
-        LOG_WARNING() << "Could not move particle outside body at "
-                      << particle.position;
+        throw std::runtime_error("Cannot recover particle from body interior");
       }
     }
   }

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include "inner_boundary.h"
 #include "particle.h"
 #include "poligon.h"
+#include "utils/utils.hpp"
 
 namespace {
 
@@ -303,4 +305,82 @@ TEST(BodyCollisionTest, ConcaveCornerHitDoesNotLeaveParticleInside) {
   ASSERT_EQ(boundary.BoundaryCondition(particles, 1), 0);
   ASSERT_EQ(particles.size(), 1U);
   EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
+}
+
+TEST(BodyReviewRegressionTest, VeryShortPositiveHitFractionIsNotDiscarded) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  const auto hit = body.FirstIntersection({-1, 0, 0}, {1e13, 0, 0});
+  ASSERT_TRUE(hit);
+  EXPECT_NEAR(hit->fraction * 1e13, 0.5, 1e-12);
+}
+
+TEST(BodyReviewRegressionTest, SmallClosedBodyHasAnInterior) {
+  mc3d::Geometry body;
+  body.CreateCube(-5e-11, 1e-10, 1e-10, 1e-10);
+  EXPECT_TRUE(body.IsInnerPoint({0, 0, 0}));
+  EXPECT_FALSE(body.IsInnerPoint({-1e-10, 0, 0}));
+}
+
+TEST(BodyReviewRegressionTest, ZeroSTLNormalDoesNotMakeTriangleTransparent) {
+  MeshGeometry body;
+  mc3d::Geometry cube;
+  cube.CreateCube(-0.5, 1, 1, 1);
+  for (std::size_t i = 0; i < cube.PolygonCount(); ++i) {
+    const auto& p = cube.GetPolygon(i);
+    body.Triangle(p.GetP1(), p.GetP2(), p.GetP3(), {0, 0, 0});
+  }
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  std::vector<mc3d::Particle> particles{{{-1, 0, 0}, {1, 0, 0}}};
+  boundary.BoundaryCondition(particles, 1.1);
+  EXPECT_LT(particles.front().position.x, 0);
+  EXPECT_LT(particles.front().velocity.x, 0);
+}
+
+namespace {
+std::unique_ptr<MeshGeometry> MakeNarrowGap(double gap) {
+  auto mesh = std::make_unique<MeshGeometry>();
+  for (double x : {-1.0, gap}) {
+    mc3d::Geometry cube;
+    cube.CreateCube(x, 100, 1, 100);
+    for (std::size_t i = 0; i < cube.PolygonCount(); ++i) {
+      const auto& p = cube.GetPolygon(i);
+      mesh->Triangle(p.GetP1(), p.GetP2(), p.GetP3(), p.GetNormal());
+    }
+  }
+  return mesh;
+}
+}  // namespace
+
+TEST(BodyReviewRegressionTest, SurfaceOffsetDoesNotJumpAcrossNarrowGap) {
+  auto body = MakeNarrowGap(1e-6);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(*body);
+  std::vector<mc3d::Particle> particles{{{5e-7, 0, 0}, {1, 0, 0}}};
+  boundary.BoundaryCondition(particles, 5e-7);
+  EXPECT_GT(particles.front().position.x, 9e-7);
+  EXPECT_LT(particles.front().position.x, 1e-6);
+  EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
+}
+
+TEST(BodyReviewRegressionTest,
+     CollisionLimitCannotSilentlyDiscardRemainingTime) {
+  auto body = MakeNarrowGap(1e-4);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(*body);
+  utils::RandomEngine().seed(44);
+  std::vector<mc3d::Particle> particles{{{5e-5, 0, 0}, {1, 0, 0}}};
+  EXPECT_THROW(boundary.BoundaryCondition(particles, 1), std::runtime_error);
+}
+
+TEST(BodyReviewRegressionTest, SmallBodySurfaceStartReflectsAndMovesOutside) {
+  mc3d::Geometry body;
+  body.CreateCube(-5e-11, 1e-10, 1e-10, 1e-10);
+  mc3d::InnerBoundary boundary;
+  boundary.SetGeometry(body);
+  std::vector<mc3d::Particle> particles{{{-5e-11, 0, 0}, {1, 0, 0}}};
+  boundary.BoundaryCondition(particles, 1e-11);
+  EXPECT_LT(particles.front().velocity.x, 0);
+  EXPECT_LT(particles.front().position.x, -5e-11);
 }
