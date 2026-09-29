@@ -75,7 +75,7 @@ CellCluster::~CellCluster() {
 bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              unsigned int ncz, double density, double Kn,
                              double Cu, std::unique_ptr<Geometry>&& body,
-                             double S, double alpha, double T) {
+                             double S, double alpha, double T, double wall_temperature) {
   LOG_DEBUG() << bool(body);
   body_ = std::move(body);
 
@@ -126,6 +126,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
 
         N_ = static_cast<unsigned int>(density * dx * dy * dz);
         temp_cell.SetParameters(S, alpha, T);
+        temp_cell.SetWallTemperature(wall_temperature);
 
         temp_cell.SetApex(a);
         temp_cell.SetSize(dx, dy, dz);

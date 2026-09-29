@@ -42,7 +42,7 @@ class CellCluster {
   bool Initialize(unsigned int ncx, unsigned int ncy, unsigned int ncz,
                   double density, double Kn, double Cu,
                   std::unique_ptr<Geometry>&& body_, double S, double alpha,
-                  double T);
+                  double T, double wall_temperature = 1.0);
   bool WriteCellFile(const string& init_file);
   void SetBinaryOutput(bool enabled);
   bool WriteFile();       // запись данных в файл(плотность и энэргия), данные

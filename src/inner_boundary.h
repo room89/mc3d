@@ -26,6 +26,7 @@ class InnerBoundary : public Boundary {
   ~InnerBoundary();
   bool AddPolygon(mc3d::Geometry& body, Point cell_center, double L);
   void SetGeometry(Geometry& geometry);
+  void SetWallTemperature(double temperature);
   Geometry* GetGeometryPtr();
   bool Empty() const;
   int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);

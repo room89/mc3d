@@ -47,6 +47,7 @@ if(BUILD_TESTING)
     tests/open_boundary_test.cpp
     tests/hyperfree_test.cpp
     src/boundary.cpp
+    src/config.cpp
     src/cell_cluster.cpp
     src/cell.cpp
     src/exception.cpp
