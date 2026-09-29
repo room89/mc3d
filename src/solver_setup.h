@@ -8,6 +8,8 @@
 
 namespace mc3d {
 
+double ReferenceParticleDensity(const SimulationConfig& config);
+
 struct BoundaryDescriptor {
   Point position;
   Point normal;

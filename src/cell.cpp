@@ -6,6 +6,7 @@
 #include <iterator>
 #include <limits>
 #include <mutex>
+#include <stdexcept>
 #include <utils/logger.hpp>
 #include <utils/utils.hpp>
 
@@ -16,7 +17,6 @@ const double Pi = 3.14159265358979;
 
 Cell::Cell() : particles_mutex_(std::make_shared<std::mutex>()) {
   this->calc_time = 0;
-  np = 1;
   body_mark = false;
   volume_ = 0.0;
 }
@@ -50,6 +50,9 @@ void Cell::SetSize(Point dl) {
 void Cell::SetApex(Point a) { apex = a; }
 
 bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
+  // Keep the reservoir normalization, not the fluctuating current population.
+  // Empty standalone cells retain the explicit/default normalization.
+  if (N > 0) SetReferenceParticleCount(static_cast<double>(N));
   this->GenerateRandom(N);
 
   dt = 100000;
@@ -371,18 +374,28 @@ void Cell::Collisions() {
 
   CalculateKn();
 
-  double g_max = 2 * sqrt(CalculateTemperature());
-  double factor = 2 * sqrt(2.) * L * Kn_l / particles.size();
+  CalculateTemperature();
+  // Bound every relative speed by twice the largest peculiar speed. A thermal
+  // mean is not an upper bound and causes population-dependent missed events.
+  double max_speed_squared = 0;
+  auto speed_squared = [this](const Point& v) {
+    const Point c = v - velocity;
+    return c * c;
+  };
+  for (const auto& p : particles)
+    max_speed_squared = std::max(max_speed_squared, speed_squared(p.velocity));
+  if (max_speed_squared == 0) return;
+  double g_max = 2 * std::sqrt(max_speed_squared);
+  // N*(N-1)/2 distinct unordered pairs, with particle weight set by N0.
+  double factor = 2 * sqrt(2.) * L * Kn_l / (particles.size() - 1);
   double frequency_t = factor / g_max;
 
   double t = 0;
 
   auto& rng = utils::RandomEngine();
 
-  auto particle_1 = particles.begin();
-  auto particle_2 = particles.begin();
-
-  particle_2++;
+  std::uniform_int_distribution<std::size_t> first(0, particles.size()-1);
+  std::uniform_int_distribution<std::size_t> second(0, particles.size()-2);
 
   while (t <= dt) {
     double r = utils::Random01();
@@ -393,6 +406,14 @@ void Cell::Collisions() {
     t += tau;
     if (t > dt) break;
 
+    // Every attempt must sample all particles, even when a time step contains
+    // fewer attempts than N/2. Restarting at the vector prefix biases collisions.
+    const auto i = first(rng);
+    auto j = second(rng);
+    if (j >= i) ++j;
+    auto particle_1 = particles.begin() + i;
+    auto particle_2 = particles.begin() + j;
+
     Point v1 = particle_1->GetVelocity();
     Point v2 = particle_2->GetVelocity();
 
@@ -400,13 +421,6 @@ void Cell::Collisions() {
 
     Point g = v2 - v1;
     double gmod = g.Mod();
-
-    if (g_max < gmod) {
-      g_max = gmod;
-      t -= tau;
-      frequency_t = factor / g_max;
-      continue;
-    }
 
     double rr = utils::Random01();
 
@@ -447,27 +461,11 @@ void Cell::Collisions() {
 
       particle_1->velocity = v1;
       particle_2->velocity = v2;
+      max_speed_squared = std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
+      g_max = 2 * std::sqrt(max_speed_squared);
+      frequency_t = factor / g_max;
     }
 
-    particle_2++;
-
-    if (particle_2 == particles.end()) {
-      std::shuffle(particles.begin(), particles.end(), rng);
-
-      particle_1 = particles.begin();
-      particle_2 = particles.begin();
-      particle_2++;
-    } else {
-      particle_1 = particle_2;
-      particle_2++;
-      if (particle_2 == particles.end()) {
-        std::shuffle(particles.begin(), particles.end(), rng);
-
-        particle_1 = particles.begin();
-        particle_2 = particles.begin();
-        particle_2++;
-      }
-    }
   }
 }
 
@@ -584,9 +582,18 @@ void Cell::SetTemperature(double t) { this->T = t; }
 
 double Cell::GetKn() { return Kn; }
 
+void Cell::SetReferenceParticleCount(double count) {
+  if (!(count > 0) || !std::isfinite(count))
+    throw std::invalid_argument("Reference particle count must be finite and positive");
+  reference_particle_count_ = count;
+}
+
 double Cell::CalculateKn() {
-  Kn_l = Kn * np / particles.size();
-  return Kn;
+  if (particles.empty()) return Kn_l = std::numeric_limits<double>::infinity();
+  // n/n0 = N / (N0 * Vgas/Vcell); N0 includes the model-particle weight.
+  Kn_l = Kn * reference_particle_count_ * GetVolume() /
+         (lx * ly * lz * particles.size());
+  return Kn_l;
 }
 
 double Cell::GetTemperature() {

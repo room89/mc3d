@@ -132,6 +132,8 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         temp_cell.SetSize(dx, dy, dz);
 
         temp_cell.Initialize(N_, body_);
+        if (density > 0)
+          temp_cell.SetReferenceParticleCount(density * dx * dy * dz);
 
         temp_cell.SetCharacteristicLength(Lx);
         temp_cell.SetKn(Kn);
@@ -166,7 +168,8 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
     cell_lookup_.push_back(&cell);
   }
 
-  this->density = N;
+  // density is the reservoir number of model particles per unit volume.
+  // It must not become the total population (nor the population outside a body).
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {

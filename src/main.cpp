@@ -21,13 +21,10 @@ int main(int argc, char* argv[]) {
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 
-  const double total_particles =
-      static_cast<double>(config.particles_per_cell) *
-      static_cast<double>(config.cells_x) *
-      static_cast<double>(config.cells_y) * static_cast<double>(config.cells_z);
+  const double reference_density = mc3d::ReferenceParticleDensity(config);
 
   cluster.Initialize(config.cells_x, config.cells_y, config.cells_z,
-                     total_particles, config.Kn, config.Cu, std::move(geometry),
+                     reference_density, config.Kn, config.Cu, std::move(geometry),
                      config.S, config.alpha, config.temperature, config.wall_temperature);
   cluster.SetBinaryOutput(config.snapshots_binary);
   cluster.SetSnapshotInterval(config.snapshot_interval);

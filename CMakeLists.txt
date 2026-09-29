@@ -40,6 +40,7 @@ if(BUILD_TESTING)
   add_executable(mc3d_tests
     tests/point_test.cpp
     tests/collision_test.cpp
+    tests/collision_normalization_test.cpp
     tests/cell_cluster_test.cpp
     tests/solver_setup_test.cpp
     tests/conservation_test.cpp

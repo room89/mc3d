@@ -1,6 +1,8 @@
 #include "solver_setup.h"
 
 #include <utility>
+#include <cmath>
+#include <stdexcept>
 
 #include "free_boundary.h"
 #include "giper_free_boundary.h"
@@ -8,6 +10,14 @@
 #include "pereodic_boundary.h"
 
 namespace mc3d {
+
+double ReferenceParticleDensity(const SimulationConfig& cfg) {
+  const double volume = cfg.Lx * cfg.Ly * cfg.Lz;
+  if (!(volume > 0) || !std::isfinite(volume))
+    throw std::invalid_argument("Domain volume must be finite and positive");
+  return static_cast<double>(cfg.particles_per_cell) * cfg.cells_x *
+         cfg.cells_y * cfg.cells_z / volume;
+}
 
 BoundaryDescriptor MakeBoundaryDescriptor(BoundaryFace face,
                                           const SimulationConfig& cfg) {

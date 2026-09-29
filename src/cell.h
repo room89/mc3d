@@ -48,7 +48,7 @@ class Cell {
   double calc_time;
   double start_time;
   bool body_mark;  // is body inside cell
-  unsigned int np;
+  double reference_particle_count_ = 1.0;  // reservoir count per full cell
   InnerBoundary body_boundary;
   std::vector<std::reference_wrapper<Cell>> neighbors;
   std::optional<std::reference_wrapper<int>> thread_mark;
@@ -73,6 +73,7 @@ class Cell {
   void SetParameters(double S, double alpha, double T);
   void SetVelocity(Point velocity);
   void SetKn(double Kn);
+  void SetReferenceParticleCount(double count);
   void SetInnerBoundary(InnerBoundary bound);
   void SetBodyMark(bool mark);
   virtual bool Initialize(
@@ -116,6 +117,7 @@ class Cell {
   double CalculateDt();
   void AddNeighbor(Cell& neighbor);
   friend ostream& operator<<(ostream& o, const Cell& c);
+  friend class CellCollisionTestAccess;
   bool WriteFile(ofstream* file);
   bool WriteFile();
   void Calculate();
