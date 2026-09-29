@@ -11,6 +11,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <numbers>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -664,4 +665,34 @@ TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
   EXPECT_EQ(cells.front()->GetParticleCount(), 1U);
   EXPECT_EQ(cells.back()->GetParticleCount(), 1U);
   EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 0);
+}
+
+TEST(CellClusterIntegrationTest, HyperFreeInflowRepopulatesEmptyDomain) {
+  mc3d::SimulationConfig cfg;
+  cfg.Lx = cfg.Ly = cfg.Lz = 1;
+  cfg.particles_per_cell = 60;
+  cfg.temperature = 1.2;
+  cfg.S = 0;
+  // This duration admits 2.25 particles through one face. The old boundary
+  // discarded the entire inflow because its integer part was less than three.
+  const double duration = 2.25 / (cfg.particles_per_cell *
+      std::sqrt(cfg.temperature / (2 * std::numbers::pi)));
+  mc3d::CellCluster cluster(1);
+  cluster.SetApex({-0.5, -0.5, -0.5});
+  cluster.SetSize(1, 1, 1);
+  cluster.SetEndTime(duration);
+  cluster.SetSnapshotInterval(1);
+  ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0, kKn, 0.2,
+      std::make_unique<mc3d::Geometry>(), 0, 0, cfg.temperature));
+  cluster.SetBoundaryCondition(mc3d::MakeBoundary(
+      mc3d::MakeBoundaryDescriptor(mc3d::BoundaryFace::ZNeg, cfg),
+      mc3d::BoundaryType::HyperFree, cfg));
+
+  cluster.Compute();
+
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  ASSERT_EQ(cells.size(), 1U);
+  EXPECT_EQ(cells.front()->GetParticleCount(), 2U);
+  EXPECT_TRUE(std::isfinite(cells.front()->GetEnergy()));
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), duration);
 }

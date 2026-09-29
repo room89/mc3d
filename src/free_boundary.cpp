@@ -1,5 +1,6 @@
 #include "free_boundary.h"
 
+#include <algorithm>
 #include <cmath>
 #include <utils/logger.hpp>
 
@@ -55,24 +56,34 @@ void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
   for (auto& cell : cluster_cells) {
     if (abs(nrml * (cell.GetCenter() - pstn)) <
         0.6 * abs(nrml * cell.GetSize())) {
-      cells_.emplace_back(cell);
+      cells_.push_back({cell, 0});
     }
   }
 }
 
+unsigned int FreeBoundary::AccumulateInflow(InflowCell& entry, double dt,
+                                          unsigned int minimum_batch) {
+  if (dt <= 0 || np == 0) return 0;
+  const double incoming =
+      dt * np * sqrt(T / (Pi * 2)) *
+      (exp(-Vn * Vn / (2 * T)) +
+       sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
+      abs(entry.cell.get().GetSize() * nrml);
+  // Keep the fractional flux in this cell across variable time steps.
+  entry.pending_particles += std::max(0.0, incoming);
+  if (entry.pending_particles < minimum_batch) return 0;
+  const auto count = static_cast<unsigned int>(entry.pending_particles);
+  entry.pending_particles -= count;
+  return count;
+}
+
 int FreeBoundary::BoundaryCondition(std::vector<Particle>& /*cluster_particle*/,
                                     double dt) {
-  unsigned int N;
-  for (Cell& cell : cells_) {
-    Point cell_size = cell.GetSize();
-
-    N = static_cast<unsigned int>(
-        dt * np * sqrt(T / (Pi * 2)) *
-        (exp(-Vn * Vn / (2 * T)) +
-         sqrt(Pi) * (Vn / sqrt(2 * T)) * (1 + std::erf(Vn / sqrt(2 * T)))) /
-        abs(cell_size * nrml));
-
-    if (N > 2) cell.GenerateFreeRandom(N, T, V, nrml);
+  for (auto& entry : cells_) {
+    // GenerateFreeRandom normalizes the batch temperature, requiring at least
+    // three particles. Small inflows are delayed, never discarded.
+    const auto count = AccumulateInflow(entry, dt, 3);
+    if (count > 0) entry.cell.get().GenerateFreeRandom(count, T, V, nrml);
   }
 
   return 1;
