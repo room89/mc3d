@@ -29,13 +29,16 @@ make test
 make run-example
 make run CONFIG=configs/example.json ARGS="--end-time 0.1"
 make run-smoke
+make run-example OUTPUT_DIR=results/example
 make clean
 ```
 
 `make run` запускает расчёт с выбранным конфигурационным файлом; дополнительные
 параметры командной строки можно передать через `ARGS`. `make run-example`
 использует демонстрационный набор `configs/example.json`, а `make run-smoke`
-запускает короткий расчёт на маленькой сетке без геометрии тела.
+запускает короткий расчёт на маленькой сетке без геометрии тела. Все файлы,
+созданные при запуске через Makefile, сохраняются в `output/`; каталог можно
+переопределить, например `OUTPUT_DIR=results/example`.
 
 Проверки запускаются командой `ctest --test-dir build --output-on-failure`.
 Тесты проверяют ограничение шага времени по каждой оси, периодический перенос
