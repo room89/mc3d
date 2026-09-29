@@ -4,6 +4,7 @@ BUILD_TESTING ?= ON
 CMAKE ?= cmake
 CTEST ?= ctest
 CONFIG ?= configs/example.json
+OUTPUT_DIR ?= output
 ARGS ?=
 
 .PHONY: all help configure build test run run-example run-smoke clean
@@ -17,6 +18,7 @@ help:
 	  'make run CONFIG=path [ARGS="..."] Run with a configuration file' \
 	  'make run-example                   Run configs/example.json' \
 	  'make run-smoke                     Run a small built-in sample case' \
+	  '                                    Simulation files go to $(OUTPUT_DIR)/' \
 	  'make clean                         Remove the build directory'
 
 configure:
@@ -31,13 +33,15 @@ test: configure
 	$(CTEST) --test-dir $(BUILD_DIR) --output-on-failure
 
 run: build
-	$(BUILD_DIR)/MC3dSolver --config $(CONFIG) $(ARGS)
+	mkdir -p "$(OUTPUT_DIR)"
+	cd "$(abspath $(OUTPUT_DIR))" && "$(abspath $(BUILD_DIR))/MC3dSolver" --config "$(abspath $(CONFIG))" $(ARGS)
 
 run-example: CONFIG = configs/example.json
 run-example: run
 
 run-smoke: build
-	$(BUILD_DIR)/MC3dSolver --lx 1 --ly 1 --lz 1 --ncx 2 --ncy 2 --ncz 2 --np 1 --end-time 0.01 --geometry-type none
+	mkdir -p "$(OUTPUT_DIR)"
+	cd "$(abspath $(OUTPUT_DIR))" && "$(abspath $(BUILD_DIR))/MC3dSolver" --lx 1 --ly 1 --lz 1 --ncx 2 --ncy 2 --ncz 2 --np 1 --end-time 0.01 --geometry-type none
 
 clean:
 	$(CMAKE) -E rm -rf $(BUILD_DIR)
