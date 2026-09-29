@@ -1,7 +1,9 @@
 #include "inner_boundary.h"
 
+#include <algorithm>
 #include <cmath>
 #include <utils/utils.hpp>
+#include <utils/logger.hpp>
 
 namespace mc3d {
 const double Pi = 3.1415926535;
@@ -72,288 +74,153 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
 
 int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
                                      double dt) {
-  // if(poligon_ptrs.size() <= 0) return 1;
-
-  auto particle_iter = cluster_particle.begin();
-
-  // Проверяем начальные позиции частиц - если частица уже внутри геометрии,
-  // перемещаем её наружу перед обработкой столкновений
   Geometry* geometry_ptr = GetGeometryPtr();
-  if (geometry_ptr) {
-    for (auto& particle : cluster_particle) {
-      if (geometry_ptr->IsInnerPoint(particle.GetPosition())) {
-        // Находим ближайший полигон и его нормаль
-        Point normal = Point(1.0, 0.0, 0.0);
-        double min_dist = 1e10;
+  if (!geometry_ptr) return 0;
 
-        for (const auto& poly_ref : poligon_ptrs) {
-          const Polygon& poly = poly_ref.get();
-          Point poly_gmt = poly.GetGmt();
-          Point to_particle = particle.GetPosition() - poly_gmt;
-          double dist_to_plane = std::abs(to_particle * poly.GetNormal());
-
-          if (dist_to_plane < min_dist) {
-            min_dist = dist_to_plane;
-            normal = poly.GetNormal();
-            normal.Normalize();
-          }
-        }
-
-        // Перемещаем частицу наружу
-        const double escape_step = eps * 10000.0;
-        int max_iterations = 50;
-        while (geometry_ptr->IsInnerPoint(particle.GetPosition()) &&
-               max_iterations > 0) {
-          particle.position += normal * escape_step;
-          max_iterations--;
-        }
+  for (auto& particle : cluster_particle) {
+    if (!SegmentMayReachBody(particle.position,
+                             particle.position + particle.velocity * dt)) {
+      particle.position += particle.velocity * dt;
+      continue;
+    }
+    if (geometry_ptr->IsInnerPoint(particle.position)) {
+      if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
+        particle.position = *exterior;
       }
     }
-  }
 
-  while (particle_iter != cluster_particle.end()) {
     double particle_dt = dt;
-    while (particle_dt > 0) {
-      double dtt = particle_dt;
-      auto poligon_iterator = poligon_ptrs.begin();
-      auto collision_poligon_iterator = poligon_ptrs.end();
-      bool collision_mark = false;
-      while (poligon_iterator !=
-             poligon_ptrs
-                 .end())  // ищем полигон с которым будет соударятся
-                          // частица(полигон к которому частица прелетит первой)
-      {
-        if (poligon_iterator->get().GetNormal() * particle_iter->GetVelocity() <
-            0)  // проверка направления скорости частицы на возможность
-                // соударения
-        {
-          Point poligon_gmt = poligon_iterator->get().GetGmt();
-
-          double A = particle_iter->GetVelocity() *
-                     poligon_iterator->get().GetNormal();
-
-          double tc =
-              (poligon_iterator->get().GetP1() - particle_iter->GetPosition()) *
-              poligon_iterator->get().GetNormal() / A;
-
-          if (tc <= 0) {
-            poligon_iterator++;
-            continue;
-          } else if (tc > dtt) {
-            poligon_iterator++;
-            continue;
-          }
-          // else if(tc > min_dt) continue;
-          else {
-            Point collision_pstn = particle_iter->GetPosition() +
-                                   particle_iter->GetVelocity() * tc;
-
-            Point a = poligon_iterator->get().GetP2() -
-                      poligon_iterator->get().GetP1();
-            Point b = poligon_iterator->get().GetP3() -
-                      poligon_iterator->get().GetP2();
-            Point c = poligon_iterator->get().GetP1() -
-                      poligon_iterator->get().GetP3();
-
-            Point d1 = poligon_iterator->get().GetP1() - collision_pstn;
-            Point d2 = poligon_iterator->get().GetP2() - collision_pstn;
-            Point d3 = poligon_iterator->get().GetP3() - collision_pstn;
-
-            // Более строгая проверка принадлежности точки полигону
-            // Используем более строгий порог для предотвращения проникновения
-            // Частица должна быть строго внутри полигона (не на границе)
-            if (poligon_iterator->get().GetNormal() * d1.Cross(a) > -eps &&
-                poligon_iterator->get().GetNormal() * d2.Cross(b) > -eps &&
-                poligon_iterator->get().GetNormal() * d3.Cross(c) > -eps) {
-              dtt = tc;
-              collision_poligon_iterator = poligon_iterator;
-              collision_mark = true;
-            }
-          }
-        }
-
-        poligon_iterator++;
-      }  // while(poligon_iterator != poligon_ptrs.end())
-
-      if (collision_mark) {
-        Point normal = collision_poligon_iterator->get().GetNormal();
-        double normal_length = normal.Mod();
-        Point unit_normal = normal;
-        if (normal_length > eps) {
-          unit_normal /= normal_length;
-        } else {
-          unit_normal = Point(1.0, 0.0, 0.0);
-          normal_length = 1.0;
-        }
-        // Перемещаем частицу на поверхность полигона с достаточным смещением
-        // наружу чтобы избежать проникновения внутрь из-за численных ошибок
-        // Используем большее смещение для гарантированного выхода за границу
-        const double safety_offset = eps * 1.0;
-        particle_iter->position +=
-            particle_iter->velocity * dtt + unit_normal * safety_offset;
-
-        collision_poligon_iterator->get().force += particle_iter->velocity;
-
-        double r1 = utils::Random01();
-        double r2 = utils::Random01();
-        double r3 = utils::Random01();
-
-        if (r1 <= 0.) r1 = 0.00001;
-        if (r2 <= 0.) r2 = 0.00001;
-
-        Point vel = particle_iter->velocity;
-
-        double sp = vel * unit_normal;
-        double r = sqrt(2. * Tw * fabs(log(r1)));
-
-        Point vn;
-        vn = unit_normal * r;
-
-        Point vni;
-        vni = unit_normal * sp;
-
-        Point vt;
-        vt = vel - vni;
-        double lvt = vt.Mod();
-        Point tangent1;
-        if (lvt < eps) {
-          if (std::abs(unit_normal.x) < 0.9) {
-            tangent1 = unit_normal.Cross(Point(1.0, 0.0, 0.0));
-          } else {
-            tangent1 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
-          }
-          double tangent1_length = tangent1.Mod();
-          if (tangent1_length < eps) {
-            tangent1 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
-            tangent1_length = tangent1.Mod();
-            if (tangent1_length < eps) {
-              tangent1 = Point(0.0, 1.0, 0.0);
-              tangent1_length = tangent1.Mod();
-            }
-          }
-          tangent1 /= tangent1_length;
-        } else {
-          vt /= lvt;
-          tangent1 = vt;
-        }
-
-        r = sqrt(2. * Tw * fabs(log(r2)));
-        double teta = 2. * Pi * r3;
-        double vt1m = r * cos(teta);
-        double vt2m = r * sin(teta);
-
-        Point vt1 = tangent1;
-        Point vt2;
-
-        vt1 *= vt1m;
-
-        vt2 = unit_normal.Cross(tangent1);
-        double tangent2_length = vt2.Mod();
-        if (tangent2_length < eps) {
-          if (std::abs(unit_normal.z) < 0.9) {
-            vt2 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
-          } else {
-            vt2 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
-          }
-          tangent2_length = vt2.Mod();
-          if (tangent2_length < eps) {
-            vt2 = Point(1.0, 0.0, 0.0);
-            tangent2_length = vt2.Mod();
-          }
-        }
-        vt2 /= tangent2_length;
-        vt2 *= vt2m;
-
-        particle_iter->velocity = vt1 + vt2 + vn;
-        double outgoing_component = particle_iter->velocity * unit_normal;
-        if (outgoing_component <= 0.0) {
-          particle_iter->velocity -= unit_normal * (2.0 * outgoing_component);
-        }
-
-        collision_poligon_iterator->get().force -= particle_iter->velocity;
-
-        // Дополнительная проверка: если частица оказалась внутри геометрии,
-        // перемещаем её наружу по нормали с более агрессивным шагом
-        Geometry* geometry_ptr = GetGeometryPtr();
-        if (geometry_ptr) {
-          // Используем больший шаг для выхода из геометрии
-          const double escape_step =
-              eps * 10000.0;        // Значительно увеличенный шаг
-          int max_iterations = 50;  // Увеличено количество итераций
-
-          while (geometry_ptr->IsInnerPoint(particle_iter->GetPosition()) &&
-                 max_iterations > 0) {
-            particle_iter->position += unit_normal * escape_step;
-            max_iterations--;
-          }
-
-          // Если частица всё ещё внутри после всех попыток, перемещаем её
-          // на значительное расстояние наружу
-          if (geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
-            // Находим ближайшую точку на поверхности и перемещаем частицу туда
-            double min_dist = 1e10;
-            Point best_position = particle_iter->GetPosition();
-
-            for (const auto& poly_ref : poligon_ptrs) {
-              const Polygon& poly = poly_ref.get();
-              Point poly_gmt = poly.GetGmt();
-              Point to_particle = particle_iter->GetPosition() - poly_gmt;
-              double dist_to_plane = to_particle * poly.GetNormal();
-
-              if (dist_to_plane < min_dist) {
-                min_dist = dist_to_plane;
-                best_position =
-                    poly_gmt + poly.GetNormal() * (dist_to_plane + escape_step);
-              }
-            }
-
-            particle_iter->position = best_position;
-          }
-        }
-
-        particle_dt -= dtt;
-      } else {
-        // Проверяем, что частица не находится уже внутри геометрии перед
-        // движением
-        Geometry* geometry_ptr = GetGeometryPtr();
-        if (geometry_ptr &&
-            geometry_ptr->IsInnerPoint(particle_iter->GetPosition())) {
-          // Частица уже внутри - перемещаем её наружу
-          Point normal = Point(1.0, 0.0, 0.0);  // Начальное направление
-          double min_dist = 1e10;
-
-          // Находим ближайший полигон и его нормаль
-          for (const auto& poly_ref : poligon_ptrs) {
-            const Polygon& poly = poly_ref.get();
-            Point poly_gmt = poly.GetGmt();
-            Point to_particle = particle_iter->GetPosition() - poly_gmt;
-            double dist_to_plane = std::abs(to_particle * poly.GetNormal());
-
-            if (dist_to_plane < min_dist) {
-              min_dist = dist_to_plane;
-              normal = poly.GetNormal();
-              normal.Normalize();
-            }
-          }
-
-          // Перемещаем частицу наружу
-          const double escape_step = eps * 10000.0;
-          int max_iterations = 50;
-          while (geometry_ptr->IsInnerPoint(particle_iter->GetPosition()) &&
-                 max_iterations > 0) {
-            particle_iter->position += normal * escape_step;
-            max_iterations--;
-          }
-        } else {
-          // Частица снаружи - нормальное движение
-          particle_iter->position += particle_iter->velocity * dtt;
-        }
+    for (int collisions = 0; particle_dt > 0 && collisions < 32; ++collisions) {
+      if (!SegmentMayReachBody(
+              particle.position,
+              particle.position + particle.velocity * particle_dt)) {
+        particle.position += particle.velocity * particle_dt;
         particle_dt = 0;
+        break;
+      }
+      const auto hit = geometry_ptr->FirstIntersection(
+          particle.position, particle.velocity * particle_dt);
+      if (!hit) {
+        particle.position += particle.velocity * particle_dt;
+        particle_dt = 0;
+        break;
       }
 
-    }  // while(dt > 0)
+      Polygon* collision_polygon = hit->polygon;
+      const double dtt = particle_dt * hit->fraction;
+      Point unit_normal = collision_polygon->GetNormal();
+      const double normal_length = unit_normal.Mod();
+      if (normal_length <= 1e-14) {
+        particle.position += particle.velocity * particle_dt;
+        particle_dt = 0;
+        break;
+      }
+      unit_normal /= normal_length;
+      // The mesh normal may be reversed; an entering particle must leave the
+      // collision along the side from which it approached the triangle.
+      if (unit_normal * particle.velocity > 0) unit_normal *= -1;
+      particle.position += particle.velocity * dtt + unit_normal * eps;
 
-    ++particle_iter;
+      const Point incoming_velocity = particle.velocity;
+
+      double r1 = utils::Random01();
+      double r2 = utils::Random01();
+      double r3 = utils::Random01();
+
+      if (r1 <= 0.) r1 = 0.00001;
+      if (r2 <= 0.) r2 = 0.00001;
+
+      Point vel = particle.velocity;
+
+      double sp = vel * unit_normal;
+      double r = sqrt(2. * Tw * fabs(log(r1)));
+
+      Point vn;
+      vn = unit_normal * r;
+
+      Point vni;
+      vni = unit_normal * sp;
+
+      Point vt;
+      vt = vel - vni;
+      double lvt = vt.Mod();
+      Point tangent1;
+      if (lvt < eps) {
+        if (std::abs(unit_normal.x) < 0.9) {
+          tangent1 = unit_normal.Cross(Point(1.0, 0.0, 0.0));
+        } else {
+          tangent1 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
+        }
+        double tangent1_length = tangent1.Mod();
+        if (tangent1_length < eps) {
+          tangent1 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
+          tangent1_length = tangent1.Mod();
+          if (tangent1_length < eps) {
+            tangent1 = Point(0.0, 1.0, 0.0);
+            tangent1_length = tangent1.Mod();
+          }
+        }
+        tangent1 /= tangent1_length;
+      } else {
+        vt /= lvt;
+        tangent1 = vt;
+      }
+
+      r = sqrt(2. * Tw * fabs(log(r2)));
+      double teta = 2. * Pi * r3;
+      double vt1m = r * cos(teta);
+      double vt2m = r * sin(teta);
+
+      Point vt1 = tangent1;
+      Point vt2;
+
+      vt1 *= vt1m;
+
+      vt2 = unit_normal.Cross(tangent1);
+      double tangent2_length = vt2.Mod();
+      if (tangent2_length < eps) {
+        if (std::abs(unit_normal.z) < 0.9) {
+          vt2 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
+        } else {
+          vt2 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
+        }
+        tangent2_length = vt2.Mod();
+        if (tangent2_length < eps) {
+          vt2 = Point(1.0, 0.0, 0.0);
+          tangent2_length = vt2.Mod();
+        }
+      }
+      vt2 /= tangent2_length;
+      vt2 *= vt2m;
+
+      particle.velocity = vt1 + vt2 + vn;
+      double outgoing_component = particle.velocity * unit_normal;
+      if (outgoing_component <= 0.0) {
+        particle.velocity -= unit_normal * (2.0 * outgoing_component);
+      }
+
+      geometry_ptr->AccumulateForce(*collision_polygon,
+                                    incoming_velocity - particle.velocity);
+
+      if (geometry_ptr->IsInnerPoint(particle.position)) {
+        if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
+          particle.position = *exterior;
+        }
+      }
+      particle_dt -= dtt;
+    }
+    if (particle_dt > 0) {
+      LOG_WARNING() << "Particle reached the 32-collision limit at "
+                    << particle.position << "; remaining dt=" << particle_dt;
+    }
+    if (geometry_ptr->IsInnerPoint(particle.position)) {
+      if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {
+        particle.position = *exterior;
+      } else {
+        LOG_WARNING() << "Could not move particle outside body at "
+                      << particle.position;
+      }
+    }
   }
 
   return 0;
@@ -522,7 +389,21 @@ double InnerBoundary::CalcCellVolume(
   return volume;
 }
 
-void InnerBoundary::SetGeometry(Geometry& geometry) { geometry_ = geometry; }
+void InnerBoundary::SetGeometry(Geometry& geometry) {
+  geometry_ = geometry;
+  const auto bounds = geometry.Bounds();
+  bounds_min_ = bounds.first;
+  bounds_max_ = bounds.second;
+}
+
+bool InnerBoundary::SegmentMayReachBody(Point start, Point end) const {
+  return std::max(start.x, end.x) >= bounds_min_.x &&
+         std::min(start.x, end.x) <= bounds_max_.x &&
+         std::max(start.y, end.y) >= bounds_min_.y &&
+         std::min(start.y, end.y) <= bounds_max_.y &&
+         std::max(start.z, end.z) >= bounds_min_.z &&
+         std::min(start.z, end.z) <= bounds_max_.z;
+}
 
 Geometry* InnerBoundary::GetGeometryPtr() {
   return geometry_ ? &geometry_->get() : nullptr;

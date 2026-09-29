@@ -12,6 +12,8 @@
 
 namespace mc3d {
 Polygon::Polygon() {
+  force = Point(0, 0, 0);
+  flux = 0;
   this->p1 = Point(0, 0, 0);
   this->p2 = Point(0, 0, 0);
   this->p3 = Point(0, 0, 0);
@@ -21,6 +23,8 @@ Polygon::Polygon() {
 Polygon::~Polygon() {}
 
 Polygon::Polygon(Point p1, Point p2, Point p3, Point nrml) {
+  force = Point(0, 0, 0);
+  flux = 0;
   this->p1 = p1;
   this->p2 = p2;
   this->p3 = p3;
@@ -29,6 +33,8 @@ Polygon::Polygon(Point p1, Point p2, Point p3, Point nrml) {
 }
 
 Polygon::Polygon(Point p1, Point p2, Point p3) {
+  force = Point(0, 0, 0);
+  flux = 0;
   this->p1 = p1;
   this->p2 = p2;
   this->p3 = p3;

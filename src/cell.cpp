@@ -77,6 +77,13 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
 
 unsigned int Cell::GetParticleCount() const { return particles.size(); }
 
+std::size_t Cell::CountInnerParticles(const Geometry& body) const {
+  return std::count_if(particles.begin(), particles.end(),
+                       [&body](const Particle& particle) {
+                         return body.IsInnerPoint(particle.position);
+                       });
+}
+
 double Cell::GenerateRandom(size_t N) {
   if (N == 0) {
     return 0;
@@ -692,7 +699,8 @@ void Cell::SortNeighbors() {
 
 void Cell::Calculate() {
   Collisions();
-  if (body_mark)
+  if (body_boundary.GetGeometryPtr() &&
+      body_boundary.GetGeometryPtr()->PolygonCount() > 0)
     body_boundary.BoundaryCondition(particles, dt);
   else
     MoveParticles();

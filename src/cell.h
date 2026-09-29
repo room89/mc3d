@@ -62,6 +62,7 @@ class Cell {
   virtual void Collisions();     // соударения между частицами
   void SortNeighbors();
   unsigned int GetParticleCount() const;  // возвращает количество частиц
+  std::size_t CountInnerParticles(const Geometry& body) const;
   double GetTemperatureRaw();
   void SetSize(double lx, double ly, double lz);  // установка размера ячейки
   void SetSize(Point dl);

@@ -42,6 +42,7 @@ if(BUILD_TESTING)
     tests/cell_cluster_test.cpp
     tests/solver_setup_test.cpp
     tests/conservation_test.cpp
+    tests/body_penetration_test.cpp
     src/boundary.cpp
     src/cell_cluster.cpp
     src/cell.cpp

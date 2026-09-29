@@ -266,6 +266,24 @@ bool CellCluster::TimeStep() {
 
   partile_buffer.clear();
 
+  if (body_ && body_->PolygonCount() > 0) {
+    std::size_t inner_particles = 0;
+    const auto [lower, upper] = body_->Bounds();
+    for (const auto& cell : cells) {
+      const auto origin = cell.GetApex();
+      const auto extent = cell.GetSize();
+      if (origin.x <= upper.x && origin.x + extent.x >= lower.x &&
+          origin.y <= upper.y && origin.y + extent.y >= lower.y &&
+          origin.z <= upper.z && origin.z + extent.z >= lower.z) {
+        inner_particles += cell.CountInnerParticles(*body_);
+      }
+    }
+    if (inner_particles > 0) {
+      LOG_WARNING() << "Particles inside body at time " << t
+                    << ": " << inner_particles;
+    }
+  }
+
   const bool should_write_snapshot = UpdateSnapshotSchedule();
 
   if (should_write_snapshot) {
