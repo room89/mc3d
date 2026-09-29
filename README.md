@@ -27,6 +27,7 @@ cmake --build build
 Каждый тест GoogleTest зарегистрирован в CTest отдельно, поэтому имя
 упавшего теста видно в отчёте CI. На Ubuntu 24.04 CI собирает Release
 с GCC 14 и Debug с Clang 18, AddressSanitizer и UndefinedBehaviorSanitizer.
+Отдельная Debug-сборка с GCC 14 и ThreadSanitizer проверяет гонки потоков.
 Тесты столкновений и параллельного расчёта дополнительно повторяются трижды
 в Release-сборке.
 Тесты проверяют ограничение шага времени по каждой оси, периодический перенос

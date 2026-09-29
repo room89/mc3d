@@ -23,6 +23,11 @@ jobs:
             cxx: clang++-18
             build_type: Debug
             sanitizer_flags: -fsanitize=address,undefined -fno-omit-frame-pointer
+          - name: GCC 14 Debug + TSan
+            cc: gcc-14
+            cxx: g++-14
+            build_type: Debug
+            sanitizer_flags: -fsanitize=thread -fno-omit-frame-pointer
 
     steps:
       - name: Checkout repository
@@ -54,6 +59,7 @@ jobs:
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+          TSAN_OPTIONS: halt_on_error=1
         run: ctest --test-dir build --output-on-failure --parallel 2
 
       - name: Repeat collision and concurrent tests
