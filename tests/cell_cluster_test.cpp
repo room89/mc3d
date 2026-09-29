@@ -134,6 +134,35 @@ TEST(CellClusterInitializeTest, SynchronizesDtAcrossCells) {
   }
 }
 
+TEST(CellClusterInitializeTest, NonUnitDomainPreservesReservoirNormalization) {
+  ScopedWorkingDirectory guard("mc3d_reference_density");
+  mc3d::SimulationConfig cfg;
+  cfg.Lx=2; cfg.Ly=3; cfg.Lz=4;
+  cfg.cells_x=4; cfg.cells_y=2; cfg.cells_z=2;
+  cfg.particles_per_cell=64;
+  mc3d::CellCluster cluster(1);
+  cluster.SetApex({0,0,0}); cluster.SetSize(cfg.Lx,cfg.Ly,cfg.Lz);
+  ASSERT_TRUE(cluster.Initialize(cfg.cells_x,cfg.cells_y,cfg.cells_z,
+      mc3d::ReferenceParticleDensity(cfg),.1,.3,
+      std::make_unique<mc3d::Geometry>(),0,0,1));
+  for (auto* cell:mc3d::CellClusterTestAccess::GetLookup(cluster)) {
+    EXPECT_EQ(cell->GetParticleCount(),64U);
+    EXPECT_NEAR(cell->CalculateKn(),.1,1e-14);
+  }
+  ASSERT_TRUE(cluster.WriteFile("normalized.dat"));
+  std::ifstream input("normalized.dat");
+  std::string line;
+  std::getline(input,line);
+  while(std::getline(input,line)) {
+    std::replace(line.begin(),line.end(),';',' ');
+    std::istringstream row(line);
+    double x,y,z,count,density;
+    ASSERT_TRUE(bool(row>>x>>y>>z>>count>>density));
+    EXPECT_EQ(count,64);
+    EXPECT_NEAR(density,1,1e-12);
+  }
+}
+
 namespace mc3d::test {
 
 class CountingBoundary : public mc3d::Boundary {
@@ -624,6 +653,14 @@ TEST(CellClusterIntegrationTest, BodyCollisionKeepsParticlesOutsideEveryStep) {
   cluster.SetSnapshotInterval(10);
   ASSERT_TRUE(
       cluster.Initialize(2, 1, 1, 0, kKn, 0.2, std::move(body), 0, 0, 1));
+  // Diffuse reflection has unbounded thermal speeds. Close the outer box so
+  // the particle-count assertion does not fail on legitimate rare escapes.
+  mc3d::SimulationConfig cfg;
+  cfg.Lx=10; cfg.Ly=10; cfg.Lz=10;
+  for (int face=0;face<6;++face)
+    cluster.SetBoundaryCondition(mc3d::MakeBoundary(
+        mc3d::MakeBoundaryDescriptor(static_cast<mc3d::BoundaryFace>(face),cfg),
+        mc3d::BoundaryType::Periodic,cfg));
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   mc3d::Particle left({-0.5, 0, 0}, {1, 0, 0});
   mc3d::Particle right({0.5, 0, 0}, {-1, 0, 0});

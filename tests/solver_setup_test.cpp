@@ -11,6 +11,16 @@
 
 namespace {
 
+TEST(SolverSetupTest, ReferenceDensityUsesDomainVolume) {
+  mc3d::SimulationConfig cfg;
+  cfg.cells_x=4; cfg.cells_y=3; cfg.cells_z=2;
+  cfg.particles_per_cell=64;
+  cfg.Lx=2; cfg.Ly=3; cfg.Lz=4;
+  EXPECT_DOUBLE_EQ(mc3d::ReferenceParticleDensity(cfg),64);
+  cfg.Lz=0;
+  EXPECT_THROW(mc3d::ReferenceParticleDensity(cfg),std::invalid_argument);
+}
+
 TEST(SimulationConfigTest, ParsesAndValidatesWallTemperature) {
   char program[] = "solver";
   char option[] = "--wall-temperature";
