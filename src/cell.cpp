@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include <iterator>
+#include <limits>
 #include <mutex>
 #include <utils/logger.hpp>
 #include <utils/utils.hpp>
@@ -331,36 +332,38 @@ double Cell::GenerateFreeRandom(unsigned int N, double T, Point V, Point nrml) {
   return 0;
 }
 
-double Cell::GenerateHyperFreeRandom(unsigned int N, Point V, double T) {
-  std::vector<Particle> added_particles;
-  Point position;
-  Point d(lx, ly, lz);
-  double A = sqrt(3 * T);
-
-  added_particles.reserve(N);
-
-  for (unsigned int i = 0; i < N; i++) {
-    double rnx = utils::RandomDouble(0, 1);
-    double rny = utils::RandomDouble(0, 1);
-    double rnz = utils::RandomDouble(0, 1);
-
-    position = apex + Point(d.x * rnx, d.y * rny, d.z * rnz);
-
-    Particle new_particle;
-
-    new_particle.position = position;
-    Point noise(A * utils::RandomDouble(-1, 1), A * utils::RandomDouble(-1, 1),
-                A * utils::RandomDouble(-1, 1));
-    new_particle.velocity = V + noise;
-
-    added_particles.push_back(new_particle);
+void Cell::GenerateHyperFreeRandom(unsigned int N, Point V, double T,
+                                   Point normal, double dt,
+                                   std::vector<Particle>& arrivals) {
+  std::normal_distribution<double> thermal(0, std::sqrt(T));
+  const double inward_drift = -(V * normal);
+  const Point tangent_drift = V - normal * (V * normal);
+  std::vector<Particle> particle(1);
+  for (unsigned int i = 0; i < N; ++i) {
+    Point noise(thermal(utils::RandomEngine()), thermal(utils::RandomEngine()),
+                thermal(utils::RandomEngine()));
+    const double w = utils::IncomingNormalSpeed(inward_drift, T);
+    particle[0].velocity = tangent_drift + noise - normal * (noise * normal) - normal * w;
+    Point position = apex + Point(lx * utils::Random01(), ly * utils::Random01(),
+                                  lz * utils::Random01());
+    auto face = [](double a, double size, double n) {
+      return std::nextafter(n < 0 ? a : a + size,
+          n < 0 ? std::numeric_limits<double>::infinity()
+                : -std::numeric_limits<double>::infinity());
+    };
+    if (normal.x != 0) position.x = face(apex.x, lx, normal.x);
+    if (normal.y != 0) position.y = face(apex.y, ly, normal.y);
+    if (normal.z != 0) position.z = face(apex.z, lz, normal.z);
+    particle[0].position = position;
+    // Uniform entry time within this step; advance only the remaining time.
+    const double remaining = dt * utils::Random01();
+    if (body_boundary.GetGeometryPtr() && body_boundary.GetGeometryPtr()->PolygonCount() > 0)
+      body_boundary.BoundaryCondition(particle, remaining);
+    else
+      particle[0].position += particle[0].velocity * remaining;
+    // The arrival may cross into another cell (or leave at a corner).
+    arrivals.push_back(particle[0]);
   }
-
-  particles.reserve(particles.size() + added_particles.size());
-  particles.insert(particles.end(), added_particles.begin(),
-                   added_particles.end());
-
-  return 0;
 }
 
 void Cell::Collisions() {

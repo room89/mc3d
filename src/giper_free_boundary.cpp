@@ -11,10 +11,11 @@ HyperFreeBoundary::HyperFreeBoundary(Point pstn, Point nrml, unsigned int np,
 HyperFreeBoundary::~HyperFreeBoundary() {}
 
 int HyperFreeBoundary::BoundaryCondition(
-    std::vector<Particle>& /*cluster_particle*/, double dt) {
+    std::vector<Particle>& cluster_particle, double dt) {
   for (auto& entry : cells_) {
     const auto count = AccumulateInflow(entry, dt, 1);
-    if (count > 0) entry.cell.get().GenerateHyperFreeRandom(count, V, T);
+    if (count > 0)
+      entry.cell.get().GenerateHyperFreeRandom(count, V, T, nrml, dt, cluster_particle);
   }
 
   return 1;
