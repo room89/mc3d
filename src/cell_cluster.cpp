@@ -1,6 +1,7 @@
 #include "cell_cluster.h"
 
 #include <algorithm>
+#include <atomic>
 #include <charconv>
 #include <cmath>
 #include <cstdint>
@@ -44,6 +45,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              double S, double alpha, double T, double wall_temperature) {
   LOG_DEBUG() << bool(body);
   body_ = std::move(body);
+  if (body_) body_->PrepareQueries();
 
   srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -157,7 +159,10 @@ void CellCluster::SetSize(double Lx, double Ly, double Lz) {
 }
 
 StepResult CellCluster::TimeStep() {
-  SyncDt();
+  {
+    utils::Stopwatch sw("TimeStep::SyncDt");
+    SyncDt();
+  }
 
   LOG_INFO() << "dt = " << dt << " t = " << t;
 
@@ -165,23 +170,43 @@ StepResult CellCluster::TimeStep() {
 
   {
     utils::Stopwatch sw("TimeStep::CalculateCells");
-    std::vector<std::future<void>> futures;
-    futures.reserve(cells.size());
-    for (auto& cell : cells) {
-      futures.emplace_back(thread_pool_.Execute(
-          [cell_ptr = &cell]() { cell_ptr->Calculate(); }));
-    }
-    // A failing cell must not leave other tasks using cells after the caller
-    // catches the error or destroys the cluster.
-    std::exception_ptr failure;
-    for (auto& fut : futures) {
-      try {
-        fut.get();
-      } catch (...) {
-        if (!failure) failure = std::current_exception();
+    const auto workers = std::max<std::size_t>(1,
+        std::min(thread_pool_.GetThreadCount(), cells.size()));
+    // Keep several chunks per worker even on small grids; cap large-grid chunks.
+    const auto chunk_size = std::clamp(
+        (cells.size() + 4 * workers - 1) / (4 * workers),
+        std::size_t{1}, std::size_t{32});
+    std::atomic<std::size_t> next{0};
+    auto calculate = [&] {
+      std::exception_ptr failure;
+      for (;;) {
+        const auto begin = next.fetch_add(chunk_size, std::memory_order_relaxed);
+        if (begin >= cells.size()) break;
+        const auto end = std::min(begin + chunk_size, cells.size());
+        for (auto i = begin; i < end; ++i) {
+          try { cells[i].Calculate(); }
+          catch (...) { if (!failure) failure = std::current_exception(); }
+        }
       }
+      if (failure) std::rethrow_exception(failure);
+    };
+    if (workers <= 1) {
+      calculate();
+    } else {
+      std::vector<std::future<void>> futures;
+      futures.reserve(workers);
+      std::exception_ptr failure;
+      try {
+        for (std::size_t i = 0; i < workers; ++i)
+          futures.emplace_back(thread_pool_.Execute(calculate));
+      } catch (...) { failure = std::current_exception(); }
+      // Drain every submitted task, including when submission itself fails.
+      for (auto& future : futures) {
+        try { future.get(); }
+        catch (...) { if (!failure) failure = std::current_exception(); }
+      }
+      if (failure) std::rethrow_exception(failure);
     }
-    if (failure) std::rethrow_exception(failure);
   }
 
   {
@@ -218,6 +243,7 @@ StepResult CellCluster::TimeStep() {
 
   std::size_t inner_particles = 0;
   if (body_ && body_->PolygonCount() > 0) {
+    utils::Stopwatch sw("TimeStep::CheckBodyParticles");
     const auto [lower, upper] = body_->Bounds();
     for (const auto& cell : cells) {
       const auto origin = cell.GetApex();

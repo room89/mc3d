@@ -9,8 +9,8 @@ Stopwatch::Stopwatch(const std::string& name)
 
 Stopwatch::~Stopwatch() {
   using namespace std::chrono;
-  auto now = high_resolution_clock::now();
-  auto t = duration_cast<milliseconds>(now - start_time_).count() / 1000.0;
+  auto now = Clock::now();
+  auto t = duration<double>(now - start_time_).count();
   LOG_INFO() << "stopwatch:" << name_ << ";total_time:" << t;
 }
 

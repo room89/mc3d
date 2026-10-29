@@ -8,7 +8,7 @@ class Stopwatch {
   Stopwatch(const std::string& name);
   ~Stopwatch();
 
-  using Clock = std::chrono::high_resolution_clock;
+  using Clock = std::chrono::steady_clock;
   using TimePoint = Clock::time_point;
 
  private:
