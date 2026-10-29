@@ -8,23 +8,37 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(CTest)
 
-file(GLOB_RECURSE MC3D_SOURCES CONFIGURE_DEPENDS
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-
-add_executable(${PROJECT_NAME})
-target_sources(${PROJECT_NAME}
-  PRIVATE
-    ${MC3D_SOURCES}
+add_library(mc3d_core STATIC
+  src/boundary.cpp
+  src/cell.cpp
+  src/cell_cluster.cpp
+  src/cellnet.cpp
+  src/config.cpp
+  src/exception.cpp
+  src/free_boundary.cpp
+  src/geometry.cpp
+  src/giper_free_boundary.cpp
+  src/inner_boundary.cpp
+  src/inner_cell.cpp
+  src/mirror_boundary.cpp
+  src/particle.cpp
+  src/pereodic_boundary.cpp
+  src/point.cpp
+  src/poligon.cpp
+  src/solver_setup.cpp
+  src/utils/logger.cpp
+  src/utils/stopwatch.cpp
+  src/utils/threadpool.cpp
+  src/utils/utils.cpp
+  src/var.cpp
+  src/warning.cpp
 )
-
-target_include_directories(${PROJECT_NAME}
-  PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-)
-
+target_include_directories(mc3d_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+target_link_libraries(mc3d_core PUBLIC Threads::Threads)
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE mc3d_core)
 
 if(BUILD_TESTING)
   include(FetchContent)
@@ -48,25 +62,6 @@ if(BUILD_TESTING)
     tests/body_penetration_test.cpp
     tests/open_boundary_test.cpp
     tests/hyperfree_test.cpp
-    src/boundary.cpp
-    src/config.cpp
-    src/cell_cluster.cpp
-    src/cell.cpp
-    src/exception.cpp
-    src/free_boundary.cpp
-    src/geometry.cpp
-    src/giper_free_boundary.cpp
-    src/inner_boundary.cpp
-    src/mirror_boundary.cpp
-    src/particle.cpp
-    src/pereodic_boundary.cpp
-    src/poligon.cpp
-    src/point.cpp
-    src/solver_setup.cpp
-    src/utils/logger.cpp
-    src/utils/stopwatch.cpp
-    src/utils/threadpool.cpp
-    src/utils/utils.cpp
   )
 
   target_include_directories(mc3d_tests
@@ -76,6 +71,7 @@ if(BUILD_TESTING)
 
   target_link_libraries(mc3d_tests
     PRIVATE
+      mc3d_core
       GTest::gtest_main
   )
 
