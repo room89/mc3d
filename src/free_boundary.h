@@ -30,9 +30,9 @@ class FreeBoundary : public Boundary {
   Point V;
 
  public:
-  virtual void AddCell(std::deque<Cell>& cluster_cells);
+  void BindCells(std::deque<Cell>& cluster_cells) override;
   virtual void SetNp(unsigned int np);
-  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
+  BoundaryInflow GenerateInflow(double dt) override;
   FreeBoundary(Point pstn, Point nrml, unsigned int np, double S, double T,
                double alpha = 0);
   FreeBoundary();

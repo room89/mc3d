@@ -27,8 +27,15 @@ class OpenBoundaryInflowTest : public testing::TestWithParam<bool> {
           mc3d::Point(0, 0, -0.5), mc3d::Point(0, 0, -1),
           kParticlesPerCell, 10, kTemperature);
     }
-    boundary->AddCell(cells);
+    boundary->BindCells(cells);
     return boundary;
+  }
+
+  static void ApplyInflow(mc3d::Boundary& boundary, std::vector<mc3d::Particle>& arrivals, double dt) {
+    auto result = boundary.GenerateInflow(dt);
+    for (auto& batch : result.local)
+      batch.cell.get().AppendGeneratedParticles(std::move(batch.particles));
+    arrivals.insert(arrivals.end(), result.transit.begin(), result.transit.end());
   }
 
   static void AddCell(std::deque<mc3d::Cell>& cells, double width = 1) {
@@ -57,7 +64,7 @@ TEST_P(OpenBoundaryInflowTest, SubParticleFluxIsNotLostAtSmallTimeSteps) {
   auto boundary = MakeBoundary(cells);
   std::vector<mc3d::Particle> outgoing;
   for (int step = 1; step <= 100; ++step) {
-    boundary->BoundaryCondition(outgoing, DurationForFlux(0.2025));
+    ApplyInflow(*boundary, outgoing, DurationForFlux(0.2025));
     ExpectBudget(cells.front(), step * 0.2025, outgoing);
   }
   EXPECT_GT(cells.front().GetParticleCount() + outgoing.size(), 17U);
@@ -71,7 +78,7 @@ TEST_P(OpenBoundaryInflowTest, OneAndTwoParticleInflowsAreNotDiscarded) {
     auto boundary = MakeBoundary(cells);
     std::vector<mc3d::Particle> outgoing;
     for (int step = 1; step <= 10; ++step) {
-      boundary->BoundaryCondition(outgoing, DurationForFlux(flux));
+      ApplyInflow(*boundary, outgoing, DurationForFlux(flux));
       ExpectBudget(cells.front(), step * flux, outgoing);
     }
   }
@@ -85,7 +92,7 @@ TEST_P(OpenBoundaryInflowTest, FractionalFluxSurvivesVariableTimeSteps) {
   double expected = 0;
   for (const double flux : {0.25, 3.2, 1.1, 0.0, 2.3, 4.7, 0.1}) {
     expected += flux;
-    boundary->BoundaryCondition(outgoing, DurationForFlux(flux));
+    ApplyInflow(*boundary, outgoing, DurationForFlux(flux));
     ExpectBudget(cells.front(), expected, outgoing);
   }
 }
@@ -102,9 +109,9 @@ TEST_P(OpenBoundaryInflowTest, EachCellAccumulatesItsOwnFlux) {
   std::vector<mc3d::Particle> outgoing;
   std::vector<mc3d::Particle> arrivals_a, arrivals_b;
   for (int step = 1; step <= 100; ++step) {
-    boundary->BoundaryCondition(outgoing, DurationForFlux(0.1717));
-    a->BoundaryCondition(arrivals_a, DurationForFlux(0.1717));
-    b->BoundaryCondition(arrivals_b, DurationForFlux(0.1717));
+    ApplyInflow(*boundary, outgoing, DurationForFlux(0.1717));
+    ApplyInflow(*a, arrivals_a, DurationForFlux(0.1717));
+    ApplyInflow(*b, arrivals_b, DurationForFlux(0.1717));
     ExpectBudget(reference_a[0], step * 0.1717, arrivals_a);
     ExpectBudget(reference_b[0], step * 0.3434, arrivals_b);
     EXPECT_EQ(cells[0].GetParticleCount() + cells[1].GetParticleCount() + outgoing.size(),
@@ -120,9 +127,9 @@ TEST_P(OpenBoundaryInflowTest, SubdividingTimeKeepsIntegratedInflow) {
   auto coarse = MakeBoundary(coarse_cells);
   auto fine = MakeBoundary(fine_cells);
   std::vector<mc3d::Particle> coarse_arrivals, fine_arrivals;
-  coarse->BoundaryCondition(coarse_arrivals, DurationForFlux(30.5));
+  ApplyInflow(*coarse, coarse_arrivals, DurationForFlux(30.5));
   for (int step = 0; step < 100; ++step) {
-    fine->BoundaryCondition(fine_arrivals, DurationForFlux(0.305));
+    ApplyInflow(*fine, fine_arrivals, DurationForFlux(0.305));
   }
   EXPECT_EQ(coarse_cells.front().GetParticleCount() + coarse_arrivals.size(),
             fine_cells.front().GetParticleCount() + fine_arrivals.size());
@@ -136,3 +143,28 @@ INSTANTIATE_TEST_SUITE_P(
     });
 
 }  // namespace
+
+TEST(BoundaryPhasesTest, InflowReturnsBatchesWithoutChangingCells) {
+  std::deque<mc3d::Cell> cells;
+  cells.emplace_back(std::make_shared<utils::RandomStream>(7));
+  cells.front().SetApex({0,0,0});
+  cells.front().SetSize(1,1,1);
+  mc3d::FreeBoundary free({0,0,0}, {-1,0,0}, 60, 0, 1);
+  mc3d::HyperFreeBoundary hyper({0,0,0}, {-1,0,0}, 60, 0, 1);
+  free.BindCells(cells);
+  hyper.BindCells(cells);
+  const double dt = 3.25 / (60 * utils::IncomingFlux(0, 1));
+  const auto local = free.GenerateInflow(dt);
+  ASSERT_EQ(local.local.size(), 1u);
+  EXPECT_EQ(&local.local.front().cell.get(), &cells.front());
+  EXPECT_EQ(local.local.front().particles.size(), 3u);
+  EXPECT_TRUE(local.transit.empty());
+  const auto transit = hyper.GenerateInflow(dt);
+  EXPECT_TRUE(transit.local.empty());
+  EXPECT_EQ(transit.transit.size(), 3u);
+  EXPECT_EQ(cells.front().GetParticleCount(), 0u);
+  std::vector<mc3d::Particle> outgoing{{{2,0,0},{1,0,0}}};
+  free.ProcessOutgoing(outgoing, dt);
+  EXPECT_EQ(outgoing.size(), 1u);
+  EXPECT_DOUBLE_EQ(outgoing.front().position.x, 2);
+}

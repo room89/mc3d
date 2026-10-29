@@ -126,7 +126,7 @@ TEST(PeriodicBoundaryTest,
         mc3d::MakeBoundary(mc3d::MakeBoundaryDescriptor(
                                static_cast<mc3d::BoundaryFace>(face), cfg),
                            mc3d::BoundaryType::Periodic, cfg);
-    boundary->BoundaryCondition(particles, 1);
+    boundary->ProcessOutgoing(particles, 1);
   }
   ASSERT_EQ(particles.size(), expected.size());
   for (std::size_t i = 0; i < particles.size(); ++i) {
@@ -148,7 +148,7 @@ TEST(MirrorBoundaryTest, ExactUpperFaceHitRemainsInsideHalfOpenCell) {
   std::vector<mc3d::Particle> particles;
   particles.emplace_back(mc3d::Point(1, 0, 0), mc3d::Point(2, 3, 4));
   mc3d::MirrorBoundary boundary({1, 0, 0}, {1, 0, 0});
-  boundary.BoundaryCondition(particles, 0.5);
+  boundary.ProcessOutgoing(particles, 0.5);
   ASSERT_TRUE(cell.TryAcceptParticle(particles.front()));
   const auto moments = cell.ComputeMoments();
   EXPECT_DOUBLE_EQ(moments.velocity.x, -2);

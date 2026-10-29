@@ -40,7 +40,7 @@ MirrorBoundary::MirrorBoundary(Point pstn, Point nrml) {
 
 MirrorBoundary::~MirrorBoundary() {}
 
-int MirrorBoundary::BoundaryCondition(std::vector<Particle>& particles,
+int MirrorBoundary::ProcessOutgoing(std::vector<Particle>& particles,
                                       double dt) {
   double t;
   auto data = particles.begin();

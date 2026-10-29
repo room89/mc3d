@@ -95,8 +95,9 @@ class Cell {
           body);  // инициализация ячейки (N-количество частиц)
   virtual double GenerateRandom(size_t N);
   virtual double GenerateRandom(unsigned int N, double T, Point V);
-  virtual double GenerateFreeRandom(unsigned int N, double T, Point V,
-                                    Point normal);
+  std::vector<Particle> SampleFreeInflow(unsigned int N, double T, Point V, Point normal);
+  // Generated local batches already belong to this cell; preserve sampler placement.
+  void AppendGeneratedParticles(std::vector<Particle>&& incoming);
   virtual void GenerateHyperFreeRandom(unsigned int N, Point V, double T,
                                       Point normal, double dt,
                                       std::vector<Particle>& arrivals);

@@ -234,7 +234,14 @@ StepResult CellCluster::TimeStep() {
 
 void CellCluster::BoundaryCondition() {
   for (auto& boundary : boundary_cond_outer) {
-    boundary->BoundaryCondition(partile_buffer, dt);
+    // Keep face order: later faces also process arrivals emitted by earlier ones.
+    boundary->ProcessOutgoing(partile_buffer, dt);
+    auto inflow = boundary->GenerateInflow(dt);
+    for (auto& batch : inflow.local)
+      batch.cell.get().AppendGeneratedParticles(std::move(batch.particles));
+    partile_buffer.insert(partile_buffer.end(),
+                          std::make_move_iterator(inflow.transit.begin()),
+                          std::make_move_iterator(inflow.transit.end()));
   }
 }
 
@@ -340,9 +347,7 @@ void CellCluster::SetBoundaryCondition(std::unique_ptr<Boundary> boundary) {
     return;
   }
 
-  if (auto* free_boundary = dynamic_cast<FreeBoundary*>(boundary.get())) {
-    free_boundary->AddCell(cells);
-  }
+  boundary->BindCells(cells);
 
   boundary_cond_outer.push_back(std::move(boundary));
 }

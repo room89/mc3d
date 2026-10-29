@@ -15,6 +15,6 @@ class MirrorBoundary : public Boundary {
   MirrorBoundary();
   MirrorBoundary(Point pstn, Point nrml);
   ~MirrorBoundary();
-  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
+  int ProcessOutgoing(std::vector<Particle>& cluster_particle, double dt) override;
 };
 };  // namespace mc3d

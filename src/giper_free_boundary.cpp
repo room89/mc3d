@@ -10,14 +10,14 @@ HyperFreeBoundary::HyperFreeBoundary(Point pstn, Point nrml, unsigned int np,
 
 HyperFreeBoundary::~HyperFreeBoundary() {}
 
-int HyperFreeBoundary::BoundaryCondition(
-    std::vector<Particle>& cluster_particle, double dt) {
+BoundaryInflow HyperFreeBoundary::GenerateInflow(double dt) {
+  BoundaryInflow result;
   for (auto& entry : cells_) {
     const auto count = AccumulateInflow(entry, dt, 1);
     if (count > 0)
-      entry.cell.get().GenerateHyperFreeRandom(count, V, T, nrml, dt, cluster_particle);
+      entry.cell.get().GenerateHyperFreeRandom(count, V, T, nrml, dt, result.transit);
   }
 
-  return 1;
+  return result;
 }
 }  // namespace mc3d
