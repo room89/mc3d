@@ -63,7 +63,7 @@ bool SnapshotWriter::WriteFile() {
 
     file1 << ap << "\t"
           << double(cell.GetParticleCount()) / (cell.GetVolume() * cluster_.density)
-          << "\t" << cell.GetTemperature() << '\n';
+          << "\t" << cell.ComputeMoments().temperature << '\n';
   }
   file1.close();
   return file1.good();
@@ -172,7 +172,7 @@ bool SnapshotWriter::WriteSpeedFile(const char* file_name) {
   Point ap;
   for (auto& cell : cluster_.cells) {
     ap = cell.GetCenter();
-    file1 << ap << cell.GetVelocity() << '\n';
+    file1 << ap << cell.ComputeMoments().velocity << '\n';
   }
   file1.close();
   return file1.good();
@@ -184,7 +184,7 @@ bool SnapshotWriter::WriteSpeedFile() {
   for (auto& cell : cluster_.cells) {
     ap = cell.GetCenter();
 
-    file1 << ap << "\t" << cell.GetVelocity() << '\n';
+    file1 << ap << "\t" << cell.ComputeMoments().velocity << '\n';
   }
 
   file1.close();
@@ -224,8 +224,9 @@ bool SnapshotWriter::WriteCellFile(const std::string& init_file) {
   file << "cluster" << std::endl;
 
   for (auto& cell : cluster_.cells) {
-    Point V = cell.GetVelocity();
-    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
+    const auto moments = cell.ComputeMoments();
+    Point V = moments.velocity;
+    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * moments.temperature);
     double alpha = M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
@@ -243,7 +244,7 @@ bool SnapshotWriter::WriteCellFile(const std::string& init_file) {
 
     file << "\t\tparticles\t" << cell.GetParticleCount() << endl;
 
-    file << "\t\ttemperature\t" << cell.GetTemperature() << endl;
+    file << "\t\ttemperature\t" << moments.temperature << endl;
 
     file << "\t\tL\t" << cell.GetCharacteristicLength() << endl;
 

@@ -56,7 +56,7 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   this->GenerateRandom(N);
 
   dt = 100000;
-  CalculateTemperature();
+  RefreshMoments();
   double c = sqrt(2 * T);
   double dtt = lx / (fabs(velocity.x) + c) < ly / (fabs(velocity.y) + c)
                    ? lx / (fabs(velocity.x) + c)
@@ -168,7 +168,7 @@ double Cell::GenerateRandom(size_t N) {
   particles.reserve(particles.size() + new_particles.size());
   particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 
-  CalculateTemperature();
+  RefreshMoments();
 
   return 0;
 }
@@ -374,7 +374,7 @@ void Cell::Collisions() {
 
   CalculateKn();
 
-  CalculateTemperature();
+  RefreshMoments();
   // Bound every relative speed by twice the largest peculiar speed. A thermal
   // mean is not an upper bound and causes population-dependent missed events.
   double max_speed_squared = 0;
@@ -568,8 +568,6 @@ double Cell::PeekDt() const { return dt; }
 
 void Cell::SetDt(double dt) { this->dt = dt; }
 
-double Cell::GetTemperatureRaw() { return T; }
-
 void Cell::SetParameters(double S, double alpha, double T) {
   this->T = T;
   velocity =
@@ -596,11 +594,6 @@ double Cell::CalculateKn() {
   return Kn_l;
 }
 
-double Cell::GetTemperature() {
-  CalculateTemperature();
-  return T;
-}
-
 CellMoments Cell::ComputeMoments() const {
   CellMoments result;
   result.count = particles.size();
@@ -619,29 +612,14 @@ CellMoments Cell::ComputeMoments() const {
   return result;
 }
 
-double Cell::GetEnergy() {
-  double squared_speed = 0;
-  for (const auto& particle : particles)
-    squared_speed += particle.velocity * particle.velocity;
-  return particles.empty() ? 0 : squared_speed / (2 * particles.size());
-}
-
-Point Cell::CalculateVelocity() const {
-  Point mean(0, 0, 0);
-  for (const auto& particle : particles) mean += particle.velocity;
-  if (!particles.empty()) mean /= static_cast<double>(particles.size());
-  return mean;
-}
-
-double Cell::CalculateTemperature() {
+void Cell::RefreshMoments() {
   const auto moments = ComputeMoments();
   velocity = moments.velocity;
   T = moments.temperature;
-  return T;
 }
 
 double Cell::CalculateDt() {
-  CalculateTemperature();
+  RefreshMoments();
   dt = 1000000;
   double c = sqrt(2 * T);
   double dtt = min(lx / (fabs(velocity.x) + c), ly / (fabs(velocity.y) + c));
@@ -746,11 +724,6 @@ double Cell::GetVolume() const {
 }
 
 bool Cell::GetBodyMark() { return body_mark; }
-
-Point Cell::GetVelocity() {
-  velocity = CalculateVelocity();
-  return velocity;
-}
 
 Point Cell::GetParticleMassCenter() {
   Point particle_mass_center(0, 0, 0);
