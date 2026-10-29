@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <cctype>
+#include <charconv>
 #include <cmath>
 #include <cstdlib>
 #include <filesystem>
@@ -199,7 +200,13 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
   const auto key = NormalizeKey(raw_key);
   const auto prepared_value = StripQuotes(TrimCopy(raw_value));
 
-  if (key == "lx") {
+  if (key == "seed") {
+    unsigned int seed = 0;
+    const auto result = std::from_chars(prepared_value.data(), prepared_value.data() + prepared_value.size(), seed);
+    if (result.ec != std::errc() || result.ptr != prepared_value.data() + prepared_value.size())
+      ThrowOptionError(raw_key, ctx, "expected a seed in [0, 4294967295]");
+    config.seed = seed;
+  } else if (key == "lx") {
     config.Lx = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "ly") {
     config.Ly = ParseDouble(prepared_value, raw_key, ctx);
@@ -687,6 +694,7 @@ void PrintUsage(const char* program) {
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"
+      << "  --seed UINT32                    Random seed (logged at startup)\n"
       << "  --thread-pool-size COUNT         Number of worker threads\n"
       << "  --snapshots-binary               Enable binary snapshot output\n"
       << "  --boundary-x-neg TYPE            Boundary type (none, mirror, "

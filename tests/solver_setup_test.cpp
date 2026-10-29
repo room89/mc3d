@@ -238,3 +238,15 @@ TEST(SolverSetupTest, ApplyGeometryPostProcessingFragmentsGeometry) {
 
   EXPECT_GT(geometry.PolygonCount(), before_count);
 }
+
+TEST(SimulationConfigTest, SeedIsOptionalAndValidated) {
+  char program[] = "solver", option[] = "--seed", zero[] = "0";
+  char negative[] = "-1", overflow[] = "4294967296";
+  char* args[] = {program, option, zero};
+  EXPECT_FALSE(mc3d::LoadSimulationConfig(1, args).seed.has_value());
+  EXPECT_EQ(mc3d::LoadSimulationConfig(3, args).seed.value(), 0u);
+  args[2] = negative;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(3, args), std::runtime_error);
+  args[2] = overflow;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(3, args), std::runtime_error);
+}

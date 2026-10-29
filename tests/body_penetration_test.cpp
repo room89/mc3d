@@ -16,6 +16,8 @@
 #include "utils/utils.hpp"
 
 TEST(BodyCollisionTest, DiffuseWallTemperatureControlsOutgoingFluxMoments) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
@@ -25,9 +27,9 @@ TEST(BodyCollisionTest, DiffuseWallTemperatureControlsOutgoingFluxMoments) {
   EXPECT_THROW(boundary.SetWallTemperature(std::numeric_limits<double>::infinity()), std::invalid_argument);
   for (double temperature : {1., 10.}) {
     boundary.SetWallTemperature(temperature);
-    utils::RandomEngine().seed(54321);
+    random.Seed(54321);
     std::vector<mc3d::Particle> particles(30000, {{-0.6,0,0},{10,0,0}});
-    boundary.BoundaryCondition(particles, 0.02);
+    boundary.BoundaryCondition(particles, 0.02, random);
     mc3d::Point mean(0,0,0), squares(0,0,0);
     for (const auto& p : particles) {
       ASSERT_LT(p.velocity.x, 0);
@@ -111,13 +113,15 @@ TEST(BodyGeometryTest, RecoversStartingParticleFromDeepInside) {
 }
 
 TEST(BodyCollisionTest, HighSpeedCrossingCannotTunnelThroughCube) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{-1, 0, 0}, {4, 0, 0}},
                                         {{-1, 0.49, 0.49}, {4, 0, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.5), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.5, random), 0);
   for (const auto& particle : particles) {
     EXPECT_FALSE(body.IsInnerPoint(particle.position));
     EXPECT_LT(particle.position.x, -0.5);
@@ -125,19 +129,22 @@ TEST(BodyCollisionTest, HighSpeedCrossingCannotTunnelThroughCube) {
 }
 
 TEST(BodyCollisionTest, ReflectsAtConcaveNotchWithoutPenetration) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   auto body = MakeConcavePrism();
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(*body);
   std::vector<mc3d::Particle> particles{{{1.5, 1.5, 0.5}, {-3, 0, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.3), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.3, random), 0);
   EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
   EXPECT_GT(particles.front().velocity.x, 0);
 }
 
 TEST(BodyCollisionTest, AdjacentCellDetectsSurfaceOutsideLocalPolygonList) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
   auto body = std::make_unique<mc3d::Geometry>();
   body->CreateCube(-0.5, 1, 1, 1);
-  mc3d::Cell cell;
+  mc3d::Cell cell(random_stream);
   cell.SetApex({-1.5, -0.5, -0.5});
   cell.SetSize(1, 1, 1);
   cell.SetParameters(0, 0, 1);
@@ -152,7 +159,9 @@ TEST(BodyCollisionTest, AdjacentCellDetectsSurfaceOutsideLocalPolygonList) {
 }
 
 TEST(BodyCollisionTest, RepeatedCrossingsKeepEveryParticleOutside) {
-  utils::SeedRandom(20260929u);
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
+  random.Seed(20260929u);
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
@@ -190,7 +199,7 @@ TEST(BodyCollisionTest, RepeatedCrossingsKeepEveryParticleOutside) {
   }
   for (int step = 0; step < 20; ++step) {
     SCOPED_TRACE(step);
-    ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1), 0);
+    ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1, random), 0);
     ASSERT_EQ(particles.size(), 60U);
     for (std::size_t i = 0; i < particles.size(); ++i) {
       SCOPED_TRACE(i);
@@ -200,24 +209,28 @@ TEST(BodyCollisionTest, RepeatedCrossingsKeepEveryParticleOutside) {
 }
 
 TEST(BodyCollisionTest, ReversedMeshNormalsStillReflectIncomingParticle) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   body.ReverseNormals();
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{-1, 0, 0}, {2, 0, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.3), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.3, random), 0);
   EXPECT_FALSE(body.IsInnerPoint(particles.front().position));
   EXPECT_LT(particles.front().velocity.x, 0);
 }
 
 TEST(BodyCollisionTest, SurfaceStartReflectsInsteadOfBeingRecoveredInside) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{-0.5, 0, 0}, {1, 0, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1, random), 0);
   EXPECT_FALSE(body.IsInnerPoint(particles.front().position));
   EXPECT_LT(particles.front().velocity.x, 0);
 }
@@ -247,25 +260,29 @@ TEST(BodyGeometryTest, BoundsIncludeNegativeCoordinatesAndTranslatedBody) {
 
 TEST(BodyCollisionTest,
      StartingInsideIsRecoveredByBoundaryWithoutParticleLoss) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{0, 0, 0}, {0, 0, 0}}};
   ASSERT_TRUE(body.IsInnerPoint(particles.front().position));
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.1, random), 0);
   ASSERT_EQ(particles.size(), 1U);
   EXPECT_FALSE(body.IsInnerPoint(particles.front().position));
   EXPECT_DOUBLE_EQ(particles.front().velocity.Mod(), 0);
 }
 
 TEST(BodyCollisionTest, DistantTrajectoryKeepsVelocityAndCreatesNoForce) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{2, 2, 2}, {1, -0.25, 0.5}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2, random), 0);
   EXPECT_NEAR(particles.front().position.x, 2.2, 1e-12);
   EXPECT_NEAR(particles.front().position.y, 1.95, 1e-12);
   EXPECT_NEAR(particles.front().position.z, 2.1, 1e-12);
@@ -289,11 +306,12 @@ TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
   std::vector<std::thread> workers;
   for (int thread_index = 0; thread_index < kThreads; ++thread_index) {
     workers.emplace_back([&, thread_index] {
+      utils::RandomStream random(123, thread_index);
       std::vector<mc3d::Particle> particles;
       for (int j = 0; j < kParticlesPerThread; ++j) {
         particles.emplace_back(mc3d::Point(-1, 0.1, 0.1), mc3d::Point(2, 0, 0));
       }
-      boundary.BoundaryCondition(particles, 0.3);
+      boundary.BoundaryCondition(particles, 0.3, random);
       mc3d::Point impulse(0, 0, 0);
       bool outside = particles.size() == kParticlesPerThread;
       for (const auto& particle : particles) {
@@ -320,24 +338,28 @@ TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
 }
 
 TEST(BodyCollisionTest, RecoversFromConcaveInteriorTowardNotch) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   auto body = MakeConcavePrism();
   const mc3d::Point start(0.9, 1.5, 0.5);
   ASSERT_TRUE(body->IsInnerPoint(start));
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(*body);
   std::vector<mc3d::Particle> particles{{start, {0, 0, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 0.2, random), 0);
   ASSERT_EQ(particles.size(), 1U);
   EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
   EXPECT_GT(particles.front().position.x, 1);
 }
 
 TEST(BodyCollisionTest, ConcaveCornerHitDoesNotLeaveParticleInside) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   auto body = MakeConcavePrism();
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(*body);
   std::vector<mc3d::Particle> particles{{{1.5, 1.5, 0.5}, {-1, -1, 0}}};
-  ASSERT_EQ(boundary.BoundaryCondition(particles, 1), 0);
+  ASSERT_EQ(boundary.BoundaryCondition(particles, 1, random), 0);
   ASSERT_EQ(particles.size(), 1U);
   EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
 }
@@ -358,6 +380,8 @@ TEST(BodyReviewRegressionTest, SmallClosedBodyHasAnInterior) {
 }
 
 TEST(BodyReviewRegressionTest, ZeroSTLNormalDoesNotMakeTriangleTransparent) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   MeshGeometry body;
   mc3d::Geometry cube;
   cube.CreateCube(-0.5, 1, 1, 1);
@@ -368,7 +392,7 @@ TEST(BodyReviewRegressionTest, ZeroSTLNormalDoesNotMakeTriangleTransparent) {
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{-1, 0, 0}, {1, 0, 0}}};
-  boundary.BoundaryCondition(particles, 1.1);
+  boundary.BoundaryCondition(particles, 1.1, random);
   EXPECT_LT(particles.front().position.x, 0);
   EXPECT_LT(particles.front().velocity.x, 0);
 }
@@ -389,11 +413,13 @@ std::unique_ptr<MeshGeometry> MakeNarrowGap(double gap) {
 }  // namespace
 
 TEST(BodyReviewRegressionTest, SurfaceOffsetDoesNotJumpAcrossNarrowGap) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   auto body = MakeNarrowGap(1e-6);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(*body);
   std::vector<mc3d::Particle> particles{{{5e-7, 0, 0}, {1, 0, 0}}};
-  boundary.BoundaryCondition(particles, 5e-7);
+  boundary.BoundaryCondition(particles, 5e-7, random);
   EXPECT_GT(particles.front().position.x, 9e-7);
   EXPECT_LT(particles.front().position.x, 1e-6);
   EXPECT_FALSE(body->IsInnerPoint(particles.front().position));
@@ -401,21 +427,25 @@ TEST(BodyReviewRegressionTest, SurfaceOffsetDoesNotJumpAcrossNarrowGap) {
 
 TEST(BodyReviewRegressionTest,
      CollisionLimitCannotSilentlyDiscardRemainingTime) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   auto body = MakeNarrowGap(1e-4);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(*body);
-  utils::RandomEngine().seed(44);
+  random.Seed(44);
   std::vector<mc3d::Particle> particles{{{5e-5, 0, 0}, {1, 0, 0}}};
-  EXPECT_THROW(boundary.BoundaryCondition(particles, 1), std::runtime_error);
+  EXPECT_THROW(boundary.BoundaryCondition(particles, 1, random), std::runtime_error);
 }
 
 TEST(BodyReviewRegressionTest, SmallBodySurfaceStartReflectsAndMovesOutside) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-5e-11, 1e-10, 1e-10, 1e-10);
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   std::vector<mc3d::Particle> particles{{{-5e-11, 0, 0}, {1, 0, 0}}};
-  boundary.BoundaryCondition(particles, 1e-11);
+  boundary.BoundaryCondition(particles, 1e-11, random);
   EXPECT_LT(particles.front().velocity.x, 0);
   EXPECT_LT(particles.front().position.x, -5e-11);
 }

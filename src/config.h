@@ -40,6 +40,7 @@ struct SimulationConfig {
   unsigned int cells_z = 3;
   unsigned int particles_per_cell = 50;
   unsigned int thread_pool_size = 4;
+  std::optional<unsigned int> seed;
 
   double S = 10.0;
   double end_time = 1.0;

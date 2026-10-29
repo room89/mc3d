@@ -79,7 +79,7 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
 }
 
 int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
-                                     double dt) {
+                                     double dt, utils::RandomStream& random) {
   Geometry* geometry_ptr = GetGeometryPtr();
   if (!geometry_ptr) return 0;
   const double surface_offset = 8 * geometry_ptr->SurfaceTolerance();
@@ -133,9 +133,9 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
       const Point incoming_velocity = particle.velocity;
 
-      double r1 = utils::Random01();
-      double r2 = utils::Random01();
-      double r3 = utils::Random01();
+      double r1 = random.Uniform();
+      double r2 = random.Uniform();
+      double r3 = random.Uniform();
 
       if (r1 <= 0.) r1 = 0.00001;
       if (r2 <= 0.) r2 = 0.00001;
@@ -239,7 +239,7 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 }
 
 double InnerBoundary::CalcCellVolume(
-    Point cell_apex, Point size,
+    Point cell_apex, Point size, utils::RandomStream& random,
     Point* mass_center_out)  // вычисление отсеченного обёма ячейки, аргументы:
                              // входные параметры:cell_apex - опорный угол
                              // ячейки, size - размеры ячейки, выходные
@@ -265,7 +265,7 @@ double InnerBoundary::CalcCellVolume(
   rand_points.reserve(N);
 
   for (size_t i = 0; i < N; i++) {
-    rand_points.emplace_back(cell_apex + size.RandomPoint());
+    rand_points.emplace_back(cell_apex + size.RandomPoint(random));
   }
 
   auto poligon_col_iterator_x = poligon_ptrs.end();

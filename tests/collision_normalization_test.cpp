@@ -17,7 +17,8 @@ class CellCollisionTestAccess {
 }
 
 TEST(CollisionNormalizationTest, ReservoirCountDoesNotFollowPopulationChanges) {
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  mc3d::Cell cell(random_stream);
   cell.SetApex({0,0,0}); cell.SetSize(2,1,1);
   cell.SetParameters(0,0,1); cell.SetKn(.1);
   std::unique_ptr<mc3d::Geometry> body;
@@ -43,8 +44,9 @@ double Relaxation(int count, double kn, double duration, int steps=8, bool shuff
   double result=0;
   constexpr int ensembles=400;
   for (int seed=0;seed<ensembles;++seed) {
-    utils::RandomEngine().seed(12000+seed);
-    mc3d::Cell cell;
+    auto random_stream = std::make_shared<utils::RandomStream>(12000+seed);
+    auto& random = *random_stream;
+    mc3d::Cell cell(random_stream);
     cell.SetApex({0,0,0}); cell.SetSize(1,1,1);
     cell.SetParameters(0,0,1); cell.SetKn(kn);
     cell.SetCharacteristicLength(1);
@@ -52,7 +54,7 @@ double Relaxation(int count, double kn, double duration, int steps=8, bool shuff
     cell.Initialize(count,body);
     auto& particles=mc3d::CellCollisionTestAccess::Particles(cell);
     for(int i=0;i<count;++i) particles[i].velocity={i<count/2 ? 1. : -1.,0,0};
-    if (shuffle) std::shuffle(particles.begin(),particles.end(),utils::RandomEngine());
+    if (shuffle) std::shuffle(particles.begin(),particles.end(),random.Engine());
     cell.SetDt(duration/steps);
     for(int step=0;step<steps;++step) cell.Collisions();
     double xx=0, energy=0;
@@ -93,7 +95,8 @@ TEST(CollisionNormalizationTest, RelaxationDoesNotDependOnArrayOrderOrStepSubdiv
 }
 
 TEST(CollisionNormalizationTest, ColdTranslatingGasDoesNotCollide) {
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  mc3d::Cell cell(random_stream);
   cell.SetApex({0,0,0}); cell.SetSize(1,1,1);
   cell.SetReferenceParticleCount(32); cell.SetKn(.1); cell.SetDt(1);
   for (int i=0;i<32;++i) {
@@ -109,7 +112,8 @@ TEST(CollisionNormalizationTest, ColdTranslatingGasDoesNotCollide) {
 }
 
 TEST(CellMomentsTest, EmptySingleAndCounterstreamingParticles) {
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  mc3d::Cell cell(random_stream);
   cell.SetTemperature(42);
   EXPECT_EQ(cell.ComputeMoments().count, 0u);
   EXPECT_DOUBLE_EQ(cell.ComputeMoments().temperature, 0);
@@ -131,7 +135,8 @@ TEST(CellMomentsTest, EmptySingleAndCounterstreamingParticles) {
 }
 
 TEST(CellMomentsTest, ResultsStayFreshAfterParticleChanges) {
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  mc3d::Cell cell(random_stream);
   cell.SetTemperature(42);
   auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
   particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(2,4,6));

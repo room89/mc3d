@@ -39,7 +39,7 @@ class CellCluster {
       double dt);  // установка шага по времени во все ячейки
   StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
-                           kDefaultThreadPoolSize);  // конструктор по умолчанию
+                           kDefaultThreadPoolSize, uint32_t seed = std::random_device{}());  // конструктор по умолчанию
   ~CellCluster();                                    // деструктор
   void SetApex(Point apex);  // задание опорной точки кластера
   void SetSize(double Lx, double Ly, double Lz);  // задание размеров кластера
@@ -59,6 +59,7 @@ class CellCluster {
   void CleanInnerParticles();
 
  private:
+  utils::RandomStreams random_streams_;
   int numproc;  // количество процессов(не путать с нитями), специально для MPI
   int proc_id;  // номер процесса
   unsigned int i_j_k;  // переменная используется при инициализации кластера|

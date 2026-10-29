@@ -120,22 +120,22 @@ Point Point::Get() {
 }
 
 Point Point::RandomPoint(
-    Point size)  // возврощает рандомную точку с коорд.: x от 0 до size.x, y от
+    Point size, utils::RandomStream& random)  // возврощает рандомную точку с коорд.: x от 0 до size.x, y от
                  // 0 до size.y, z от 0 до size.z
 {
-  double rnx = utils::RandomDouble(0.0, 1.0);
-  double rny = utils::RandomDouble(0.0, 1.0);
-  double rnz = utils::RandomDouble(0.0, 1.0);
+  double rnx = random.Uniform();
+  double rny = random.Uniform();
+  double rnz = random.Uniform();
 
   return Point(size.x * rnx, size.y * rny, size.z * rnz);
 }
 
-Point Point::RandomPoint()  // возврощает рандомную точку с коорд.: x от 0 до
+Point Point::RandomPoint(utils::RandomStream& random)  // возврощает рандомную точку с коорд.: x от 0 до
                             //  this->x, y от 0 до this->y, z от 0 до this->z
 {
-  double rnx = utils::RandomDouble(0.0, 1.0);
-  double rny = utils::RandomDouble(0.0, 1.0);
-  double rnz = utils::RandomDouble(0.0, 1.0);
+  double rnx = random.Uniform();
+  double rny = random.Uniform();
+  double rnz = random.Uniform();
 
   return Point(x * rnx, y * rny, z * rnz);
 }

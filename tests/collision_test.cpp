@@ -1,3 +1,4 @@
+#include "utils/utils.hpp"
 #include <gtest/gtest.h>
 #include <inner_boundary.h>
 #include <particle.h>
@@ -51,6 +52,8 @@ Point Difference(const Point& a, const Point& b) {
 }  // namespace
 
 TEST(InnerBoundaryCollisionTest, ParticleCollidesWithPolygon) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::test::GeometryAccessor geometry;
   mc3d::Polygon polygon(mc3d::test::MakePoint(0.0, -0.5, -0.5),
                         mc3d::test::MakePoint(0.0, 0.5, -0.5),
@@ -73,8 +76,8 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithPolygon) {
   const Point initial_velocity = particles.front().velocity;
   constexpr double dt = 0.2;
 
-  utils::SeedRandom(123u);
-  EXPECT_EQ(boundary.BoundaryCondition(particles, dt), 0);
+  random.Seed(123u);
+  EXPECT_EQ(boundary.BoundaryCondition(particles, dt, random), 0);
 
   const Point& final_position = particles.front().position;
   // Account for intentional offset (eps * 10.0 = 1e-4) added to prevent penetration
@@ -94,6 +97,8 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithPolygon) {
 }
 
 TEST(InnerBoundaryCollisionTest, ParticleCollidesWithBodyGeometry) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::test::GeometryAccessor geometry;
   geometry.CreateCube(-0.5, 1.0, 1.0, 1.0);
 
@@ -108,8 +113,8 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithBodyGeometry) {
   const Point initial_velocity = particles.front().velocity;
   constexpr double dt = 0.2;
 
-  utils::SeedRandom(456u);
-  EXPECT_EQ(boundary.BoundaryCondition(particles, dt), 0);
+  random.Seed(456u);
+  EXPECT_EQ(boundary.BoundaryCondition(particles, dt, random), 0);
 
   const Point& final_position = particles.front().position;
   // Account for intentional offset (eps * 10.0 = 1e-4) added to prevent penetration
