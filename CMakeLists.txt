@@ -25,6 +25,7 @@ add_library(mc3d_core STATIC
   src/pereodic_boundary.cpp
   src/point.cpp
   src/poligon.cpp
+  src/simulation_runner.cpp
   src/solver_setup.cpp
   src/utils/logger.cpp
   src/utils/stopwatch.cpp

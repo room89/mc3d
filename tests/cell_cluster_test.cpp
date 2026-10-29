@@ -1,3 +1,4 @@
+#include "simulation_runner.h"
 #include "cell_cluster.h"
 
 #include <gtest/gtest.h>
@@ -44,17 +45,17 @@ class CellClusterTestAccess {
     return cluster.partile_buffer.size();
   }
 
-  static double GetSnapshotInterval(const CellCluster& cluster) {
-    return cluster.snapshot_interval_;
+  static double GetSnapshotInterval(const SimulationRunner& runner) {
+    return runner.SnapshotInterval();
   }
 
-  static double GetNextSnapshotTime(const CellCluster& cluster) {
-    return cluster.next_snapshot_time_;
+  static double GetNextSnapshotTime(const SimulationRunner& runner) {
+    return runner.NextSnapshotTime();
   }
 
   static double GetTime(const CellCluster& cluster) { return cluster.t; }
 
-  static bool RunTimeStep(CellCluster& cluster) { return cluster.TimeStep(); }
+  static bool RunTimeStep(CellCluster& cluster) { return cluster.TimeStep().finished; }
 
   static void DistributeParticles(CellCluster& cluster,
                                   std::vector<Particle>& buffer) {
@@ -117,6 +118,7 @@ TEST(CellClusterInitializeTest, SynchronizesDtAcrossCells) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(2.0, 1.0, 1.0);
   cluster.SetEndTime(0.5);
@@ -141,6 +143,7 @@ TEST(CellClusterInitializeTest, NonUnitDomainPreservesReservoirNormalization) {
   cfg.cells_x=4; cfg.cells_y=2; cfg.cells_z=2;
   cfg.particles_per_cell=64;
   mc3d::CellCluster cluster(1);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({0,0,0}); cluster.SetSize(cfg.Lx,cfg.Ly,cfg.Lz);
   ASSERT_TRUE(cluster.Initialize(cfg.cells_x,cfg.cells_y,cfg.cells_z,
       mc3d::ReferenceParticleDensity(cfg),.1,.3,
@@ -149,7 +152,7 @@ TEST(CellClusterInitializeTest, NonUnitDomainPreservesReservoirNormalization) {
     EXPECT_EQ(cell->GetParticleCount(),64U);
     EXPECT_NEAR(cell->CalculateKn(),.1,1e-14);
   }
-  ASSERT_TRUE(cluster.WriteFile("normalized.dat"));
+  ASSERT_TRUE(runner.Writer().WriteFile("normalized.dat"));
   std::ifstream input("normalized.dat");
   std::string line;
   std::getline(input,line);
@@ -184,6 +187,7 @@ TEST(CellClusterInitializeTest, PopulatesLookupAndFindsCells) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0.0, kKn, kCu, std::move(geometry),
@@ -209,6 +213,7 @@ TEST(CellClusterInitializeTest, CleansParticleBufferAndMarksBodyCells) {
   geometry->CreateCube(-0.5, 1.0, 1.0, 1.0);
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(-0.5, -0.5, -0.5));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.5);
@@ -228,6 +233,7 @@ TEST(CellClusterGridTest, FindCellIndexUsesHalfOpenDomain) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.1);
@@ -249,6 +255,7 @@ TEST(CellClusterDistributionTest, DistributeParticlesAcceptsAndRejects) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(2.0, 1.0, 1.0);
   cluster.SetEndTime(0.1);
@@ -276,21 +283,23 @@ TEST(CellClusterDistributionTest, DistributeParticlesAcceptsAndRejects) {
 
 TEST(CellClusterSnapshotTest, ZeroIntervalDisablesScheduling) {
   mc3d::CellCluster cluster;
-  cluster.SetSnapshotInterval(0.0);
+  mc3d::SimulationRunner runner(cluster);
+  runner.SetSnapshotInterval(0.0);
 
-  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetSnapshotInterval(cluster),
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetSnapshotInterval(runner),
                    0.0);
-  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetNextSnapshotTime(cluster),
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetNextSnapshotTime(runner),
                    0.0);
 }
 
 TEST(CellClusterSnapshotTest, PositiveIntervalInitialisesNextTime) {
   mc3d::CellCluster cluster;
-  cluster.SetSnapshotInterval(0.25);
+  mc3d::SimulationRunner runner(cluster);
+  runner.SetSnapshotInterval(0.25);
 
-  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetSnapshotInterval(cluster),
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetSnapshotInterval(runner),
                    0.25);
-  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetNextSnapshotTime(cluster),
+  EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetNextSnapshotTime(runner),
                    0.25);
 }
 
@@ -300,17 +309,18 @@ TEST(CellClusterSnapshotTest, TimeStepHonoursSnapshotSchedule) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.25);
-  cluster.SetSnapshotInterval(0.1);
+  runner.SetSnapshotInterval(0.1);
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 25.0, kKn, kCu, std::move(geometry),
                                  kS, kAlpha, kTemperature));
 
   bool finished = false;
   int steps = 0;
   while (!finished && steps < 500) {
-    finished = mc3d::CellClusterTestAccess::RunTimeStep(cluster);
+    finished = runner.Step().finished;
     ++steps;
   }
   EXPECT_TRUE(finished);
@@ -342,7 +352,7 @@ TEST(CellClusterSnapshotTest, TimeStepHonoursSnapshotSchedule) {
   std::sort(snapshot_times.begin(), snapshot_times.end());
   EXPECT_GE(snapshot_times.front(), 0.1);
   EXPECT_GE(snapshot_times.back(), 0.2);
-  EXPECT_NEAR(mc3d::CellClusterTestAccess::GetNextSnapshotTime(cluster), 0.3,
+  EXPECT_NEAR(mc3d::CellClusterTestAccess::GetNextSnapshotTime(runner), 0.3,
               1e-6);
   EXPECT_NEAR(mc3d::CellClusterTestAccess::GetTime(cluster), 0.25, 1e-9);
 }
@@ -353,15 +363,16 @@ TEST(CellClusterSnapshotWriters, WriteTextSnapshotProducesExpectedColumns) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.1);
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0.0, kKn, kCu, std::move(geometry),
                                  kS, kAlpha, kTemperature));
-  cluster.SetBinaryOutput(false);
+  runner.Writer().SetBinaryOutput(false);
 
   const auto snapshot_path = guard.Path() / "snapshot.dat";
-  ASSERT_TRUE(cluster.WriteFile(snapshot_path.string()));
+  ASSERT_TRUE(runner.Writer().WriteFile(snapshot_path.string()));
 
   std::ifstream input(snapshot_path);
   ASSERT_TRUE(input.is_open());
@@ -404,15 +415,16 @@ TEST(CellClusterSnapshotWriters, WriteBinarySnapshotProducesExpectedLayout) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.1);
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0.0, kKn, kCu, std::move(geometry),
                                  kS, kAlpha, kTemperature));
-  cluster.SetBinaryOutput(true);
+  runner.Writer().SetBinaryOutput(true);
 
   const auto snapshot_path = guard.Path() / "snapshot.bin";
-  ASSERT_TRUE(cluster.WriteFile(snapshot_path.string()));
+  ASSERT_TRUE(runner.Writer().WriteFile(snapshot_path.string()));
 
   std::ifstream input(snapshot_path, std::ios::binary);
   ASSERT_TRUE(input.is_open());
@@ -479,11 +491,12 @@ TEST(CellClusterIntegrationTest, RunsComputeAndInvokesBoundary) {
   auto geometry = std::make_unique<mc3d::Geometry>();
 
   mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(mc3d::Point(0.0, 0.0, 0.0));
   cluster.SetSize(1.0, 1.0, 1.0);
   cluster.SetEndTime(0.05);
-  cluster.SetSnapshotInterval(1.0);
-  cluster.SetBinaryOutput(false);
+  runner.SetSnapshotInterval(1.0);
+  runner.Writer().SetBinaryOutput(false);
 
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 10.0, kKn, kCu, std::move(geometry),
                                  kS, kAlpha, kTemperature));
@@ -492,7 +505,7 @@ TEST(CellClusterIntegrationTest, RunsComputeAndInvokesBoundary) {
   auto* boundary_ptr = boundary.get();
   cluster.SetBoundaryCondition(std::move(boundary));
 
-  cluster.Compute();
+  runner.Compute();
 
   EXPECT_NEAR(mc3d::CellClusterTestAccess::GetTime(cluster), 0.05, 1e-6);
   ASSERT_NE(boundary_ptr, nullptr);
@@ -503,6 +516,7 @@ TEST(CellClusterIntegrationTest, RunsComputeAndInvokesBoundary) {
 TEST(CellClusterDistributionTest,
      AcceptsExactInternalFacesAndLowerDomainCorner) {
   mc3d::CellCluster cluster(2);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({0, 0, 0});
   cluster.SetSize(2, 2, 2);
   cluster.SetEndTime(1);
@@ -530,10 +544,11 @@ TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
     cfg.apex_y = -7;
     cfg.apex_z = 2;
     mc3d::CellCluster cluster(threads);
+  mc3d::SimulationRunner runner(cluster);
     cluster.SetApex({4, -7, 2});
     cluster.SetSize(cfg.Lx, cfg.Ly, cfg.Lz);
     cluster.SetEndTime(2);
-    cluster.SetSnapshotInterval(3);
+    runner.SetSnapshotInterval(3);
     ASSERT_TRUE(cluster.Initialize(
         2, 3, 5, 0, kKn, 0.4, std::make_unique<mc3d::Geometry>(), 0, 0, 1));
     const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
@@ -598,10 +613,11 @@ TEST(CellClusterIntegrationTest,
   cfg.Lz = 5;
   cfg.apex_x = cfg.apex_y = cfg.apex_z = 0;
   mc3d::CellCluster cluster(1);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({0, 0, 0});
   cluster.SetSize(2, 3, 5);
   cluster.SetEndTime(0.5);
-  cluster.SetSnapshotInterval(1);
+  runner.SetSnapshotInterval(1);
   ASSERT_TRUE(cluster.Initialize(2, 3, 5, 0, kKn, 1,
                                  std::make_unique<mc3d::Geometry>(), 0, 0, 1));
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
@@ -647,10 +663,11 @@ TEST(CellClusterIntegrationTest, BodyCollisionKeepsParticlesOutsideEveryStep) {
   body->CreateCube(-0.2, 0.4, 0.4, 0.4);
   const auto* body_ptr = body.get();
   mc3d::CellCluster cluster(2);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({-5, -5, -5});
   cluster.SetSize(10, 10, 10);
   cluster.SetEndTime(1.6);
-  cluster.SetSnapshotInterval(10);
+  runner.SetSnapshotInterval(10);
   ASSERT_TRUE(
       cluster.Initialize(2, 1, 1, 0, kKn, 0.2, std::move(body), 0, 0, 1));
   // Diffuse reflection has unbounded thermal speeds. Close the outer box so
@@ -688,17 +705,18 @@ TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
   body->CreateCube(-1, 100, 1, 100);
   body->CreateCube(1e-4, 100, 1, 100);
   mc3d::CellCluster cluster(2);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({-1, -50, -50});
   cluster.SetSize(2.0001, 100, 100);
   cluster.SetEndTime(1);
-  cluster.SetSnapshotInterval(10);
+  runner.SetSnapshotInterval(10);
   ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1, std::move(body), 0, 0, 1));
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   mc3d::Particle left({5e-5, -0.1, 0}, {1, 0, 0});
   mc3d::Particle right({5e-5, 0.1, 0}, {1, 0, 0});
   ASSERT_TRUE(cells.front()->TryAcceptParticle(left));
   ASSERT_TRUE(cells.back()->TryAcceptParticle(right));
-  EXPECT_THROW(cluster.Compute(), std::runtime_error);
+  EXPECT_THROW(runner.Compute(), std::runtime_error);
   EXPECT_EQ(cells.front()->GetParticleCount(), 1U);
   EXPECT_EQ(cells.back()->GetParticleCount(), 1U);
   EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), 0);
@@ -716,17 +734,18 @@ TEST(CellClusterIntegrationTest, HyperFreeInflowRepopulatesEmptyDomain) {
   const double duration = 2.25 / (cfg.particles_per_cell *
       std::sqrt(cfg.temperature / (2 * std::numbers::pi)));
   mc3d::CellCluster cluster(1);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex({-0.5, -0.5, -0.5});
   cluster.SetSize(1, 1, 1);
   cluster.SetEndTime(duration);
-  cluster.SetSnapshotInterval(1);
+  runner.SetSnapshotInterval(1);
   ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0, kKn, 0.2,
       std::make_unique<mc3d::Geometry>(), 0, 0, cfg.temperature));
   cluster.SetBoundaryCondition(mc3d::MakeBoundary(
       mc3d::MakeBoundaryDescriptor(mc3d::BoundaryFace::ZNeg, cfg),
       mc3d::BoundaryType::HyperFree, cfg));
 
-  cluster.Compute();
+  runner.Compute();
 
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   ASSERT_EQ(cells.size(), 1U);
@@ -746,17 +765,18 @@ TEST(CellClusterIntegrationTest, HyperFreeAllFacesPreserveUniformReservoir) {
     cfg.S = speed_ratio;
     cfg.temperature = 1;
     mc3d::CellCluster cluster(1);
+  mc3d::SimulationRunner runner(cluster);
     cluster.SetApex({-1,-0.5,-0.25});
     cluster.SetSize(2,1,0.5);
     cluster.SetEndTime(0.6);
-    cluster.SetSnapshotInterval(10);
+    runner.SetSnapshotInterval(10);
     ASSERT_TRUE(cluster.Initialize(8,4,2,6400,kKn,0.3,
         std::make_unique<mc3d::Geometry>(),cfg.S,0,1));
     for (int face = 0; face < 6; ++face)
       cluster.SetBoundaryCondition(mc3d::MakeBoundary(
           mc3d::MakeBoundaryDescriptor(static_cast<mc3d::BoundaryFace>(face),cfg),
           mc3d::BoundaryType::HyperFree,cfg));
-    cluster.Compute();
+    runner.Compute();
     double count = 0, temperature = 0;
     mc3d::Point velocity(0,0,0);
     for (auto* cell : mc3d::CellClusterTestAccess::GetLookup(cluster)) {
@@ -771,4 +791,12 @@ TEST(CellClusterIntegrationTest, HyperFreeAllFacesPreserveUniformReservoir) {
     EXPECT_NEAR(velocity.y / count,0,0.06);
     EXPECT_NEAR(velocity.z / count,0,0.06);
   }
+}
+
+TEST(SimulationOutputTest, ReportsWriteFailure) {
+  ScopedWorkingDirectory guard("mc3d_failed_output_test");
+  mc3d::CellCluster cluster;
+  mc3d::SimulationRunner runner(cluster);
+  EXPECT_FALSE(runner.Writer().WriteFile("missing/snapshot.dat"));
+  EXPECT_THROW(mc3d::SimulationRunner::RequireWrite(false), std::runtime_error);
 }

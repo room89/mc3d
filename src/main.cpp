@@ -1,3 +1,4 @@
+#include "simulation_runner.h"
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -8,7 +9,7 @@
 #include "point.h"
 #include "solver_setup.h"
 
-int main(int argc, char* argv[]) {
+int Run(int argc, char* argv[]) {
   const auto config = mc3d::LoadSimulationConfig(argc, argv);
 
   auto geometry = mc3d::BuildGeometry(config);
@@ -18,6 +19,7 @@ int main(int argc, char* argv[]) {
                          config.apex_z.value_or(-0.5 * config.Lz));
 
   mc3d::CellCluster cluster(config.thread_pool_size);
+  mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 
@@ -26,11 +28,11 @@ int main(int argc, char* argv[]) {
   cluster.Initialize(config.cells_x, config.cells_y, config.cells_z,
                      reference_density, config.Kn, config.Cu, std::move(geometry),
                      config.S, config.alpha, config.temperature, config.wall_temperature);
-  cluster.SetBinaryOutput(config.snapshots_binary);
-  cluster.SetSnapshotInterval(config.snapshot_interval);
+  runner.Writer().SetBinaryOutput(config.snapshots_binary);
+  runner.SetSnapshotInterval(config.snapshot_interval);
 
   if (config.write_default_snapshot_before_compute) {
-    cluster.WriteFile();
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile());
   }
 
   std::vector<std::unique_ptr<mc3d::Boundary>> boundaries;
@@ -51,38 +53,46 @@ int main(int argc, char* argv[]) {
   }
 
   if (config.write_speed_before) {
-    cluster.WriteSpeedFile();
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteSpeedFile());
   }
 
   cluster.SetEndTime(config.end_time);
 
   if (!config.precompute_snapshot.empty()) {
-    cluster.WriteFile(config.precompute_snapshot);
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile(config.precompute_snapshot));
   }
 
-  cluster.Compute();
+  runner.Compute();
 
   std::cout << "Computation is over." << std::endl;
 
   if (!config.final_cell_snapshot.empty()) {
-    cluster.WriteCellFile(config.final_cell_snapshot);
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteCellFile(config.final_cell_snapshot));
   }
 
   if (config.write_default_snapshot_after_compute) {
-    cluster.WriteFile();
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile());
   }
 
   if (!config.final_snapshot.empty()) {
-    cluster.WriteFile(config.final_snapshot);
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile(config.final_snapshot));
   }
 
   if (config.write_times) {
-    cluster.WriteTimes();
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteTimes());
   }
 
   if (config.write_speed_after) {
-    cluster.WriteSpeedFile();
+    mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteSpeedFile());
   }
 
   return 0;
+}
+
+int main(int argc, char* argv[]) {
+  try { return Run(argc, argv); }
+  catch (const std::exception& error) {
+    std::cerr << error.what() << '\n';
+    return 1;
+  }
 }
