@@ -437,7 +437,8 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
 
   for (auto& cell : cells) {
     const auto center = cell.GetCenter();
-    const auto velocity = cell.GetVelocity();
+    const auto moments = cell.ComputeMoments();
+    const auto velocity = moments.velocity;
     const unsigned int particle_count = cell.GetParticleCount();
     const double density_value =
         cell.GetVolume() > 0 && density != 0.0
@@ -454,7 +455,7 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
     buffer.push_back(';');
     AppendDouble(buffer, density_value);
     buffer.push_back(';');
-    AppendDouble(buffer, cell.GetTemperature());
+    AppendDouble(buffer, moments.temperature);
     buffer.push_back(';');
     AppendDouble(buffer, velocity.x);
     buffer.push_back(';');
@@ -462,7 +463,7 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
     buffer.push_back(';');
     AppendDouble(buffer, velocity.z);
     buffer.push_back(';');
-    AppendDouble(buffer, cell.GetEnergy());
+    AppendDouble(buffer, moments.energy);
     buffer.push_back('\n');
   }
 
@@ -492,15 +493,16 @@ bool CellCluster::WriteBinarySnapshot(std::ofstream& file) {
 
   for (auto& cell : cells) {
     const auto center = cell.GetCenter();
-    const auto velocity = cell.GetVelocity();
+    const auto moments = cell.ComputeMoments();
+    const auto velocity = moments.velocity;
     const std::uint32_t particle_count =
         static_cast<std::uint32_t>(cell.GetParticleCount());
     const double density_value =
         cell.GetVolume() > 0 && density != 0.0
             ? static_cast<double>(particle_count) / (cell.GetVolume() * density)
             : 0.0;
-    const double temperature = cell.GetTemperature();
-    const double energy = cell.GetEnergy();
+    const double temperature = moments.temperature;
+    const double energy = moments.energy;
 
     file.write(reinterpret_cast<const char*>(&center.x), sizeof(center.x));
     file.write(reinterpret_cast<const char*>(&center.y), sizeof(center.y));

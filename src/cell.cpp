@@ -601,83 +601,33 @@ double Cell::GetTemperature() {
   return T;
 }
 
-double Cell::GetU() {
-  velocity = Point(0, 0, 0);
+CellMoments Cell::ComputeMoments() const {
+  CellMoments result;
+  result.count = particles.size();
+  double squared_speed = 0;
   for (const auto& particle : particles) {
-    velocity += particle.velocity;
+    result.velocity += particle.velocity;
+    squared_speed += particle.velocity * particle.velocity;
   }
-  if (!particles.empty()) {
-    velocity /= static_cast<double>(particles.size());
+  if (result.count != 0) {
+    const double inv_count = 1.0 / static_cast<double>(result.count);
+    result.velocity *= inv_count;
+    squared_speed *= inv_count;
+    result.energy = squared_speed / 2;
+    result.temperature = (squared_speed - result.velocity * result.velocity) / 3;
   }
-  return velocity.x;
+  return result;
 }
 
-double Cell::GetV() {
-  velocity = Point(0, 0, 0);
-  for (const auto& particle : particles) {
-    velocity += particle.velocity;
-  }
-  if (!particles.empty()) {
-    velocity /= static_cast<double>(particles.size());
-  }
-  return velocity.y;
-}
-
-double Cell::GetW() {
-  velocity = Point(0, 0, 0);
-  for (const auto& particle : particles) {
-    velocity += particle.velocity;
-  }
-  if (!particles.empty()) {
-    velocity /= static_cast<double>(particles.size());
-  }
-  return velocity.z;
-}
-
-double Cell::GetEnergy() {
-  double E = 0;
-  for (const auto& particle : particles) {
-    E += particle.velocity * particle.velocity;
-  }
-  if (!particles.empty()) {
-    E /= 2 * particles.size();
-  }
-  return E;
-}
-
-Point Cell::CalculateVelocity() const {
-  auto velocity = Point(0, 0, 0);
-  for (const auto& particle : particles) {
-    velocity += particle.GetVelocity();
-  }
-
-  if (!particles.empty()) {
-    velocity /= static_cast<double>(particles.size());
-  }
-
-  return velocity;
-}
-
+double Cell::GetU() { velocity = ComputeMoments().velocity; return velocity.x; }
+double Cell::GetV() { velocity = ComputeMoments().velocity; return velocity.y; }
+double Cell::GetW() { velocity = ComputeMoments().velocity; return velocity.z; }
+double Cell::GetEnergy() { return ComputeMoments().energy; }
+Point Cell::CalculateVelocity() const { return ComputeMoments().velocity; }
 double Cell::CalculateTemperature() {
-  if (particles.empty()) {
-    velocity = Point(0, 0, 0);
-    T = 0;
-    return T;
-  }
-
-  Point av_vel(0, 0, 0);
-  double E = 0;
-
-  for (const auto& particle : particles) {
-    av_vel += particle.velocity;
-    E += particle.velocity * particle.velocity;
-  }
-
-  const double inv_count = 1.0 / static_cast<double>(particles.size());
-  av_vel *= inv_count;
-  E *= inv_count;
-  velocity = av_vel;
-  T = (E - velocity * velocity) / 3;
+  const auto moments = ComputeMoments();
+  velocity = moments.velocity;
+  T = moments.temperature;
   return T;
 }
 
@@ -789,13 +739,7 @@ double Cell::GetVolume() const {
 bool Cell::GetBodyMark() { return body_mark; }
 
 Point Cell::GetVelocity() {
-  velocity = Point(0, 0, 0);
-  for (const auto& particle : particles) {
-    velocity += particle.velocity;
-  }
-  if (!particles.empty()) {
-    velocity /= static_cast<double>(particles.size());
-  }
+  velocity = ComputeMoments().velocity;
   return velocity;
 }
 

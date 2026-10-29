@@ -29,6 +29,13 @@ using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
+struct CellMoments {
+  std::size_t count = 0;
+  Point velocity{0, 0, 0};
+  double temperature = 0;
+  double energy = 0;
+};
+
 class Cell {
  private:
   std::vector<Particle> particles;
@@ -55,6 +62,7 @@ class Cell {
   std::shared_ptr<std::mutex> particles_mutex_;
 
  public:
+  CellMoments ComputeMoments() const;
   Cell();
   virtual ~Cell();
 

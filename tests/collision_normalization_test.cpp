@@ -106,3 +106,25 @@ TEST(CollisionNormalizationTest, ColdTranslatingGasDoesNotCollide) {
     EXPECT_DOUBLE_EQ(p.velocity.z,3);
   }
 }
+
+TEST(CellMomentsTest, EmptySingleAndCounterstreamingParticles) {
+  mc3d::Cell cell;
+  cell.SetTemperature(42);
+  EXPECT_EQ(cell.ComputeMoments().count, 0u);
+  EXPECT_DOUBLE_EQ(cell.ComputeMoments().temperature, 0);
+  auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(3,0,0));
+  auto moments = cell.ComputeMoments();
+  EXPECT_EQ(moments.count, 1u);
+  EXPECT_DOUBLE_EQ(moments.velocity.x, 3);
+  EXPECT_DOUBLE_EQ(moments.energy, 4.5);
+  EXPECT_DOUBLE_EQ(moments.temperature, 0);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(-3,0,0));
+  moments = cell.ComputeMoments();
+  EXPECT_EQ(moments.count, 2u);
+  EXPECT_DOUBLE_EQ(moments.velocity.x, 0);
+  EXPECT_DOUBLE_EQ(moments.energy, 4.5);
+  EXPECT_DOUBLE_EQ(moments.temperature, 3);
+  EXPECT_DOUBLE_EQ(cell.GetTemperatureRaw(), 42);
+  EXPECT_DOUBLE_EQ(particles.front().velocity.x, 3);
+}
