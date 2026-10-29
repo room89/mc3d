@@ -295,8 +295,6 @@ TEST(BodyCollisionTest, DistantTrajectoryKeepsVelocityAndCreatesNoForce) {
 }
 
 TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
-  auto random_stream = std::make_shared<utils::RandomStream>(123);
-  auto& random = *random_stream;
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
   mc3d::InnerBoundary boundary;
@@ -308,6 +306,7 @@ TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
   std::vector<std::thread> workers;
   for (int thread_index = 0; thread_index < kThreads; ++thread_index) {
     workers.emplace_back([&, thread_index] {
+      utils::RandomStream random(123, thread_index);
       std::vector<mc3d::Particle> particles;
       for (int j = 0; j < kParticlesPerThread; ++j) {
         particles.emplace_back(mc3d::Point(-1, 0.1, 0.1), mc3d::Point(2, 0, 0));

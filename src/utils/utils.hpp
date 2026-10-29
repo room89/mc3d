@@ -8,6 +8,7 @@
 namespace utils {
 
 // Streams belong to a simulation/cell, never to a worker thread.
+// A stream has one active consumer; concurrent operations must use distinct streams.
 class RandomStream {
  public:
   explicit RandomStream(uint32_t seed = std::random_device{}(), uint64_t id = 0) { Seed(seed, id); }
