@@ -95,7 +95,7 @@ def _load_snapshot_text(path: Path) -> pd.DataFrame:
         raise SnapshotFormatError(
             f"Snapshot {path} is missing expected columns: {', '.join(missing)}"
         )
-    return df[SNAPSHOT_COLUMNS]
+    return df[list(SNAPSHOT_COLUMNS)]
 
 
 def load_snapshot(path: Path) -> pd.DataFrame:
