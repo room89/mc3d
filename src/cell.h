@@ -109,9 +109,6 @@ class Cell {
   double GetDt();
   double PeekDt() const;
   double GetTemperature();
-  double GetU();
-  double GetV();
-  double GetW();
   double GetVolume() const;
   Point GetParticleMassCenter();
   Point GetVelocity();

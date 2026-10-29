@@ -252,7 +252,6 @@ bool CellCluster::TimeStep() {
   {
     utils::Stopwatch sw("TimeStep::GatherParticles");
     for (auto& cell : cells) {
-      cell.CalculateVelocity();
       cell.Sort();
       cell.SortNeighbors();
       auto& cell_buffer = cell.GetBuffer();
