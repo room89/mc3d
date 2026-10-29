@@ -21,15 +21,23 @@
 namespace mc3d {
 
 class CellClusterTestAccess;
+struct StepResult {
+  double time;
+  double dt;
+  bool finished;
+  std::size_t inner_particles;
+};
 
 class CellCluster {
  public:
   inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
+  friend class SnapshotWriter;
+  friend class SimulationRunner;
   inline void CalculateDt();  // вычисление шага по времени для данного кластера
   inline void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
-  bool TimeStep();
+  StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
                            kDefaultThreadPoolSize);  // конструктор по умолчанию
   ~CellCluster();                                    // деструктор
@@ -43,23 +51,9 @@ class CellCluster {
                   double density, double Kn, double Cu,
                   std::unique_ptr<Geometry>&& body_, double S, double alpha,
                   double T, double wall_temperature = 1.0);
-  bool WriteCellFile(const string& init_file);
-  void SetBinaryOutput(bool enabled);
-  bool WriteFile();       // запись данных в файл(плотность и энэргия), данные
-                          // собираються со всех кластеров
-  bool WriteSpeedFile();  // запись данных в файл(скорость), данные
-                          // собираются со всех кластеров
-  bool WriteFile(
-      const string& file_name);  // запись данных в файл(плотность и
-                                 // энэргия) с заданным именем, данные
-                                 // собираются со всех кластеров
-  bool WriteSpeedFile(const char* file_name);
-  void SetSnapshotInterval(double interval);
-  bool WriteTimes();  // запись данных о времени выполнения каждой итерации
   void SetBoundaryCondition(
       std::vector<std::unique_ptr<Boundary>>&& boundaries);
   void SetBoundaryCondition(std::unique_ptr<Boundary> boundary);
-  void Compute();  // вычисления
   void FragmentCells();
   void TestCells();
   void CleanInnerParticles();
@@ -113,17 +107,11 @@ class CellCluster {
   double data_t;
   double density;
   double volume;
-  bool binary_output_ = false;
-  double snapshot_interval_ = 0.0;
-  double next_snapshot_time_ = 0.0;
 
   utils::ThreadPool thread_pool_;
   std::vector<Cell*> cell_lookup_;
   double cell_dx_ = 0.0;
   double cell_dy_ = 0.0;
   double cell_dz_ = 0.0;
-  bool UpdateSnapshotSchedule();
-  bool WriteTextSnapshot(std::ofstream& file);
-  bool WriteBinarySnapshot(std::ofstream& file);
 };
 };  // namespace mc3d
