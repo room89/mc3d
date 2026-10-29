@@ -21,30 +21,29 @@ std::atomic<uint32_t> seed_base{[]() {
   return rd();
 }()};
 std::atomic<uint32_t> seed_counter{0};
+std::atomic<uint64_t> seed_generation{1};
 thread_local std::uniform_real_distribution<double> uniform01_distribution{0.0,
                                                                            1.0};
 }  // namespace
 
 std::mt19937& RandomEngine() {
-  thread_local std::mt19937 engine =
-      CreateEngine(seed_base.load(std::memory_order_relaxed),
-                   seed_counter.fetch_add(1, std::memory_order_relaxed));
+  thread_local std::mt19937 engine;
+  thread_local uint64_t generation = 0;
+  const auto current = seed_generation.load(std::memory_order_acquire);
+  if (generation != current) {
+    engine = CreateEngine(seed_base.load(std::memory_order_relaxed),
+                          seed_counter.fetch_add(1, std::memory_order_relaxed));
+    uniform01_distribution.reset();
+    generation = current;
+  }
   return engine;
 }
 
 void SeedRandom(uint32_t seed) {
+  // Call only while all consumers are idle. Existing workers reset lazily.
   seed_base.store(seed, std::memory_order_relaxed);
   seed_counter.store(0, std::memory_order_relaxed);
-  // Re-seeding existing thread-local engines requires reinitialization.
-  // Force recreation on next use by resetting the thread-local counter.
-  thread_local bool reset = []() {
-    RandomEngine() =
-        CreateEngine(seed_base.load(std::memory_order_relaxed),
-                     seed_counter.fetch_add(1, std::memory_order_relaxed));
-    uniform01_distribution = std::uniform_real_distribution<double>(0.0, 1.0);
-    return true;
-  }();
-  (void)reset;
+  seed_generation.fetch_add(1, std::memory_order_release);
 }
 
 double RandomDouble(double min, double max) {
