@@ -554,13 +554,14 @@ TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
     auto totals = [&] {
       std::array<double, 5> result{};
       for (auto* cell : cells) {
-        const double n = cell->GetParticleCount();
-        const auto momentum = cell->GetVelocity() * n;
+        const auto moments = cell->ComputeMoments();
+        const double n = moments.count;
+        const auto momentum = moments.velocity * n;
         result[0] += n;
         result[1] += momentum.x;
         result[2] += momentum.y;
         result[3] += momentum.z;
-        result[4] += cell->GetEnergy() * n;
+        result[4] += moments.energy * n;
       }
       return result;
     };
@@ -632,8 +633,9 @@ TEST(CellClusterIntegrationTest,
   double energy = 0;
   for (auto* cell : cells) {
     count += cell->GetParticleCount();
-    momentum += cell->GetVelocity() * cell->GetParticleCount();
-    energy += cell->GetEnergy() * cell->GetParticleCount();
+    const auto moments = cell->ComputeMoments();
+    momentum += moments.velocity * cell->GetParticleCount();
+    energy += moments.energy * cell->GetParticleCount();
   }
   EXPECT_EQ(count, 2U);
   EXPECT_DOUBLE_EQ(momentum.x, 2);
@@ -731,7 +733,7 @@ TEST(CellClusterIntegrationTest, HyperFreeInflowRepopulatesEmptyDomain) {
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   ASSERT_EQ(cells.size(), 1U);
   EXPECT_EQ(cells.front()->GetParticleCount(), 2U);
-  EXPECT_TRUE(std::isfinite(cells.front()->GetEnergy()));
+  EXPECT_TRUE(std::isfinite(cells.front()->ComputeMoments().energy));
   EXPECT_DOUBLE_EQ(mc3d::CellClusterTestAccess::GetTime(cluster), duration);
 }
 
@@ -760,10 +762,11 @@ TEST(CellClusterIntegrationTest, HyperFreeAllFacesPreserveUniformReservoir) {
     double count = 0, temperature = 0;
     mc3d::Point velocity(0,0,0);
     for (auto* cell : mc3d::CellClusterTestAccess::GetLookup(cluster)) {
-      const double n = cell->GetParticleCount();
+      const auto moments = cell->ComputeMoments();
+      const double n = moments.count;
       count += n;
-      temperature += n * cell->GetTemperature();
-      velocity += cell->GetVelocity() * n;
+      temperature += n * moments.temperature;
+      velocity += moments.velocity * n;
     }
     EXPECT_NEAR(count,6400,320);
     EXPECT_NEAR(temperature / count,1,0.08);

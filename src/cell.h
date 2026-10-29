@@ -38,6 +38,7 @@ struct CellMoments {
 
 class Cell {
  private:
+  void RefreshMoments();
   std::vector<Particle> particles;
   std::vector<Particle>
       particle_buffer;  // Particle that departing from the cell
@@ -71,7 +72,6 @@ class Cell {
   void SortNeighbors();
   unsigned int GetParticleCount() const;  // возвращает количество частиц
   std::size_t CountInnerParticles(const Geometry& body) const;
-  double GetTemperatureRaw();
   void SetSize(double lx, double ly, double lz);  // установка размера ячейки
   void SetSize(Point dl);
   void SetApex(Point a);  // установка "опорной" точки
@@ -108,15 +108,10 @@ class Cell {
   double GetKn();
   double GetDt();
   double PeekDt() const;
-  double GetTemperature();
   double GetVolume() const;
   Point GetParticleMassCenter();
-  Point GetVelocity();
-  double GetEnergy();
   double GetCharacteristicLength();
   bool GetBodyMark();
-  Point CalculateVelocity() const;
-  double CalculateTemperature();
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();

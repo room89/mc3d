@@ -538,7 +538,7 @@ bool CellCluster::WriteSpeedFile(const char* file_name) {
       bool a = body_->IsInnerPoint(ap);
       a = body_->IsInnerPoint(cell.GetApex());
     }
-    file1 << ap << cell.GetVelocity() << '\n';
+    file1 << ap << cell.ComputeMoments().velocity << '\n';
     cell_iter++;
   }
   file1.close();
@@ -557,7 +557,7 @@ bool CellCluster::WriteFile() {
     av_den += double(N) / np;
     file1 << ap << "\t"
           << double(cell.GetParticleCount()) / (cell.GetVolume() * density)
-          << "\t" << cell.GetTemperature() << '\n';
+          << "\t" << cell.ComputeMoments().temperature << '\n';
     cell_iter++;
   }
   file1.close();
@@ -574,7 +574,7 @@ bool CellCluster::WriteSpeedFile() {
     ap = cell.GetCenter();
     N = cell.GetParticleCount();
     av_den += double(N) / np;
-    file1 << ap << "\t" << cell.GetVelocity() << '\n';
+    file1 << ap << "\t" << cell.ComputeMoments().velocity << '\n';
     cell_iter++;
   }
 
@@ -682,8 +682,9 @@ bool CellCluster::WriteCellFile(const std::string& init_file) {
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    Point V = cell.GetVelocity();
-    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
+    const auto moments = cell.ComputeMoments();
+    Point V = moments.velocity;
+    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * moments.temperature);
     double alpha = M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
@@ -701,7 +702,7 @@ bool CellCluster::WriteCellFile(const std::string& init_file) {
 
     file << "\t\tparticles\t" << cell.GetParticleCount() << endl;
 
-    file << "\t\ttemperature\t" << cell.GetTemperature() << endl;
+    file << "\t\ttemperature\t" << moments.temperature << endl;
 
     file << "\t\tL\t" << cell.GetCharacteristicLength() << endl;
 
