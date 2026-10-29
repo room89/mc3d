@@ -18,7 +18,9 @@ int Run(int argc, char* argv[]) {
                          config.apex_y.value_or(-0.5 * config.Ly),
                          config.apex_z.value_or(-0.5 * config.Lz));
 
-  mc3d::CellCluster cluster(config.thread_pool_size);
+  const auto seed = config.seed ? *config.seed : std::random_device{}();
+  std::cout << "Random seed: " << seed << std::endl;
+  mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);

@@ -45,7 +45,7 @@ void Particle::Move(double dt) {
   z += dt * w;*/
 }
 bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
-               double factor) {
+               double factor, utils::RandomStream& random) {
   const double Pi = std::numbers::pi;
 
   /*double u1 = a->u, v1 = a->v, w1 = a->w;
@@ -65,11 +65,11 @@ bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
     rtrn = false;
   }
 
-  double rr = utils::Random01();
+  double rr = random.Uniform();
 
   if (g / g_max > rr) {
-    double r1 = utils::Random01();
-    double r2 = utils::Random01();
+    double r1 = random.Uniform();
+    double r2 = random.Uniform();
 
     double g1z = g * std::cos(Pi * r1);
     double g1y = g * std::sin(Pi * r1) * std::sin(2. * Pi * r2);

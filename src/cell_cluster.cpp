@@ -16,8 +16,8 @@ using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
-CellCluster::CellCluster(std::size_t thread_pool_size)
-    : thread_pool_(std::max<std::size_t>(1, thread_pool_size),
+CellCluster::CellCluster(std::size_t thread_pool_size, uint32_t seed)
+    : random_streams_(seed), thread_pool_(std::max<std::size_t>(1, thread_pool_size),
                    "move_and_collisions") {
   Kn = 0;
   np = 0;
@@ -82,7 +82,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   for (size_t i = 0; i < ncx; i++) {
     for (size_t j = 0; j < ncy; j++) {
       for (size_t k = 0; k < ncz; k++) {
-        Cell temp_cell;
+        Cell temp_cell(random_streams_.At(initialized_cells));
 
         size_t N_ = 0;
         Point a;

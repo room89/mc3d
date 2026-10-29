@@ -10,6 +10,8 @@ include(CTest)
 
 add_library(mc3d_core STATIC
   src/boundary.cpp
+  src/collision_model.cpp
+  src/particle_sampler.cpp
   src/cell.cpp
   src/cell_cluster.cpp
   src/cellnet.cpp

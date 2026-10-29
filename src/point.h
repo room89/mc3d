@@ -7,6 +7,7 @@
 #pragma once
 
 #include <iostream>
+#include "utils/utils.hpp"
 
 using namespace std;
 
@@ -20,10 +21,10 @@ struct Point {
   Point(double x, double y, double z);
   ~Point();
   static Point RandomPoint(
-      Point size);  // возвращает рандомную точку с коорд.: x от 0 до size.x, y
+      Point size, utils::RandomStream& random);  // возвращает рандомную точку с коорд.: x от 0 до size.x, y
                     // от 0 до size.y, z от 0 до size.z
   Point
-  RandomPoint();  // возвращает рандомную точку с коорд.: x от 0 до this->x,
+  RandomPoint(utils::RandomStream& random);  // возвращает рандомную точку с коорд.: x от 0 до this->x,
                   //  y от 0 до this->y, z от 0 до this->z
   void Print();
   double Mod() const;

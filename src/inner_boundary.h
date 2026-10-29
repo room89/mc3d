@@ -5,11 +5,12 @@
 #include <vector>
 
 #include "boundary.h"
+#include "utils/utils.hpp"
 #include "geometry.h"
 #include "poligon.h"
 
 namespace mc3d {
-class InnerBoundary : public Boundary {
+class InnerBoundary {
  private:
   std::vector<std::reference_wrapper<Polygon>> poligon_ptrs;
   Point cell_center;
@@ -29,9 +30,9 @@ class InnerBoundary : public Boundary {
   void SetWallTemperature(double temperature);
   Geometry* GetGeometryPtr();
   bool Empty() const;
-  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt);
+  int BoundaryCondition(std::vector<Particle>& cluster_particle, double dt, utils::RandomStream& random);
   double CalcCellVolume(
-      Point cell_apex, Point size,
+      Point cell_apex, Point size, utils::RandomStream& random,
       Point* mass_center =
           NULL);  // вычисление отсеченного обёма ячейки, аргументы:
                   // входные параметры:cell_apex - опорный угол ячейки, size -

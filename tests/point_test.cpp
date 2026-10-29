@@ -1,3 +1,4 @@
+#include "utils/utils.hpp"
 #include <gtest/gtest.h>
 #include <point.h>
 
@@ -41,8 +42,10 @@ TEST(PointTest, VolumeMultipliesComponents) {
 }
 
 TEST(PointRandomTest, StaticRandomPointRespectsBounds) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   const mc3d::Point bounds(2.0, 3.0, 4.0);
-  const mc3d::Point sample = mc3d::Point::RandomPoint(bounds);
+  const mc3d::Point sample = mc3d::Point::RandomPoint(bounds, random);
 
   EXPECT_GE(sample.x, 0.0);
   EXPECT_LE(sample.x, bounds.x);
@@ -53,8 +56,10 @@ TEST(PointRandomTest, StaticRandomPointRespectsBounds) {
 }
 
 TEST(PointRandomTest, MemberRandomPointRespectsBounds) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   mc3d::Point bounds(5.0, 0.0, 1.0);
-  const mc3d::Point sample = bounds.RandomPoint();
+  const mc3d::Point sample = bounds.RandomPoint(random);
 
   EXPECT_GE(sample.x, 0.0);
   EXPECT_LE(sample.x, bounds.x);

@@ -44,5 +44,5 @@ struct Particle {
 };
 
 bool Collision(Particle& a, Particle& b, double& g_max_ch,
-               double& frequency_t_ch, double factor);
+               double& frequency_t_ch, double factor, utils::RandomStream& random);
 }  // namespace mc3d

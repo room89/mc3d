@@ -39,6 +39,11 @@ struct CellMoments {
 class Cell {
  private:
   void RefreshMoments();
+  std::shared_ptr<utils::RandomStream> random_;
+  utils::RandomStream& Random() {
+    if (!random_) random_ = std::make_shared<utils::RandomStream>();
+    return *random_;
+  }
   std::vector<Particle> particles;
   std::vector<Particle>
       particle_buffer;  // Particle that departing from the cell
@@ -64,7 +69,7 @@ class Cell {
 
  public:
   CellMoments ComputeMoments() const;
-  Cell();
+  explicit Cell(std::shared_ptr<utils::RandomStream> random = nullptr);
   virtual ~Cell();
 
   virtual void MoveParticles();  // перемещение частиц

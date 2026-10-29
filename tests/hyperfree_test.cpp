@@ -10,12 +10,14 @@
 #include "utils/utils.hpp"
 
 TEST(HyperFreeSamplingTest, FluxWeightedNormalMomentsMatchMaxwellian) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   constexpr double temperature = 1.4;
   constexpr int samples = 50000;
   const double sigma = std::sqrt(temperature);
   for (double drift : {-5., -1., 0., 1., 7.}) {
     SCOPED_TRACE(drift);
-    utils::RandomEngine().seed(12345);
+    random.Seed(12345);
     const double phi = std::exp(-drift * drift / (2 * temperature)) /
                        std::sqrt(2 * std::numbers::pi);
     const double cdf = 0.5 * std::erfc(-drift / (std::sqrt(2.) * sigma));
@@ -26,7 +28,7 @@ TEST(HyperFreeSamplingTest, FluxWeightedNormalMomentsMatchMaxwellian) {
     EXPECT_NEAR(utils::IncomingFlux(drift, temperature), m1, 1e-14);
     double sum = 0, squared = 0;
     for (int i = 0; i < samples; ++i) {
-      const double w = utils::IncomingNormalSpeed(drift, temperature);
+      const double w = utils::IncomingNormalSpeed(drift, temperature, random);
       ASSERT_GT(w, 0);
       sum += w;
       squared += w * w;
@@ -37,17 +39,21 @@ TEST(HyperFreeSamplingTest, FluxWeightedNormalMomentsMatchMaxwellian) {
 }
 
 TEST(HyperFreeSamplingTest, FluxRetainsTheStrongOutflowTail) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   // Integral of w*N(-10,1) over w>0, evaluated independently at high precision.
   EXPECT_NEAR(utils::IncomingFlux(-10, 1), 7.47456025458933e-25, 1e-35);
   EXPECT_NEAR(utils::IncomingFlux(10, 1), 10, 1e-12);
-  EXPECT_THROW(utils::IncomingNormalSpeed(0, 0), std::invalid_argument);
+  EXPECT_THROW(utils::IncomingNormalSpeed(0, 0, random), std::invalid_argument);
 }
 
 TEST(HyperFreeSamplingTest, EveryFaceUsesIncomingVelocitiesAndUniformEntryTimes) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
   for (const mc3d::Point normal : {mc3d::Point(-1,0,0), {1,0,0}, {0,-1,0},
                                    {0,1,0}, {0,0,-1}, {0,0,1}}) {
-    utils::RandomEngine().seed(317);
-    mc3d::Cell cell;
+    random.Seed(317);
+    mc3d::Cell cell(random_stream);
     cell.SetApex({-0.5,-0.5,-0.5});
     cell.SetSize(1,1,1);
     std::vector<mc3d::Particle> arrivals;
@@ -81,10 +87,12 @@ TEST(HyperFreeSamplingTest, EveryFaceUsesIncomingVelocitiesAndUniformEntryTimes)
 }
 
 TEST(HyperFreeSamplingTest, NewArrivalsCannotTunnelThroughNearbyBody) {
-  utils::RandomEngine().seed(19);
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
+  random.Seed(19);
   auto body = std::make_unique<mc3d::Geometry>();
   body->CreateCube(0.02, 10, 0.1, 10);
-  mc3d::Cell cell;
+  mc3d::Cell cell(random_stream);
   cell.SetApex({0,-0.5,-0.5});
   cell.SetSize(1,1,1);
   cell.SetParameters(0,0,1);

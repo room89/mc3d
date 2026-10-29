@@ -36,9 +36,10 @@ void ExpectConserved(const Totals& actual, const Totals& initial) {
 }  // namespace
 
 TEST(CellTimeStepTest, ThermalSpeedLimitsEveryAxisEvenWithZeroMeanVelocity) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
   for (int axis = 0; axis < 3; ++axis) {
     SCOPED_TRACE(axis);
-    mc3d::Cell cell;
+    mc3d::Cell cell(random_stream);
     cell.SetApex({0, 0, 0});
     const std::array<mc3d::Point, 3> sizes{
         {{1, 10, 10}, {10, 1, 10}, {10, 10, 1}}};
@@ -55,9 +56,10 @@ TEST(CellTimeStepTest, ThermalSpeedLimitsEveryAxisEvenWithZeroMeanVelocity) {
 }
 
 TEST(CellTimeStepTest, BulkVelocityLimitsEachAxisIncludingNegativeVelocities) {
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
   for (const auto velocity :
        {mc3d::Point(-4, 0, 0), mc3d::Point(0, -6, 0), mc3d::Point(0, 0, -10)}) {
-    mc3d::Cell cell;
+    mc3d::Cell cell(random_stream);
     cell.SetApex({0, 0, 0});
     cell.SetSize(2, 3, 5);
     mc3d::Particle particle({1, 1, 1}, velocity);
@@ -68,8 +70,10 @@ TEST(CellTimeStepTest, BulkVelocityLimitsEachAxisIncludingNegativeVelocities) {
 
 TEST(CellCollisionTest,
      RepeatedCollisionsConserveParticleCountMomentumAndEnergy) {
-  utils::SeedRandom(20260929u);
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  auto& random = *random_stream;
+  random.Seed(20260929u);
+  mc3d::Cell cell(random_stream);
   cell.SetApex({0, 0, 0});
   cell.SetSize(1, 1, 1);
   cell.SetKn(0.05);
@@ -137,7 +141,8 @@ TEST(PeriodicBoundaryTest,
 }
 
 TEST(MirrorBoundaryTest, ExactUpperFaceHitRemainsInsideHalfOpenCell) {
-  mc3d::Cell cell;
+  auto random_stream = std::make_shared<utils::RandomStream>(123);
+  mc3d::Cell cell(random_stream);
   cell.SetApex({-1, -1, -1});
   cell.SetSize(2, 2, 2);
   std::vector<mc3d::Particle> particles;
