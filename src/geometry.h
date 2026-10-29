@@ -32,6 +32,12 @@ class Geometry {
  protected:
   std::deque<std::unique_ptr<Polygon>> poligons;
   std::mutex force_mutex_;
+  // Subclasses editing polygon vertices/topology must invalidate before edits.
+  void InvalidateQueries() { query_bounds_.reset(); query_tolerance_.reset(); }
+
+ private:
+  std::optional<std::pair<Point, Point>> query_bounds_;
+  std::optional<double> query_tolerance_;
 
  public:
   struct SurfaceHit {
@@ -60,6 +66,8 @@ class Geometry {
   bool IsInnerPoint(Point test_point) const;
   std::optional<SurfaceHit> FirstIntersection(Point start, Point displacement);
   std::optional<Point> ExteriorPoint(Point interior) const;
+  // Prepare on the setup thread. Geometry must not be edited during queries.
+  void PrepareQueries();
   std::pair<Point, Point> Bounds() const;
   double SurfaceTolerance() const;
   void AccumulateForce(Polygon& polygon, Point impulse);

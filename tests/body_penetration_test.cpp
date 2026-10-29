@@ -297,6 +297,7 @@ TEST(BodyCollisionTest, DistantTrajectoryKeepsVelocityAndCreatesNoForce) {
 TEST(BodyCollisionTest, ConcurrentHitsAccumulateTheFullWallImpulse) {
   mc3d::Geometry body;
   body.CreateCube(-0.5, 1, 1, 1);
+  body.PrepareQueries();
   mc3d::InnerBoundary boundary;
   boundary.SetGeometry(body);
   constexpr int kThreads = 8;
@@ -448,4 +449,29 @@ TEST(BodyReviewRegressionTest, SmallBodySurfaceStartReflectsAndMovesOutside) {
   boundary.BoundaryCondition(particles, 1e-11, random);
   EXPECT_LT(particles.front().velocity.x, 0);
   EXPECT_LT(particles.front().position.x, -5e-11);
+}
+
+TEST(GeometryQueriesTest, PreparedCacheMatchesQueriesAndInvalidatesAfterEdits) {
+  mc3d::Geometry body;
+  body.CreateCube(-0.5, 1, 1, 1);
+  const std::vector<mc3d::Point> points{{0,0,0}, {2,0,0}, {0.5,0,0},
+      {0.5-1e-11,0,0}, {0.5+1e-11,0,0}, {0.49,0.49,0.49}};
+  std::vector<bool> expected;
+  for (auto point : points) expected.push_back(body.IsInnerPoint(point));
+  const auto tolerance = body.SurfaceTolerance();
+  body.PrepareQueries();
+  for (size_t i = 0; i < points.size(); ++i)
+    EXPECT_EQ(body.IsInnerPoint(points[i]), expected[i]);
+  EXPECT_DOUBLE_EQ(body.SurfaceTolerance(), tolerance);
+  body.Move({3,0,0});
+  EXPECT_FALSE(body.IsInnerPoint({0,0,0}));
+  EXPECT_TRUE(body.IsInnerPoint({3,0,0}));
+  EXPECT_DOUBLE_EQ(body.Bounds().first.x, 2.5);
+  body.PrepareQueries();
+  body.Scale(2);
+  EXPECT_DOUBLE_EQ(body.Bounds().first.x, 5);
+  EXPECT_TRUE(body.IsInnerPoint({6,0,0}));
+  body.PrepareQueries();
+  body.CreateCube(-0.5,1,1,1);
+  EXPECT_DOUBLE_EQ(body.Bounds().first.x, -0.5);
 }

@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Repeat small solver scenarios; keep logs and report phase time per step.
+
+Use the same machine/build configuration for comparisons. Initialization is
+included in elapsed time, but not in the ClusterStep phase. Parallel runs may
+have different trajectories and step counts even with a fixed seed.
+"""
+import argparse
+import json
+from pathlib import Path
+import re
+import statistics
+import subprocess
+import time
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--binary", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--repeats", type=int, default=3)
+    args = parser.parse_args()
+    if args.repeats < 1:
+        parser.error("--repeats must be positive")
+    binary = args.binary.resolve()
+    output = args.out.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    source = Path(__file__).resolve().parents[1] / "configs/example.json"
+    results = []
+    for geometry in ("none", "cube", "wedge"):
+        for threads in (1, 4):
+            runs = []
+            for repeat in range(args.repeats):
+                directory = output / f"{geometry}-{threads}-{repeat}"
+                directory.mkdir(exist_ok=True)
+                cfg = json.loads(source.read_text())
+                cfg.update(geometry_type=geometry, thread_pool_size=threads,
+                           ncx=24, ncy=12, ncz=8, np=60, seed=123,
+                           end_time=0.05, snapshot_interval=1,
+                           write_default_snapshot_before_compute=False,
+                           write_default_snapshot_after_compute=False,
+                           write_speed_before=False, write_speed_after=False,
+                           write_times=False, precompute_snapshot="none",
+                           final_cell_snapshot="none")
+                config = directory / "config.json"
+                config.write_text(json.dumps(cfg, indent=2))
+                start = time.perf_counter()
+                with (directory / "run.log").open("w") as log:
+                    subprocess.run([str(binary), "--config", str(config)],
+                                   cwd=directory, stdout=log, stderr=log, check=True)
+                elapsed = time.perf_counter() - start
+                log = (directory / "run.log").read_text()
+                phases = {}
+                for name, duration in re.findall(
+                        r"stopwatch:([^;]+);total_time:([0-9.eE+-]+)", log):
+                    phases[name] = phases.get(name, 0.0) + float(duration)
+                steps = len(re.findall(r"text=Time step:", log))
+                if not steps:
+                    raise RuntimeError(f"No simulation steps in {directory}")
+                runs.append(dict(elapsed_s=elapsed, steps=steps,
+                                 phase_ms_per_step={k: v * 1000 / steps
+                                                    for k, v in phases.items()}))
+            summary = dict(geometry=geometry, threads=threads, runs=runs,
+                           median_elapsed_s=statistics.median(r["elapsed_s"] for r in runs),
+                           median_phase_ms_per_step={
+                               key: statistics.median(r["phase_ms_per_step"][key] for r in runs)
+                               for key in runs[0]["phase_ms_per_step"]})
+            results.append(summary)
+            print(json.dumps({k: v for k, v in summary.items() if k != "runs"}), flush=True)
+    (output / "summary.json").write_text(json.dumps(results, indent=2))
+
+
+if __name__ == "__main__":
+    main()

@@ -148,12 +148,14 @@ Point Geometry::MassCenter() {
 }
 
 void Geometry::Move(Point a) {
+  InvalidateQueries();
   for (auto& polygon : poligons) {
     polygon->Move(a);
   }
 }
 
 void Geometry::Scale(double e) {
+  InvalidateQueries();
   for (auto& polygon : poligons) {
     polygon->Scale(e);
   }
@@ -171,6 +173,12 @@ bool Geometry::IsInnerPoint(Point test_point) const {
   if (poligons.size() < 4) {
     return false;
   }
+  const auto [lower, upper] = Bounds();
+  // Expand beyond the ray/triangle barycentric tolerance to retain near-surface behavior.
+  const double margin = std::max(SurfaceTolerance(), 1e-9 * (upper - lower).Mod());
+  if (test_point.x < lower.x - margin || test_point.x > upper.x + margin ||
+      test_point.y < lower.y - margin || test_point.y > upper.y + margin ||
+      test_point.z < lower.z - margin || test_point.z > upper.z + margin) return false;
   // A parity test works for closed concave meshes as well as convex bodies.
   // Three non-axis-aligned rays avoid most edge and vertex degeneracies.
   const std::array<Point, 3> directions{
@@ -181,9 +189,11 @@ bool Geometry::IsInnerPoint(Point test_point) const {
                    std::max({std::abs(test_point.x), std::abs(test_point.y),
                              std::abs(test_point.z)}));
   int inside_votes = 0;
+  // Queries do not recurse; each worker can safely reuse its own scratch storage.
+  thread_local std::vector<double> distances;
+  distances.reserve(poligons.size());
   for (const Point& direction : directions) {
-    std::vector<double> distances;
-    distances.reserve(poligons.size());
+    distances.clear();
     for (const auto& polygon : poligons) {
       const auto fraction = RayTriangle(test_point, direction, *polygon);
       if (!fraction) continue;
@@ -262,7 +272,14 @@ void Geometry::AccumulateForce(Polygon& polygon, Point impulse) {
   polygon.force += impulse;
 }
 
+void Geometry::PrepareQueries() {
+  InvalidateQueries();
+  query_bounds_ = Bounds();
+  query_tolerance_ = SurfaceTolerance();
+}
+
 std::pair<Point, Point> Geometry::Bounds() const {
+  if (query_bounds_) return *query_bounds_;
   Point lower(std::numeric_limits<double>::infinity(),
               std::numeric_limits<double>::infinity(),
               std::numeric_limits<double>::infinity());
@@ -284,6 +301,7 @@ std::pair<Point, Point> Geometry::Bounds() const {
 }
 
 double Geometry::SurfaceTolerance() const {
+  if (query_tolerance_) return *query_tolerance_;
   if (poligons.empty()) return 0;
   const auto [lower, upper] = Bounds();
   const Point extent = upper - lower;
@@ -297,6 +315,7 @@ double Geometry::SurfaceTolerance() const {
 
 void Geometry::CreateWedge(double x, double width, double length,
                            double alpha) {
+  InvalidateQueries();
   Point vertices[6];
 
   vertices[0].Set(x, 0, -(width / 2));
@@ -350,6 +369,7 @@ void Geometry::CreateWedge(double x, double width, double length,
 }
 
 void Geometry::Fragment(double Lmax) {
+  InvalidateQueries();
   double max_Lmax = 10000.;
   while (max_Lmax > Lmax) {
     max_Lmax = 0;
@@ -425,6 +445,7 @@ double Geometry::DistanceToPoint(Point p) {
 }
 
 void Geometry::CreateCube(double x, double width, double length, double H) {
+  InvalidateQueries();
   Point p[8];
   for (int i = 0; i < 4; i++) {
     p[i].x = x;
@@ -463,6 +484,7 @@ void Geometry::CreateCube(double x, double width, double length, double H) {
 
 void Geometry::CreateCylinder(double x, double radius, double length,
                               int segments) {
+  InvalidateQueries();
   const double Pi = 3.14159265358979323846;
 
   // Generate points for the front and back circles
@@ -527,6 +549,7 @@ void Geometry::CreateCylinder(double x, double radius, double length,
 }
 
 int Geometry::FixPolygons() {
+  InvalidateQueries();
   int res = 0;
   for (auto& polygon : poligons) {
     if (polygon->Fix()) res++;
@@ -535,6 +558,7 @@ int Geometry::FixPolygons() {
 }
 
 void Geometry::ReverseNormals() {
+  InvalidateQueries();
   for (auto& polygon : poligons) {
     polygon->normal = polygon->normal * -1.;
   }
