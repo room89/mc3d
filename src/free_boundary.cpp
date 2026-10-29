@@ -33,7 +33,8 @@ FreeBoundary::FreeBoundary(Point pstn, Point nrml, unsigned int np, double S,
               << ") Vn: " << Vn << " pstn " << pstn;
 }
 
-void FreeBoundary::AddCell(std::deque<Cell>& cluster_cells) {
+void FreeBoundary::BindCells(std::deque<Cell>& cluster_cells) {
+  cells_.clear();
   for (auto& cell : cluster_cells) {
     if (abs(nrml * (cell.GetCenter() - pstn)) <
         0.6 * abs(nrml * cell.GetSize())) {
@@ -55,16 +56,15 @@ unsigned int FreeBoundary::AccumulateInflow(InflowCell& entry, double dt,
   return count;
 }
 
-int FreeBoundary::BoundaryCondition(std::vector<Particle>& /*cluster_particle*/,
-                                    double dt) {
+BoundaryInflow FreeBoundary::GenerateInflow(double dt) {
+  BoundaryInflow result;
   for (auto& entry : cells_) {
-    // GenerateFreeRandom normalizes the batch temperature, requiring at least
-    // three particles. Small inflows are delayed, never discarded.
+    // Batch temperature normalization requires at least three particles.
     const auto count = AccumulateInflow(entry, dt, 3);
-    if (count > 0) entry.cell.get().GenerateFreeRandom(count, T, V, nrml);
+    if (count > 0)
+      result.local.push_back({entry.cell, entry.cell.get().SampleFreeInflow(count, T, V, nrml)});
   }
-
-  return 1;
+  return result;
 }
 
 void FreeBoundary::SetNp(unsigned int np) { this->np = np; }

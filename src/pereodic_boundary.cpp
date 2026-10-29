@@ -11,7 +11,7 @@ PeriodicBoundary::PeriodicBoundary() {}
 
 PeriodicBoundary::~PeriodicBoundary() {}
 
-int PeriodicBoundary::BoundaryCondition(std::vector<Particle>& particles,
+int PeriodicBoundary::ProcessOutgoing(std::vector<Particle>& particles,
                                         double dt) {
   // Cells own [lower, upper): wrap an exact upper-face hit to the lower face.
   const bool upper_face = nrml.x > 0 || nrml.y > 0 || nrml.z > 0;

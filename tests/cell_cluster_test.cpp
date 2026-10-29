@@ -173,7 +173,7 @@ class CountingBoundary : public mc3d::Boundary {
   int call_count = 0;
   double last_dt = 0.0;
 
-  int BoundaryCondition(std::vector<mc3d::Particle>& /*particles*/,
+  int ProcessOutgoing(std::vector<mc3d::Particle>& /*particles*/,
                         double dt) override {
     ++call_count;
     last_dt = dt;
@@ -807,4 +807,39 @@ TEST(SimulationOutputTest, ReportsWriteFailure) {
   mc3d::SimulationRunner runner(cluster);
   EXPECT_FALSE(runner.Writer().WriteFile("missing/snapshot.dat"));
   EXPECT_THROW(mc3d::SimulationRunner::RequireWrite(false), std::runtime_error);
+}
+
+TEST(BoundaryPhasesTest, LaterFacesProcessEarlierTransitArrivals) {
+  class EmitBoundary : public mc3d::Boundary {
+   public:
+    bool bound = false;
+    void BindCells(std::deque<mc3d::Cell>& cells) override { bound = cells.size() == 1; }
+    mc3d::BoundaryInflow GenerateInflow(double) override {
+      mc3d::BoundaryInflow result;
+      result.transit.emplace_back(mc3d::Point(2,0.5,0.5), mc3d::Point(0,0,0));
+      return result;
+    }
+  };
+  class ReturnBoundary : public mc3d::Boundary {
+   public:
+    int ProcessOutgoing(std::vector<mc3d::Particle>& particles, double) override {
+      for (auto& particle : particles) particle.position.x = 0.5;
+      return 0;
+    }
+  };
+  mc3d::CellCluster cluster(1, 7);
+  cluster.SetApex({0,0,0});
+  cluster.SetSize(1,1,1);
+  cluster.SetEndTime(0.001);
+  ASSERT_TRUE(cluster.Initialize(1,1,1,0,kKn,0.2,
+      std::make_unique<mc3d::Geometry>(),0,0,1));
+  auto emit = std::make_unique<EmitBoundary>();
+  auto* bound = emit.get();
+  cluster.SetBoundaryCondition(std::move(emit));
+  EXPECT_TRUE(bound->bound);
+  cluster.SetBoundaryCondition(std::make_unique<ReturnBoundary>());
+  EXPECT_TRUE(cluster.TimeStep().finished);
+  const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
+  EXPECT_EQ(cells.front()->GetParticleCount(), 1u);
+  EXPECT_DOUBLE_EQ(cells.front()->GetParticleMassCenter().x, 0.5);
 }

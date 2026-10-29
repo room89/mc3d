@@ -95,8 +95,14 @@ double Cell::GenerateRandom(size_t N) {
 double Cell::GenerateRandom(unsigned int N, double temperature, Point drift) {
   return ParticleSampler::Reservoir(particles, apex, GetSize(), N, temperature, drift, Random());
 }
-double Cell::GenerateFreeRandom(unsigned int N, double temperature, Point drift, Point normal) {
-  return ParticleSampler::Free(particles, apex, GetSize(), N, temperature, drift, normal, Random());
+std::vector<Particle> Cell::SampleFreeInflow(unsigned int N, double temperature, Point drift, Point normal) {
+  std::vector<Particle> arrivals;
+  ParticleSampler::Free(arrivals, apex, GetSize(), N, temperature, drift, normal, Random());
+  return arrivals;
+}
+void Cell::AppendGeneratedParticles(std::vector<Particle>&& incoming) {
+  particles.insert(particles.end(), std::make_move_iterator(incoming.begin()),
+                   std::make_move_iterator(incoming.end()));
 }
 void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperature,
                                   Point normal, double step, std::vector<Particle>& arrivals) {

@@ -7,19 +7,31 @@
 #pragma once
 
 #include <vector>
+#include <deque>
+#include <functional>
 
 #include "particle.h"
 #include "point.h"
 
 namespace mc3d {
+class Cell;
+struct LocalInflow {
+  std::reference_wrapper<Cell> cell;
+  std::vector<Particle> particles;
+};
+struct BoundaryInflow {
+  std::vector<LocalInflow> local;
+  std::vector<Particle> transit;
+};
 class Boundary {
  protected:
   // char type[6];
   Point nrml;  // направление граничного условия
   Point pstn;  // положение граничного условия
  public:
-  virtual int BoundaryCondition(std::vector<Particle>& particles,
-                                double dt = 0) = 0;
+  virtual void BindCells(std::deque<Cell>& cells) {}
+  virtual int ProcessOutgoing(std::vector<Particle>& particles, double dt = 0) { return 0; }
+  virtual BoundaryInflow GenerateInflow(double dt) { return {}; }
   virtual ~Boundary() {}
   void SetPosition(Point a);  // установка места граничных условий
   void SetNormal(Point a);    // установка направления граничных условий
