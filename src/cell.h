@@ -29,8 +29,16 @@ using namespace std;
 using namespace mc3d;
 
 namespace mc3d {
+struct CellMoments {
+  std::size_t count = 0;
+  Point velocity{0, 0, 0};
+  double temperature = 0;
+  double energy = 0;
+};
+
 class Cell {
  private:
+  void RefreshMoments();
   std::vector<Particle> particles;
   std::vector<Particle>
       particle_buffer;  // Particle that departing from the cell
@@ -55,6 +63,7 @@ class Cell {
   std::shared_ptr<std::mutex> particles_mutex_;
 
  public:
+  CellMoments ComputeMoments() const;
   Cell();
   virtual ~Cell();
 
@@ -63,7 +72,6 @@ class Cell {
   void SortNeighbors();
   unsigned int GetParticleCount() const;  // возвращает количество частиц
   std::size_t CountInnerParticles(const Geometry& body) const;
-  double GetTemperatureRaw();
   void SetSize(double lx, double ly, double lz);  // установка размера ячейки
   void SetSize(Point dl);
   void SetApex(Point a);  // установка "опорной" точки
@@ -100,18 +108,10 @@ class Cell {
   double GetKn();
   double GetDt();
   double PeekDt() const;
-  double GetTemperature();
-  double GetU();
-  double GetV();
-  double GetW();
   double GetVolume() const;
   Point GetParticleMassCenter();
-  Point GetVelocity();
-  double GetEnergy();
   double GetCharacteristicLength();
   bool GetBodyMark();
-  Point CalculateVelocity() const;
-  double CalculateTemperature();
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();

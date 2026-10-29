@@ -252,7 +252,6 @@ bool CellCluster::TimeStep() {
   {
     utils::Stopwatch sw("TimeStep::GatherParticles");
     for (auto& cell : cells) {
-      cell.CalculateVelocity();
       cell.Sort();
       cell.SortNeighbors();
       auto& cell_buffer = cell.GetBuffer();
@@ -437,7 +436,8 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
 
   for (auto& cell : cells) {
     const auto center = cell.GetCenter();
-    const auto velocity = cell.GetVelocity();
+    const auto moments = cell.ComputeMoments();
+    const auto velocity = moments.velocity;
     const unsigned int particle_count = cell.GetParticleCount();
     const double density_value =
         cell.GetVolume() > 0 && density != 0.0
@@ -454,7 +454,7 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
     buffer.push_back(';');
     AppendDouble(buffer, density_value);
     buffer.push_back(';');
-    AppendDouble(buffer, cell.GetTemperature());
+    AppendDouble(buffer, moments.temperature);
     buffer.push_back(';');
     AppendDouble(buffer, velocity.x);
     buffer.push_back(';');
@@ -462,7 +462,7 @@ bool CellCluster::WriteTextSnapshot(std::ofstream& file) {
     buffer.push_back(';');
     AppendDouble(buffer, velocity.z);
     buffer.push_back(';');
-    AppendDouble(buffer, cell.GetEnergy());
+    AppendDouble(buffer, moments.energy);
     buffer.push_back('\n');
   }
 
@@ -492,15 +492,16 @@ bool CellCluster::WriteBinarySnapshot(std::ofstream& file) {
 
   for (auto& cell : cells) {
     const auto center = cell.GetCenter();
-    const auto velocity = cell.GetVelocity();
+    const auto moments = cell.ComputeMoments();
+    const auto velocity = moments.velocity;
     const std::uint32_t particle_count =
         static_cast<std::uint32_t>(cell.GetParticleCount());
     const double density_value =
         cell.GetVolume() > 0 && density != 0.0
             ? static_cast<double>(particle_count) / (cell.GetVolume() * density)
             : 0.0;
-    const double temperature = cell.GetTemperature();
-    const double energy = cell.GetEnergy();
+    const double temperature = moments.temperature;
+    const double energy = moments.energy;
 
     file.write(reinterpret_cast<const char*>(&center.x), sizeof(center.x));
     file.write(reinterpret_cast<const char*>(&center.y), sizeof(center.y));
@@ -537,7 +538,7 @@ bool CellCluster::WriteSpeedFile(const char* file_name) {
       bool a = body_->IsInnerPoint(ap);
       a = body_->IsInnerPoint(cell.GetApex());
     }
-    file1 << ap << cell.GetVelocity() << '\n';
+    file1 << ap << cell.ComputeMoments().velocity << '\n';
     cell_iter++;
   }
   file1.close();
@@ -556,7 +557,7 @@ bool CellCluster::WriteFile() {
     av_den += double(N) / np;
     file1 << ap << "\t"
           << double(cell.GetParticleCount()) / (cell.GetVolume() * density)
-          << "\t" << cell.GetTemperature() << '\n';
+          << "\t" << cell.ComputeMoments().temperature << '\n';
     cell_iter++;
   }
   file1.close();
@@ -573,7 +574,7 @@ bool CellCluster::WriteSpeedFile() {
     ap = cell.GetCenter();
     N = cell.GetParticleCount();
     av_den += double(N) / np;
-    file1 << ap << "\t" << cell.GetVelocity() << '\n';
+    file1 << ap << "\t" << cell.ComputeMoments().velocity << '\n';
     cell_iter++;
   }
 
@@ -681,8 +682,9 @@ bool CellCluster::WriteCellFile(const std::string& init_file) {
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    Point V = cell.GetVelocity();
-    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * cell.GetTemperature());
+    const auto moments = cell.ComputeMoments();
+    Point V = moments.velocity;
+    double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * moments.temperature);
     double alpha = M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
@@ -700,7 +702,7 @@ bool CellCluster::WriteCellFile(const std::string& init_file) {
 
     file << "\t\tparticles\t" << cell.GetParticleCount() << endl;
 
-    file << "\t\ttemperature\t" << cell.GetTemperature() << endl;
+    file << "\t\ttemperature\t" << moments.temperature << endl;
 
     file << "\t\tL\t" << cell.GetCharacteristicLength() << endl;
 

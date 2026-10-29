@@ -10,6 +10,7 @@
 namespace mc3d {
 class CellCollisionTestAccess {
  public:
+  static double StoredTemperature(const Cell& cell) { return cell.T; }
   static std::vector<Particle>& Particles(Cell& cell) { return cell.particles; }
   static void GasVolume(Cell& cell, double volume) { cell.volume_ = volume; }
 };
@@ -105,4 +106,49 @@ TEST(CollisionNormalizationTest, ColdTranslatingGasDoesNotCollide) {
     EXPECT_DOUBLE_EQ(p.velocity.y,-20);
     EXPECT_DOUBLE_EQ(p.velocity.z,3);
   }
+}
+
+TEST(CellMomentsTest, EmptySingleAndCounterstreamingParticles) {
+  mc3d::Cell cell;
+  cell.SetTemperature(42);
+  EXPECT_EQ(cell.ComputeMoments().count, 0u);
+  EXPECT_DOUBLE_EQ(cell.ComputeMoments().temperature, 0);
+  auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(3,0,0));
+  auto moments = cell.ComputeMoments();
+  EXPECT_EQ(moments.count, 1u);
+  EXPECT_DOUBLE_EQ(moments.velocity.x, 3);
+  EXPECT_DOUBLE_EQ(moments.energy, 4.5);
+  EXPECT_DOUBLE_EQ(moments.temperature, 0);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(-3,0,0));
+  moments = cell.ComputeMoments();
+  EXPECT_EQ(moments.count, 2u);
+  EXPECT_DOUBLE_EQ(moments.velocity.x, 0);
+  EXPECT_DOUBLE_EQ(moments.energy, 4.5);
+  EXPECT_DOUBLE_EQ(moments.temperature, 3);
+  EXPECT_DOUBLE_EQ(mc3d::CellCollisionTestAccess::StoredTemperature(cell), 42);
+  EXPECT_DOUBLE_EQ(particles.front().velocity.x, 3);
+}
+
+TEST(CellMomentsTest, ResultsStayFreshAfterParticleChanges) {
+  mc3d::Cell cell;
+  cell.SetTemperature(42);
+  auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(2,4,6));
+  const auto before = cell.ComputeMoments();
+  EXPECT_DOUBLE_EQ(before.velocity.x, 2);
+  EXPECT_DOUBLE_EQ(before.velocity.y, 4);
+  EXPECT_DOUBLE_EQ(before.velocity.z, 6);
+  EXPECT_DOUBLE_EQ(before.energy, 28);
+  particles.front().velocity = {-2,-4,-6};
+  const auto after = cell.ComputeMoments();
+  EXPECT_DOUBLE_EQ(after.velocity.x, -2);
+  EXPECT_DOUBLE_EQ(after.velocity.y, -4);
+  EXPECT_DOUBLE_EQ(after.velocity.z, -6);
+  EXPECT_DOUBLE_EQ(before.velocity.x, 2);
+  EXPECT_DOUBLE_EQ(mc3d::CellCollisionTestAccess::StoredTemperature(cell), 42);
+  particles.clear();
+  const auto empty = cell.ComputeMoments();
+  EXPECT_DOUBLE_EQ(empty.velocity.Mod(), 0);
+  EXPECT_DOUBLE_EQ(empty.energy, 0);
 }

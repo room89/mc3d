@@ -20,8 +20,8 @@ struct Totals {
 };
 
 Totals Measure(mc3d::Cell& cell) {
-  const auto count = cell.GetParticleCount();
-  return {count, cell.GetVelocity() * count, cell.GetEnergy() * count};
+  const auto moments = cell.ComputeMoments();
+  return {moments.count, moments.velocity * moments.count, moments.energy * moments.count};
 }
 
 void ExpectConserved(const Totals& actual, const Totals& initial) {
@@ -145,8 +145,9 @@ TEST(MirrorBoundaryTest, ExactUpperFaceHitRemainsInsideHalfOpenCell) {
   mc3d::MirrorBoundary boundary({1, 0, 0}, {1, 0, 0});
   boundary.BoundaryCondition(particles, 0.5);
   ASSERT_TRUE(cell.TryAcceptParticle(particles.front()));
-  EXPECT_DOUBLE_EQ(cell.GetVelocity().x, -2);
-  EXPECT_DOUBLE_EQ(cell.GetVelocity().y, 3);
-  EXPECT_DOUBLE_EQ(cell.GetVelocity().z, 4);
-  EXPECT_DOUBLE_EQ(cell.GetEnergy(), 14.5);
+  const auto moments = cell.ComputeMoments();
+  EXPECT_DOUBLE_EQ(moments.velocity.x, -2);
+  EXPECT_DOUBLE_EQ(moments.velocity.y, 3);
+  EXPECT_DOUBLE_EQ(moments.velocity.z, 4);
+  EXPECT_DOUBLE_EQ(moments.energy, 14.5);
 }
