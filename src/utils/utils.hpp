@@ -7,6 +7,7 @@ namespace utils {
 
 std::mt19937& RandomEngine();
 
+// Only call before computation or between completed steps.
 void SeedRandom(uint32_t seed);
 
 double RandomDouble(double min, double max);

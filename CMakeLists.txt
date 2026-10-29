@@ -38,6 +38,7 @@ if(BUILD_TESTING)
   FetchContent_MakeAvailable(googletest)
 
   add_executable(mc3d_tests
+    tests/random_test.cpp
     tests/point_test.cpp
     tests/collision_test.cpp
     tests/collision_normalization_test.cpp
