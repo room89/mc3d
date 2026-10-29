@@ -619,11 +619,20 @@ CellMoments Cell::ComputeMoments() const {
   return result;
 }
 
-double Cell::GetU() { velocity = ComputeMoments().velocity; return velocity.x; }
-double Cell::GetV() { velocity = ComputeMoments().velocity; return velocity.y; }
-double Cell::GetW() { velocity = ComputeMoments().velocity; return velocity.z; }
-double Cell::GetEnergy() { return ComputeMoments().energy; }
-Point Cell::CalculateVelocity() const { return ComputeMoments().velocity; }
+double Cell::GetEnergy() {
+  double squared_speed = 0;
+  for (const auto& particle : particles)
+    squared_speed += particle.velocity * particle.velocity;
+  return particles.empty() ? 0 : squared_speed / (2 * particles.size());
+}
+
+Point Cell::CalculateVelocity() const {
+  Point mean(0, 0, 0);
+  for (const auto& particle : particles) mean += particle.velocity;
+  if (!particles.empty()) mean /= static_cast<double>(particles.size());
+  return mean;
+}
+
 double Cell::CalculateTemperature() {
   const auto moments = ComputeMoments();
   velocity = moments.velocity;
@@ -739,7 +748,7 @@ double Cell::GetVolume() const {
 bool Cell::GetBodyMark() { return body_mark; }
 
 Point Cell::GetVelocity() {
-  velocity = ComputeMoments().velocity;
+  velocity = CalculateVelocity();
   return velocity;
 }
 

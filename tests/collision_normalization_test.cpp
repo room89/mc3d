@@ -128,3 +128,26 @@ TEST(CellMomentsTest, EmptySingleAndCounterstreamingParticles) {
   EXPECT_DOUBLE_EQ(cell.GetTemperatureRaw(), 42);
   EXPECT_DOUBLE_EQ(particles.front().velocity.x, 3);
 }
+
+TEST(CellMomentsTest, IndividualAccessorsStayFreshAfterParticleChanges) {
+  mc3d::Cell cell;
+  cell.SetTemperature(42);
+  auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().x, 0);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().y, 0);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().z, 0);
+  EXPECT_DOUBLE_EQ(cell.GetEnergy(), 0);
+  particles.emplace_back(mc3d::Point(0,0,0), mc3d::Point(2,4,6));
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().x, 2);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().y, 4);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().z, 6);
+  EXPECT_DOUBLE_EQ(cell.GetEnergy(), 28);
+  particles.front().velocity = {-2,-4,-6};
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().x, -2);
+  EXPECT_DOUBLE_EQ(cell.CalculateVelocity().y, -4);
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().z, -6);
+  EXPECT_DOUBLE_EQ(cell.GetTemperatureRaw(), 42);
+  particles.clear();
+  EXPECT_DOUBLE_EQ(cell.GetVelocity().z, 0);
+  EXPECT_DOUBLE_EQ(cell.GetEnergy(), 0);
+}
