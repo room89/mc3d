@@ -25,6 +25,11 @@ struct Polygon {
   Point p3;
   Point normal;
   Point force;
+  // Thermal state is initialized after mesh transforms/refinement.
+  double wall_temperature = 1;
+  double heat_capacity = 0;
+  double pending_heat = 0;
+  double absorbed_heat = 0;
   double flux;
   double S;
   // double colision(Particle a, double dt);

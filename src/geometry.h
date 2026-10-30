@@ -54,6 +54,8 @@ class Geometry {
   std::vector<QueryTriangle> query_triangles_;
   std::optional<std::pair<Point, Point>> query_bounds_;
   std::optional<double> query_tolerance_;
+  double thermal_particle_weight_ = 0;
+  Point step_impulse_{0, 0, 0};
 
  public:
   struct SurfaceHit {
@@ -86,7 +88,14 @@ class Geometry {
   void PrepareQueries();
   std::pair<Point, Point> Bounds() const;
   double SurfaceTolerance() const;
-  void AccumulateForce(Polygon& polygon, Point impulse);
+  void AccumulateForce(Polygon& polygon, Point impulse, double energy = 0);
+  // Call setup/update only when particle workers are idle.
+  Point TakeStepImpulse();
+  void ConfigureSurfaceHeating(double temperature, double heat_capacity,
+                               double particle_weight);
+  bool SurfaceHeatingEnabled() const { return thermal_particle_weight_ > 0; }
+  void UpdateSurfaceTemperatures();
+  bool WriteSurfaceSnapshot(const std::string& path, double time) const;
   pair<Point, Point> Size();
   double DistanceToPoint(Point p);
   int FixPolygons();

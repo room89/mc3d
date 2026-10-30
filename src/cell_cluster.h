@@ -15,6 +15,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <utils/threadpool.hpp>
 #include <vector>
 
@@ -26,6 +27,8 @@ struct StepResult {
   double dt;
   bool finished;
   std::size_t inner_particles;
+  Point body_force{0, 0, 0};
+  Point mean_body_force{0, 0, 0};
 };
 
 class CellCluster {
@@ -50,7 +53,8 @@ class CellCluster {
   bool Initialize(unsigned int ncx, unsigned int ncy, unsigned int ncz,
                   double density, double Kn, double Cu,
                   std::unique_ptr<Geometry>&& body_, double S, double alpha,
-                  double T, double wall_temperature = 1.0);
+                  double T, double wall_temperature = 1.0,
+                  std::optional<double> wall_heat_capacity = std::nullopt);
   void SetBoundaryCondition(
       std::vector<std::unique_ptr<Boundary>>&& boundaries);
   void SetBoundaryCondition(std::unique_ptr<Boundary> boundary);
@@ -109,6 +113,7 @@ class CellCluster {
   double data_dt;
   double data_t;
   double density;
+  Point body_impulse_{0, 0, 0};
   double volume;
 
   utils::ThreadPool thread_pool_;

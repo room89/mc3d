@@ -49,14 +49,17 @@ bool SnapshotWriter::WriteFile(const std::string& file_name) {
     return false;
   }
 
-  if (binary_output_) {
-    return WriteBinarySnapshot(file);
-  }
-
-  return WriteTextSnapshot(file);
+  const bool success = binary_output_ ? WriteBinarySnapshot(file) : WriteTextSnapshot(file);
+  file.close();
+  if (!success || !file) return false;
+  if (cluster_.body_ && cluster_.body_->SurfaceHeatingEnabled())
+    return cluster_.body_->WriteSurfaceSnapshot(file_name + ".surface.csv", cluster_.t);
+  return true;
 }
 
 bool SnapshotWriter::WriteFile() {
+  if (cluster_.body_ && cluster_.body_->SurfaceHeatingEnabled() &&
+      !cluster_.body_->WriteSurfaceSnapshot("data.dat.surface.csv", cluster_.t)) return false;
   std::ofstream file1("data.dat");
   for (auto& cell : cluster_.cells) {
     auto ap = cell.GetCenter();
@@ -294,8 +297,51 @@ void SimulationRunner::Compute() {
   }
 }
 
+void SimulationRunner::SetForceReference(double area, double speed, double alpha) {
+  const double q = 0.5 * speed * speed;
+  const double scale = q * area;
+  if (!(area > 0) || !std::isfinite(area) || !(speed > 0) ||
+      !std::isfinite(speed) || !std::isfinite(alpha) ||
+      !(scale > 0) || !std::isfinite(scale))
+    throw std::invalid_argument("Force coefficients require positive finite area and speed, and finite flow angle");
+  if (body_loads_.is_open())
+    throw std::logic_error("Cannot change force reference after recording loads");
+  reference_area_ = area;
+  dynamic_pressure_ = q;
+  flow_angle_ = alpha;
+  force_scale_ = scale;
+}
+
+void SimulationRunner::WriteBodyLoads(const StepResult& result) {
+  if (!cluster_.body_ || cluster_.body_->PolygonCount() == 0) return;
+  if (!body_loads_.is_open()) {
+    body_loads_.open("body_loads.csv");
+    body_loads_ << std::setprecision(17);
+    body_loads_ << "time;dt;Fx;Fy;Fz;mean_Fx;mean_Fy;mean_Fz";
+    if (force_scale_)
+      body_loads_ << ";reference_area;dynamic_pressure;flow_angle;Cx;Cy;Cz;Cd;Cl;mean_Cx;mean_Cy;mean_Cz;mean_Cd;mean_Cl";
+    body_loads_ << '\n';
+  }
+  body_loads_ << result.time << ';' << result.dt;
+  for (const auto& f : {result.body_force, result.mean_body_force})
+    body_loads_ << ';' << f.x << ';' << f.y << ';' << f.z;
+  if (force_scale_) {
+    body_loads_ << ';' << reference_area_ << ';' << dynamic_pressure_ << ';' << flow_angle_;
+    for (const auto& f : {result.body_force, result.mean_body_force}) {
+      const Point c = f / *force_scale_;
+      const double cd = c.x * std::cos(flow_angle_) + c.y * std::sin(flow_angle_);
+      const double cl = -c.x * std::sin(flow_angle_) + c.y * std::cos(flow_angle_);
+      body_loads_ << ';' << c.x << ';' << c.y << ';' << c.z << ';' << cd << ';' << cl;
+    }
+  }
+  body_loads_ << '\n';
+  body_loads_.flush();
+  RequireWrite(bool(body_loads_));
+}
+
 StepResult SimulationRunner::Step() {
   const auto result = cluster_.TimeStep();
+  WriteBodyLoads(result);
   if (result.inner_particles > 0)
     LOG_WARNING() << "Particles inside body at time " << result.time << ": " << result.inner_particles;
   if (UpdateSnapshotSchedule()) {

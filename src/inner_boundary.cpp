@@ -130,6 +130,8 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
           particle.velocity * dtt + unit_normal * surface_offset;
 
       const Point incoming_velocity = particle.velocity;
+      const double wall_temperature = geometry_ptr->SurfaceHeatingEnabled()
+          ? collision_polygon->wall_temperature : Tw;
 
       double r1 = random.Uniform();
       double r2 = random.Uniform();
@@ -141,7 +143,7 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
       Point vel = particle.velocity;
 
       double sp = vel * unit_normal;
-      double r = sqrt(2. * Tw * fabs(log(r1)));
+      double r = sqrt(2. * wall_temperature * fabs(log(r1)));
 
       Point vn;
       vn = unit_normal * r;
@@ -174,7 +176,7 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
         tangent1 = vt;
       }
 
-      r = sqrt(2. * Tw * fabs(log(r2)));
+      r = sqrt(2. * wall_temperature * fabs(log(r2)));
       double teta = 2. * Pi * r3;
       double vt1m = r * cos(teta);
       double vt2m = r * sin(teta);
@@ -208,7 +210,9 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
       }
 
       geometry_ptr->AccumulateForce(*collision_polygon,
-                                    incoming_velocity - particle.velocity);
+                                    incoming_velocity - particle.velocity,
+                                    0.5 * (incoming_velocity * incoming_velocity -
+                                           particle.velocity * particle.velocity));
 
       if (geometry_ptr->IsInnerPoint(particle.position)) {
         if (auto exterior = geometry_ptr->ExteriorPoint(particle.position)) {

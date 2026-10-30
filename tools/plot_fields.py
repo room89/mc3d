@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 from generate_gif import PLANE_AXES, draw_plot
 from snapshot_loader import load_snapshot
+from plot_body import render_body
 
 
 def main() -> None:
@@ -53,6 +54,7 @@ def main() -> None:
         fig.savefig(path, dpi=200, bbox_inches="tight")
         plt.close(fig)
         print(path, flush=True)
+    render_body(args.run, out, args.gif)
     if args.gif:
         subprocess.run([
             sys.executable, str(Path(__file__).with_name("generate_gif.py")),
