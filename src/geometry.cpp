@@ -8,30 +8,36 @@
 #include <vector>
 
 namespace mc3d {
-namespace {
-
-// Returns the fraction of a ray needed to reach a triangle. The ray direction
-// can be a velocity step or an arbitrary direction for point-in-mesh queries.
-std::optional<double> RayTriangle(Point start, Point direction,
-                                  const Polygon& polygon) {
+Geometry::QueryTriangle Geometry::PrepareTriangle(const Polygon& polygon) {
   const Point e1 = polygon.GetP2() - polygon.GetP1();
   const Point e2 = polygon.GetP3() - polygon.GetP1();
-  const Point p = direction.Cross(e2);
-  const double det = e1 * p;
-  if (std::abs(det) <= 1e-14 * e1.Mod() * e2.Mod() * direction.Mod()) {
-    return std::nullopt;
-  }
-  const double inverse_det = 1.0 / det;
-  Point from_vertex = start - polygon.GetP1();
-  const double u = (from_vertex * p) * inverse_det;
-  if (u < -1e-10 || u > 1.0 + 1e-10) return std::nullopt;
-  const Point q = from_vertex.Cross(e1);
-  const double v = (direction * q) * inverse_det;
-  if (v < -1e-10 || u + v > 1.0 + 1e-10) return std::nullopt;
-  return (e2 * q) * inverse_det;
+  return {polygon.GetP1(), e1, e2, 1e-14 * e1.Mod() * e2.Mod()};
 }
 
-}  // namespace
+// Preserve the original arithmetic and polygon order for boundary/tie behavior.
+std::optional<double> Geometry::RayTriangle(std::size_t index, Point start,
+                                           Point direction, double direction_length) const {
+  if (query_triangles_.empty())
+    return IntersectTriangle(PrepareTriangle(*poligons[index]), start, direction, direction_length);
+  return IntersectTriangle(query_triangles_[index], start, direction, direction_length);
+}
+
+std::optional<double> Geometry::IntersectTriangle(const QueryTriangle& triangle,
+    Point start, Point direction, double direction_length) {
+  const Point p = direction.Cross(triangle.e2);
+  const double det = triangle.e1 * p;
+  if (std::abs(det) <= triangle.determinant_scale * direction_length)
+    return std::nullopt;
+  const double inverse_det = 1.0 / det;
+  Point from_vertex = start - triangle.origin;
+  const double u = (from_vertex * p) * inverse_det;
+  if (u < -1e-10 || u > 1.0 + 1e-10) return std::nullopt;
+  const Point q = from_vertex.Cross(triangle.e1);
+  const double v = (direction * q) * inverse_det;
+  if (v < -1e-10 || u + v > 1.0 + 1e-10) return std::nullopt;
+  return (triangle.e2 * q) * inverse_det;
+}
+
 Geometry::Geometry() {}
 
 Geometry::Geometry(const char* file_name) {
@@ -189,27 +195,32 @@ bool Geometry::IsInnerPoint(Point test_point) const {
                    std::max({std::abs(test_point.x), std::abs(test_point.y),
                              std::abs(test_point.z)}));
   int inside_votes = 0;
+  int outside_votes = 0;
   // Queries do not recurse; each worker can safely reuse its own scratch storage.
   thread_local std::vector<double> distances;
   distances.reserve(poligons.size());
   for (const Point& direction : directions) {
     distances.clear();
-    for (const auto& polygon : poligons) {
-      const auto fraction = RayTriangle(test_point, direction, *polygon);
+    const double direction_length = direction.Mod();
+    for (std::size_t i = 0; i < poligons.size(); ++i) {
+      const auto fraction = RayTriangle(i, test_point, direction, direction_length);
       if (!fraction) continue;
-      if (std::abs(*fraction) * direction.Mod() <= tolerance) return false;
+      if (std::abs(*fraction) * direction_length <= tolerance) return false;
       if (*fraction > 0) distances.push_back(*fraction);
     }
     std::sort(distances.begin(), distances.end());
     std::size_t crossings = 0;
     double previous = -std::numeric_limits<double>::infinity();
     for (double distance : distances) {
-      if ((distance - previous) * direction.Mod() > tolerance) {
+      if ((distance - previous) * direction_length > tolerance) {
         ++crossings;
         previous = distance;
       }
     }
     inside_votes += crossings % 2;
+    outside_votes += crossings % 2 == 0;
+    // Positive votes cannot short-circuit: a later ray can detect a surface start.
+    if (outside_votes == 2) return false;
   }
   return inside_votes >= 2;
 }
@@ -217,12 +228,12 @@ bool Geometry::IsInnerPoint(Point test_point) const {
 std::optional<Geometry::SurfaceHit> Geometry::FirstIntersection(
     Point start, Point displacement) {
   std::optional<SurfaceHit> first;
-  for (const auto& polygon : poligons) {
-    const auto fraction = RayTriangle(start, displacement, *polygon);
+  const double distance = displacement.Mod();
+  for (std::size_t i = 0; i < poligons.size(); ++i) {
+    const auto fraction = RayTriangle(i, start, displacement, distance);
     // A positive fraction is a real hit even for a very long segment.
     if (!fraction || *fraction < 0 || *fraction > 1.0) continue;
     if (*fraction == 0) {
-      const double distance = displacement.Mod();
       if (distance == 0 ||
           !IsInnerPoint(start +
                         displacement *
@@ -231,7 +242,7 @@ std::optional<Geometry::SurfaceHit> Geometry::FirstIntersection(
       }
     }
     if (!first || *fraction < first->fraction) {
-      first = SurfaceHit{polygon.get(), *fraction};
+      first = SurfaceHit{poligons[i].get(), *fraction};
     }
   }
   return first;
@@ -246,8 +257,9 @@ std::optional<Point> Geometry::ExteriorPoint(Point interior) const {
   Point exit;
   Point direction_to_exit;
   for (const Point& direction : directions) {
-    for (const auto& polygon : poligons) {
-      const auto distance = RayTriangle(interior, direction, *polygon);
+    const double direction_length = direction.Mod();
+    for (std::size_t i = 0; i < poligons.size(); ++i) {
+      const auto distance = RayTriangle(i, interior, direction, direction_length);
       if (distance && *distance > 0 && *distance < nearest) {
         nearest = *distance;
         exit = interior + direction * *distance;
@@ -276,6 +288,10 @@ void Geometry::PrepareQueries() {
   InvalidateQueries();
   query_bounds_ = Bounds();
   query_tolerance_ = SurfaceTolerance();
+  std::vector<QueryTriangle> triangles;
+  triangles.reserve(poligons.size());
+  for (const auto& polygon : poligons) triangles.push_back(PrepareTriangle(*polygon));
+  query_triangles_.swap(triangles);
 }
 
 std::pair<Point, Point> Geometry::Bounds() const {
