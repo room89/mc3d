@@ -50,7 +50,7 @@ class CellClusterTestAccess {
     for (int i = 0; i < n; ++i) {
       c.cells.emplace_back(123, i);
       auto& cell = c.cells.back();
-      cell.SetApex({-.5 + i * .01, -.1, -.1});
+      cell.SetApex({-.5 + (i % 100) * .01, -.1, -.1});
       cell.SetSize(.01, .2, .2);
       cell.particles.emplace_back(Point(0, 0, 0), Point(1, 2, 3));
       cell.particles.emplace_back(Point(-.5, 0, 0), Point(3, 2, 1));
@@ -1350,7 +1350,7 @@ TEST(CellClusterIntegrationTest, SurfaceHeatingAndLoadsReachSnapshots) {
 
 TEST(BodyParticleCheckTest, MatchesSerialOracleWithoutChangingParticlesOrRandom) {
   using A = mc3d::CellClusterTestAccess;
-  for (auto threads : {1, 4, 12}) for (auto size : {0, 1, 32, 33, 100}) {
+  for (auto threads : {1, 4, 12}) for (auto size : {0, 1, 32, 33, 100, 400}) {
     for (int shape = 0; shape < 3; ++shape) {
       mc3d::CellCluster c(threads, 123);
       auto body = std::make_unique<mc3d::Geometry>();
