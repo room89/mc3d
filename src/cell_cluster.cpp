@@ -212,15 +212,7 @@ StepResult CellCluster::TimeStep() {
 
   {
     utils::Stopwatch sw("TimeStep::GatherParticles");
-    for (auto& cell : cells) {
-      cell.Sort();
-      cell.SortNeighbors();
-      auto& cell_buffer = cell.GetBuffer();
-      partile_buffer.insert(partile_buffer.end(),
-                            std::make_move_iterator(cell_buffer.begin()),
-                            std::make_move_iterator(cell_buffer.end()));
-      cell_buffer.clear();
-    }
+    GatherParticles();
     LOG_INFO() << "particle_buffer_size:" << partile_buffer.size();
   }
 
@@ -257,6 +249,64 @@ StepResult CellCluster::TimeStep() {
     }
   }
   return {t, dt, t >= t_end, inner_particles};
+}
+
+void CellCluster::GatherParticles() {
+  constexpr size_t chunk_size = 32;
+  const auto chunks = cells.size() / chunk_size + (cells.size() % chunk_size != 0);
+  const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
+  const bool has_neighbors = std::any_of(cells.begin(), cells.end(),
+      [](const Cell& cell) { return !cell.neighbors.empty(); });
+  if (workers <= 1 || has_neighbors) {
+    // Neighbor arrivals can affect cells later in this same traversal.
+    for (auto& cell : cells) {
+      cell.Sort();
+      cell.SortNeighbors();
+      auto& cell_buffer = cell.GetBuffer();
+      partile_buffer.insert(partile_buffer.end(),
+                            std::make_move_iterator(cell_buffer.begin()),
+                            std::make_move_iterator(cell_buffer.end()));
+      cell_buffer.clear();
+    }
+    return;
+  }
+
+  std::atomic<size_t> next{0};
+  auto sort = [&] {
+    std::exception_ptr failure;
+    for (;;) {
+      const auto begin = next.fetch_add(chunk_size, std::memory_order_relaxed);
+      if (begin >= cells.size()) break;
+      const auto end = std::min(begin + chunk_size, cells.size());
+      for (auto i = begin; i < end; ++i) {
+        try { cells[i].Sort(); }
+        catch (...) { if (!failure) failure = std::current_exception(); }
+      }
+    }
+    if (failure) std::rethrow_exception(failure);
+  };
+  std::vector<std::future<void>> futures;
+  futures.reserve(workers);
+  std::exception_ptr failure;
+  try {
+    for (size_t worker = 0; worker < workers; ++worker)
+      futures.emplace_back(thread_pool_.Execute(sort));
+  } catch (...) { failure = std::current_exception(); }
+  // Tasks access cell-owned buffers: drain all submissions before unwinding.
+  for (auto& future : futures) {
+    try { future.get(); }
+    catch (...) { if (!failure) failure = std::current_exception(); }
+  }
+  if (failure) std::rethrow_exception(failure);
+
+  // Preserve cell order and any existing prefix in the cluster buffer.
+  for (auto& cell : cells) {
+    auto& cell_buffer = cell.GetBuffer();
+    partile_buffer.insert(partile_buffer.end(),
+                         std::make_move_iterator(cell_buffer.begin()),
+                         std::make_move_iterator(cell_buffer.end()));
+    cell_buffer.clear();
+  }
 }
 
 void CellCluster::BoundaryCondition() {

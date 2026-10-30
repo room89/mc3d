@@ -60,6 +60,7 @@ class CellCluster {
 
  private:
   void CalculateCellTimeSteps();
+  void GatherParticles();
   utils::RandomStreams random_streams_;
   int numproc;  // количество процессов(не путать с нитями), специально для MPI
   int proc_id;  // номер процесса
