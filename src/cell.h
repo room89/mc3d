@@ -17,6 +17,7 @@
 #include <optional>
 #include <span>
 #include <vector>
+#include <variant>
 // #include "free_boundary.h"
 #include "geometry.h"
 #include "inner_boundary.h"
@@ -55,10 +56,14 @@ class Cell {
   // Indices were validated by the cluster; cell bounds stay fixed during routing.
   void AppendRoutedParticles(std::span<Particle> source,
                              std::span<const std::size_t> indices);
-  std::shared_ptr<utils::RandomStream> random_;
+  // Shared streams are an explicit opt-in; cluster-owned streams live in-place.
+  std::variant<std::monostate, utils::RandomStream,
+               std::shared_ptr<utils::RandomStream>> random_;
   utils::RandomStream& Random() {
-    if (!random_) random_ = std::make_shared<utils::RandomStream>();
-    return *random_;
+    if (std::holds_alternative<std::monostate>(random_))
+      random_.emplace<utils::RandomStream>(utils::RandomStream{});
+    if (auto* owned = std::get_if<utils::RandomStream>(&random_)) return *owned;
+    return *std::get<std::shared_ptr<utils::RandomStream>>(random_);
   }
   std::vector<Particle> particles;
   std::vector<Particle>
@@ -81,11 +86,16 @@ class Cell {
   InnerBoundary body_boundary;
   std::vector<std::reference_wrapper<Cell>> neighbors;
   std::optional<std::reference_wrapper<int>> thread_mark;
-  std::shared_ptr<std::mutex> particles_mutex_;
+  std::mutex particles_mutex_;
 
  public:
   CellMoments ComputeMoments() const;
   explicit Cell(std::shared_ptr<utils::RandomStream> random = nullptr);
+  Cell(uint32_t seed, uint64_t stream_id);
+  Cell(const Cell&) = delete;
+  Cell& operator=(const Cell&) = delete;
+  Cell(Cell&&) = delete;
+  Cell& operator=(Cell&&) = delete;
   virtual ~Cell();
 
   virtual void MoveParticles();  // перемещение частиц

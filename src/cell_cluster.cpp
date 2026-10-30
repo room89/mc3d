@@ -18,7 +18,7 @@ using namespace mc3d;
 
 namespace mc3d {
 CellCluster::CellCluster(std::size_t thread_pool_size, uint32_t seed)
-    : random_streams_(seed), thread_pool_(std::max<std::size_t>(1, thread_pool_size),
+    : random_seed_(seed), thread_pool_(std::max<std::size_t>(1, thread_pool_size),
                    "move_and_collisions") {
   Kn = 0;
   np = 0;
@@ -84,7 +84,8 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   for (size_t i = 0; i < ncx; i++) {
     for (size_t j = 0; j < ncy; j++) {
       for (size_t k = 0; k < ncz; k++) {
-        Cell temp_cell(random_streams_.At(initialized_cells));
+        cells.emplace_back(random_seed_, initialized_cells);
+        Cell& cell = cells.back();
 
         size_t N_ = 0;
         Point a;
@@ -93,24 +94,23 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         a.z = apex.z + k * dz;
 
         N_ = static_cast<unsigned int>(density * dx * dy * dz);
-        temp_cell.SetParameters(S, alpha, T);
-        temp_cell.SetWallTemperature(wall_temperature);
+        cell.SetParameters(S, alpha, T);
+        cell.SetWallTemperature(wall_temperature);
 
-        temp_cell.SetApex(a);
-        temp_cell.SetSize(dx, dy, dz);
+        cell.SetApex(a);
+        cell.SetSize(dx, dy, dz);
 
-        temp_cell.Initialize(N_, body_);
+        cell.Initialize(N_, body_);
         if (density > 0)
-          temp_cell.SetReferenceParticleCount(density * dx * dy * dz);
+          cell.SetReferenceParticleCount(density * dx * dy * dz);
 
-        temp_cell.SetCharacteristicLength(Lx);
-        temp_cell.SetKn(Kn);
+        cell.SetCharacteristicLength(Lx);
+        cell.SetKn(Kn);
 
         N += N_;
-        double dtt = temp_cell.GetDt();
+        double dtt = cell.GetDt();
         dt = min(dt, dtt);
 
-        cells.emplace_back(std::move(temp_cell));
         ++initialized_cells;
         if (total_cells > 0) {
           size_t completed_percent = (initialized_cells * 100) / total_cells;

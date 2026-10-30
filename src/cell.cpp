@@ -14,10 +14,15 @@
 
 namespace mc3d {
 
-Cell::Cell(std::shared_ptr<utils::RandomStream> random) : random_(std::move(random)), particles_mutex_(std::make_shared<std::mutex>()) {
+Cell::Cell(std::shared_ptr<utils::RandomStream> random) {
+  if (random) random_ = std::move(random);
   this->calc_time = 0;
   body_mark = false;
   volume_ = 0.0;
+}
+
+Cell::Cell(uint32_t seed, uint64_t stream_id) : Cell() {
+  random_.emplace<utils::RandomStream>(seed, stream_id);
 }
 
 Cell::~Cell() {
@@ -178,7 +183,7 @@ void Cell::AddParticle(std::vector<Particle>& incoming) {
 void Cell::AppendRoutedParticles(std::span<Particle> source,
                                  std::span<const std::size_t> indices) {
   if (indices.empty()) return;
-  std::lock_guard<std::mutex> lock(*particles_mutex_);
+  std::lock_guard<std::mutex> lock(particles_mutex_);
   if (indices.size() > particles.max_size() - particles.size())
     throw std::length_error("Particle batch exceeds cell capacity");
   const auto required = particles.size() + indices.size();
@@ -194,13 +199,7 @@ void Cell::AppendRoutedParticles(std::span<Particle> source,
 bool Cell::TryAcceptParticle(Particle& particle) {
   if (!ContainsPosition(particle.position)) return false;
 
-  auto mutex_ptr = particles_mutex_;
-  if (!mutex_ptr) {
-    mutex_ptr = std::make_shared<std::mutex>();
-    particles_mutex_ = mutex_ptr;
-  }
-
-  std::lock_guard<std::mutex> lock(*mutex_ptr);
+  std::lock_guard<std::mutex> lock(particles_mutex_);
   particles.push_back(std::move(particle));
   return true;
 }
