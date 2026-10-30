@@ -37,7 +37,40 @@ class CellClusterTestAccess {
 
   static std::vector<Particle>& MutableParticles(Cell& cell) { return cell.particles; }
   static std::vector<Particle>& Buffer(CellCluster& cluster) { return cluster.partile_buffer; }
-  static void Gather(CellCluster& cluster) { cluster.GatherParticles(); }
+  // Materialize only in the legacy gather-oracle tests; production keeps spans.
+  static void Gather(CellCluster& cluster) {
+    auto sources = cluster.GatherParticles();
+    std::vector<Particle> logical;
+    for (const auto& source : sources)
+      logical.insert(logical.end(), source.particles->begin(), source.particles->end());
+    for (const auto& source : sources) source.particles->clear();
+    cluster.partile_buffer = std::move(logical);
+  }
+  static void DirectTransport(CellCluster& cluster) {
+    auto sources = cluster.GatherParticles();
+    cluster.DistributeSources(sources, cluster.partile_buffer);
+  }
+  static void RouteGathered(CellCluster& cluster) {
+    CellCluster::OutgoingSources sources;
+    std::size_t total = 0;
+    auto append = [&](std::vector<Particle>& b) {
+      if (!b.empty()) { total += b.size(); sources.push_back({&b,total}); }
+    };
+    append(cluster.partile_buffer);
+    for (auto& cell : cluster.cells) append(cell.GetBuffer());
+    cluster.DistributeSources(sources, cluster.partile_buffer);
+  }
+  static void ReferenceRoute(CellCluster& cluster) {
+    std::vector<Particle> remaining;
+    for (auto& particle : cluster.partile_buffer) {
+      std::size_t destination = 0;
+      if (!cluster.FindCellIndex(particle.position, destination) ||
+          !cluster.cell_lookup_[destination] ||
+          !cluster.cell_lookup_[destination]->TryAcceptParticle(particle))
+        remaining.push_back(particle);
+    }
+    cluster.partile_buffer = std::move(remaining);
+  }
 
   static std::size_t CountBody(CellCluster& c) { return c.CountBodyParticles(); }
   static std::size_t Candidates(const CellCluster& c) { return c.body_check_cells_.size(); }
@@ -1483,4 +1516,70 @@ TEST(BodyParticleCheckTest, CountsConcaveInteriorAndNotchExactly) {
     ASSERT_GT(expected, 0);
     EXPECT_EQ(A::CountBody(c), expected);
   }
+}
+
+
+TEST(DirectDistributionTest, SegmentedInputMatchesSerialRoutingAndBoundaryOrder) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto workers : {1,4,12}) for (auto outside_percent : {0,1,100}) {
+    mc3d::CellCluster actual(workers,123), expected(1,123);
+    for (auto* c : {&actual,&expected}) {
+      c->SetApex({0,0,0}); c->SetSize(5,1,1);
+      ASSERT_TRUE(c->Initialize(5,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+      std::size_t id=0;
+      // A pre-existing prefix plus uneven spans and a long same-destination batch.
+      const std::array<std::size_t,6> sizes{3,1,1023,1024,1025,4097};
+      for (std::size_t span=0;span<sizes.size();++span) {
+        auto& buffer=span ? A::GetLookup(*c)[span-1]->GetBuffer() : A::Buffer(*c);
+        for (std::size_t i=0;i<sizes[span];++i,++id) {
+          const bool outside=id%100<static_cast<std::size_t>(outside_percent);
+          buffer.emplace_back(mc3d::Point(outside ? -1. : 4.5,.5,.5),mc3d::Point(double(id),2,3));
+        }
+      }
+    }
+    for (int repeat=0;repeat<2;++repeat) {
+      A::DirectTransport(actual);
+      ReferenceGather(expected);
+      A::ReferenceRoute(expected);
+      const auto& left=A::Buffer(actual); const auto& right=A::Buffer(expected);
+      ASSERT_EQ(left.size(),right.size());
+      for (std::size_t i=0;i<left.size();++i) ExpectSameParticle(left[i],right[i]);
+      for (std::size_t i=0;i<A::GetLookup(actual).size();++i) {
+        auto a=A::Particles(*A::GetLookup(actual)[i]);
+        auto b=A::Particles(*A::GetLookup(expected)[i]);
+        if (workers>1) {
+          auto less=[](const auto& x,const auto& y){return x.velocity.x<y.velocity.x;};
+          std::sort(a.begin(),a.end(),less); std::sort(b.begin(),b.end(),less);
+        }
+        ASSERT_EQ(a.size(),b.size());
+        for (std::size_t j=0;j<a.size();++j) ExpectSameParticle(a[j],b[j]);
+        EXPECT_TRUE(A::GetLookup(actual)[i]->GetBuffer().empty());
+      }
+    }
+  }
+}
+
+TEST(DirectDistributionTest, InternalTrafficDoesNotAllocateGlobalParticleStorage) {
+  using A=mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4,123);
+  c.SetApex({0,0,0}); c.SetSize(2,1,1);
+  ASSERT_TRUE(c.Initialize(2,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+  for (int i=0;i<10000;++i)
+    A::GetLookup(c)[0]->GetBuffer().emplace_back(mc3d::Point(1.5,.5,.5),mc3d::Point(i,0,0));
+  A::DirectTransport(c);
+  EXPECT_EQ(A::Buffer(c).capacity(),0);
+  EXPECT_EQ(A::GetLookup(c)[1]->GetParticleCount(),10000);
+}
+
+TEST(DirectDistributionTest, SubmissionFailureRetainsSourceBuffers) {
+  using A=mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4,123);
+  c.SetApex({0,0,0}); c.SetSize(1,1,1);
+  ASSERT_TRUE(c.Initialize(1,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+  auto& local=A::GetLookup(c)[0]->GetBuffer();
+  local.assign(4097,mc3d::Particle({.5,.5,.5},{1,2,3}));
+  A::StopPool(c);
+  EXPECT_THROW(A::RouteGathered(c),std::runtime_error);
+  EXPECT_EQ(local.size(),4097);
+  EXPECT_TRUE(A::Buffer(c).empty());
 }

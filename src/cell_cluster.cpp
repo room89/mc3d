@@ -223,15 +223,17 @@ StepResult CellCluster::TimeStep() {
     }
   }
 
+  OutgoingSources outgoing;
   {
     utils::Stopwatch sw("TimeStep::GatherParticles");
-    GatherParticles();
-    LOG_INFO() << "particle_buffer_size:" << partile_buffer.size();
+    outgoing = GatherParticles();
+    LOG_INFO() << "particle_buffer_size:" << (outgoing.empty() ? 0 : outgoing.back().end);
   }
 
   {
     utils::Stopwatch sw("TimeStep::AddParticlesBeforeBoundary");
-    DistributeParticles(partile_buffer);
+    DistributeSources(outgoing, partile_buffer);
+    outgoing.clear();
   }
 
   {
@@ -337,13 +339,27 @@ std::size_t CellCluster::CountBodyParticles() {
   return count;
 }
 
-void CellCluster::GatherParticles() {
+CellCluster::OutgoingSources CellCluster::GatherParticles() {
+  auto describe = [&](bool include_cells) {
+    OutgoingSources sources;
+    std::size_t total = 0;
+    auto append = [&](std::vector<Particle>& buffer) {
+      if (buffer.empty()) return;
+      if (buffer.size() > std::numeric_limits<std::size_t>::max() - total)
+        throw std::length_error("Outgoing particle count overflow");
+      total += buffer.size();
+      sources.push_back({&buffer, total});
+    };
+    append(partile_buffer);
+    if (include_cells) for (auto& cell : cells) append(cell.GetBuffer());
+    return sources;
+  };
   constexpr size_t chunk_size = 32;
   const auto chunks = cells.size() / chunk_size + (cells.size() % chunk_size != 0);
   const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
   const bool has_neighbors = std::any_of(cells.begin(), cells.end(),
       [](const Cell& cell) { return !cell.neighbors.empty(); });
-  if (workers <= 1 || has_neighbors) {
+  if (has_neighbors) {
     // Neighbor arrivals can affect cells later in this same traversal.
     for (auto& cell : cells) {
       cell.Sort();
@@ -354,7 +370,11 @@ void CellCluster::GatherParticles() {
                             std::make_move_iterator(cell_buffer.end()));
       cell_buffer.clear();
     }
-    return;
+    return describe(false);
+  }
+  if (workers <= 1) {
+    for (auto& cell : cells) cell.Sort();
+    return describe(true);
   }
 
   std::atomic<size_t> next{0};
@@ -385,14 +405,7 @@ void CellCluster::GatherParticles() {
   }
   if (failure) std::rethrow_exception(failure);
 
-  // Preserve cell order and any existing prefix in the cluster buffer.
-  for (auto& cell : cells) {
-    auto& cell_buffer = cell.GetBuffer();
-    partile_buffer.insert(partile_buffer.end(),
-                         std::make_move_iterator(cell_buffer.begin()),
-                         std::make_move_iterator(cell_buffer.end()));
-    cell_buffer.clear();
-  }
+  return describe(true);
 }
 
 void CellCluster::BoundaryCondition() {
@@ -438,79 +451,88 @@ bool CellCluster::FindCellIndex(const Point& position,
 }
 
 void CellCluster::DistributeParticles(std::vector<Particle>& buffer) {
-  if (buffer.empty()) {
-    return;
-  }
+  if (buffer.empty()) return;
+  DistributeSources({{&buffer, buffer.size()}}, buffer);
+}
 
-  const size_t thread_count =
-      std::max<size_t>(1, thread_pool_.GetThreadCount());
-  const size_t chunk_size =
-      std::max<size_t>(1024, (buffer.size() + thread_count - 1) / thread_count);
-  const size_t chunk_count = (buffer.size() + chunk_size - 1) / chunk_size;
-
+CellCluster::RoutingStorage CellCluster::DistributeSources(const OutgoingSources& sources,
+                                    std::vector<Particle>& output) {
+  if (sources.empty()) return {};
+  const auto total = sources.back().end;
+  const auto thread_count = std::max<std::size_t>(1, thread_pool_.GetThreadCount());
+  const auto chunk_size = std::max<std::size_t>(1024,
+      total / thread_count + (total % thread_count != 0));
+  const auto chunk_count = total / chunk_size + (total % chunk_size != 0);
+  std::vector<std::vector<Particle>> leftovers(chunk_count);
   std::vector<std::future<void>> futures;
   futures.reserve(chunk_count);
-  std::vector<std::vector<Particle>> leftovers(chunk_count);
-
-  auto distribute = [&](size_t start, size_t end, std::vector<Particle>& remaining) {
-    std::vector<size_t> accepted;
-    accepted.reserve(std::min<size_t>(1024, end - start));
-    remaining.reserve(end - start);
-    size_t destination = 0;
-    auto flush = [&] {
-      if (!accepted.empty()) {
-        cell_lookup_[destination]->AppendRoutedParticles(buffer, accepted);
-        accepted.clear();
+  auto distribute = [&](std::size_t begin, std::size_t end, std::vector<Particle>& remaining) {
+    std::vector<std::size_t> accepted;
+    accepted.reserve(std::min<std::size_t>(1024, end - begin));
+    auto source = std::upper_bound(sources.begin(), sources.end(), begin,
+        [](std::size_t index, const OutgoingSource& range) { return index < range.end; });
+    while (begin < end) {
+      const auto source_begin = source->end - source->particles->size();
+      const auto stop = std::min(end, source->end);
+      std::span<Particle> particles(*source->particles);
+      std::size_t destination = 0;
+      auto flush = [&] {
+        if (!accepted.empty()) {
+          cell_lookup_[destination]->AppendRoutedParticles(particles, accepted);
+          accepted.clear();
+        }
+      };
+      for (auto index = begin - source_begin; index < stop - source_begin; ++index) {
+        std::size_t next_destination = 0;
+        if (FindCellIndex(particles[index].position, next_destination) &&
+            cell_lookup_[next_destination] &&
+            cell_lookup_[next_destination]->ContainsPosition(particles[index].position)) {
+          if (next_destination != destination) flush();
+          destination = next_destination;
+          accepted.push_back(index);
+          if (accepted.size() == 1024) flush();
+        } else {
+          // Allocate only for actual boundary leftovers, never for the whole input.
+          remaining.push_back(std::move(particles[index]));
+        }
       }
-    };
-    // Gather consecutive accepted particles for one destination. Full sorting
-    // costs more than the locks it saves for the mostly local transfer stream.
-    for (size_t index = start; index < end; ++index) {
-      size_t next_destination = 0;
-      if (FindCellIndex(buffer[index].position, next_destination) &&
-          cell_lookup_[next_destination] &&
-          cell_lookup_[next_destination]->ContainsPosition(buffer[index].position)) {
-        if (next_destination != destination) flush();
-        destination = next_destination;
-        accepted.push_back(index);
-      } else {
-        remaining.push_back(std::move(buffer[index]));
-      }
+      flush();
+      begin = stop;
+      ++source;
     }
-    flush();
   };
   if (chunk_count == 1) {
-    distribute(0, buffer.size(), leftovers.front());
+    distribute(0, total, leftovers.front());
   } else {
     std::exception_ptr failure;
     try {
-      for (size_t chunk = 0; chunk < chunk_count; ++chunk) {
-        const auto start = chunk * chunk_size;
-        const auto end = std::min(start + chunk_size, buffer.size());
-        futures.emplace_back(thread_pool_.Execute([&, start, end, chunk] {
-          distribute(start, end, leftovers[chunk]);
+      for (std::size_t chunk = 0; chunk < chunk_count; ++chunk) {
+        const auto begin = chunk * chunk_size;
+        const auto end = begin + std::min(chunk_size, total - begin);
+        futures.emplace_back(thread_pool_.Execute([&, begin, end, chunk] {
+          distribute(begin, end, leftovers[chunk]);
         }));
       }
     } catch (...) { failure = std::current_exception(); }
-    // Tasks capture local buffers: drain all submissions even on failure.
     for (auto& future : futures) {
       try { future.get(); }
       catch (...) { if (!failure) failure = std::current_exception(); }
     }
     if (failure) std::rethrow_exception(failure);
   }
-
-  buffer.clear();
-  size_t total_remaining = 0;
-  for (auto& chunk_leftovers : leftovers) {
-    total_remaining += chunk_leftovers.size();
+  RoutingStorage storage;
+  for (const auto& remaining : leftovers) {
+    storage.size += remaining.size();
+    storage.capacity += remaining.capacity();
   }
-  buffer.reserve(total_remaining);
-  for (auto& chunk_leftovers : leftovers) {
-    buffer.insert(buffer.end(),
-                  std::make_move_iterator(chunk_leftovers.begin()),
-                  std::make_move_iterator(chunk_leftovers.end()));
-  }
+  // Reserve before clearing input. All tasks have finished; output may alias a source.
+  output.reserve(storage.size);
+  for (const auto& source : sources) source.particles->clear();
+  output.clear();
+  for (auto& remaining : leftovers)
+    output.insert(output.end(), std::make_move_iterator(remaining.begin()),
+                  std::make_move_iterator(remaining.end()));
+  return storage;
 }
 
 bool CellCluster::SendData() { return true; }
