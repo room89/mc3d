@@ -10,6 +10,7 @@
 namespace mc3d {
 class CellCollisionTestAccess {
  public:
+  static void CalculatePrepared(Cell& cell) { cell.CalculateWithPreparedMoments(); }
   static double StoredTemperature(const Cell& cell) { return cell.T; }
   static std::vector<Particle>& Particles(Cell& cell) { return cell.particles; }
   static void GasVolume(Cell& cell, double volume) { cell.volume_ = volume; }
@@ -156,4 +157,113 @@ TEST(CellMomentsTest, ResultsStayFreshAfterParticleChanges) {
   const auto empty = cell.ComputeMoments();
   EXPECT_DOUBLE_EQ(empty.velocity.Mod(), 0);
   EXPECT_DOUBLE_EQ(empty.energy, 0);
+}
+
+namespace {
+void ExpectSameParticles(mc3d::Cell& actual, mc3d::Cell& expected) {
+  const auto& a = mc3d::CellCollisionTestAccess::Particles(actual);
+  const auto& b = mc3d::CellCollisionTestAccess::Particles(expected);
+  ASSERT_EQ(a.size(), b.size());
+  for (std::size_t i = 0; i < a.size(); ++i) {
+    SCOPED_TRACE(i);
+    EXPECT_EQ(a[i].position.x, b[i].position.x);
+    EXPECT_EQ(a[i].position.y, b[i].position.y);
+    EXPECT_EQ(a[i].position.z, b[i].position.z);
+    EXPECT_EQ(a[i].velocity.x, b[i].velocity.x);
+    EXPECT_EQ(a[i].velocity.y, b[i].velocity.y);
+    EXPECT_EQ(a[i].velocity.z, b[i].velocity.z);
+  }
+}
+
+void PrepareCell(mc3d::Cell& cell, const std::unique_ptr<mc3d::Geometry>& body,
+                 int count) {
+  cell.SetApex({-1.5, -.5, -.5});
+  cell.SetSize(1, 1, 1);
+  cell.SetParameters(0, 0, 1);
+  cell.SetKn(.1);
+  cell.SetCharacteristicLength(1);
+  ASSERT_TRUE(cell.Initialize(0, body));
+  cell.SetReferenceParticleCount(std::max(count, 1));
+  auto& particles = mc3d::CellCollisionTestAccess::Particles(cell);
+  for (int i = 0; i < count; ++i)
+    particles.emplace_back(mc3d::Point(-1, 0, 0),
+                           mc3d::Point(2, (i % 3 - 1) * .2, (i % 5 - 2) * .1));
+}
+}
+
+TEST(CellPreparedMomentsTest, MatchesStandaloneStepAndRandomState) {
+  for (bool with_body : {false, true}) {
+    std::unique_ptr<mc3d::Geometry> body;
+    if (with_body) {
+      body = std::make_unique<mc3d::Geometry>();
+      body->CreateCube(-.5, 1, 1, 1);
+      body->PrepareQueries();
+    }
+    for (int count : {0, 1, 5, 6, 64}) {
+      SCOPED_TRACE(with_body);
+      SCOPED_TRACE(count);
+      auto rng_a = std::make_shared<utils::RandomStream>(123);
+      auto rng_b = std::make_shared<utils::RandomStream>(123);
+      mc3d::Cell prepared(rng_a), standalone(rng_b);
+      PrepareCell(prepared, body, count);
+      PrepareCell(standalone, body, count);
+      EXPECT_EQ(prepared.CalculateDt(), standalone.CalculateDt());
+      prepared.SetDt(.5);
+      standalone.SetDt(.5);
+      mc3d::CellCollisionTestAccess::CalculatePrepared(prepared);
+      standalone.Calculate();
+      ExpectSameParticles(prepared, standalone);
+      EXPECT_EQ(rng_a->Engine()(), rng_b->Engine()());
+      if (with_body && count == 1) {
+        const auto& particle = mc3d::CellCollisionTestAccess::Particles(prepared).front();
+        EXPECT_LT(particle.position.x, -.5);
+        EXPECT_LT(particle.velocity.x, 0);
+      }
+    }
+  }
+}
+
+TEST(CellPreparedMomentsTest, StandaloneCallsRefreshAfterPopulationAndVelocityChanges) {
+  for (bool full_step : {false, true}) {
+    auto rng_a = std::make_shared<utils::RandomStream>(321);
+    auto rng_b = std::make_shared<utils::RandomStream>(321);
+    mc3d::Cell actual(rng_a), expected(rng_b);
+    std::unique_ptr<mc3d::Geometry> body;
+    PrepareCell(actual, body, 64);
+    PrepareCell(expected, body, 64);
+    actual.CalculateDt();
+    expected.CalculateDt();
+    for (auto* cell : {&actual, &expected}) {
+      auto& particles = mc3d::CellCollisionTestAccess::Particles(*cell);
+      particles.resize(24);
+      for (auto& particle : particles) particle.velocity = {7, -3, 2};
+    }
+    // Only the reference explicitly refreshes; public entry points must do it themselves.
+    expected.CalculateDt();
+    actual.SetDt(.02);
+    expected.SetDt(.02);
+    if (full_step) {
+      actual.Calculate();
+      mc3d::CellCollisionTestAccess::CalculatePrepared(expected);
+    } else {
+      actual.Collisions();
+      expected.Collisions();
+    }
+    ExpectSameParticles(actual, expected);
+    EXPECT_EQ(mc3d::CellCollisionTestAccess::StoredTemperature(actual), 0);
+    EXPECT_EQ(rng_a->Engine()(), rng_b->Engine()());
+  }
+}
+
+TEST(CellPreparedMomentsTest, PublicCalculateKeepsVirtualCollisionDispatch) {
+  class CustomCell : public mc3d::Cell {
+   public:
+    void Collisions() override { collided = true; }
+    void MoveParticles() override { moved = true; }
+    bool collided = false;
+    bool moved = false;
+  } cell;
+  cell.Calculate();
+  EXPECT_TRUE(cell.collided);
+  EXPECT_TRUE(cell.moved);
 }

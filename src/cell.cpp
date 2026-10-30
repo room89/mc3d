@@ -112,8 +112,13 @@ void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperatu
 
 void Cell::Collisions() {
   if (particles.size() <= 5) return;
-  CalculateKn();
   RefreshMoments();
+  CollisionsWithPreparedMoments();
+}
+
+void Cell::CollisionsWithPreparedMoments() {
+  if (particles.size() <= 5) return;
+  CalculateKn();
   CollisionModel::Apply(particles, velocity, L, Kn_l, dt, Random());
 }
 
@@ -288,6 +293,15 @@ void Cell::SortNeighbors() {
 
 void Cell::Calculate() {
   Collisions();
+  AdvanceParticles();
+}
+
+void Cell::CalculateWithPreparedMoments() {
+  CollisionsWithPreparedMoments();
+  AdvanceParticles();
+}
+
+void Cell::AdvanceParticles() {
   if (body_boundary.GetGeometryPtr() &&
       body_boundary.GetGeometryPtr()->PolygonCount() > 0)
     body_boundary.BoundaryCondition(particles, dt, Random());

@@ -38,6 +38,12 @@ struct CellMoments {
 
 class Cell {
  private:
+  friend class CellCluster;
+  // Only after CalculateDt(), with unchanged particles and stored moments.
+  // Setting the common dt is allowed; no cache is retained across steps.
+  void CalculateWithPreparedMoments();
+  void CollisionsWithPreparedMoments();
+  void AdvanceParticles();
   void RefreshMoments();
   std::shared_ptr<utils::RandomStream> random_;
   utils::RandomStream& Random() {
