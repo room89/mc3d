@@ -16,7 +16,6 @@ namespace mc3d {
 
 Cell::Cell(std::shared_ptr<utils::RandomStream> random) {
   if (random) random_ = std::move(random);
-  this->calc_time = 0;
   body_mark = false;
   volume_ = 0.0;
 }
@@ -315,7 +314,6 @@ void Cell::AdvanceParticles() {
     MoveParticles();
 }
 
-void Cell::AttachThreadMark(int& ptr) { thread_mark = ptr; }
 
 Point Cell::GetSize() const { return Point(abs(lx), abs(ly), abs(lz)); }
 
@@ -443,14 +441,6 @@ void Cell::CleanInnerParticles(const Geometry& body) {
     }
   }
   particle_buffer.clear();
-}
-
-bool operator>(const Cell& a, const Cell& b) {
-  return a.calc_time > b.calc_time;
-}
-
-bool operator<(const Cell& a, const Cell& b) {
-  return b.calc_time > a.calc_time;
 }
 
 void Cell::SetBodyMark(bool mark) { this->body_mark = mark; }

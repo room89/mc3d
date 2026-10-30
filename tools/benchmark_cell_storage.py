@@ -24,7 +24,7 @@ for grid in (40, 80):
             with stem.with_suffix('.log').open('w') as log:
                 subprocess.run(['/usr/bin/time', '-f', '%M', '-o', str(rss), str(binary), str(grid)], stdout=log, stderr=subprocess.STDOUT, check=True)
             text = stem.with_suffix('.log').read_text()
-            values = {key: float(re.search(rf'{key}=([0-9.]+)', text)[1]) for key in ('cell_bytes', 'seeded_cell_allocations', 'initialization_ms')}
+            values = {key: float(re.search(rf'{key}=([0-9.]+)', text)[1]) for key in ('cell_bytes', 'inner_boundary_bytes', 'seeded_cell_allocations', 'initialization_ms')}
             values['peak_rss_kib'] = int(rss.read_text().strip())
             runs[name].append(values)
     for name, values in runs.items():
