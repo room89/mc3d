@@ -184,7 +184,8 @@ StepResult CellCluster::TimeStep() {
         if (begin >= cells.size()) break;
         const auto end = std::min(begin + chunk_size, cells.size());
         for (auto i = begin; i < end; ++i) {
-          try { cells[i].Calculate(); }
+          // SyncDt prepared moments; only the common dt changed since then.
+          try { cells[i].CalculateWithPreparedMoments(); }
           catch (...) { if (!failure) failure = std::current_exception(); }
         }
       }
