@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import time
 from pathlib import Path
 from typing import Iterable
 
@@ -107,6 +106,9 @@ def filter_slice(df: pd.DataFrame, plane: str, centre: float, thickness: float) 
 
 def update_plot(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, plane: str, field: str) -> None:
     axis_a, axis_b, axis_c = PLANE_AXES[plane]
+    if update_plot._colorbar is not None:
+        update_plot._colorbar.remove()
+        update_plot._colorbar = None
     ax.clear()
     if df.empty:
         ax.set_title("No cells in slice yet")
@@ -136,8 +138,6 @@ def update_plot(fig: plt.Figure, ax: plt.Axes, df: pd.DataFrame, plane: str, fie
     mean_coord = df[axis_c].mean()
     ax.set_title(f"{field} on {plane.upper()} plane ({axis_c}≈{mean_coord:.3f})")
 
-    if hasattr(update_plot, "_colorbar") and update_plot._colorbar is not None:
-        update_plot._colorbar.remove()
     update_plot._colorbar = fig.colorbar(mappable, ax=ax, fraction=0.046, pad=0.04, label=field)
 
 
@@ -149,7 +149,10 @@ def main() -> None:
     plt.ion()
     fig, ax = plt.subplots(figsize=(7, 5.5))
 
-    while True:
+    plt.show(block=False)
+    print(f"Watching {args.directory.resolve()} (close the window or press Ctrl+C to stop)", flush=True)
+
+    while plt.fignum_exists(fig.number):
         df = load_latest(args.directory)
         if df is not None:
             sliced = filter_slice(df, args.plane, args.coord, args.thickness)
@@ -164,12 +167,11 @@ def main() -> None:
         if args.once:
             break
 
-        time.sleep(max(0.5, args.interval))
+        # Keep the GUI event loop running between snapshots. time.sleep()
+        # leaves native windows unresponsive, particularly on macOS.
+        plt.pause(max(0.5, args.interval))
 
-    if not args.once:
-        print("Monitoring stopped. Close the window to exit.")
-        plt.ioff()
-        plt.show()
+    plt.close(fig)
 
 
 if __name__ == "__main__":
