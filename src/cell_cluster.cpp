@@ -316,33 +316,52 @@ void CellCluster::DistributeParticles(std::vector<Particle>& buffer) {
   futures.reserve(chunk_count);
   std::vector<std::vector<Particle>> leftovers(chunk_count);
 
-  size_t chunk_idx = 0;
-  for (size_t start = 0; start < buffer.size();
-       start += chunk_size, ++chunk_idx) {
-    const size_t end = std::min(buffer.size(), start + chunk_size);
-    auto& chunk_leftovers = leftovers[chunk_idx];
-    chunk_leftovers.reserve(end - start);
-    futures.emplace_back(
-        thread_pool_.Execute([this, &buffer, start, end, &chunk_leftovers]() {
-          for (size_t idx = start; idx < end; ++idx) {
-            Particle particle = std::move(buffer[idx]);
-            size_t cell_index = 0;
-            bool accepted = false;
-            if (FindCellIndex(particle.position, cell_index)) {
-              Cell* cell_ptr = cell_lookup_[cell_index];
-              if (cell_ptr != nullptr) {
-                accepted = cell_ptr->TryAcceptParticle(particle);
-              }
-            }
-            if (!accepted) {
-              chunk_leftovers.push_back(std::move(particle));
-            }
-          }
+  auto distribute = [&](size_t start, size_t end, std::vector<Particle>& remaining) {
+    std::vector<size_t> accepted;
+    accepted.reserve(std::min<size_t>(1024, end - start));
+    remaining.reserve(end - start);
+    size_t destination = 0;
+    auto flush = [&] {
+      if (!accepted.empty()) {
+        cell_lookup_[destination]->AppendRoutedParticles(buffer, accepted);
+        accepted.clear();
+      }
+    };
+    // Gather consecutive accepted particles for one destination. Full sorting
+    // costs more than the locks it saves for the mostly local transfer stream.
+    for (size_t index = start; index < end; ++index) {
+      size_t next_destination = 0;
+      if (FindCellIndex(buffer[index].position, next_destination) &&
+          cell_lookup_[next_destination] &&
+          cell_lookup_[next_destination]->ContainsPosition(buffer[index].position)) {
+        if (next_destination != destination) flush();
+        destination = next_destination;
+        accepted.push_back(index);
+      } else {
+        remaining.push_back(std::move(buffer[index]));
+      }
+    }
+    flush();
+  };
+  if (chunk_count == 1) {
+    distribute(0, buffer.size(), leftovers.front());
+  } else {
+    std::exception_ptr failure;
+    try {
+      for (size_t chunk = 0; chunk < chunk_count; ++chunk) {
+        const auto start = chunk * chunk_size;
+        const auto end = std::min(start + chunk_size, buffer.size());
+        futures.emplace_back(thread_pool_.Execute([&, start, end, chunk] {
+          distribute(start, end, leftovers[chunk]);
         }));
-  }
-
-  for (auto& future : futures) {
-    future.get();
+      }
+    } catch (...) { failure = std::current_exception(); }
+    // Tasks capture local buffers: drain all submissions even on failure.
+    for (auto& future : futures) {
+      try { future.get(); }
+      catch (...) { if (!failure) failure = std::current_exception(); }
+    }
+    if (failure) std::rethrow_exception(failure);
   }
 
   buffer.clear();

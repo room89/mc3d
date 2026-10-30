@@ -15,6 +15,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <span>
 #include <vector>
 // #include "free_boundary.h"
 #include "geometry.h"
@@ -39,12 +40,21 @@ struct CellMoments {
 class Cell {
  private:
   friend class CellCluster;
+  friend class CellClusterTestAccess;
   // Only after CalculateDt(), with unchanged particles and stored moments.
   // Setting the common dt is allowed; no cache is retained across steps.
   void CalculateWithPreparedMoments();
   void CollisionsWithPreparedMoments();
   void AdvanceParticles();
   void RefreshMoments();
+  bool ContainsPosition(const Point& position) const {
+    return position.x >= apex.x && position.x < apex.x + lx &&
+           position.y >= apex.y && position.y < apex.y + ly &&
+           position.z >= apex.z && position.z < apex.z + lz;
+  }
+  // Indices were validated by the cluster; cell bounds stay fixed during routing.
+  void AppendRoutedParticles(std::span<Particle> source,
+                             std::span<const std::size_t> indices);
   std::shared_ptr<utils::RandomStream> random_;
   utils::RandomStream& Random() {
     if (!random_) random_ = std::make_shared<utils::RandomStream>();
