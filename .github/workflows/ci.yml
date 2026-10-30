@@ -33,6 +33,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Test benchmark tools
+        run: python3 -B -m unittest discover -s tools -p 'test_benchmark*.py'
+
       - name: Verify toolchain
         run: |
           ${{ matrix.cc }} --version

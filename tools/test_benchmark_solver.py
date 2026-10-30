@@ -1,7 +1,9 @@
 import tempfile
+import json
+from unittest.mock import patch
 import unittest
 from pathlib import Path
-from benchmark_solver import parse_log, summarize, particle_counts
+from benchmark_solver import parse_log, summarize, particle_counts, main
 
 
 class BenchmarkTest(unittest.TestCase):
@@ -21,6 +23,33 @@ class BenchmarkTest(unittest.TestCase):
         self.assertEqual(summary['median_peak_rss_kib'], 3072)
         self.assertEqual(summary['range_steps'], [2, 2])
         self.assertIsNone(summary['median_phase_ms_per_step']['TimeStep::SyncDt'])
+
+    def test_seeds_are_separate_and_warmups_diagnostics_are_excluded(self):
+        calls = []
+
+        def fake_run(binary, directory, cfg, rss=False, diagnostic=False):
+            calls.append((directory.name, cfg['seed']))
+            result = dict(steps=2, model_time=.05, cluster_total_s=.02,
+                          elapsed_s=99 if 'warmup' in directory.name or diagnostic else .03,
+                          peak_rss_kib=2048, phase_ms_per_step={'ClusterStep': 10})
+            if diagnostic:
+                result.update(initial_particles=8, final_particles=9)
+            return result
+
+        with tempfile.TemporaryDirectory() as output:
+            args = ['benchmark_solver.py', '--binary', '/current', '--baseline', '/baseline',
+                    '--out', output, '--geometries', 'none', '--threads', '1',
+                    '--seeds', '123', '456', '--repeats', '2', '--warmups', '1', '--diagnostics']
+            with patch('sys.argv', args), patch('benchmark_solver.run', side_effect=fake_run), patch('builtins.print'):
+                main()
+            rows = json.loads((Path(output)/'summary.json').read_text())
+        self.assertEqual(len(calls), 16)
+        self.assertEqual(len(rows), 4)
+        self.assertEqual({row['seed'] for row in rows}, {123, 456})
+        for row in rows:
+            self.assertEqual(len(row['runs']), 2)
+            self.assertEqual(row['median_elapsed_s'], .03)
+            self.assertEqual(row['diagnostic']['final_particles'], 9)
 
     def test_bad_logs_are_not_silent_successes(self):
         for log in ('', 'text=Time step:1', 'stopwatch:ClusterStep;total_time:0.1'):
