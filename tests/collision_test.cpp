@@ -6,6 +6,7 @@
 
 #include <utils/utils.hpp>
 #include <vector>
+#include <utility>
 
 namespace mc3d::test {
 
@@ -151,4 +152,60 @@ TEST(InnerBoundaryCollisionTest, ParticleCollidesWithBodyGeometry) {
 
   const Point normal = collided_polygon->GetNormal();
   EXPECT_GT(normal * final_velocity, 0.0);
+}
+
+TEST(InnerBoundaryStorageTest, EmptyAndCopiedBindingsPreserveIdentity) {
+  mc3d::InnerBoundary empty;
+  EXPECT_EQ(empty.GetGeometryPtr(), nullptr);
+  EXPECT_TRUE(empty.Empty());
+  auto empty_copy = empty;
+  EXPECT_EQ(empty_copy.GetGeometryPtr(), nullptr);
+  utils::RandomStream random(123), expected(123);
+  std::vector<Particle> particles{Particle({1, 2, 3}, {4, 5, 6})};
+  EXPECT_EQ(empty_copy.BoundaryCondition(particles, .1, random), 0);
+  EXPECT_EQ(particles.front().position.x, 1);
+  EXPECT_EQ(random.Engine()(), expected.Engine()());
+
+  mc3d::Geometry geometry;
+  geometry.CreateCube(-.5, 1, 1, 1);
+  mc3d::InnerBoundary bound(geometry, {-.5, 0, 0}, 1);
+  ASSERT_FALSE(bound.Empty());
+  auto copy = bound;
+  mc3d::InnerBoundary assigned;
+  assigned = bound;
+  EXPECT_EQ(bound.GetGeometryPtr(), &geometry);
+  EXPECT_EQ(copy.GetGeometryPtr(), &geometry);
+  EXPECT_EQ(assigned.GetGeometryPtr(), &geometry);
+  EXPECT_EQ(copy.Empty(), bound.Empty());
+  EXPECT_EQ(assigned.Empty(), bound.Empty());
+}
+
+TEST(InnerBoundaryStorageTest, RebindingRefreshesBoundsAndLeavesCopiesUnchanged) {
+  mc3d::Geometry original, shifted;
+  original.CreateCube(-.5, 1, 1, 1);
+  shifted.CreateCube(9.5, 1, 1, 1);
+  mc3d::InnerBoundary rebound(original, {-.5, 0, 0}, 1);
+  auto copy = rebound;
+  rebound.SetGeometry(shifted);
+  ASSERT_EQ(rebound.GetGeometryPtr(), &shifted);
+  ASSERT_EQ(copy.GetGeometryPtr(), &original);
+  mc3d::InnerBoundary fresh;
+  fresh.SetGeometry(shifted);
+  rebound.SetWallTemperature(2);
+  fresh.SetWallTemperature(2);
+  std::vector<Particle> actual{Particle({9.3, 0, 0}, {1, 0, 0})};
+  auto expected = actual;
+  utils::RandomStream random_a(123), random_b(123);
+  rebound.BoundaryCondition(actual, .4, random_a);
+  fresh.BoundaryCondition(expected, .4, random_b);
+  // Stale bounds of the original cube would skip this collision entirely.
+  EXPECT_LT(actual.front().velocity.x, 0);
+  EXPECT_LT(actual.front().position.x, 9.5);
+  for (auto coordinates : {std::pair{actual.front().position, expected.front().position},
+                           std::pair{actual.front().velocity, expected.front().velocity}}) {
+    EXPECT_DOUBLE_EQ(coordinates.first.x, coordinates.second.x);
+    EXPECT_DOUBLE_EQ(coordinates.first.y, coordinates.second.y);
+    EXPECT_DOUBLE_EQ(coordinates.first.z, coordinates.second.z);
+  }
+  EXPECT_EQ(random_a.Engine()(), random_b.Engine()());
 }

@@ -10,7 +10,6 @@ const double Pi = 3.1415926535;
 
 InnerBoundary::InnerBoundary() {
   Tw = 1;
-  eps = 0.00001;
 }
 
 InnerBoundary::InnerBoundary(mc3d::Geometry& geometry, Point cell_center,
@@ -29,7 +28,6 @@ void InnerBoundary::SetWallTemperature(double temperature) {
 }
 
 bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
-  this->cell_center = cell_center;
 
   poligon_ptrs.clear();
 
@@ -64,9 +62,9 @@ bool InnerBoundary::AddPolygon(Geometry& body, Point cell_center, double L) {
         Point d3 = polygon.GetP3() - point_on_poligon;
 
         // Более строгая проверка принадлежности точки полигону
-        if (polygon.GetNormal() * d1.Cross(a) > -eps * 10.0 &&
-            polygon.GetNormal() * d2.Cross(b) > -eps * 10.0 &&
-            polygon.GetNormal() * d3.Cross(c) > -eps * 10.0) {
+        if (polygon.GetNormal() * d1.Cross(a) > -kEpsilon * 10.0 &&
+            polygon.GetNormal() * d2.Cross(b) > -kEpsilon * 10.0 &&
+            polygon.GetNormal() * d3.Cross(c) > -kEpsilon * 10.0) {
           poligon_ptrs.emplace_back(polygon);
         }
       }
@@ -155,17 +153,17 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
       vt = vel - vni;
       double lvt = vt.Mod();
       Point tangent1;
-      if (lvt < eps) {
+      if (lvt < kEpsilon) {
         if (std::abs(unit_normal.x) < 0.9) {
           tangent1 = unit_normal.Cross(Point(1.0, 0.0, 0.0));
         } else {
           tangent1 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
         }
         double tangent1_length = tangent1.Mod();
-        if (tangent1_length < eps) {
+        if (tangent1_length < kEpsilon) {
           tangent1 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
           tangent1_length = tangent1.Mod();
-          if (tangent1_length < eps) {
+          if (tangent1_length < kEpsilon) {
             tangent1 = Point(0.0, 1.0, 0.0);
             tangent1_length = tangent1.Mod();
           }
@@ -188,14 +186,14 @@ int InnerBoundary::BoundaryCondition(std::vector<Particle>& cluster_particle,
 
       vt2 = unit_normal.Cross(tangent1);
       double tangent2_length = vt2.Mod();
-      if (tangent2_length < eps) {
+      if (tangent2_length < kEpsilon) {
         if (std::abs(unit_normal.z) < 0.9) {
           vt2 = unit_normal.Cross(Point(0.0, 0.0, 1.0));
         } else {
           vt2 = unit_normal.Cross(Point(0.0, 1.0, 0.0));
         }
         tangent2_length = vt2.Mod();
-        if (tangent2_length < eps) {
+        if (tangent2_length < kEpsilon) {
           vt2 = Point(1.0, 0.0, 0.0);
           tangent2_length = vt2.Mod();
         }
@@ -402,7 +400,7 @@ double InnerBoundary::CalcCellVolume(
 }
 
 void InnerBoundary::SetGeometry(Geometry& geometry) {
-  geometry_ = geometry;
+  geometry_ = &geometry;
   const auto bounds = geometry.Bounds();
   bounds_min_ = bounds.first;
   bounds_max_ = bounds.second;
@@ -418,7 +416,7 @@ bool InnerBoundary::SegmentMayReachBody(Point start, Point end) const {
 }
 
 Geometry* InnerBoundary::GetGeometryPtr() {
-  return geometry_ ? &geometry_->get() : nullptr;
+  return geometry_;
 }
 
 bool InnerBoundary::Empty() const { return poligon_ptrs.empty(); }

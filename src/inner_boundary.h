@@ -1,7 +1,6 @@
 #pragma once
 
 #include <functional>
-#include <optional>
 #include <vector>
 
 #include "boundary.h"
@@ -13,10 +12,9 @@ namespace mc3d {
 class InnerBoundary {
  private:
   std::vector<std::reference_wrapper<Polygon>> poligon_ptrs;
-  Point cell_center;
   double Tw;
-  double eps;
-  std::optional<std::reference_wrapper<Geometry>> geometry_;
+  static constexpr double kEpsilon = 0.00001;
+  Geometry* geometry_ = nullptr;  // Non-owning; geometry outlives the boundary.
   Point bounds_min_;
   Point bounds_max_;
   bool SegmentMayReachBody(Point start, Point end) const;

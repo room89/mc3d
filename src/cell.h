@@ -14,7 +14,6 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <span>
 #include <vector>
 #include <variant>
@@ -78,14 +77,10 @@ class Cell {
   double Kn;
   double L;   // характерный размер
   double dt;  //
-  double time;
-  double calc_time;
-  double start_time;
   bool body_mark;  // is body inside cell
   double reference_particle_count_ = 1.0;  // reservoir count per full cell
   InnerBoundary body_boundary;
   std::vector<std::reference_wrapper<Cell>> neighbors;
-  std::optional<std::reference_wrapper<int>> thread_mark;
   std::mutex particles_mutex_;
 
  public:
@@ -153,14 +148,11 @@ class Cell {
   bool WriteFile(ofstream* file);
   bool WriteFile();
   void Calculate();
-  void AttachThreadMark(int& ptr);
   std::deque<std::unique_ptr<Cell>> Fragment(
       const std::unique_ptr<Geometry>& body);
   void CleanInnerParticles(const Geometry& body);
 
   bool DebugTestParticle();
 
-  friend bool operator>(const Cell& a, const Cell& b);
-  friend bool operator<(const Cell& a, const Cell& b);
 };
 }  // namespace mc3d

@@ -39,6 +39,7 @@ std::size_t SeededAllocations() {
 int main(int argc, char** argv) {
   const unsigned n = argc > 1 ? std::stoul(argv[1]) : 40;
   std::cout << "cell_bytes=" << sizeof(mc3d::Cell)
+            << " inner_boundary_bytes=" << sizeof(mc3d::InnerBoundary)
             << " seeded_cell_allocations=" << SeededAllocations<mc3d::Cell>()
             << '\n';
   mc3d::CellCluster cluster(1, 123);
