@@ -34,8 +34,8 @@ class CellCluster {
   friend class CellClusterTestAccess;
   friend class SnapshotWriter;
   friend class SimulationRunner;
-  inline void CalculateDt();  // вычисление шага по времени для данного кластера
-  inline void SetDtInCells(
+  void CalculateDt();  // вычисление шага по времени для данного кластера
+  void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
   StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
@@ -59,6 +59,7 @@ class CellCluster {
   void CleanInnerParticles();
 
  private:
+  void CalculateCellTimeSteps();
   utils::RandomStreams random_streams_;
   int numproc;  // количество процессов(не путать с нитями), специально для MPI
   int proc_id;  // номер процесса
@@ -98,7 +99,7 @@ class CellCluster {
                            // возможно стоит удалить
   inline void SyncData();  // синхронизация данных между кластерами. замена для
                            // методов:  send_data(), recv_data()
-  inline void SyncDt();    // синхронизация шага по времени. тоже самое что и
+  void SyncDt();    // синхронизация шага по времени. тоже самое что и
                          // методы: send_dt() и recv_dt(), только в одном методе
   ofstream log;  // переменная для вывода логов, пока не реализовано
   void DistributeParticles(std::vector<Particle>& buffer);

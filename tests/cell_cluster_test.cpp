@@ -33,6 +33,15 @@ class CellClusterTestAccess {
   static const std::vector<Particle>& Particles(const Cell& cell) { return cell.particles; }
 
   static double GetDt(const CellCluster& cluster) { return cluster.dt; }
+  static void ConfigureTime(CellCluster& cluster, double cu, double t, double end) {
+    cluster.Cu = cu; cluster.t = t; cluster.t_end = end;
+  }
+  static void SyncDt(CellCluster& cluster) { cluster.SyncDt(); }
+  static void StopPool(CellCluster& cluster) { cluster.thread_pool_.Stop(); }
+  static utils::Pcg32 Engine(const Cell& cell) { return cell.random_->Engine(); }
+  static Point StoredVelocity(const Cell& cell) { return cell.velocity; }
+  static double StoredTemperature(const Cell& cell) { return cell.T; }
+
 
   static const std::vector<Cell*>& GetLookup(const CellCluster& cluster) {
     return cluster.cell_lookup_;
@@ -950,4 +959,90 @@ TEST(CellClusterDistributionTest, RoutesHighDestinationIndices) {
     }
   }
   EXPECT_TRUE(std::all_of(seen.begin(),seen.end(),[](bool value){return value;}));
+}
+
+TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly) {
+  using Access = mc3d::CellClusterTestAccess;
+  for (unsigned workers : {1U,4U,8U}) {
+    for (unsigned count : {0U,1U,31U,32U,33U,65U,257U}) {
+      SCOPED_TRACE(workers);
+      SCOPED_TRACE(count);
+      mc3d::CellCluster cluster(workers,123);
+      if (count) {
+        cluster.SetApex({0,0,0});
+        cluster.SetSize(count,2,3);
+        ASSERT_TRUE(cluster.Initialize(count,1,1,0,kKn,kCu,
+            std::make_unique<mc3d::Geometry>(),0,0,1));
+      }
+      const auto& cells = Access::GetLookup(cluster);
+      for (size_t i = 0; i < cells.size(); ++i) {
+        // Include empty cells, unequal populations, and tied local minima.
+        const auto particles = i == 3 ? 1000U : i % 7;
+        for (size_t j = 0; j < particles; ++j) {
+          mc3d::Particle particle(cells[i]->GetCenter(),
+              {double(j%3)-1, double(j%5)-2, double(j%7)-3});
+          ASSERT_TRUE(cells[i]->TryAcceptParticle(particle));
+        }
+        cells[i]->SetSize(1 + (i%3)*.25,2,3);
+      }
+      for (int round = 0; round < 3; ++round) {
+        SCOPED_TRACE(round);
+        if (round == 1) {
+          for (auto* cell : cells) {
+            mc3d::Particle extra(cell->GetCenter(),{7,-3,2});
+            ASSERT_TRUE(cell->TryAcceptParticle(extra));
+          }
+        }
+        const double cu = .37, t = .2;
+        const double end = round == 2 ? t + 1e-6 : std::numeric_limits<double>::infinity();
+        Access::ConfigureTime(cluster,cu,t,end);
+        std::vector<double> local_dt;
+        std::vector<mc3d::CellMoments> moments;
+        std::vector<utils::Pcg32> engines;
+        double expected = 1000000.;
+        for (auto* cell : cells) {
+          engines.push_back(Access::Engine(*cell));
+          const auto local = cell->CalculateDt();
+          local_dt.push_back(local);
+          moments.push_back(cell->ComputeMoments());
+          if (local < expected) expected = local;
+          // Poison stored moments to ensure the cluster recomputes them.
+          cell->SetVelocity({999,999,999});
+          cell->SetTemperature(999);
+          cell->SetDt(-1);
+        }
+        expected *= cu;
+        if (t + expected > end) expected = end - t;
+        cluster.CalculateDt();
+        EXPECT_EQ(Access::GetDt(cluster),expected);
+        for (size_t i = 0; i < cells.size(); ++i) {
+          EXPECT_EQ(cells[i]->PeekDt(),local_dt[i]);
+          const auto velocity = Access::StoredVelocity(*cells[i]);
+          EXPECT_EQ(velocity.x,moments[i].velocity.x);
+          EXPECT_EQ(velocity.y,moments[i].velocity.y);
+          EXPECT_EQ(velocity.z,moments[i].velocity.z);
+          EXPECT_EQ(Access::StoredTemperature(*cells[i]),moments[i].temperature);
+          auto actual_engine = Access::Engine(*cells[i]);
+          EXPECT_EQ(actual_engine(),engines[i]());
+        }
+        Access::SyncDt(cluster);
+        EXPECT_EQ(Access::GetDt(cluster),expected);
+        for (auto* cell : cells) EXPECT_EQ(cell->PeekDt(),expected);
+      }
+    }
+  }
+}
+
+TEST(CellClusterTimeStepTest, SubmissionFailureDoesNotPublishGlobalDt) {
+  using Access = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster cluster(4,123);
+  cluster.SetApex({0,0,0});
+  cluster.SetSize(65,1,1);
+  ASSERT_TRUE(cluster.Initialize(65,1,1,0,kKn,kCu,
+      std::make_unique<mc3d::Geometry>(),0,0,1));
+  const double previous = Access::GetDt(cluster);
+  Access::ConfigureTime(cluster,.1,0,1e-6);
+  Access::StopPool(cluster);
+  EXPECT_THROW(Access::SyncDt(cluster),std::runtime_error);
+  EXPECT_EQ(Access::GetDt(cluster),previous);
 }

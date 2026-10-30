@@ -403,12 +403,52 @@ void CellCluster::SetEndTime(double t_end) {
   this->data_dt = t_end / 100 + 0.000001;
   this->t_end = t_end;
 }
+void CellCluster::CalculateCellTimeSteps() {
+  constexpr size_t chunk_size = 32;
+  const auto chunks = cells.size() / chunk_size + (cells.size() % chunk_size != 0);
+  const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
+  if (workers <= 1) {
+    for (auto& cell : cells) cell.CalculateDt();
+    return;
+  }
+
+  std::atomic<size_t> next{0};
+  auto calculate = [&] {
+    std::exception_ptr failure;
+    for (;;) {
+      const auto begin = next.fetch_add(chunk_size, std::memory_order_relaxed);
+      if (begin >= cells.size()) break;
+      const auto end = std::min(begin + chunk_size, cells.size());
+      for (auto i = begin; i < end; ++i) {
+        try { cells[i].CalculateDt(); }
+        catch (...) { if (!failure) failure = std::current_exception(); }
+      }
+    }
+    if (failure) std::rethrow_exception(failure);
+  };
+  std::vector<std::future<void>> futures;
+  futures.reserve(workers);
+  std::exception_ptr failure;
+  try {
+    for (size_t worker = 0; worker < workers; ++worker)
+      futures.emplace_back(thread_pool_.Execute(calculate));
+  } catch (...) { failure = std::current_exception(); }
+  // Every submitted task must finish before publishing dt or unwinding.
+  for (auto& future : futures) {
+    try { future.get(); }
+    catch (...) { if (!failure) failure = std::current_exception(); }
+  }
+  if (failure) std::rethrow_exception(failure);
+}
+
 void CellCluster::CalculateDt() {
+  CalculateCellTimeSteps();
+  // Read stored local results in the original order; no extra per-cell buffer.
   dt = 1000000.;
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
-    double dtt = cell.CalculateDt();
+    double dtt = cell.PeekDt();
     if (dtt < dt) dt = dtt;
   }
   dt *= Cu;
