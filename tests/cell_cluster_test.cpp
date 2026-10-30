@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -38,6 +39,38 @@ class CellClusterTestAccess {
   static std::vector<Particle>& Buffer(CellCluster& cluster) { return cluster.partile_buffer; }
   static void Gather(CellCluster& cluster) { cluster.GatherParticles(); }
 
+  static std::size_t CountBody(CellCluster& c) { return c.CountBodyParticles(); }
+  static std::size_t Candidates(const CellCluster& c) { return c.body_check_cells_.size(); }
+  static bool Cached(const CellCluster& c) { return c.body_check_bounds_.has_value(); }
+  static void ClearCells(CellCluster& c) { c.cells.clear(); c.cell_lookup_.clear(); }
+  static Geometry* Body(CellCluster& c) { return c.body_.get(); }
+  static void BodyCells(CellCluster& c, std::unique_ptr<Geometry> body, int n) {
+    c.body_ = std::move(body);
+    if (c.body_) c.body_->PrepareQueries();
+    for (int i = 0; i < n; ++i) {
+      c.cells.emplace_back(123, i);
+      auto& cell = c.cells.back();
+      cell.SetApex({-.5 + i * .01, -.1, -.1});
+      cell.SetSize(.01, .2, .2);
+      cell.particles.emplace_back(Point(0, 0, 0), Point(1, 2, 3));
+      cell.particles.emplace_back(Point(-.5, 0, 0), Point(3, 2, 1));
+      cell.particles.emplace_back(Point(5, 5, 5), Point(0, 0, 0));
+      c.cell_lookup_.push_back(&cell);
+    }
+  }
+  static std::size_t BodyOracle(const CellCluster& c) {
+    if (!c.body_ || !c.body_->PolygonCount()) return 0;
+    const auto [lo, hi] = c.body_->Bounds();
+    std::size_t count = 0;
+    for (const auto& cell : c.cells) {
+      auto p = cell.GetApex(), d = cell.GetSize();
+      if (p.x <= hi.x && p.x+d.x >= lo.x && p.y <= hi.y && p.y+d.y >= lo.y &&
+          p.z <= hi.z && p.z+d.z >= lo.z)
+        for (const auto& particle : cell.particles)
+          count += c.body_->IsInnerPoint(particle.position);
+    }
+    return count;
+  }
   static double GetDt(const CellCluster& cluster) { return cluster.dt; }
   static void ConfigureTime(CellCluster& cluster, double cu, double t, double end) {
     cluster.Cu = cu; cluster.t = t; cluster.t_end = end;
@@ -1312,4 +1345,142 @@ TEST(CellClusterIntegrationTest, SurfaceHeatingAndLoadsReachSnapshots) {
   EXPECT_NEAR(columns[14], columns[11]*std::cos(0.2)+columns[12]*std::sin(0.2), 1e-12);
   EXPECT_NEAR(columns[15], -columns[11]*std::sin(0.2)+columns[12]*std::cos(0.2), 1e-12);
   EXPECT_NEAR(columns[16], result.mean_body_force.x, 1e-12);
+}
+
+
+TEST(BodyParticleCheckTest, MatchesSerialOracleWithoutChangingParticlesOrRandom) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto threads : {1, 4, 12}) for (auto size : {0, 1, 32, 33, 100}) {
+    for (int shape = 0; shape < 3; ++shape) {
+      mc3d::CellCluster c(threads, 123);
+      auto body = std::make_unique<mc3d::Geometry>();
+      if (shape == 1) body->CreateCube(-.5, 1, 1, 1);
+      if (shape == 2) body->CreateWedge();
+      A::BodyCells(c, std::move(body), size);
+      std::vector<std::vector<mc3d::Particle>> particles;
+      std::vector<utils::Pcg32> engines;
+      for (auto* cell : A::GetLookup(c)) {
+        particles.push_back(A::Particles(*cell));
+        engines.push_back(A::Engine(*cell));
+      }
+      EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+      EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+      for (std::size_t i = 0; i < particles.size(); ++i) {
+        auto engine = A::Engine(*A::GetLookup(c)[i]);
+        EXPECT_EQ(engine(), engines[i]());
+        const auto& actual = A::Particles(*A::GetLookup(c)[i]);
+        ASSERT_EQ(actual.size(), particles[i].size());
+        for (std::size_t j = 0; j < actual.size(); ++j) {
+          for (auto pair : {std::pair{actual[j].position, particles[i][j].position},
+                            std::pair{actual[j].velocity, particles[i][j].velocity}}) {
+            EXPECT_EQ(pair.first.x, pair.second.x);
+            EXPECT_EQ(pair.first.y, pair.second.y);
+            EXPECT_EQ(pair.first.z, pair.second.z);
+          }
+        }
+      }
+    }
+  }
+  mc3d::CellCluster no_body(4, 123);
+  A::BodyCells(no_body, nullptr, 100);
+  EXPECT_EQ(A::CountBody(no_body), 0);
+  EXPECT_FALSE(A::Cached(no_body));
+}
+
+TEST(BodyParticleCheckTest, CacheTracksBoundsAndReadsCurrentParticles) {
+  using A = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4, 123);
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(body), 100);
+  ASSERT_EQ(A::CountBody(c), 100);
+  A::MutableParticles(*A::GetLookup(c)[0]).clear();
+  EXPECT_EQ(A::CountBody(c), 99);
+  auto same_bounds = std::make_unique<mc3d::Geometry>();
+  same_bounds->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(same_bounds), 1);
+  EXPECT_EQ(A::CountBody(c), 100);
+  EXPECT_EQ(A::Candidates(c), 101);
+  A::Body(c)->Move({10, 0, 0});
+  EXPECT_EQ(A::CountBody(c), 0);
+  EXPECT_EQ(A::Candidates(c), 0);
+  A::Body(c)->Move({-10, 0, 0});
+  EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+  c.SetSize(1, 1, 1);
+  EXPECT_FALSE(A::Cached(c));
+  A::CountBody(c);
+  c.SetApex({0, 0, 0});
+  EXPECT_FALSE(A::Cached(c));
+  A::CountBody(c);
+  auto empty = std::make_unique<mc3d::Geometry>();
+  A::ClearCells(c);
+  c.Initialize(1, 1, 1, 0, .04, .5, std::move(empty), 0, 0, 1);
+  EXPECT_FALSE(A::Cached(c));
+  EXPECT_EQ(A::CountBody(c), 0);
+}
+
+TEST(BodyParticleCheckTest, StoppedPoolFailsWithoutPublishingPartialCount) {
+  using A = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4, 123);
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(body), 100);
+  A::StopPool(c);
+  EXPECT_THROW(A::CountBody(c), std::runtime_error);
+}
+
+namespace {
+class CheckConcaveGeometry : public mc3d::Geometry {
+ public:
+  void Triangle(mc3d::Point a, mc3d::Point b, mc3d::Point c, mc3d::Point normal) {
+    InvalidateQueries();
+    poligons.push_back(std::make_unique<mc3d::Polygon>(a, b, c, normal));
+  }
+};
+std::unique_ptr<CheckConcaveGeometry> MakeCheckConcavePrism() {
+  auto geometry = std::make_unique<CheckConcaveGeometry>();
+  // Extrude the L-shaped polygon (0,0)-(2,0)-(2,1)-(1,1)-(1,2)-(0,2).
+  const std::array<mc3d::Point, 6> outline{
+      {{0, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}}};
+  for (std::size_t i = 0; i < outline.size(); ++i) {
+    auto a = outline[i];
+    auto b = outline[(i + 1) % outline.size()];
+    auto top_a = a + mc3d::Point(0, 0, 1);
+    auto top_b = b + mc3d::Point(0, 0, 1);
+    mc3d::Point normal(b.y - a.y, a.x - b.x, 0);
+    geometry->Triangle(a, b, top_b, normal);
+    geometry->Triangle(a, top_b, top_a, normal);
+  }
+  const std::array<std::array<mc3d::Point, 4>, 3> squares{
+      {{{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}}},
+       {{{1, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}}},
+       {{{0, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}}}}};
+  for (const auto& square : squares) {
+    geometry->Triangle(square[0], square[2], square[1], {0, 0, -1});
+    geometry->Triangle(square[0], square[3], square[2], {0, 0, -1});
+    const auto rise = mc3d::Point(0, 0, 1);
+    geometry->Triangle(square[0] + rise, square[1] + rise, square[2] + rise,
+                       {0, 0, 1});
+    geometry->Triangle(square[0] + rise, square[2] + rise, square[3] + rise,
+                       {0, 0, 1});
+  }
+  return geometry;
+}
+}
+TEST(BodyParticleCheckTest, CountsConcaveInteriorAndNotchExactly) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto workers : {1, 4, 12}) {
+    mc3d::CellCluster c(workers, 123);
+    A::BodyCells(c, MakeCheckConcavePrism(), 100);
+    for (auto* cell : A::GetLookup(c)) {
+      auto& p = A::MutableParticles(*cell);
+      p.clear();
+      p.emplace_back(mc3d::Point(.5, .5, .5), mc3d::Point(0, 0, 0));
+      p.emplace_back(mc3d::Point(1.5, 1.5, .5), mc3d::Point(0, 0, 0));
+      p.emplace_back(mc3d::Point(0, .5, .5), mc3d::Point(0, 0, 0));
+    }
+    const auto expected = A::BodyOracle(c);
+    ASSERT_GT(expected, 0);
+    EXPECT_EQ(A::CountBody(c), expected);
+  }
 }

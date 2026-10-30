@@ -45,6 +45,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              double S, double alpha, double T, double wall_temperature,
                              std::optional<double> wall_heat_capacity) {
   LOG_DEBUG() << bool(body);
+  InvalidateBodyCheck();
   body_ = std::move(body);
   if (body_) body_->PrepareQueries();
   if (wall_heat_capacity) {
@@ -158,9 +159,13 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   return true;
 }
 
-void CellCluster::SetApex(Point apex) { this->apex = apex; }
+void CellCluster::SetApex(Point apex) {
+  InvalidateBodyCheck();
+  this->apex = apex;
+}
 
 void CellCluster::SetSize(double Lx, double Ly, double Lz) {
+  InvalidateBodyCheck();
   this->Lx = Lx;
   this->Ly = Ly;
   this->Lz = Lz;
@@ -246,16 +251,9 @@ StepResult CellCluster::TimeStep() {
   std::size_t inner_particles = 0;
   if (body_ && body_->PolygonCount() > 0) {
     utils::Stopwatch sw("TimeStep::CheckBodyParticles");
-    const auto [lower, upper] = body_->Bounds();
-    for (const auto& cell : cells) {
-      const auto origin = cell.GetApex();
-      const auto extent = cell.GetSize();
-      if (origin.x <= upper.x && origin.x + extent.x >= lower.x &&
-          origin.y <= upper.y && origin.y + extent.y >= lower.y &&
-          origin.z <= upper.z && origin.z + extent.z >= lower.z) {
-        inner_particles += cell.CountInnerParticles(*body_);
-      }
-    }
+    inner_particles = CountBodyParticles();
+  } else {
+    InvalidateBodyCheck();
   }
   Point force(0, 0, 0), mean_force(0, 0, 0);
   if (body_ && body_->PolygonCount() > 0) {
@@ -265,6 +263,78 @@ StepResult CellCluster::TimeStep() {
     if (t > 0) mean_force = body_impulse_ / t;
   }
   return {t, dt, t >= t_end, inner_particles, force, mean_force};
+}
+
+void CellCluster::InvalidateBodyCheck() {
+  body_check_cells_.clear();
+  body_check_bounds_.reset();
+  body_check_cell_count_ = 0;
+}
+
+std::size_t CellCluster::CountBodyParticles() {
+  if (!body_ || body_->PolygonCount() == 0) {
+    InvalidateBodyCheck();
+    return 0;
+  }
+  const auto bounds = body_->Bounds();
+  const auto same = [](Point a, Point b) {
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+  };
+  if (!body_check_bounds_ || body_check_cell_count_ != cells.size() ||
+      !same(body_check_bounds_->first, bounds.first) ||
+      !same(body_check_bounds_->second, bounds.second)) {
+    // Publish a complete cache only after a successful rebuild.
+    InvalidateBodyCheck();
+    const auto [lower, upper] = bounds;
+    for (auto& cell : cells) {
+      const auto origin = cell.GetApex();
+      const auto extent = cell.GetSize();
+      if (origin.x <= upper.x && origin.x + extent.x >= lower.x &&
+          origin.y <= upper.y && origin.y + extent.y >= lower.y &&
+          origin.z <= upper.z && origin.z + extent.z >= lower.z)
+        body_check_cells_.push_back(&cell);
+    }
+    body_check_cell_count_ = cells.size();
+    body_check_bounds_ = bounds;
+  }
+  constexpr std::size_t chunk_size = 32;
+  const auto chunks = body_check_cells_.size() / chunk_size +
+                      (body_check_cells_.size() % chunk_size != 0);
+  const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
+  if (workers <= 1) {
+    std::size_t count = 0;
+    for (const auto* cell : body_check_cells_) count += cell->CountInnerParticles(*body_);
+    return count;
+  }
+  std::atomic<std::size_t> next{0};
+  std::vector<std::size_t> counts(workers, 0);
+  std::vector<std::future<void>> futures;
+  futures.reserve(workers);
+  std::exception_ptr failure;
+  try {
+    for (std::size_t worker = 0; worker < workers; ++worker) {
+      futures.emplace_back(thread_pool_.Execute([&, worker] {
+        std::size_t count = 0;
+        for (;;) {
+          const auto begin = next.fetch_add(chunk_size, std::memory_order_relaxed);
+          if (begin >= body_check_cells_.size()) break;
+          const auto end = std::min(begin + chunk_size, body_check_cells_.size());
+          for (auto i = begin; i < end; ++i)
+            count += body_check_cells_[i]->CountInnerParticles(*body_);
+        }
+        counts[worker] = count;
+      }));
+    }
+  } catch (...) { failure = std::current_exception(); }
+  // Tasks refer to local counters and cluster data: drain before unwinding.
+  for (auto& future : futures) {
+    try { future.get(); }
+    catch (...) { if (!failure) failure = std::current_exception(); }
+  }
+  if (failure) std::rethrow_exception(failure);
+  std::size_t count = 0;
+  for (auto local : counts) count += local;
+  return count;
 }
 
 void CellCluster::GatherParticles() {

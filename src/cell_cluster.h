@@ -18,6 +18,7 @@
 #include <optional>
 #include <utils/threadpool.hpp>
 #include <vector>
+#include <utility>
 
 namespace mc3d {
 
@@ -110,6 +111,11 @@ class CellCluster {
   void DistributeParticles(std::vector<Particle>& buffer);
   bool FindCellIndex(const Point& position, size_t& cell_index) const;
   std::unique_ptr<Geometry> body_;
+  std::vector<Cell*> body_check_cells_;
+  std::optional<std::pair<Point, Point>> body_check_bounds_;
+  std::size_t body_check_cell_count_ = 0;
+  void InvalidateBodyCheck();
+  std::size_t CountBodyParticles();
   double data_dt;
   double data_t;
   double density;
