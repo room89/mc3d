@@ -19,6 +19,7 @@ int Run(int argc, char* argv[]) {
                          config.apex_z.value_or(-0.5 * config.Lz));
 
   const auto seed = config.seed ? *config.seed : std::random_device{}();
+  std::cout << "Random generator: " << utils::RandomStream::kAlgorithm << std::endl;
   std::cout << "Random seed: " << seed << std::endl;
   mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
