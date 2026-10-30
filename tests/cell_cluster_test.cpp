@@ -18,6 +18,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <thread>
+#include <type_traits>
 
 #include "boundary.h"
 #include "geometry.h"
@@ -42,7 +44,15 @@ class CellClusterTestAccess {
   }
   static void SyncDt(CellCluster& cluster) { cluster.SyncDt(); }
   static void StopPool(CellCluster& cluster) { cluster.thread_pool_.Stop(); }
-  static utils::Pcg32 Engine(const Cell& cell) { return cell.random_->Engine(); }
+  static utils::Pcg32 Engine(const Cell& cell) {
+    if (const auto* owned = std::get_if<utils::RandomStream>(&cell.random_))
+      return utils::RandomStream(*owned).Engine();
+    return std::get<std::shared_ptr<utils::RandomStream>>(cell.random_)->Engine();
+  }
+  static utils::RandomStream& Random(Cell& cell) { return cell.Random(); }
+  static bool Lazy(const Cell& cell) {
+    return std::holds_alternative<std::monostate>(cell.random_);
+  }
   static Point StoredVelocity(const Cell& cell) { return cell.velocity; }
   static double StoredTemperature(const Cell& cell) { return cell.T; }
 
@@ -1178,4 +1188,75 @@ TEST(CellClusterGatherTest, SubmissionFailurePreservesGlobalBuffer) {
   const auto& after = GatherAccess::Buffer(cluster);
   ASSERT_EQ(after.size(),before.size());
   for (size_t i = 0; i < before.size(); ++i) ExpectSameParticle(after[i],before[i]);
+}
+
+
+static_assert(!std::is_copy_constructible_v<mc3d::Cell>);
+static_assert(!std::is_move_constructible_v<mc3d::Cell>);
+static_assert(!std::is_copy_assignable_v<mc3d::Cell>);
+static_assert(!std::is_move_assignable_v<mc3d::Cell>);
+
+TEST(CellStorageTest, OwnedStreamsMatchRegistryAndStayIndependent) {
+  using Access = mc3d::CellClusterTestAccess;
+  utils::RandomStreams reference(123);
+  mc3d::Cell first(123, 0), other(123, 7);
+  for (int i = 0; i < 100; ++i) {
+    EXPECT_EQ(Access::Random(first).Engine()(), reference.At(0)->Engine()());
+    EXPECT_EQ(Access::Random(other).Engine()(), reference.At(7)->Engine()());
+  }
+  EXPECT_THROW((mc3d::Cell(123, utils::Pcg32::kMaxStreamId + 1)), std::invalid_argument);
+}
+
+TEST(CellStorageTest, SharedStreamRetainsIdentityAndLifetime) {
+  using Access = mc3d::CellClusterTestAccess;
+  auto shared = std::make_shared<utils::RandomStream>(123);
+  std::weak_ptr<utils::RandomStream> weak = shared;
+  utils::RandomStream expected(123);
+  {
+    mc3d::Cell first(shared), second(shared);
+    EXPECT_EQ(&Access::Random(first), shared.get());
+    EXPECT_EQ(&Access::Random(second), shared.get());
+    EXPECT_EQ(Access::Random(first).Engine()(), expected.Engine()());
+    EXPECT_EQ(shared->Engine()(), expected.Engine()());
+    shared.reset();
+    EXPECT_FALSE(weak.expired());
+    EXPECT_EQ(Access::Random(second).Engine()(), expected.Engine()());
+  }
+  EXPECT_TRUE(weak.expired());
+}
+
+TEST(CellStorageTest, LazyStreamsAndDequeAddressesRemainStable) {
+  using Access = mc3d::CellClusterTestAccess;
+  mc3d::Cell empty(nullptr);
+  EXPECT_TRUE(Access::Lazy(empty));
+  auto* random = &Access::Random(empty);
+  EXPECT_FALSE(Access::Lazy(empty));
+  EXPECT_EQ(random, &Access::Random(empty));
+  std::deque<mc3d::Cell> cells;
+  cells.emplace_back();
+  EXPECT_TRUE(Access::Lazy(cells.front()));
+  auto* first = &cells.front();
+  for (int i = 0; i < 1024; ++i) cells.emplace_back(123, i);
+  EXPECT_EQ(first, &cells.front());
+}
+
+TEST(CellStorageTest, ConcurrentAcceptanceHasNoLossOrDuplicates) {
+  mc3d::Cell cell(123, 0);
+  cell.SetApex({0, 0, 0});
+  cell.SetSize(1, 1, 1);
+  std::vector<std::thread> workers;
+  std::atomic<int> accepted{0};
+  for (int worker = 0; worker < 4; ++worker) workers.emplace_back([&, worker] {
+    for (int i = 0; i < 500; ++i) {
+      mc3d::Particle particle({.5, .5, .5}, {double(worker * 500 + i), 0, 0});
+      if (cell.TryAcceptParticle(particle)) ++accepted;
+    }
+  });
+  for (auto& worker : workers) worker.join();
+  EXPECT_EQ(accepted, 2000);
+  std::vector<int> ids;
+  for (const auto& p : mc3d::CellClusterTestAccess::Particles(cell)) ids.push_back(int(p.velocity.x));
+  std::sort(ids.begin(), ids.end());
+  ASSERT_EQ(ids.size(), 2000);
+  for (int i = 0; i < 2000; ++i) EXPECT_EQ(ids[i], i);
 }
