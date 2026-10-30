@@ -250,3 +250,23 @@ TEST(SimulationConfigTest, SeedIsOptionalAndValidated) {
   args[2] = overflow;
   EXPECT_THROW(mc3d::LoadSimulationConfig(3, args), std::runtime_error);
 }
+
+TEST(SimulationConfigTest, ParsesAndValidatesSurfaceCapacityAndReferenceArea) {
+  char program[] = "solver";
+  char capacity[] = "--wall-heat-capacity";
+  char area[] = "--force-reference-area";
+  char valid[] = "2.5";
+  char invalid[] = "-1";
+  char* args[] = {program, capacity, valid, area, valid};
+  const auto defaults = mc3d::LoadSimulationConfig(1, args);
+  EXPECT_FALSE(defaults.wall_heat_capacity);
+  EXPECT_FALSE(defaults.force_reference_area);
+  const auto cfg = mc3d::LoadSimulationConfig(5, args);
+  EXPECT_DOUBLE_EQ(*cfg.wall_heat_capacity, 2.5);
+  EXPECT_DOUBLE_EQ(*cfg.force_reference_area, 2.5);
+  args[2] = invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(5, args), std::invalid_argument);
+  args[2] = valid;
+  args[4] = invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(5, args), std::invalid_argument);
+}

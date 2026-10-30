@@ -1260,3 +1260,56 @@ TEST(CellStorageTest, ConcurrentAcceptanceHasNoLossOrDuplicates) {
   ASSERT_EQ(ids.size(), 2000);
   for (int i = 0; i < 2000; ++i) EXPECT_EQ(ids[i], i);
 }
+
+TEST(CellClusterIntegrationTest, SurfaceHeatingAndLoadsReachSnapshots) {
+  ScopedWorkingDirectory guard("mc3d_surface_loads_test");
+  auto geometry = std::make_unique<mc3d::Geometry>();
+  geometry->CreateCube(-0.25, 0.5, 0.5, 0.5);
+  auto* body = geometry.get();
+  mc3d::CellCluster cluster(2, 123);
+  mc3d::SimulationRunner runner(cluster);
+  cluster.SetApex({-0.5,-0.5,-0.5});
+  cluster.SetSize(1,1,1);
+  cluster.SetEndTime(0.03);
+  ASSERT_TRUE(cluster.Initialize(4,4,4,512,0.05,0.2,std::move(geometry),2,0,1,1,10));
+  runner.SetForceReference(0.25, 2*std::sqrt(2.), 0.2);
+  ASSERT_TRUE(runner.Writer().WriteFile("initial.dat"));
+  EXPECT_TRUE(std::filesystem::exists("initial.dat.surface.csv"));
+  mc3d::Point integrated_force(0,0,0);
+  mc3d::StepResult result{};
+  for (int n = 0; n < 100; ++n) {
+    result = runner.Step();
+    integrated_force += result.body_force * result.dt;
+    mc3d::Point total_impulse(0,0,0);
+    for (std::size_t i = 0; i < body->PolygonCount(); ++i) {
+      const auto& p = body->GetPolygon(i);
+      total_impulse += p.force / 512;
+      EXPECT_NEAR(p.heat_capacity * (p.wall_temperature-1), p.absorbed_heat, 1e-12);
+      EXPECT_DOUBLE_EQ(p.pending_heat, 0);
+    }
+    EXPECT_NEAR((integrated_force-total_impulse).Mod(), 0, 1e-12);
+    EXPECT_NEAR((result.mean_body_force*result.time-total_impulse).Mod(), 0, 1e-12);
+    if (result.finished) break;
+  }
+  EXPECT_TRUE(result.finished);
+  EXPECT_GT(integrated_force.Mod(), 0);
+  ASSERT_TRUE(runner.Writer().WriteFile("final.dat"));
+  EXPECT_TRUE(std::filesystem::exists("final.dat.surface.csv"));
+  std::ifstream file("body_loads.csv");
+  std::string header, row, last;
+  std::getline(file, header);
+  EXPECT_NE(header.find("Cx;Cy;Cz;Cd;Cl"), std::string::npos);
+  while (std::getline(file, row)) last = row;
+  std::replace(last.begin(), last.end(), ';', ' ');
+  std::istringstream values(last);
+  std::vector<double> columns;
+  for (double value; values >> value;) columns.push_back(value);
+  ASSERT_EQ(columns.size(), 21u);
+  EXPECT_NEAR(columns[8], 0.25, 1e-12);
+  EXPECT_NEAR(columns[9], 4, 1e-12);
+  EXPECT_NEAR(columns[11], result.body_force.x, 1e-12);
+  EXPECT_NEAR(columns[12], result.body_force.y, 1e-12);
+  EXPECT_NEAR(columns[14], columns[11]*std::cos(0.2)+columns[12]*std::sin(0.2), 1e-12);
+  EXPECT_NEAR(columns[15], -columns[11]*std::sin(0.2)+columns[12]*std::cos(0.2), 1e-12);
+  EXPECT_NEAR(columns[16], result.mean_body_force.x, 1e-12);
+}

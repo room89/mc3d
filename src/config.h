@@ -33,6 +33,8 @@ struct SimulationConfig {
   double Cu = 0.7;
   double temperature = 1.0;
   double wall_temperature = 1.0;
+  std::optional<double> wall_heat_capacity;
+  std::optional<double> force_reference_area;
   double alpha = 0.0;
 
   unsigned int cells_x = 20;

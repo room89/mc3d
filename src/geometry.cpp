@@ -5,6 +5,7 @@
 #include <cmath>
 #include <limits>
 #include <optional>
+#include <stdexcept>
 #include <vector>
 
 namespace mc3d {
@@ -279,9 +280,77 @@ std::optional<Point> Geometry::ExteriorPoint(Point interior) const {
   return std::nullopt;
 }
 
-void Geometry::AccumulateForce(Polygon& polygon, Point impulse) {
+void Geometry::AccumulateForce(Polygon& polygon, Point impulse, double energy) {
   std::lock_guard<std::mutex> lock(force_mutex_);
   polygon.force += impulse;
+  step_impulse_ += impulse;
+  if (SurfaceHeatingEnabled()) polygon.pending_heat += thermal_particle_weight_ * energy;
+}
+
+Point Geometry::TakeStepImpulse() {
+  std::lock_guard<std::mutex> lock(force_mutex_);
+  const Point impulse = step_impulse_;
+  step_impulse_ = {0, 0, 0};
+  return impulse;
+}
+
+void Geometry::ConfigureSurfaceHeating(double temperature, double heat_capacity,
+                                       double particle_weight) {
+  if (!(temperature > 0) || !std::isfinite(temperature) ||
+      !(heat_capacity > 0) || !std::isfinite(heat_capacity) ||
+      !(particle_weight > 0) || !std::isfinite(particle_weight))
+    throw std::invalid_argument("Surface heating requires positive finite temperature, capacity and particle weight");
+  double total_area = 0;
+  for (const auto& p : poligons) {
+    const double area = 0.5 * (p->p2 - p->p1).Cross(p->p3 - p->p1).Mod();
+    if (!(area > 0) || !std::isfinite(area))
+      throw std::invalid_argument("Surface heating requires nondegenerate triangles");
+    total_area += area;
+  }
+  if (!(total_area > 0) || !std::isfinite(total_area))
+    throw std::invalid_argument("Surface heating requires a finite nonempty body");
+  for (const auto& p : poligons) {
+    const double area = 0.5 * (p->p2 - p->p1).Cross(p->p3 - p->p1).Mod();
+    const double capacity = heat_capacity * (area / total_area);
+    if (!(capacity > 0) || !std::isfinite(capacity))
+      throw std::invalid_argument("Polygon heat capacity is not representable");
+    p->wall_temperature = temperature;
+    p->heat_capacity = capacity;
+    p->pending_heat = p->absorbed_heat = 0;
+  }
+  thermal_particle_weight_ = particle_weight;
+}
+
+void Geometry::UpdateSurfaceTemperatures() {
+  if (!SurfaceHeatingEnabled()) return;
+  // Validate every polygon before committing any updates. Never clamp energy.
+  for (const auto& p : poligons) {
+    const double next = p->wall_temperature + p->pending_heat / p->heat_capacity;
+    if (!(next > 0) || !std::isfinite(next) ||
+        !std::isfinite(p->absorbed_heat + p->pending_heat))
+      throw std::runtime_error("Surface thermal step exhausted polygon energy; reduce Cu or increase wall heat capacity");
+  }
+  for (const auto& p : poligons) {
+    p->wall_temperature += p->pending_heat / p->heat_capacity;
+    p->absorbed_heat += p->pending_heat;
+    p->pending_heat = 0;
+  }
+}
+
+bool Geometry::WriteSurfaceSnapshot(const std::string& path, double time) const {
+  std::ofstream file(path);
+  file << std::setprecision(17);
+  file << "time;polygon;x1;y1;z1;x2;y2;z2;x3;y3;z3;temperature;heat_capacity;absorbed_heat\n";
+  for (std::size_t i = 0; i < poligons.size(); ++i) {
+    const auto& p = *poligons[i];
+    file << time << ';' << i;
+    for (const auto& v : {p.p1, p.p2, p.p3})
+      file << ';' << v.x << ';' << v.y << ';' << v.z;
+    file << ';' << p.wall_temperature << ';' << p.heat_capacity
+         << ';' << p.absorbed_heat << '\n';
+  }
+  file.close();
+  return bool(file);
 }
 
 void Geometry::PrepareQueries() {

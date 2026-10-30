@@ -30,7 +30,11 @@ int Run(int argc, char* argv[]) {
 
   cluster.Initialize(config.cells_x, config.cells_y, config.cells_z,
                      reference_density, config.Kn, config.Cu, std::move(geometry),
-                     config.S, config.alpha, config.temperature, config.wall_temperature);
+                     config.S, config.alpha, config.temperature, config.wall_temperature,
+                     config.wall_heat_capacity);
+  if (config.force_reference_area)
+    runner.SetForceReference(*config.force_reference_area,
+                             config.S * std::sqrt(2 * config.temperature), config.alpha);
   runner.Writer().SetBinaryOutput(config.snapshots_binary);
   runner.SetSnapshotInterval(config.snapshot_interval);
 

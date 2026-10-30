@@ -222,6 +222,16 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.wall_temperature = ParseDouble(prepared_value, raw_key, ctx);
     if (!(config.wall_temperature > 0) || !std::isfinite(config.wall_temperature))
       throw std::invalid_argument("Wall temperature must be finite and positive");
+  } else if (key == "force_reference_area") {
+    const double area = ParseDouble(prepared_value, raw_key, ctx);
+    if (!(area > 0) || !std::isfinite(area))
+      throw std::invalid_argument("Force reference area must be finite and positive");
+    config.force_reference_area = area;
+  } else if (key == "wall_heat_capacity") {
+    const double capacity = ParseDouble(prepared_value, raw_key, ctx);
+    if (!(capacity > 0) || !std::isfinite(capacity))
+      throw std::invalid_argument("Wall heat capacity must be finite and positive");
+    config.wall_heat_capacity = capacity;
   } else if (key == "alpha") {
     config.alpha = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "ncx" || key == "cells_x") {
@@ -690,6 +700,8 @@ void PrintUsage(const char* program) {
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
+      << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl output\n"
+      << "  --wall-heat-capacity VALUE      Enable per-polygon heating (total capacity)\n"
       << "  --wall-temperature VALUE        Diffuse body temperature (default 1)\n"
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"

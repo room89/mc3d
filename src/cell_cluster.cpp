@@ -42,10 +42,16 @@ CellCluster::~CellCluster() {
 bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              unsigned int ncz, double density, double Kn,
                              double Cu, std::unique_ptr<Geometry>&& body,
-                             double S, double alpha, double T, double wall_temperature) {
+                             double S, double alpha, double T, double wall_temperature,
+                             std::optional<double> wall_heat_capacity) {
   LOG_DEBUG() << bool(body);
   body_ = std::move(body);
   if (body_) body_->PrepareQueries();
+  if (wall_heat_capacity) {
+    if (!body_ || !(density > 0) || !std::isfinite(density))
+      throw std::invalid_argument("Surface heating requires a body and positive reference particle density");
+    body_->ConfigureSurfaceHeating(wall_temperature, *wall_heat_capacity, 1.0 / density);
+  }
 
   srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -69,6 +75,8 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   cell_lookup_.clear();
 
   this->t = 0;
+  body_impulse_ = {0, 0, 0};
+  if (body_) body_->TakeStepImpulse();
   this->dt = 1000000000;
 
   const size_t total_cells = static_cast<size_t>(ncx) *
@@ -230,6 +238,7 @@ StepResult CellCluster::TimeStep() {
     utils::Stopwatch sw("TimeStep::AddParticlesAfterBoundary");
     DistributeParticles(partile_buffer);
   }
+  if (body_) body_->UpdateSurfaceTemperatures();
   t += dt;
 
   partile_buffer.clear();
@@ -248,7 +257,14 @@ StepResult CellCluster::TimeStep() {
       }
     }
   }
-  return {t, dt, t >= t_end, inner_particles};
+  Point force(0, 0, 0), mean_force(0, 0, 0);
+  if (body_ && body_->PolygonCount() > 0) {
+    const Point impulse = body_->TakeStepImpulse() / density;
+    body_impulse_ += impulse;
+    if (dt > 0) force = impulse / dt;
+    if (t > 0) mean_force = body_impulse_ / t;
+  }
+  return {t, dt, t >= t_end, inner_particles, force, mean_force};
 }
 
 void CellCluster::GatherParticles() {

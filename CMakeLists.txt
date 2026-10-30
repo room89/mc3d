@@ -64,6 +64,7 @@ if(BUILD_TESTING)
     tests/cell_cluster_test.cpp
     tests/solver_setup_test.cpp
     tests/conservation_test.cpp
+    tests/surface_heating_test.cpp
     tests/body_penetration_test.cpp
     tests/open_boundary_test.cpp
     tests/hyperfree_test.cpp
