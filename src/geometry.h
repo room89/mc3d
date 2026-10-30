@@ -33,9 +33,25 @@ class Geometry {
   std::deque<std::unique_ptr<Polygon>> poligons;
   std::mutex force_mutex_;
   // Subclasses editing polygon vertices/topology must invalidate before edits.
-  void InvalidateQueries() { query_bounds_.reset(); query_tolerance_.reset(); }
+  void InvalidateQueries() {
+    query_bounds_.reset();
+    query_tolerance_.reset();
+    query_triangles_.clear();
+  }
 
  private:
+  struct QueryTriangle {
+    Point origin;
+    Point e1;
+    Point e2;
+    double determinant_scale;
+  };
+  static QueryTriangle PrepareTriangle(const Polygon& polygon);
+  std::optional<double> RayTriangle(std::size_t index, Point start,
+                                    Point direction, double direction_length) const;
+  static std::optional<double> IntersectTriangle(const QueryTriangle& triangle,
+      Point start, Point direction, double direction_length);
+  std::vector<QueryTriangle> query_triangles_;
   std::optional<std::pair<Point, Point>> query_bounds_;
   std::optional<double> query_tolerance_;
 
