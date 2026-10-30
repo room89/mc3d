@@ -65,7 +65,15 @@ class CellCluster {
 
  private:
   void CalculateCellTimeSteps();
-  void GatherParticles();
+  struct OutgoingSource {
+    std::vector<Particle>* particles;
+    std::size_t end;
+  };
+  using OutgoingSources = std::vector<OutgoingSource>;
+  OutgoingSources GatherParticles();
+  // Returned storage statistics are consumed only by the standalone memory probe.
+  struct RoutingStorage { std::size_t size = 0, capacity = 0; };
+  RoutingStorage DistributeSources(const OutgoingSources& sources, std::vector<Particle>& output);
   uint32_t random_seed_;
   int numproc;  // количество процессов(не путать с нитями), специально для MPI
   int proc_id;  // номер процесса
