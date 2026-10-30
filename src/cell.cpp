@@ -175,17 +175,24 @@ void Cell::AddParticle(std::vector<Particle>& incoming) {
   incoming.erase(write_it, incoming.end());
 }
 
-bool Cell::TryAcceptParticle(Particle& particle) {
-  const bool inside_x =
-      (particle.position.x >= apex.x) && (particle.position.x < apex.x + lx);
-  const bool inside_y =
-      (particle.position.y >= apex.y) && (particle.position.y < apex.y + ly);
-  const bool inside_z =
-      (particle.position.z >= apex.z) && (particle.position.z < apex.z + lz);
-
-  if (!(inside_x && inside_y && inside_z)) {
-    return false;
+void Cell::AppendRoutedParticles(std::span<Particle> source,
+                                 std::span<const std::size_t> indices) {
+  if (indices.empty()) return;
+  std::lock_guard<std::mutex> lock(*particles_mutex_);
+  if (indices.size() > particles.max_size() - particles.size())
+    throw std::length_error("Particle batch exceeds cell capacity");
+  const auto required = particles.size() + indices.size();
+  if (required > particles.capacity()) {
+    // Keep amortized growth: exact reserves would reallocate on every small influx.
+    const auto capacity = particles.capacity();
+    const auto grown = capacity + std::min(capacity, particles.max_size() - capacity);
+    particles.reserve(std::max(required, grown));
   }
+  for (auto index : indices) particles.push_back(std::move(source[index]));
+}
+
+bool Cell::TryAcceptParticle(Particle& particle) {
+  if (!ContainsPosition(particle.position)) return false;
 
   auto mutex_ptr = particles_mutex_;
   if (!mutex_ptr) {

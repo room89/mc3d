@@ -1,0 +1,29 @@
+name: Transfer measurement
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: current
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+      - name: Build both Release solvers
+        run: |
+          for variant in baseline current; do
+            cmake -S "$variant" -B "$variant/build" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+            cmake --build "$variant/build" -j 4
+          done
+      - name: Compare small scenarios
+        run: python3 current/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/small --repeats 5
+      - name: Compare large scenario
+        run: python3 current/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/large --grid 48 24 16 --particles 120 --threads 1 4 8 --geometries none --repeats 5
+      - uses: actions/upload-artifact@v4
+        with:
+          name: transfer-measurements
+          path: results

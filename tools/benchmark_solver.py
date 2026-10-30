@@ -20,7 +20,14 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--baseline", type=Path, help="Alternate baseline and current binary")
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--grid", type=int, nargs=3, default=(24, 12, 8))
+    parser.add_argument("--particles", type=int, default=60)
+    parser.add_argument("--threads", type=int, nargs="+", default=(1, 4))
+    parser.add_argument("--geometries", choices=("none", "cube", "wedge"),
+                        nargs="+", default=("none", "cube", "wedge"))
     args = parser.parse_args()
+    if min(args.grid) < 1 or args.particles < 0 or min(args.threads) < 1:
+        parser.error("grid and threads must be positive; particles must be nonnegative")
     if args.repeats < 1:
         parser.error("--repeats must be positive")
     binary = args.binary.resolve()
@@ -31,8 +38,8 @@ def main():
     if args.baseline:
         variants.insert(0, ("baseline", args.baseline.resolve()))
     results = []
-    for geometry in ("none", "cube", "wedge"):
-        for threads in (1, 4):
+    for geometry in args.geometries:
+        for threads in args.threads:
             variant_runs = {name: [] for name, _ in variants}
             for repeat in range(args.repeats):
                 ordered = variants if repeat % 2 == 0 else list(reversed(variants))
@@ -41,7 +48,8 @@ def main():
                     directory.mkdir(exist_ok=True)
                     cfg = json.loads(source.read_text())
                     cfg.update(geometry_type=geometry, thread_pool_size=threads,
-                               ncx=24, ncy=12, ncz=8, np=60, seed=123,
+                               ncx=args.grid[0], ncy=args.grid[1], ncz=args.grid[2],
+                               np=args.particles, seed=123,
                                end_time=0.05, snapshot_interval=1,
                                write_default_snapshot_before_compute=False,
                                write_default_snapshot_after_compute=False,

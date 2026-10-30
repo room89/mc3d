@@ -30,6 +30,8 @@ namespace mc3d {
 
 class CellClusterTestAccess {
  public:
+  static const std::vector<Particle>& Particles(const Cell& cell) { return cell.particles; }
+
   static double GetDt(const CellCluster& cluster) { return cluster.dt; }
 
   static const std::vector<Cell*>& GetLookup(const CellCluster& cluster) {
@@ -842,4 +844,110 @@ TEST(BoundaryPhasesTest, LaterFacesProcessEarlierTransitArrivals) {
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   EXPECT_EQ(cells.front()->GetParticleCount(), 1u);
   EXPECT_DOUBLE_EQ(cells.front()->GetParticleMassCenter().x, 0.5);
+}
+
+namespace {
+void ExpectSameParticle(const mc3d::Particle& a, const mc3d::Particle& b) {
+  EXPECT_EQ(a.position.x, b.position.x);
+  EXPECT_EQ(a.position.y, b.position.y);
+  EXPECT_EQ(a.position.z, b.position.z);
+  EXPECT_EQ(a.velocity.x, b.velocity.x);
+  EXPECT_EQ(a.velocity.y, b.velocity.y);
+  EXPECT_EQ(a.velocity.z, b.velocity.z);
+}
+}
+
+TEST(CellClusterDistributionTest, BatchesMatchSequentialRoutingAndPreserveChunkOrder) {
+  using Access = mc3d::CellClusterTestAccess;
+  for (unsigned workers : {1U, 4U, 8U}) {
+    for (size_t count : {0U, 1U, 1023U, 1024U, 1025U, 4097U, 8193U}) {
+      for (int pattern = 0; pattern < 4; ++pattern) {
+        SCOPED_TRACE(workers);
+        SCOPED_TRACE(count);
+        SCOPED_TRACE(pattern);
+        mc3d::CellCluster actual(workers, 123), reference(1, 123);
+        for (auto* cluster : {&actual, &reference}) {
+          cluster->SetApex({4,-7,2});
+          cluster->SetSize(3,2,2);
+          ASSERT_TRUE(cluster->Initialize(3,2,2,0,kKn,kCu,
+              std::make_unique<mc3d::Geometry>(),0,0,1));
+          for (auto* cell : Access::GetLookup(*cluster)) {
+            mc3d::Particle existing(cell->GetCenter(), {-1,0,0});
+            ASSERT_TRUE(cell->TryAcceptParticle(existing));
+          }
+        }
+        std::vector<mc3d::Particle> source;
+        for (size_t i = 0; i < count; ++i) {
+          auto position = Access::GetLookup(actual)[(i * 7) % 12]->GetCenter();
+          if (pattern == 1) position = {100,0,0}; // all rejected
+          if (pattern == 2) position = {4.5,-6.5,2.5}; // contended destination
+          if (pattern == 3) {
+            const std::array<double,8> x{4,5,7,
+                std::nextafter(4.,0.), std::nextafter(4.,5.),
+                std::nextafter(5.,4.), std::nextafter(5.,6.), std::nextafter(7.,6.)};
+            position = {x[i % x.size()],-7,2};
+          }
+          source.emplace_back(position,mc3d::Point(double(i),2,-3));
+        }
+        auto buffer = source;
+        std::vector<mc3d::Particle> rejected;
+        for (auto particle : source) {
+          size_t index = 0;
+          if (!Access::FindCellIndex(reference,particle.position,index) ||
+              !Access::GetLookup(reference)[index]->TryAcceptParticle(particle))
+            rejected.push_back(particle);
+        }
+        Access::DistributeParticles(actual,buffer);
+        ASSERT_EQ(buffer.size(),rejected.size());
+        for (size_t i = 0; i < buffer.size(); ++i) ExpectSameParticle(buffer[i],rejected[i]);
+        const auto chunk_size = std::max<size_t>(1024,(count+workers-1)/workers);
+        for (size_t cell = 0; cell < 12; ++cell) {
+          const auto& got = Access::Particles(*Access::GetLookup(actual)[cell]);
+          const auto& expected = Access::Particles(*Access::GetLookup(reference)[cell]);
+          ASSERT_EQ(got.size(),expected.size());
+          ASSERT_FALSE(got.empty());
+          ExpectSameParticle(got.front(),expected.front());
+          std::vector<long long> previous((count+chunk_size-1)/chunk_size,-1);
+          for (size_t i = 1; i < got.size(); ++i) {
+            const auto id = static_cast<size_t>(got[i].velocity.x);
+            ASSERT_LT(id,source.size());
+            EXPECT_GT(static_cast<long long>(id),previous[id/chunk_size]);
+            previous[id/chunk_size] = id;
+          }
+          auto ordered = got;
+          if (workers > 1) std::sort(ordered.begin()+1,ordered.end(),
+              [](const auto& a,const auto& b){return a.velocity.x < b.velocity.x;});
+          for (size_t i = 0; i < ordered.size(); ++i) ExpectSameParticle(ordered[i],expected[i]);
+        }
+      }
+    }
+  }
+}
+
+TEST(CellClusterDistributionTest, RoutesHighDestinationIndices) {
+  using Access = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster cluster(4,123);
+  cluster.SetApex({0,0,0});
+  cluster.SetSize(300,1,1);
+  ASSERT_TRUE(cluster.Initialize(300,1,1,0,kKn,kCu,
+      std::make_unique<mc3d::Geometry>(),0,0,1));
+  std::vector<mc3d::Particle> buffer;
+  for (size_t i = 0; i < 6000; ++i)
+    buffer.emplace_back(mc3d::Point((i*137)%300+.5,.5,.5),mc3d::Point(double(i),0,0));
+  Access::DistributeParticles(cluster,buffer);
+  EXPECT_TRUE(buffer.empty());
+  std::vector<bool> seen(6000);
+  for (size_t cell = 0; cell < 300; ++cell) {
+    const auto& particles = Access::Particles(*Access::GetLookup(cluster)[cell]);
+    ASSERT_EQ(particles.size(),20U);
+    for (const auto& particle : particles) {
+      const auto id = static_cast<size_t>(particle.velocity.x);
+      ASSERT_LT(id,seen.size());
+      EXPECT_FALSE(seen[id]);
+      seen[id] = true;
+      EXPECT_EQ((id*137)%300,cell);
+      EXPECT_EQ(particle.position.x,cell+.5);
+    }
+  }
+  EXPECT_TRUE(std::all_of(seen.begin(),seen.end(),[](bool value){return value;}));
 }
