@@ -20,13 +20,9 @@ jobs:
             cmake --build "$variant/build" -j 4
             c++ -std=c++23 -O3 -I "$variant/src" current/tools/benchmark_cell_storage.cpp "$variant/build/libmc3d_core.a" -pthread -o "$variant/build/cell_storage_benchmark"
           done
-      - name: Compare memory and initialization
-        run: python3 current/tools/benchmark_cell_storage.py --baseline baseline/build/cell_storage_benchmark --binary current/build/cell_storage_benchmark --out results/memory
-      - name: Compare small scenarios
-        run: python3 current/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/small --repeats 5
-      - name: Compare large scenario
-        run: python3 current/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/large --grid 48 24 16 --particles 120 --threads 1 4 8 --geometries none --repeats 5
+      - name: Repeat small scenarios after timing anomaly
+        run: python3 current/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/small --repeats 10
       - uses: actions/upload-artifact@v4
         with:
-          name: compact-cell-measurements
+          name: compact-cell-repeat
           path: results
