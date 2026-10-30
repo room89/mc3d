@@ -58,3 +58,40 @@ TEST(PhysicsKernelsTest, SamplingAndCollisionsWorkWithoutCells) {
   EXPECT_NEAR((after - momentum).Mod(), 0, 1e-10);
   EXPECT_NEAR(energy_after, energy, 1e-10);
 }
+
+static_assert(std::uniform_random_bit_generator<utils::Pcg32>);
+static_assert(sizeof(utils::RandomStream) == 16);
+
+TEST(Pcg32Test, MatchesPinnedUpstreamVectors) {
+  // Generated with pcg32_srandom_r/pcg32_random_r from pcg-c-basic
+  // bc39cd76ac3d541e618606bcc6e1e5ba5e5e6aa3. First case is the upstream demo.
+  struct Case { uint32_t seed; uint64_t id; uint32_t values[6]; };
+  const Case cases[] = {
+      {42, 54, {0xa15c02b7,0x7b47f409,0xba1d3330,0x83d2f293,0xbfa4784b,0xcbed606e}},
+      {0, 0, {0xe4c14788,0x379c6516,0x5c4ab3bb,0x601d23e0,0x1c382b8c,0xd1faab16}},
+      {UINT32_MAX, utils::Pcg32::kMaxStreamId,
+       {0xc0b80fc6,0xfaf9a041,0xedab3fb5,0x13305841,0x5f00751f,0xf549787d}}};
+  for (const auto& test : cases) {
+    utils::RandomStream random(test.seed, test.id);
+    for (int round = 0; round < 2; ++round) {
+      random.Seed(test.seed, test.id);
+      for (auto expected : test.values) EXPECT_EQ(random.Engine()(), expected);
+    }
+  }
+}
+
+TEST(Pcg32Test, RejectsAliasingStreamIdsWithoutChangingState) {
+  utils::RandomStream actual(42, 54), expected(42, 54);
+  EXPECT_EQ(actual.Engine()(), expected.Engine()());
+  EXPECT_THROW(actual.Seed(1, uint64_t{1} << 63), std::invalid_argument);
+  EXPECT_THROW(actual.Seed(1, UINT64_MAX), std::invalid_argument);
+  EXPECT_EQ(actual.Engine()(), expected.Engine()());
+  EXPECT_THROW((utils::RandomStream(1, UINT64_MAX)), std::invalid_argument);
+}
+
+TEST(RandomStreamsTest, InvalidIndexDoesNotDiscardExistingStreams) {
+  utils::RandomStreams streams(42);
+  const auto first = streams.At(0);
+  EXPECT_THROW(streams.At(std::numeric_limits<std::size_t>::max()), std::exception);
+  EXPECT_EQ(streams.At(0), first);
+}

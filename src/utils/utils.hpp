@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pcg32.hpp"
+
 #include <cstdint>
 #include <random>
 #include <memory>
@@ -11,15 +13,16 @@ namespace utils {
 // A stream has one active consumer; concurrent operations must use distinct streams.
 class RandomStream {
  public:
-  explicit RandomStream(uint32_t seed = std::random_device{}(), uint64_t id = 0) { Seed(seed, id); }
+  inline static constexpr const char* kAlgorithm = "pcg32-xsh-rr-v1";
+  explicit RandomStream(uint32_t seed = std::random_device{}(), uint64_t id = 0)
+      : engine_(seed, id) {}
   void Seed(uint32_t seed, uint64_t id = 0) {
-    std::seed_seq sequence{seed, static_cast<uint32_t>(id), static_cast<uint32_t>(id >> 32)};
-    engine_.seed(sequence);
+    engine_.seed(seed, id);
   }
-  std::mt19937& Engine() { return engine_; }
+  Pcg32& Engine() { return engine_; }
   double Uniform() { return std::uniform_real_distribution<double>(0, 1)(engine_); }
  private:
-  std::mt19937 engine_;
+  Pcg32 engine_;
 };
 
 class RandomStreams {
@@ -27,6 +30,10 @@ class RandomStreams {
   explicit RandomStreams(uint32_t seed) : seed_(seed) {}
   // Bind streams before starting worker tasks; returned streams have stable addresses.
   std::shared_ptr<RandomStream> At(std::size_t index) {
+    if (index > Pcg32::kMaxStreamId)
+      throw std::invalid_argument("PCG32 stream id exceeds 2^63 - 1");
+    if (index >= streams_.max_size())
+      throw std::length_error("Random stream index exceeds container capacity");
     if (streams_.size() <= index) streams_.resize(index + 1);
     if (!streams_[index]) streams_[index] = std::make_shared<RandomStream>(seed_, index);
     return streams_[index];
