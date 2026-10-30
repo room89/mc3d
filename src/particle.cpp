@@ -12,38 +12,12 @@
 #include <utils/utils.hpp>
 
 namespace mc3d {
-Particle::Particle() {
-  // this->r = 0.001;
-  // this->u = this->v = this->w = this->x = this->y = this->z = 0;
-  position.Set(0, 0, 0);
-  velocity.Set(0, 0, 0);
-}
-
-Particle::Particle(double x, double y, double z, double u, double v, double w) {
-  position.Set(x, y, z);
-  velocity.Set(u, v, w);
-}
-
-Particle::Particle(Point position, Point velocity) {
-  this->position = position;
-  this->velocity = velocity;
-}
-
-Particle::~Particle() {}
-
 /*void Particle::print()
 {
         std::cout<<" x = "<<x<<" y = "<<y<<" z = "<<z<<" u = "<<u<<" v = "<<v<<"
 w = "<<w<<std::endl;
 }*/
 
-void Particle::Move(double dt) {
-  position += velocity * dt;
-
-  /*x += dt * u;
-  y += dt * v;
-  z += dt * w;*/
-}
 bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
                double factor, utils::RandomStream& random) {
   const double Pi = std::numbers::pi;
@@ -93,31 +67,4 @@ bool Collision(Particle& a, Particle& b, double& g_max, double& frequency_t,
   return rtrn;
 }
 
-double Particle::GetU() const { return velocity.x; }
-
-double Particle::GetV() const { return velocity.y; }
-
-double Particle::GetW() const { return velocity.z; }
-
-double Particle::GetX() const { return position.x; }
-
-double Particle::GetY() const { return position.y; }
-
-double Particle::GetZ() const { return position.z; }
-
-void Particle::SetPosition(Point position) { this->position = position; }
-
-void Particle::SetVelocity(Point velocity) { this->velocity = velocity; }
-
-void Particle::SetX(double x) { this->position.x = x; }
-
-void Particle::SetY(double y) { this->position.y = y; }
-
-void Particle::SetZ(double z) { this->position.z = z; }
-
-void Particle::SetU(double u) { this->velocity.x = u; }
-
-void Particle::SetV(double v) { this->velocity.y = v; }
-
-void Particle::SetW(double w) { this->velocity.z = w; }
 }  // namespace mc3d

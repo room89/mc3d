@@ -58,6 +58,7 @@ if(BUILD_TESTING)
     tests/geometry_queries_test.cpp
     tests/random_test.cpp
     tests/point_test.cpp
+    tests/value_types_test.cpp
     tests/collision_test.cpp
     tests/collision_normalization_test.cpp
     tests/cell_cluster_test.cpp
