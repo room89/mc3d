@@ -32,6 +32,10 @@ class CellClusterTestAccess {
  public:
   static const std::vector<Particle>& Particles(const Cell& cell) { return cell.particles; }
 
+  static std::vector<Particle>& MutableParticles(Cell& cell) { return cell.particles; }
+  static std::vector<Particle>& Buffer(CellCluster& cluster) { return cluster.partile_buffer; }
+  static void Gather(CellCluster& cluster) { cluster.GatherParticles(); }
+
   static double GetDt(const CellCluster& cluster) { return cluster.dt; }
   static void ConfigureTime(CellCluster& cluster, double cu, double t, double end) {
     cluster.Cu = cu; cluster.t = t; cluster.t_end = end;
@@ -1045,4 +1049,133 @@ TEST(CellClusterTimeStepTest, SubmissionFailureDoesNotPublishGlobalDt) {
   Access::StopPool(cluster);
   EXPECT_THROW(Access::SyncDt(cluster),std::runtime_error);
   EXPECT_EQ(Access::GetDt(cluster),previous);
+}
+
+namespace {
+using GatherAccess = mc3d::CellClusterTestAccess;
+void InitializeGatherFixture(mc3d::CellCluster& cluster, size_t count, int pattern) {
+  if (count) {
+    cluster.SetApex({0,0,0});
+    cluster.SetSize(count,1,1);
+    ASSERT_TRUE(cluster.Initialize(count,1,1,0,kKn,kCu,
+        std::make_unique<mc3d::Geometry>(),0,0,1));
+  }
+  GatherAccess::Buffer(cluster).emplace_back(mc3d::Point(-99,0,0),mc3d::Point(-1,0,0));
+  const auto& cells = GatherAccess::GetLookup(cluster);
+  size_t id = 0;
+  for (size_t i = 0; i < count; ++i) {
+    if (pattern != 3) {
+      auto& particles = GatherAccess::MutableParticles(*cells[i]);
+      const size_t population = i == 3 ? 1000 : i % 11;
+      for (size_t j = 0; j < population; ++j) {
+        double x = i + .5;
+        if (pattern == 1) x = i + 1.5;
+        if (pattern == 2) {
+          const std::array<double,7> positions{double(i),i+1.,
+              std::nextafter(double(i),-1.),std::nextafter(double(i),i+1.),
+              std::nextafter(i+1.,double(i)),std::nextafter(i+1.,i+2.),-1.};
+          x = positions[j % positions.size()];
+        }
+        particles.emplace_back(mc3d::Point(x,.5,.5),mc3d::Point(double(id++),2,3));
+      }
+    }
+    if (i % 3 == 0)
+      cells[i]->GetBuffer().emplace_back(mc3d::Point(i+1.5,.5,.5),mc3d::Point(double(id++),4,5));
+  }
+}
+
+void ReferenceGather(mc3d::CellCluster& cluster) {
+  auto& buffer = GatherAccess::Buffer(cluster);
+  for (auto* cell : GatherAccess::GetLookup(cluster)) {
+    cell->Sort();
+    cell->SortNeighbors();
+    auto& outgoing = cell->GetBuffer();
+    buffer.insert(buffer.end(),std::make_move_iterator(outgoing.begin()),
+                  std::make_move_iterator(outgoing.end()));
+    outgoing.clear();
+  }
+}
+
+void CompareGatherState(mc3d::CellCluster& actual, mc3d::CellCluster& expected) {
+  auto compare = [](const auto& a,const auto& b) {
+    ASSERT_EQ(a.size(),b.size());
+    for (size_t i = 0; i < a.size(); ++i) ExpectSameParticle(a[i],b[i]);
+  };
+  compare(GatherAccess::Buffer(actual),GatherAccess::Buffer(expected));
+  const auto& a = GatherAccess::GetLookup(actual);
+  const auto& b = GatherAccess::GetLookup(expected);
+  ASSERT_EQ(a.size(),b.size());
+  for (size_t i = 0; i < a.size(); ++i) {
+    compare(GatherAccess::Particles(*a[i]),GatherAccess::Particles(*b[i]));
+    EXPECT_TRUE(a[i]->GetBuffer().empty());
+    EXPECT_TRUE(b[i]->GetBuffer().empty());
+  }
+}
+}
+
+TEST(CellClusterGatherTest, MatchesOriginalOrderAcrossWorkersAndChunkBoundaries) {
+  for (unsigned workers : {1U,4U,8U})
+    for (size_t count : {0U,1U,31U,32U,33U,65U,257U})
+      for (int pattern = 0; pattern < 4; ++pattern) {
+        SCOPED_TRACE(workers);
+        SCOPED_TRACE(count);
+        SCOPED_TRACE(pattern);
+        mc3d::CellCluster actual(workers,123), expected(1,123);
+        InitializeGatherFixture(actual,count,pattern);
+        InitializeGatherFixture(expected,count,pattern);
+        for (int round = 0; round < 2; ++round) {
+          GatherAccess::Gather(actual);
+          ReferenceGather(expected);
+          CompareGatherState(actual,expected);
+        }
+      }
+}
+
+TEST(CellClusterGatherTest, NeighborLinksPreserveOriginalTraversal) {
+  for (int topology = 0; topology < 4; ++topology) {
+    SCOPED_TRACE(topology);
+    mc3d::CellCluster actual(4,123), expected(1,123);
+    for (auto* cluster : {&actual,&expected}) {
+      InitializeGatherFixture(*cluster,65,2);
+      const auto& cells = GatherAccess::GetLookup(*cluster);
+      if (topology != 1) cells[0]->AddNeighbor(*cells[1]);
+      if (topology == 1 || topology == 3) cells[1]->AddNeighbor(*cells[0]);
+      if (topology == 2) cells[1]->AddNeighbor(*cells[2]);
+      GatherAccess::MutableParticles(*cells[1]).emplace_back(
+          mc3d::Point(.5,.5,.5),mc3d::Point(99999,0,0));
+    }
+    for (int round = 0; round < 2; ++round) {
+      GatherAccess::Gather(actual);
+      ReferenceGather(expected);
+      CompareGatherState(actual,expected);
+    }
+  }
+}
+
+TEST(CellClusterGatherTest, DetectsNeighborAddedAfterPreviousCollection) {
+  mc3d::CellCluster actual(4,123), expected(1,123);
+  InitializeGatherFixture(actual,65,2);
+  InitializeGatherFixture(expected,65,2);
+  GatherAccess::Gather(actual);
+  ReferenceGather(expected);
+  for (auto* cluster : {&actual,&expected}) {
+    const auto& cells = GatherAccess::GetLookup(*cluster);
+    cells[0]->AddNeighbor(*cells[1]);
+    cells[0]->GetBuffer().emplace_back(mc3d::Point(1.5,.5,.5),mc3d::Point(99,2,3));
+  }
+  GatherAccess::StopPool(actual); // The neighbor path must not submit tasks.
+  EXPECT_NO_THROW(GatherAccess::Gather(actual));
+  ReferenceGather(expected);
+  CompareGatherState(actual,expected);
+}
+
+TEST(CellClusterGatherTest, SubmissionFailurePreservesGlobalBuffer) {
+  mc3d::CellCluster cluster(4,123);
+  InitializeGatherFixture(cluster,65,2);
+  const auto before = GatherAccess::Buffer(cluster);
+  GatherAccess::StopPool(cluster);
+  EXPECT_THROW(GatherAccess::Gather(cluster),std::runtime_error);
+  const auto& after = GatherAccess::Buffer(cluster);
+  ASSERT_EQ(after.size(),before.size());
+  for (size_t i = 0; i < before.size(); ++i) ExpectSameParticle(after[i],before[i]);
 }
