@@ -1,0 +1,56 @@
+name: Cumulative optimization measurement
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      CC: gcc-14
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tooling
+      - uses: actions/checkout@v4
+        with:
+          ref: 99b0d18fc8310c59ddc5ead25760f78fb82750b0
+          path: baseline
+      - uses: actions/checkout@v4
+        with:
+          ref: aa3e43a6036a21de215450fe7ca7bbaae2126a71
+          path: current
+      - name: Record environment
+        run: |
+          mkdir -p results/environment
+          lscpu > results/environment/cpu.txt
+          free -b > results/environment/memory.txt
+          uname -a > results/environment/kernel.txt
+          g++-14 --version > results/environment/compiler.txt
+          git -C baseline rev-parse HEAD > results/environment/baseline-sha.txt
+          git -C current rev-parse HEAD > results/environment/current-sha.txt
+          git -C tooling rev-parse HEAD > results/environment/tooling-sha.txt
+      - name: Test benchmark tooling
+        run: python3 -m unittest discover -s tooling/tools -p 'test_benchmark*.py'
+      - name: Build and test both fixed revisions
+        run: |
+          for variant in baseline current; do
+            cmake -S "$variant" -B "$variant/build" -DCMAKE_BUILD_TYPE=Release
+            cmake --build "$variant/build" -j 4
+            ctest --test-dir "$variant/build" --output-on-failure > "results/environment/$variant-tests.txt"
+            cp "$variant/build/CMakeCache.txt" "results/environment/$variant-CMakeCache.txt"
+            cp "$variant/build/CMakeFiles/mc3d_core.dir/flags.make" "results/environment/$variant-flags.txt"
+            g++-14 -std=c++23 -O3 -I "$variant/src" tooling/tools/benchmark_cell_storage.cpp "$variant/build/libmc3d_core.a" -pthread -o "$variant/build/cell_storage_benchmark"
+          done
+      - name: Empty grid memory and initialization
+        run: python3 tooling/tools/benchmark_cell_storage.py --baseline baseline/build/cell_storage_benchmark --binary current/build/cell_storage_benchmark --out results/memory
+      - name: Small scenarios and diagnostics
+        run: python3 tooling/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/small --threads 1 4 8 --seeds 123 456 789 --repeats 5 --warmups 1 --rss --diagnostics
+      - name: Large scenarios and diagnostics
+        run: python3 tooling/tools/benchmark_solver.py --baseline baseline/build/MC3dSolver --binary current/build/MC3dSolver --out results/large --grid 48 24 16 --particles 120 --threads 1 4 8 --geometries none --seeds 123 456 789 --repeats 5 --warmups 1 --rss --diagnostics
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cumulative-measurements
+          path: results
