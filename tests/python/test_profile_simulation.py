@@ -110,6 +110,34 @@ class Integration(unittest.TestCase):
             if proc.poll() is None:
                 proc.kill(); proc.wait()
 
+    def test_interrupt_stops_descendant_ignoring_sigint(self):
+        ready=Path(self.temp.name)/'ready'
+        survived=Path(self.temp.name)/'survived'
+        child=("import os,signal,time; from pathlib import Path; "
+               "signal.signal(signal.SIGINT,signal.SIG_IGN); "
+               f"Path({str(ready)!r}).write_text(str(os.getpid())); time.sleep(2); "
+               f"Path({str(survived)!r}).write_text('alive'); time.sleep(20)")
+        parent=f"import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',{child!r}]); time.sleep(30)"
+        proc=subprocess.Popen(self.command(parent),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        try:
+            deadline=time.monotonic()+5
+            while not ready.exists() and time.monotonic()<deadline:
+                time.sleep(.02)
+            self.assertTrue(ready.exists())
+            proc.send_signal(signal.SIGINT)
+            _,stderr=proc.communicate(timeout=10)
+            self.assertEqual(proc.returncode,130,stderr)
+            time.sleep(2.1)
+            self.assertFalse(survived.exists())
+        finally:
+            if proc.poll() is None:
+                proc.kill(); proc.wait()
+            if ready.exists():
+                try:
+                    os.kill(int(ready.read_text()),signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+
     def test_start_failure_and_existing_directory(self):
         done=subprocess.run([sys.executable,str(SCRIPT),'--out',str(self.out),'--','/no/such/binary'],capture_output=True,timeout=10)
         self.assertEqual(done.returncode,1)
