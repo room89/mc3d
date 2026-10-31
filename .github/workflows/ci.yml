@@ -33,6 +33,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Test Python diagnostics
+        run: python3 -m unittest discover -s tests/python -v
+
       - name: Verify toolchain
         run: |
           ${{ matrix.cc }} --version
