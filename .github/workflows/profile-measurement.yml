@@ -1,0 +1,45 @@
+name: Profile diagnostics measurement
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Release
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+          cmake --build build -j 4
+      - name: Measure overhead and compare snapshots
+        run: |
+          mkdir results
+          lscpu > results/cpu.txt
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('configs/benchmark_body_check.json').read_text())
+          for n in [20,80]:
+              c['np']=n
+              Path(f'results/np-{n}.json').write_text(json.dumps(c))
+          c=json.loads(Path('configs/example.json').read_text())
+          c.update(ncx=24,ncy=12,ncz=8,np=60)
+          for geometry in ['none','cube','wedge']:
+              c['geometry_type']=geometry
+              Path(f'results/{geometry}.json').write_text(json.dumps(c))
+          PY
+          for geometry in none cube wedge; do
+            python3 tools/benchmark_profile.py --binary build/MC3dSolver --config "results/$geometry.json" --out "results/snapshots-$geometry" --threads 1 --snapshots
+          done
+          for n in 20 80; do
+            python3 tools/benchmark_profile.py --binary build/MC3dSolver --config "results/np-$n.json" --out "results/np-$n" --threads 4
+            if python3 -c "import json,sys; sys.exit(0 if json.load(open('results/np-$n/summary.json'))['overhead_percent']>5 else 1)"; then
+              python3 tools/benchmark_profile.py --binary build/MC3dSolver --config "results/np-$n.json" --out "results/repeat-np-$n" --threads 4 --repeats 10
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: profile-measurements
+          path: results
