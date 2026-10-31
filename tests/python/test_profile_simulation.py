@@ -128,6 +128,7 @@ class Integration(unittest.TestCase):
         (self.out/'samples.jsonl').write_text(''.join(json.dumps(s)+'\n' for s in samples))
         result=p.summarize(self.out,1)
         self.assertEqual(result['incomplete_steps'],[2])
+        self.assertEqual(result['initialization_duration_s'],1.1)
         self.assertEqual(result['initialization_events'][0]['phase'],'init')
         metrics=result['slowest_steps'][0]['metrics']
         self.assertTrue(metrics['sampling_gap'])
@@ -147,6 +148,15 @@ class Integration(unittest.TestCase):
         (self.out/'samples.jsonl').write_text(''.join(json.dumps(e)+'\n' for e in samples))
         result=p.summarize(self.out,1)
         self.assertIsNone(result['steps'][0]['metrics']['counter_deltas']['system.swap_in_bytes'])
+
+    def test_incomplete_step_uses_observation_end(self):
+        self.out.mkdir()
+        (self.out/'events.jsonl').write_text(json.dumps(dict(kind='step', step=1, t=2))+'\n')
+        sample=dict(t=1,process=dict.fromkeys(p.PROCESS_KEYS),system=dict.fromkeys(p.SYSTEM_KEYS))
+        (self.out/'samples.jsonl').write_text(json.dumps(sample)+'\n')
+        result=p.summarize(self.out,1,observation_end=4)
+        self.assertFalse(result['steps'][0]['metrics']['coarse'])
+        self.assertTrue(result['steps'][0]['metrics']['incomplete_coverage'])
 
     def test_signal_exit_code(self):
         done=subprocess.run(self.command('import os,signal; os.kill(os.getpid(),signal.SIGTERM)'),

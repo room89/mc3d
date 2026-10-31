@@ -207,13 +207,15 @@ def records(path):
             yield json.loads(line)
 
 
-def summarize(directory, interval):
+def summarize(directory, interval, observation_end=None):
     samples = list(records(directory/'samples.jsonl'))
     timestamps = [s['t'] for s in samples]
     steps, initial = [], []
     current = None
     for event in records(directory/'events.jsonl'):
         if event['kind'] == 'step':
+            if current is not None and not current['complete']:
+                current['end'] = event['t']
             current = {'step': event['step'], 'start': event['t'], 'complete': False, 'phases': []}
             steps.append(current)
         elif current is None:
@@ -225,7 +227,7 @@ def summarize(directory, interval):
         else:
             current['outgoing_particles'] = event['count']
     for step in steps:
-        end = step.get('end', timestamps[-1] if timestamps else step['start'])
+        end = step.get('end', max(step['start'], observation_end if observation_end is not None else (timestamps[-1] if timestamps else step['start'])))
         lo = max(0, bisect.bisect_right(timestamps, step['start'])-1)
         hi = min(len(samples), bisect.bisect_left(timestamps, end)+1)
         window = samples[lo:hi]
@@ -251,7 +253,8 @@ def summarize(directory, interval):
                            'sampling_gap': any(g > interval*1.5 for g in gaps)}
     durations = sorted(s['duration_s'] for s in steps if s['complete'])
     rss = [s['process']['rss_bytes'] for s in samples if s['process']['rss_bytes'] is not None]
-    result = {'completed_steps': len(durations), 'incomplete_steps': [s['step'] for s in steps if not s['complete']],
+    result = {'initialization_duration_s': steps[0]['start'] if steps else None,
+              'completed_steps': len(durations), 'incomplete_steps': [s['step'] for s in steps if not s['complete']],
               'median_step_s': statistics.median(durations) if durations else None,
               'p95_step_s': durations[math.ceil(.95*len(durations))-1] if durations else None,
               'max_step_s': max(durations, default=None), 'max_observed_rss_bytes': max(rss, default=None),
@@ -261,6 +264,7 @@ def summarize(directory, interval):
               'Log receipt times include pipe delivery delay. System swap is not process swap; correlation does not prove causality.'}
     (directory/'summary.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
     lines = ['# MC3D memory diagnostics', '', result['limitations'], '',
+             f"Time before first step (including process startup): {result['initialization_duration_s']} s",
              f"Completed steps: {len(durations)}; incomplete: {result['incomplete_steps']}",
              f"Step seconds: median={result['median_step_s']}, p95={result['p95_step_s']}, max={result['max_step_s']}",
              f"Maximum observed RSS bytes: {result['max_observed_rss_bytes']}", '',
@@ -312,6 +316,7 @@ def run(command, directory, interval):
             try:
                 process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, start_new_session=True)
                 metadata['pid'] = process.pid
+                (directory/'metadata.json').write_text(json.dumps(metadata, indent=2)+'\n')
                 reader = threading.Thread(target=read_output, args=(process.stdout, raw, events, start, errors), daemon=True)
                 reader.start()
                 sampler = Sampler(process.pid)
@@ -363,7 +368,7 @@ def run(command, directory, interval):
                     metadata['child_returncode'] = process.poll()
                     if not reader or not reader.is_alive():
                         process.stdout.close()
-        summarize(directory, interval)
+        summarize(directory, interval, time.monotonic()-start)
     except Exception as exc:
         metadata['collector_error'] = str(exc)
         status = 1
