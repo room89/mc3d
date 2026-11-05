@@ -24,12 +24,14 @@ class FreeBoundary : public Boundary {
   unsigned int AccumulateInflow(InflowCell& entry, double dt,
                                unsigned int minimum_batch);
   unsigned int np;
+  double density_ratio_ = 1;
   double Vn;
   double T;
   double S;
   Point V;
 
  public:
+  void SetReservoir(double ratio, double temperature, Point velocity);
   double TransportTimeLimit() const override;
   void BindCells(std::deque<Cell>& cluster_cells) override;
   virtual void SetNp(unsigned int np);

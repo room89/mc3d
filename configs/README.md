@@ -248,3 +248,31 @@ Completed runs can be checked again using `python3 tools/check_physics.py
 Reuse requires identical configuration, binary hash and valid output hashes.
 An interrupted solver run is never silently restarted. Keep the original files
 for diagnosis and use a new directory for a deliberate rerun.
+
+### Planar normal shock (stage 9a)
+
+`make check-shock SHOCK_MODE=quick OUTPUT_DIR=output/shock-quick LOAD_MODE=balanced`
+runs three engineering checks. `SHOCK_MODE=pilot` uses 400 axial cells,
+80 upstream particles per cell and two upstream transit times. Full shock
+configurations are generated outside `configs/checks`; their parameters are
+specified by `tools/normal_shock.py`. Use a fresh output directory.
+
+These are engineering conditions (M=3.8, T1=300 K, n1=1e20/m³), not an
+Alsmeyer experimental reconstruction. The length is 40 upstream VHS collision
+mean free paths; this is not claimed to be Alsmeyer's length convention.
+The stage-3 argon VHS parameters remain fixed. No convergence claim is made.
+
+JSON `reservoirs` maps face names x_neg/x_pos/y_neg/y_pos/z_neg/z_pos to
+`{density_ratio, temperature, velocity:[ux,uy,uz]}`. Overrides require hyperfree.
+Unspecified faces retain legacy S/alpha/temperature and density ratio 1.
+`initial_step:{x,left,right}` uses the same states and requires an interior
+axial cell face and no body. The upstream reference particle weight remains
+common to both sides; initial particle counts use stochastic rounding and
+velocities use independent Maxwell samples. Legacy initialization is unchanged.
+SI input uses number_density_m3, temperature_k, velocity_m_s and x_m.
+
+Reports contain unshifted/aligned profiles, Pxx/Pyy/Pzz, heat flux and front
+positions for ten windows. Multiple midpoint crossings are ambiguous; missing
+crossings remain missing. Profile alignment translates coordinates only.
+Exit codes: 0 successful checks, 1 failed criterion, 2 incomplete run, 3 solver
+error. Successful balance is not evidence of convergence or experimental agreement.

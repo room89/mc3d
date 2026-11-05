@@ -61,3 +61,7 @@
   j["statistics_enabled"]=c.statistics_enabled;
   j["balance_enabled"]=c.balance_enabled;
   j["statistics_windows"]=c.statistics_windows.empty() && c.end_time>0?std::vector<std::array<double,2>>{{0,c.end_time}}:c.statistics_windows;
+
+  auto gas_json=[](const GasState& s) { return nlohmann::json{{"density_ratio",s.density_ratio},{"temperature",s.temperature},{"velocity",s.velocity}}; };
+  for(size_t i=0;i<6;++i) if(c.reservoirs[i]) j["reservoirs"][ReservoirFaces[i]]=gas_json(*c.reservoirs[i]);
+  if(c.initial_step) j["initial_step"]={{"x",c.initial_step->x},{"left",gas_json(c.initial_step->left)},{"right",gas_json(c.initial_step->right)}};

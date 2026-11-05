@@ -244,6 +244,31 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.statistics_enabled = ParseBool(prepared_value, raw_key, ctx);
   } else if (key == "balance_enabled") {
     config.balance_enabled = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "reservoirs" || key == "initial_step") {
+    auto j = nlohmann::json::parse(prepared_value);
+    auto state = [](const nlohmann::json& v) {
+      if (!v.is_object() || v.size()!=3 || !v.contains("density_ratio") || !v.contains("temperature") || !v.contains("velocity"))
+        throw std::invalid_argument("Gas state requires density_ratio, temperature, velocity");
+      GasState s;
+      s.density_ratio=v.at("density_ratio").get<double>();
+      s.temperature=v.at("temperature").get<double>();
+      if(!v.at("velocity").is_array() || v.at("velocity").size()!=3) throw std::invalid_argument("velocity requires three components");
+      s.velocity=v.at("velocity").get<std::array<double,3>>();
+      if (!(s.density_ratio>0) || !std::isfinite(s.density_ratio) || !(s.temperature>0) || !std::isfinite(s.temperature)) throw std::invalid_argument("Invalid gas density or temperature");
+      for(double u:s.velocity) if(!std::isfinite(u)) throw std::invalid_argument("Invalid velocity");
+      return s;
+    };
+    if(!j.is_object()) throw std::invalid_argument("Expected object");
+    if(key=="initial_step") {
+      if(j.size()!=3) throw std::invalid_argument("initial_step requires x,left,right");
+      config.initial_step=InitialStep{j.at("x").get<double>(),state(j.at("left")),state(j.at("right"))};
+    } else {
+      for(auto it=j.begin();it!=j.end();++it) {
+        bool found=false;
+        for(size_t i=0;i<6;++i) if(it.key()==ReservoirFaces[i]) {config.reservoirs[i]=state(it.value());found=true;}
+        if(!found) throw std::invalid_argument("Unknown reservoir face");
+      }
+    }
   } else if (key == "statistics_windows") {
     const auto j = nlohmann::json::parse(prepared_value);
     if (!j.is_array())
@@ -661,6 +686,19 @@ class JsonReader {
     const char ch = data_[pos_];
     if (ch == '"') {
       return ParseString();
+    }
+    if (ch == '{') {
+      const auto start=pos_;
+      int depth=0; bool quoted=false, escaped=false;
+      do {
+        char c=data_[pos_++];
+        if(quoted) { if(escaped) escaped=false; else if(c=='\\') escaped=true; else if(c=='"') quoted=false; }
+        else if(c=='"') quoted=true;
+        else if(c=='{') ++depth;
+        else if(c=='}') --depth;
+      } while(pos_<data_.size() && depth>0);
+      if(depth) Throw("unterminated object");
+      return data_.substr(start,pos_-start);
     }
     if (ch == '[') {
       const auto start = pos_;

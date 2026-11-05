@@ -107,3 +107,19 @@ TEST(HyperFreeSamplingTest, NewArrivalsCannotTunnelThroughNearbyBody) {
   }
   EXPECT_GT(reflected, 900);
 }
+
+TEST(HyperFreeSamplingTest, ReservoirDensityScalesFractionalFlux) {
+  for(double ratio:{.37,1.,3.7}) for(double ux:{-1.,2.}) {
+    std::deque<mc3d::Cell> cells;
+    cells.emplace_back(std::make_shared<utils::RandomStream>(123));
+    cells.front().SetApex({0,0,0});cells.front().SetSize(1,1,1);
+    mc3d::HyperFreeBoundary boundary({0,0,0},{-1,0,0},20,0,1);
+    boundary.SetReservoir(ratio,2,{ux,-3,1});boundary.BindCells(cells);
+    size_t count=0;
+    for(int i=0;i<1000;++i) count+=boundary.GenerateInflow(.001).transit.size();
+    double expected=20*ratio*utils::IncomingFlux(ux,2);
+    EXPECT_LE(double(count),expected+1e-10);
+    EXPECT_GT(double(count),expected-1-1e-10);
+    EXPECT_NEAR(boundary.TransportTimeLimit(),1/(3+2.),1e-14);
+  }
+}
