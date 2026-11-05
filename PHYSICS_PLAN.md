@@ -619,6 +619,8 @@ HS-нормировке это `Kn·Lx`. Сохранение одного `Kn` 
 | 2026-11-05 | Этап 4 реализован в PR #42, локальные проверки пройдены, CI ожидается; добавлены пять проверочных конфигураций | Согласованный план и дополнительная просьба пользователя о configs |
 | 2026-11-05 | PR #42 слит (`0edd1bb`), CI финальной ревизии успешен; этап 4 завершён, следующий — этап 5 | Проверка слияния и результатов CI |
 
+| 2026-11-05 | Этап 5 реализован в PR #44, ожидает CI и слияния; этап 6 не начат | 167 CTest, 23 Python, повторные и мутационные проверки, make run куба/клина |
+
 ## Источники
 
 - [Alsmeyer: Density profiles in argon and nitrogen shock waves measured by
@@ -638,5 +640,3 @@ HS-нормировке это `Kn·Lx`. Сохранение одного `Kn` 
 [sparta-surface]: https://sparta.github.io/doc/surf_collide.html
 [sparta-inflow]: https://sparta.github.io/doc/fix_emit_face.html
 [nasa-shock]: https://www.grc.nasa.gov/WWW/BGH/oblique.html
-
-| 2026-11-05 | Этап 5 реализован в PR #44, ожидает CI и слияния; этап 6 не начат | 167 CTest, 23 Python, повторные и мутационные проверки, make run куба/клина |
