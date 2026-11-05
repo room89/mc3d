@@ -147,6 +147,7 @@ class Cell {
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();
+  double CollisionFrequencyBound() const;
   void AddNeighbor(Cell& neighbor);
   friend ostream& operator<<(ostream& o, const Cell& c);
   friend class CellCollisionTestAccess;

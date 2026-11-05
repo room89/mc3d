@@ -180,6 +180,8 @@ StepResult CellCluster::TimeStep() {
     SyncDt();
   }
 
+  if (t < t_end && (!(dt > 0) || !std::isfinite(dt) || t + dt == t))
+    throw std::runtime_error("Time step cannot advance simulation time");
   LOG_INFO() << "dt = " << dt << " t = " << t;
 
   //  auto cell_iter = cells.begin();
@@ -606,15 +608,25 @@ void CellCluster::CalculateCellTimeSteps() {
 void CellCluster::CalculateDt() {
   CalculateCellTimeSteps();
   // Read stored local results in the original order; no extra per-cell buffer.
-  dt = 1000000.;
+  dt = std::numeric_limits<double>::infinity();
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
     double dtt = cell.PeekDt();
     if (dtt < dt) dt = dtt;
   }
-  dt *= Cu;
-  if (t + dt > t_end) dt = t_end - t;
+  for (const auto& boundary : boundary_cond_outer)
+    dt = std::min(dt, boundary->TransportTimeLimit());
+  transport_dt = dt * Cu;
+  collision_dt = std::numeric_limits<double>::infinity();
+  if (collision_courant > 0) {
+    for (const auto& cell : cells) {
+      const double rate = cell.CollisionFrequencyBound();
+      if (rate > 0) collision_dt = std::min(collision_dt, collision_courant / rate);
+    }
+  }
+  dt = std::min({transport_dt, collision_dt, std::max(0., t_end - t)});
+
 }
 
 void CellCluster::SetDtInCells(double dt) {

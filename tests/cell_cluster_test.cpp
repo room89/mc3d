@@ -1090,7 +1090,7 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
         std::vector<double> local_dt;
         std::vector<mc3d::CellMoments> moments;
         std::vector<utils::Pcg32> engines;
-        double expected = 1000000.;
+        double expected = std::numeric_limits<double>::infinity();
         for (auto* cell : cells) {
           engines.push_back(Access::Engine(*cell));
           const auto local = cell->CalculateDt();
@@ -1103,6 +1103,10 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
           cell->SetDt(-1);
         }
         expected *= cu;
+        for (auto* cell : cells) {
+          const double rate = cell->CollisionFrequencyBound();
+          if (rate > 0) expected = std::min(expected, cluster.collision_courant/rate);
+        }
         if (t + expected > end) expected = end - t;
         cluster.CalculateDt();
         EXPECT_EQ(Access::GetDt(cluster),expected);

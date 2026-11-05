@@ -34,6 +34,8 @@ struct SimulationConfig {
 
   double Kn = 0.05;
   double Cu = 0.7;
+  double collision_courant = 0.1;
+  bool resolution_diagnostics = true;
   double temperature = 1.0;
   double wall_temperature = 1.0;
   std::optional<double> wall_heat_capacity;

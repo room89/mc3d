@@ -30,6 +30,7 @@ class FreeBoundary : public Boundary {
   Point V;
 
  public:
+  double TransportTimeLimit() const override;
   void BindCells(std::deque<Cell>& cluster_cells) override;
   virtual void SetNp(unsigned int np);
   BoundaryInflow GenerateInflow(double dt) override;

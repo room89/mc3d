@@ -33,6 +33,7 @@ int Run(int argc, char* argv[]) {
   mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
   cluster.collision_parameters = config.collisions;
+  cluster.collision_courant = config.collision_courant;
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 

@@ -36,6 +36,9 @@ struct StepResult {
 class CellCluster {
  public:
   CollisionParameters collision_parameters;
+  double collision_courant = 0.1;
+  double transport_dt = std::numeric_limits<double>::infinity();
+  double collision_dt = std::numeric_limits<double>::infinity();
   inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
   friend class SnapshotWriter;

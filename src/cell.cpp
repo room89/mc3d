@@ -290,11 +290,31 @@ void Cell::RefreshMoments() {
   T = moments.temperature;
 }
 
+double Cell::CollisionFrequencyBound() const {
+  ValidateGasPopulation();
+  const auto n = particles.size();
+  if (n < 2 || collision_parameters.kind == CollisionKind::None) return 0;
+  const auto mean = ComputeMoments().velocity;
+  long double sum = 0;
+  for (const auto& particle : particles) {
+    const auto c = particle.velocity - mean;
+    sum += static_cast<long double>(c.x)*c.x + static_cast<long double>(c.y)*c.y + static_cast<long double>(c.z)*c.z;
+  }
+  const double g = std::sqrt(2 * sum / (n - 1));
+  const double denominator = std::sqrt(2.) * L * Kn * reference_particle_count_ * (volume_ / GetSize().Volume());
+  if (!(denominator > 0) || !std::isfinite(denominator))
+    throw std::runtime_error("Invalid collision normalization for time step");
+  const double rate = (n - 1) * collision_parameters.Rate(g) / denominator;
+  if (!std::isfinite(rate) || rate < 0)
+    throw std::runtime_error("Invalid collision frequency for time step");
+  return rate;
+}
+
 double Cell::CalculateDt() {
   ValidateGasPopulation();
   if (volume_ == 0) return dt = std::numeric_limits<double>::infinity();
   RefreshMoments();
-  dt = 1000000;
+  dt = std::numeric_limits<double>::infinity();
   double c = sqrt(2 * T);
   double dtt = min(lx / (fabs(velocity.x) + c), ly / (fabs(velocity.y) + c));
   dtt = min(dtt, lz / (fabs(velocity.z) + c));

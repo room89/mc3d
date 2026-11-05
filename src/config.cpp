@@ -232,6 +232,12 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.Lz = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "kn") {
     config.Kn = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "collision_courant") {
+    config.collision_courant = ParseDouble(prepared_value, raw_key, ctx);
+    if (!std::isfinite(config.collision_courant) || config.collision_courant < 0 || config.collision_courant > 1)
+      throw std::invalid_argument("collision_courant must be in [0,1]");
+  } else if (key == "resolution_diagnostics") {
+    config.resolution_diagnostics = ParseBool(prepared_value, raw_key, ctx);
   } else if (key == "cu") {
     config.Cu = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature" || key == "t") {
