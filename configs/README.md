@@ -7,6 +7,8 @@ make run CONFIG=configs/checks/hs_low_population.json OUTPUT_DIR=output/check-hs
 make run CONFIG=configs/checks/vhs_hs_limit.json OUTPUT_DIR=output/check-vhs-hs LOAD_MODE=balanced
 make run CONFIG=configs/checks/vhs_argon_equilibrium.json OUTPUT_DIR=output/check-argon LOAD_MODE=balanced
 make run CONFIG=configs/checks/none_cube_heating.json OUTPUT_DIR=output/check-wall LOAD_MODE=balanced
+make run CONFIG=configs/checks/cut_cube.json OUTPUT_DIR=output/check-cut-cube LOAD_MODE=balanced
+make run CONFIG=configs/checks/cut_wedge.json OUTPUT_DIR=output/check-cut-wedge LOAD_MODE=balanced
 ```
 
 Каждый каталог должен быть новым или пустым. Все случаи используют seed 123
@@ -19,14 +21,16 @@ make run CONFIG=configs/checks/none_cube_heating.json OUTPUT_DIR=output/check-wa
 | `checks/hs_low_population.json` | HS с двумя начальными частицами на ячейку, периодическая область |
 | `checks/vhs_hs_limit.json` | Предел VHS при ω=0,5; физические файлы должны совпасть с HS побайтово |
 | `checks/vhs_argon_equilibrium.json` | Короткий равновесный VHS-запуск с профилем аргона и 20 частицами на ячейку |
+| `checks/cut_cube.json` | Смещённый куб: газовые, пересечённые и твёрдые ячейки, сумма Vsolid = 0,091125 |
+| `checks/cut_wedge.json` | Смещённый клин: сумма Vsolid = 0,44 × 0,6² × sin(0,4) |
 | `checks/none_cube_heating.json` | Полёт без межмолекулярных столкновений, нагрузки на куб и изменение температуры стенки |
 
-В последнем случае также появляются `body_loads.csv` и
+В случае `none_cube_heating` также появляются `body_loads.csv` и
 `final.dat.surface.csv`. Проверка равновесия и частот с надёжной статистикой
 выполняется тестами, а не оценкой одного короткого снимка:
 
 ```bash
-ctest --test-dir build --output-on-failure -R 'HsScatteringTest|CollisionFrequencyTest|LowPopulationCellTest|VhsTest'
+ctest --test-dir build --output-on-failure -R 'CellVolumeTest|HsScatteringTest|CollisionFrequencyTest|LowPopulationCellTest|VhsTest'
 ctest --test-dir build --output-on-failure -R 'RunManifestIntegration|ConfigExamplesIntegration'
 ```
 
@@ -63,8 +67,7 @@ python3 tools/replay_run.py output/check-si/manifest.json --output-dir output/ch
 500 м/с в области 1 см × 1 см × 1 см. Куб имеет размер 2 мм, время расчёта
 20 мкс; включены теплоёмкость стенки и коэффициенты силы. Это короткая
 проверка полного пути SI → расчёт → паспорт → повтор, не установившийся
-аэродинамический эталон. Точность газовых объёмов пересечённых ячеек ещё
-предстоит проверить на этапе 5.
+аэродинамический эталон. Газовые объёмы куба и клина проверяются аналитическими тестами этапа 5.
 
 Таблица `output/prepared-argon/units.json` содержит множители перевода
 результатов в SI; её копия также включена в паспорт. `ro` умножается на
@@ -80,4 +83,25 @@ python3 tools/replay_run.py output/check-si/manifest.json --output-dir output/ch
 
 `argon/argon_vhs.json` — набор параметров газа, а не полный проверочный
 сценарий. `argon_vhs_report.json` — отчёт аппроксимации, не вход решателя.
-STL в SI требует поля `file_unit_m`: размер единицы координат файла в метрах.
+Сейчас разрешены только отсутствие тела, встроенный куб и встроенный клин.
+STL, цилиндр и пирамида отклоняются, в том числе при `collision_model=none`.
+Тело должно лежать строго внутри области; касание внешней границы также
+отклоняется. Допустимы перенос, положительный масштаб и дробление сетки.
+
+## Проверка газовых объёмов
+
+Во всех запусках `cell_geometry.csv` содержит геометрию ячеек в порядке снимка:
+`index;x;y;z;dx;dy;dz;region;Vcell;Vgas;Vsolid;gas_fraction`.
+`region` принимает значения `gas`, `cut`, `solid`. Объёмы заданы в единицах
+решателя; для SI умножайте их на куб масштаба длины из `units.json`.
+Паспорт содержит метод `convex_clip_v1`, числа ячеек каждого класса,
+суммарные объёмы и SHA-256 таблицы. Для двух новых конфигураций ожидаются
+`Vcell` в сумме 1, относительная ошибка суммы `Vsolid` не более 10⁻¹⁰,
+нулевые `N` и `ro` в твёрдых ячейках и конечные значения во всех снимках,
+включая `data.dat` и `final.net`.
+
+Инициализация сохраняет вес модельной частицы: число частиц в пересечённой
+ячейке случайно и в среднем равно `N0 × Vgas/Vcell`; оно не перенормирует N0.
+Одиночный снимок с четырьмя частицами на полную ячейку не является проверкой
+сходимости или локального равновесия. Эти конфигурации проверяют интеграцию
+геометрии, нормировки и вывода; статистику частот проверяет `CellVolumeTest`.

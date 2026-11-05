@@ -76,6 +76,15 @@ class CellClusterTestAccess {
   static std::size_t Candidates(const CellCluster& c) { return c.body_check_cells_.size(); }
   static bool Cached(const CellCluster& c) { return c.body_check_bounds_.has_value(); }
   static void ClearCells(CellCluster& c) { c.cells.clear(); c.cell_lookup_.clear(); }
+  // Fault injection for the worker-draining test only: synthetic opposing walls
+  // exercise the reflection limit, not supported-volume initialization.
+  static void FaultBoundary(CellCluster& c, std::unique_ptr<Geometry> body) {
+    c.body_ = std::move(body);
+    c.body_->PrepareQueries();
+    for (auto& cell : c.cells)
+      cell.SetInnerBoundary(
+          InnerBoundary(*c.body_, cell.GetCenter(), cell.GetSize().Mod()));
+  }
   static Geometry* Body(CellCluster& c) { return c.body_.get(); }
   static void BodyCells(CellCluster& c, std::unique_ptr<Geometry> body, int n) {
     c.body_ = std::move(body);
@@ -803,7 +812,9 @@ TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
   cluster.SetSize(2.0001, 100, 100);
   cluster.SetEndTime(1);
   runner.SetSnapshotInterval(10);
-  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1, std::move(body), 0, 0, 1));
+  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  mc3d::CellClusterTestAccess::FaultBoundary(cluster, std::move(body));
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   mc3d::Particle left({5e-5, -0.1, 0}, {1, 0, 0});
   mc3d::Particle right({5e-5, 0.1, 0}, {1, 0, 0});

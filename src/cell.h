@@ -41,6 +41,7 @@ struct CellMoments {
 class Cell {
  private:
   friend class CellCluster;
+  friend class CellVolumeTestAccess;
   friend class CellClusterTestAccess;
   // Only after CalculateDt(), with unchanged particles and stored moments.
   // Setting the common dt is allowed; no cache is retained across steps.
@@ -74,6 +75,7 @@ class Cell {
   Point velocity;
   Point mass_center;
   double volume_;
+  bool geometry_initialized_ = false;
   double Kn_l;  // локальый кнутсен
   double Kn;
   double L;   // характерный размер
@@ -138,6 +140,7 @@ class Cell {
   double GetDt();
   double PeekDt() const;
   double GetVolume() const;
+  void ValidateGasPopulation() const;
   Point GetParticleMassCenter();
   double GetCharacteristicLength();
   bool GetBodyMark();

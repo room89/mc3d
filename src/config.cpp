@@ -839,6 +839,25 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   }
 
   config.collisions.Validate();
+  if (!config.geometry_file.empty() ||
+      (config.geometry_type != "none" && config.geometry_type != "cube" &&
+       config.geometry_type != "wedge"))
+    throw std::invalid_argument(
+        "Gas volume supports only built-in cube and wedge; STL, cylinder and "
+        "pyramid are unsupported");
+  auto positive = [](double x) { return x > 0 && std::isfinite(x); };
+  if (config.geometry_type == "cube" &&
+      !(positive(config.geometry_cube_width) &&
+        positive(config.geometry_cube_length) &&
+        positive(config.geometry_cube_height)))
+    throw std::invalid_argument("Cube dimensions must be finite and positive");
+  if (config.geometry_type == "wedge" &&
+      !(positive(config.geometry_wedge_width) &&
+        positive(config.geometry_wedge_length) &&
+        positive(config.geometry_wedge_alpha) &&
+        config.geometry_wedge_alpha < std::acos(-1.) / 2))
+    throw std::invalid_argument(
+        "Wedge requires positive dimensions and angle in (0,pi/2)");
   return config;
 }
 

@@ -29,10 +29,14 @@ class UnitsTest(unittest.TestCase):
             with self.subTest(field=field),self.assertRaises((ValueError,KeyError)):prepare(d)
     def test_geometry(self):
         for kind,params in [('none',{}),('cube',dict(x_m=0,width_m=.001,length_m=.001,height_m=.001)),('wedge',dict(x_m=0,width_m=.001,length_m=.001)),('pyramid',dict(x_m=0,width_m=.001,length_m=.001,height_m=.001)),('cylinder',dict(x_m=0,radius_m=.001,length_m=.001)),('stl',dict(file='body.stl',file_unit_m=.001))]:
-            d=self.case();d['geometry']={'type':kind,**params};c,_=prepare(d)
+            d=self.case();d['geometry']={'type':kind,**params}
+            if kind in ('stl','cylinder','pyramid'):
+                with self.assertRaises(ValueError):prepare(d)
+                continue
+            c,_=prepare(d)
             self.assertIn('geometry_type',c)
         d['geometry']={'type':'stl','file':'body.stl'}
-        with self.assertRaises(KeyError):prepare(d)
+        with self.assertRaises(ValueError):prepare(d)
     def test_free_molecular_force_and_wall_energy_scales(self):
         # A cold incident beam on a stationary absorbing plane transfers m*U
         # per molecule and n*U*A molecules per second.

@@ -38,6 +38,7 @@ void Cell::SetSize(double lx, double ly, double lz) {
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
   volume_ = std::abs(lx * ly * lz);
+  if (geometry_initialized_) CalculateVolume();
 }
 
 void Cell::SetSize(Point dl) {
@@ -48,15 +49,28 @@ void Cell::SetSize(Point dl) {
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
   volume_ = std::abs(lx * ly * lz);
+  if (geometry_initialized_) CalculateVolume();
 }
 
-void Cell::SetApex(Point a) { apex = a; }
+void Cell::SetApex(Point a) {
+  apex = a;
+  if (geometry_initialized_) CalculateVolume();
+}
 
 bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   // Keep the reservoir normalization, not the fluctuating current population.
   // Empty standalone cells retain the explicit/default normalization.
   if (N > 0) SetReferenceParticleCount(static_cast<double>(N));
-  this->GenerateRandom(N);
+  if (bbody)
+    body_boundary.SetGeometry(*bbody);
+  else
+    body_boundary.ClearGeometry();
+  geometry_initialized_ = true;
+  CalculateVolume();
+  if (volume_ > 0)
+    this->GenerateRandom(N);
+  else
+    particles.clear();
 
   dt = 100000;
   RefreshMoments();
@@ -72,9 +86,6 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   if (bbody) {
     body_boundary.SetGeometry(*bbody);
     body_mark = body_boundary.AddPolygon(*bbody, GetCenter(), L);
-    if (body_mark) {
-      CalculateVolume();
-    }
   } else {
     body_mark = false;
   }
@@ -115,12 +126,14 @@ void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperatu
 }
 
 void Cell::Collisions() {
+  ValidateGasPopulation();
   if (particles.size() < 2 || dt <= 0) return;
   RefreshMoments();
   CollisionsWithPreparedMoments();
 }
 
 void Cell::CollisionsWithPreparedMoments() {
+  ValidateGasPopulation();
   if (particles.size() < 2 || dt <= 0) return;
   CalculateKn();
   CollisionModel::ApplyWithStats(particles, velocity, L, Kn_l, dt, Random(), collision_parameters);
@@ -245,6 +258,7 @@ void Cell::SetReferenceParticleCount(double count) {
 }
 
 double Cell::CalculateKn() {
+  ValidateGasPopulation();
   if (particles.empty()) return Kn_l = std::numeric_limits<double>::infinity();
   // n/n0 = N / (N0 * Vgas/Vcell); N0 includes the model-particle weight.
   Kn_l = Kn * reference_particle_count_ * GetVolume() /
@@ -277,6 +291,8 @@ void Cell::RefreshMoments() {
 }
 
 double Cell::CalculateDt() {
+  ValidateGasPopulation();
+  if (volume_ == 0) return dt = std::numeric_limits<double>::infinity();
   RefreshMoments();
   dt = 1000000;
   double c = sqrt(2 * T);
@@ -375,18 +391,24 @@ std::deque<std::unique_ptr<Cell>> Cell::Fragment(
 void Cell::SetInnerBoundary(InnerBoundary bound) { body_boundary = bound; }
 
 double Cell::CalculateVolume() {
-  volume_ = body_boundary.CalcCellVolume(apex, GetSize(), Random(), &mass_center);
-  if (volume_ < 0) {
-    return volume_ = GetSize().Volume();
-  }
-  return volume_;
-}
-
-double Cell::GetVolume() const {
-  if (volume_ > 0.0) {
+  auto* geometry = body_boundary.GetGeometryPtr();
+  if (!geometry) {
+    volume_ = GetSize().Volume();
+    mass_center = GetCenter();
     return volume_;
   }
-  return std::abs(lx * ly * lz);
+  const auto result = geometry->GasVolume(apex, GetSize());
+  volume_ = result.gas;
+  mass_center = result.gas_center.value_or(GetCenter());
+  return volume_;
+}
+double Cell::GetVolume() const { return volume_; }
+void Cell::ValidateGasPopulation() const {
+  if (volume_ == 0 && (!particles.empty() || !particle_buffer.empty()))
+    throw std::runtime_error(
+        "Particles in fully solid cell at (" + std::to_string(apex.x) + "," +
+        std::to_string(apex.y) + "," + std::to_string(apex.z) +
+        "): N=" + std::to_string(particles.size() + particle_buffer.size()));
 }
 
 bool Cell::GetBodyMark() { return body_mark; }
@@ -403,6 +425,7 @@ Point Cell::GetParticleMassCenter() {
 }
 
 void Cell::CleanInnerParticles(const Geometry& body) {
+  ValidateGasPopulation();
   if (particles.size() < 100) {
     Point ad = Point(0, 0, 0);
   }

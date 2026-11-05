@@ -40,6 +40,38 @@ void AppendDouble(std::string& out, double value) {
 
 }  // namespace
 
+CellVolumeSummary SnapshotWriter::WriteCellGeometry() {
+  CellVolumeSummary summary;
+  std::ofstream out("cell_geometry.csv");
+  out << std::setprecision(17);
+  out << "index;x;y;z;dx;dy;dz;region;Vcell;Vgas;Vsolid;gas_fraction\n";
+  size_t index = 0;
+  long double full = 0, gas = 0, solid = 0;
+  for (const auto& cell : cluster_.cells) {
+    auto a = cell.GetApex(), s = cell.GetSize();
+    auto v = cluster_.body_ ? cluster_.body_->GasVolume(a, s)
+                            : CellVolume{s.Volume(), s.Volume(), 0,
+                                         CellRegion::Gas, a + s / 2};
+    if (std::abs(v.gas - cell.GetVolume()) > 1e-12 * v.full)
+      throw std::runtime_error("Stale cell gas volume");
+    ++summary.counts[static_cast<size_t>(v.region)];
+    full += v.full;
+    gas += v.gas;
+    solid += v.solid;
+    const char* names[] = {"gas", "cut", "solid"};
+    out << index++ << ';' << a.x << ';' << a.y << ';' << a.z << ';' << s.x
+        << ';' << s.y << ';' << s.z << ';'
+        << names[static_cast<size_t>(v.region)] << ';' << v.full << ';' << v.gas
+        << ';' << v.solid << ';' << v.gas / v.full << '\n';
+  }
+  out.close();
+  SimulationRunner::RequireWrite(bool(out));
+  summary.full = full;
+  summary.gas = gas;
+  summary.solid = solid;
+  return summary;
+}
+
 void SnapshotWriter::SetBinaryOutput(bool enabled) { binary_output_ = enabled; }
 
 bool SnapshotWriter::WriteFile(const std::string& file_name) {
@@ -62,10 +94,14 @@ bool SnapshotWriter::WriteFile() {
       !cluster_.body_->WriteSurfaceSnapshot("data.dat.surface.csv", cluster_.t)) return false;
   std::ofstream file1("data.dat");
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     auto ap = cell.GetCenter();
 
     file1 << ap << "\t"
-          << double(cell.GetParticleCount()) / (cell.GetVolume() * cluster_.density)
+          << (cell.GetVolume() > 0 && cluster_.density > 0
+                  ? double(cell.GetParticleCount()) /
+                        (cell.GetVolume() * cluster_.density)
+                  : 0.0)
           << "\t" << cell.ComputeMoments().temperature << '\n';
   }
   file1.close();
@@ -79,6 +115,7 @@ bool SnapshotWriter::WriteTextSnapshot(std::ofstream& file) {
   buffer.append("x;y;z;N;ro;T;vx;vy;vz;E\n");
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto center = cell.GetCenter();
     const auto moments = cell.ComputeMoments();
     const auto velocity = moments.velocity;
@@ -135,6 +172,7 @@ bool SnapshotWriter::WriteBinarySnapshot(std::ofstream& file) {
   }
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto center = cell.GetCenter();
     const auto moments = cell.ComputeMoments();
     const auto velocity = moments.velocity;
@@ -174,6 +212,7 @@ bool SnapshotWriter::WriteSpeedFile(const char* file_name) {
   std::ofstream file1(file_name);
   Point ap;
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     ap = cell.GetCenter();
     file1 << ap << cell.ComputeMoments().velocity << '\n';
   }
@@ -185,6 +224,7 @@ bool SnapshotWriter::WriteSpeedFile() {
   std::ofstream file1("speed.dat");
   Point ap;
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     ap = cell.GetCenter();
 
     file1 << ap << "\t" << cell.ComputeMoments().velocity << '\n';
@@ -227,10 +267,11 @@ bool SnapshotWriter::WriteCellFile(const std::string& init_file) {
   file << "cluster" << std::endl;
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto moments = cell.ComputeMoments();
     Point V = moments.velocity;
     double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * moments.temperature);
-    double alpha = M_PI / 2 - std::atan(V.x / V.y);
+    double alpha = (V.x == 0 && V.y == 0) ? 0 : M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
     }

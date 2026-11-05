@@ -11,6 +11,27 @@
 
 namespace mc3d {
 
+void ValidateSimulationGeometry(const SimulationConfig& c,
+                                const Geometry& body) {
+  if (!c.geometry_file.empty() ||
+      (c.geometry_type != "none" && c.geometry_type != "cube" &&
+       c.geometry_type != "wedge") ||
+      !body.SupportsGasVolume())
+    throw std::invalid_argument(
+        "Gas volume supports only built-in cube and wedge; STL, cylinder and "
+        "pyramid are unsupported");
+  if (!body.PolygonCount()) return;
+  auto [lo, hi] = body.Bounds();
+  Point origin(c.apex_x.value_or(-c.Lx / 2), c.apex_y.value_or(-c.Ly / 2),
+               c.apex_z.value_or(-c.Lz / 2));
+  if (!(lo.x > origin.x && lo.y > origin.y && lo.z > origin.z &&
+        hi.x < origin.x + c.Lx && hi.y < origin.y + c.Ly &&
+        hi.z < origin.z + c.Lz))
+    throw std::invalid_argument(
+        "Body must lie strictly inside domain; clipped inflow faces are not "
+        "supported");
+}
+
 double ReferenceParticleDensity(const SimulationConfig& cfg) {
   const double volume = cfg.Lx * cfg.Ly * cfg.Lz;
   if (!(volume > 0) || !std::isfinite(volume))
