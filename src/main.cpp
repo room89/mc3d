@@ -70,6 +70,7 @@ int Run(int argc, char* argv[]) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile(config.precompute_snapshot));
   }
 
+  runner.SetRuntimeControl(config.runtime_control);
   runner.Compute();
 
   std::cout << "Computation is over." << std::endl;
