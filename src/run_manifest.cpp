@@ -116,6 +116,12 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
   output_ = isolated_ ? fs::absolute(c.output_dir) : original_cwd_;
   if (isolated_ && fs::exists(output_) && !fs::is_empty(output_))
     throw std::runtime_error("Output directory must be empty");
+  for (const auto& name :
+       {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot})
+    if (!name.empty() && (output_ / name).lexically_normal() ==
+                             (output_ / "cell_geometry.csv").lexically_normal())
+      throw std::invalid_argument(
+          "cell_geometry.csv is reserved for static cell volumes");
   if (isolated_)
     for (const auto& name :
          {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot}) {
@@ -248,6 +254,18 @@ void RunManifest::Save() {
   f.close();
   if (!f) throw std::runtime_error("Cannot write manifest");
   fs::rename(temp, directory_ / "manifest.json");
+}
+void RunManifest::CellGeometry(const CellVolumeSummary& summary) {
+  data_["cell_geometry"] = {{"method", "convex_clip_v1"},
+                            {"gas_cells", summary.counts[0]},
+                            {"cut_cells", summary.counts[1]},
+                            {"solid_cells", summary.counts[2]},
+                            {"full_volume", summary.full},
+                            {"gas_volume", summary.gas},
+                            {"solid_volume", summary.solid},
+                            {"file", "cell_geometry.csv"},
+                            {"sha256", Hash(output_ / "cell_geometry.csv")}};
+  Save();
 }
 void RunManifest::GeometryHash(const Geometry& geometry) {
   Json points = Json::array();

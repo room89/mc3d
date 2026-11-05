@@ -11,6 +11,7 @@ nlohmann::json EffectiveConfig(const SimulationConfig& config);
 class RunManifest {
  public:
   RunManifest(SimulationConfig& config, int argc, char** argv);
+  void CellGeometry(const CellVolumeSummary& summary);
   void GeometryHash(const Geometry& geometry);
   void RuntimePolicy(double time, std::size_t step, const std::string& mode,
                      std::size_t workers);

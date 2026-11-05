@@ -2,6 +2,7 @@
 import json
 import csv
 import math
+import hashlib
 from pathlib import Path
 import subprocess
 import sys
@@ -14,7 +15,33 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
         r=subprocess.run([str(binary),'--config',str(config),'--output-dir',str(out)],capture_output=True)
         assert r.returncode==0,(config,r.stderr.decode())
         m=json.loads((out/'manifest.json').read_text());assert m['status']=='completed';manifests[config.stem]=m
+        assert m['cell_geometry']['method']=='convex_clip_v1'
+        assert m['cell_geometry']['sha256']==hashlib.sha256((out/'cell_geometry.csv').read_bytes()).hexdigest()
+        if config.stem.startswith('cut_'):
+            with (out/'cell_geometry.csv').open() as f:volumes=list(csv.DictReader(f,delimiter=';'))
+            expected=.45**3 if config.stem=='cut_cube' else .44*.6**2*math.sin(.4)
+            assert math.isclose(sum(float(r['Vsolid']) for r in volumes),expected,rel_tol=1e-10)
+            assert any(r['region']=='solid' for r in volumes) and any(r['region']=='cut' for r in volumes)
+            for line in (out/'data.dat').read_text().splitlines():
+                assert all(math.isfinite(float(value)) for value in line.replace(',', ' ').split())
+            for line in (out/'final.net').read_text().splitlines():
+                assert all(math.isfinite(float(value)) for value in line.replace(',', ' ').split()[1:])
+            with (out/'final.dat').open() as f:fields=list(csv.DictReader(f,delimiter=';'))
+            for cell,row in zip(volumes,fields):
+                assert all(math.isfinite(float(value)) for value in row.values())
+                if cell['region']=='solid':assert float(row['N'])==0 and float(row['ro'])==0
         assert (out/'initial.dat').is_file() and (out/'final.dat').is_file()
+    # Reject unsupported bodies even when intermolecular collisions are disabled.
+    base=json.loads((repo/'configs/checks/cut_cube.json').read_text())
+    for i,patch in enumerate([
+        {'geometry_type':'cylinder'}, {'geometry_type':'pyramid'},
+        {'geometry_file':'nonexistent.stl'}, {'geometry_cube_x':-.5},
+        {'geometry_scale':-1}, {'geometry_move_x':1},
+        {'final_snapshot':'cell_geometry.csv'},
+    ]):
+        cfg=root/f'invalid-{i}.json';cfg.write_text(json.dumps(base|patch|{'collision_model':'none'}))
+        r=subprocess.run([str(binary),'--config',str(cfg),'--output-dir',str(root/f'invalid-out-{i}')],capture_output=True)
+        assert r.returncode!=0,(patch,r.stdout.decode())
     # Identical HS law, RNG and configuration must produce identical physical data.
     def hashes(m):return {x['path']:x['sha256'] for x in m['outputs'] if x['kind']=='physical'}
     assert hashes(manifests['hs_low_population'])==hashes(manifests['vhs_hs_limit'])

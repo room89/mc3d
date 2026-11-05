@@ -150,8 +150,10 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   // It must not become the total population (nor the population outside a body).
 
   cell_iter = cells.begin();
+  this->N = 0;
   for (auto& cell : cells) {
-    cell.CleanInnerParticles(*body_);
+    if (body_) cell.CleanInnerParticles(*body_);
+    this->N += cell.GetParticleCount();
   }
 
   this->SyncDt();
@@ -246,6 +248,7 @@ StepResult CellCluster::TimeStep() {
     utils::Stopwatch sw("TimeStep::AddParticlesAfterBoundary");
     DistributeParticles(partile_buffer);
   }
+  for (const auto& cell : cells) cell.ValidateGasPopulation();
   if (body_) body_->UpdateSurfaceTemperatures();
   t += dt;
 

@@ -8,6 +8,9 @@
 
 namespace mc3d {
 
+void ValidateSimulationGeometry(const SimulationConfig& config,
+                                const Geometry& body);
+
 double ReferenceParticleDensity(const SimulationConfig& config);
 
 struct BoundaryDescriptor {

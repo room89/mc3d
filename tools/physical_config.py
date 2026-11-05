@@ -71,7 +71,7 @@ def prepare(data):
     geo=data.get('geometry',{'type':'none'})
     kind=geo.get('type','none')
     lengths={'wedge':{'x','width','length'},'cube':{'x','width','length','height'},'pyramid':{'x','width','length','height'},'cylinder':{'x','radius','length'},'none':set(),'stl':set()}
-    if kind not in lengths:raise ValueError('Unknown geometry type')
+    if kind not in ('none','cube','wedge'):raise ValueError('Gas volume currently supports only built-in cube and wedge; STL, cylinder and pyramid are unsupported')
     c['geometry_type']='none' if kind=='stl' else kind
     for k,value in geo.items():
         if k=='type':continue
@@ -95,6 +95,20 @@ def prepare(data):
     else:
         for key in lengths[kind]:
             if key+'_m' not in geo:raise ValueError(f'Missing geometry field: {key}_m')
+    if kind in ('cube','wedge'):
+        x=c[f'geometry_{kind}_x'];length=c[f'geometry_{kind}_length'];width=c[f'geometry_{kind}_width']
+        if kind=='wedge':
+            angle=c.get('geometry_wedge_alpha',math.pi/18)
+            if not 0<angle<math.pi/2:raise ValueError('Wedge angle must be in (0,pi/2)')
+            half_height=length*math.sin(angle)
+        else:half_height=c['geometry_cube_height']/2
+        scale=c.get('geometry_scale',1)
+        low=[x,-half_height,-width/2];high=[x+length,half_height,width/2]
+        for i,axis in enumerate('xyz'):
+            minimum=c.get('apex_'+axis,-c['l'+axis]/2);maximum=minimum+c['l'+axis]
+            move=c.get('geometry_move_'+axis,0)
+            if not minimum<low[i]*scale+move<high[i]*scale+move<maximum:
+                raise ValueError('Body must lie strictly inside domain; clipped inflow faces are unsupported')
     count=c.get('particles_per_cell',50)*c.get('cells_x',20)*c.get('cells_y',20)*c.get('cells_z',3)
     units['molecules_per_model_particle']=n*math.prod(domain)/positive(count,'reference count')
     for key,value in units.items():positive(value,key)

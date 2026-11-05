@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "boundary.h"
+#include "cell_volume.h"
 #include "exception.h"
 #include "poligon.h"
 // #include "inner_boundary.h"
@@ -33,7 +34,9 @@ class Geometry {
   std::deque<std::unique_ptr<Polygon>> poligons;
   std::mutex force_mutex_;
   // Subclasses editing polygon vertices/topology must invalidate before edits.
+  bool supported_volume_ = false;
   void InvalidateQueries() {
+    supported_volume_ = false;
     query_bounds_.reset();
     query_tolerance_.reset();
     query_triangles_.clear();
@@ -62,6 +65,10 @@ class Geometry {
     Polygon* polygon;
     double fraction;
   };
+  CellVolume GasVolume(Point apex, Point size) const;
+  bool SupportsGasVolume() const {
+    return supported_volume_ || PolygonCount() == 0;
+  }
   Geometry();
   Geometry(const char* file_name);
   ~Geometry();

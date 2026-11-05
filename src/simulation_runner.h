@@ -9,6 +9,7 @@ class SnapshotWriter {
  public:
   explicit SnapshotWriter(CellCluster& cluster) : cluster_(cluster) {}
   void SetBinaryOutput(bool enabled);
+  CellVolumeSummary WriteCellGeometry();
   bool WriteFile(const std::string& name);
   bool WriteFile();
   bool WriteSpeedFile(const char* name);

@@ -155,14 +155,20 @@ Point Geometry::MassCenter() {
 }
 
 void Geometry::Move(Point a) {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->Move(a);
   }
 }
 
 void Geometry::Scale(double e) {
+  if (!(e > 0) || !std::isfinite(e))
+    throw std::invalid_argument("Geometry scale must be finite and positive");
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->Scale(e);
   }
@@ -354,7 +360,9 @@ bool Geometry::WriteSurfaceSnapshot(const std::string& path, double time) const 
 }
 
 void Geometry::PrepareQueries() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   query_bounds_ = Bounds();
   query_tolerance_ = SurfaceTolerance();
   std::vector<QueryTriangle> triangles;
@@ -400,7 +408,9 @@ double Geometry::SurfaceTolerance() const {
 
 void Geometry::CreateWedge(double x, double width, double length,
                            double alpha) {
+  const bool empty = poligons.empty();
   InvalidateQueries();
+  supported_volume_ = empty;
   Point vertices[6];
 
   vertices[0].Set(x, 0, -(width / 2));
@@ -454,7 +464,9 @@ void Geometry::CreateWedge(double x, double width, double length,
 }
 
 void Geometry::Fragment(double Lmax) {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   double max_Lmax = 10000.;
   while (max_Lmax > Lmax) {
     max_Lmax = 0;
@@ -530,7 +542,9 @@ double Geometry::DistanceToPoint(Point p) {
 }
 
 void Geometry::CreateCube(double x, double width, double length, double H) {
+  const bool empty = poligons.empty();
   InvalidateQueries();
+  supported_volume_ = empty;
   Point p[8];
   for (int i = 0; i < 4; i++) {
     p[i].x = x;
@@ -634,7 +648,9 @@ void Geometry::CreateCylinder(double x, double radius, double length,
 }
 
 int Geometry::FixPolygons() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   int res = 0;
   for (auto& polygon : poligons) {
     if (polygon->Fix()) res++;
@@ -643,7 +659,9 @@ int Geometry::FixPolygons() {
 }
 
 void Geometry::ReverseNormals() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->normal = polygon->normal * -1.;
   }

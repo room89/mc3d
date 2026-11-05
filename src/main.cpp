@@ -20,6 +20,7 @@ int Run(int argc, char* argv[]) {
   try {
 
   auto geometry = mc3d::BuildGeometry(config);
+  mc3d::ValidateSimulationGeometry(config, *geometry);
   manifest.GeometryHash(*geometry);
 
   const mc3d::Point apex(config.apex_x.value_or(-0.5 * config.Lx),
@@ -41,6 +42,7 @@ int Run(int argc, char* argv[]) {
                      reference_density, config.Kn, config.Cu, std::move(geometry),
                      config.S, config.alpha, config.temperature, config.wall_temperature,
                      config.wall_heat_capacity);
+  manifest.CellGeometry(runner.Writer().WriteCellGeometry());
   if (config.force_reference_area)
     runner.SetForceReference(*config.force_reference_area,
                              config.S * std::sqrt(2 * config.temperature), config.alpha);

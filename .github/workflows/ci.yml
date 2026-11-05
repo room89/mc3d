@@ -70,4 +70,4 @@ jobs:
         run: >
           ctest --test-dir build --output-on-failure
           --repeat until-fail:3
-          -R '^(VhsTest|LowPopulationCellTest|CollisionFrequencyTest|HsScatteringTest|BodyCollisionTest|BodyReviewRegressionTest|CellClusterIntegrationTest)\.'
+          -R '^(CellVolumeTest|VhsTest|LowPopulationCellTest|CollisionFrequencyTest|HsScatteringTest|BodyCollisionTest|BodyReviewRegressionTest|CellClusterIntegrationTest)\.'
