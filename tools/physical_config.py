@@ -83,8 +83,8 @@ def prepare(data):
     if 'statistics_windows_s' in data:
         windows=data['statistics_windows_s']
         if not isinstance(windows,list) or not windows:raise ValueError('statistics_windows_s requires nonempty list')
-        for w in windows:
-            if not isinstance(w,list) or len(w)!=2 or not 0<=w[0]<w[1]<=data['end_time_s']:raise ValueError('Invalid statistics window')
+        for window in windows:
+            if not isinstance(window,list) or len(window)!=2 or not 0<=window[0]<window[1]<=data['end_time_s']:raise ValueError('Invalid statistics window')
         c['statistics_windows']=[[a/time0,b/time0] for a,b in windows]
     if 'apex_m' in data:
         if len(data['apex_m'])!=3:raise ValueError('apex_m requires three coordinates')
