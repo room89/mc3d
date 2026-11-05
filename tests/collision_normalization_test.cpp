@@ -271,9 +271,10 @@ TEST(CellPreparedMomentsTest, PublicCalculateKeepsVirtualCollisionDispatch) {
 }
 
 TEST(LowPopulationCellTest, BothPathsMatchKernelAndActuallyCollide) {
- for(int count:{2,3,4,5,6}) for(bool prepared:{false,true}) {
+ for(double omega:{.5,.75,1.}) for(int count:{2,3,4,5,6}) for(bool prepared:{false,true}) {
   auto rng=std::make_shared<utils::RandomStream>(123); utils::RandomStream expected_rng(123);
-  mc3d::Cell cell(rng); cell.SetApex({0,0,0}); cell.SetSize(1,1,1);
+  mc3d::Cell cell(rng);
+  cell.collision_parameters={mc3d::CollisionKind::VHS,6.6335e-26,4e-10,300,omega,300}; cell.SetApex({0,0,0}); cell.SetSize(1,1,1);
   cell.SetKn(.1);cell.SetCharacteristicLength(1);cell.SetReferenceParticleCount(count);
   auto &particles=mc3d::CellCollisionTestAccess::Particles(cell);
   mc3d::Point momentum(0,0,0);
@@ -281,7 +282,7 @@ TEST(LowPopulationCellTest, BothPathsMatchKernelAndActuallyCollide) {
   auto expected=particles;
   cell.CalculateDt();cell.SetDt(1);
   if(prepared)mc3d::CellCollisionTestAccess::CollidePrepared(cell);else cell.Collisions();
-  auto stats=mc3d::CollisionModel::ApplyWithStats(expected,momentum/double(count),1,.1,1,expected_rng);
+  auto stats=mc3d::CollisionModel::ApplyWithStats(expected,momentum/double(count),1,.1,1,expected_rng,cell.collision_parameters);
   ASSERT_GT(stats.accepted_collisions,0u);
   for(int i=0;i<count;++i){EXPECT_DOUBLE_EQ((particles[i].velocity-expected[i].velocity).Mod(),0);EXPECT_DOUBLE_EQ((particles[i].position-expected[i].position).Mod(),0);}
   EXPECT_EQ(rng->Engine()(),expected_rng.Engine()());

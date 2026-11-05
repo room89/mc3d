@@ -123,7 +123,7 @@ void Cell::Collisions() {
 void Cell::CollisionsWithPreparedMoments() {
   if (particles.size() < 2 || dt <= 0) return;
   CalculateKn();
-  CollisionModel::Apply(particles, velocity, L, Kn_l, dt, Random());
+  CollisionModel::ApplyWithStats(particles, velocity, L, Kn_l, dt, Random(), collision_parameters);
 }
 
 void Cell::MoveParticles() {

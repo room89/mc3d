@@ -23,6 +23,7 @@ int Run(int argc, char* argv[]) {
   std::cout << "Random seed: " << seed << std::endl;
   mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
+  cluster.collision_parameters = config.collisions;
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 

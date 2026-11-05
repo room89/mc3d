@@ -200,7 +200,22 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
   const auto key = NormalizeKey(raw_key);
   const auto prepared_value = StripQuotes(TrimCopy(raw_value));
 
-  if (key == "seed") {
+  if (key == "collision_model") {
+    if (prepared_value == "hs") config.collisions.kind = CollisionKind::HS;
+    else if (prepared_value == "vhs") config.collisions.kind = CollisionKind::VHS;
+    else if (prepared_value == "none") config.collisions.kind = CollisionKind::None;
+    else ThrowOptionError(raw_key, ctx, "expected hs, vhs or none");
+  } else if (key == "molecular_mass_kg") {
+    config.collisions.mass = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_diameter_m") {
+    config.collisions.diameter = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_reference_temperature_k") {
+    config.collisions.reference_temperature = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_omega") {
+    config.collisions.omega = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "temperature_unit_k") {
+    config.collisions.temperature_unit = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "seed") {
     unsigned int seed = 0;
     const auto result = std::from_chars(prepared_value.data(), prepared_value.data() + prepared_value.size(), seed);
     if (result.ec != std::errc() || result.ptr != prepared_value.data() + prepared_value.size())
@@ -699,6 +714,9 @@ void PrintUsage(const char* program) {
       << "  --lx, --ly, --lz                 Domain size along axes\n"
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
+      << "  --collision-model hs|vhs|none  Molecular collision law (default hs)\n"
+      << "  VHS requires --molecular-mass-kg, --vhs-diameter-m,\n"
+      << "    --vhs-reference-temperature-k, --vhs-omega, --temperature-unit-k\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
       << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl output\n"
       << "  --wall-heat-capacity VALUE      Enable per-polygon heating (total capacity)\n"
@@ -724,6 +742,7 @@ void PrintUsage(const char* program) {
 SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   SimulationConfig config;
   if (argc <= 1 || argv == nullptr) {
+    config.collisions.Validate();
     return config;
   }
 
@@ -802,6 +821,7 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
     throw std::runtime_error("Unexpected positional argument '" + arg + "'");
   }
 
+  config.collisions.Validate();
   return config;
 }
 
