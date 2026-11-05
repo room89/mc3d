@@ -46,8 +46,10 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
             with table.open() as f:rows=list(csv.DictReader(f,delimiter=';'))
             assert [int(r['index']) for r in rows]==list(range(len(rows)))
             for row in rows:
-                assert all(math.isfinite(float(v)) for k,v in row.items() if v and k!='status')
+                assert all(math.isfinite(float(v)) for k,v in row.items() if v and k not in ('status','region'))
                 if row['status']!='valid':assert not row['lambda_eq']
+                assert row['region'] in ('gas','cut','solid')
+                if row['region']=='solid':assert float(row['N'])==0
         assert (out/'initial.dat').is_file() and (out/'final.dat').is_file()
     original=json.loads((repo/'configs/checks/vhs_argon_equilibrium.json').read_text())
     disabled=root/'disabled.json';disabled.write_text(json.dumps(original|{'resolution_diagnostics':False}))

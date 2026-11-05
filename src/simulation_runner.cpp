@@ -414,7 +414,7 @@ void SimulationRunner::WriteResolution() {
   const auto step = steps_ + 1;
   const bool detailed =
       steps_ == 0 || cluster_.t + cluster_.dt >= cluster_.t_end ||
-      (snapshot_interval_ > 0 &&
+      (snapshot_interval_ <= 0 ||
        cluster_.t + cluster_.dt + kSnapshotTolerance >= next_snapshot_time_);
   std::ofstream summary("resolution_steps.csv",
                         steps_ ? std::ios::app : std::ios::out);
@@ -428,7 +428,8 @@ void SimulationRunner::WriteResolution() {
   std::ostringstream detail;
   {
     detail.precision(17);
-    detail << "step;time;end_time;index;status;N;gas_fraction;nu_bound;nu_eq;"
+    detail << "step;time;end_time;index;region;status;N;gas_fraction;nu_bound;"
+              "nu_eq;"
               "lambda_eq;dx_lambda;dy_lambda;dz_lambda;dt_nu;transport_limit\n";
   }
   std::array<std::size_t, 7> population{};
@@ -481,6 +482,10 @@ void SimulationRunner::WriteResolution() {
     {
       detail << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt
              << ';' << index << ';'
+             << (cell.GetVolume() == 0               ? "solid"
+                 : cell.GetVolume() == size.Volume() ? "gas"
+                                                     : "cut")
+             << ';'
              << (cell.GetVolume() == 0 ? "solid"
                  : r.mean_free_path    ? "valid"
                  : r.count < 2         ? "low_population"
