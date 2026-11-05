@@ -41,7 +41,9 @@ make clean
 использует демонстрационный набор `configs/example.json`, а `make run-smoke`
 запускает короткий расчёт на маленькой сетке без геометрии тела. Все файлы,
 созданные при запуске через Makefile, сохраняются в `output/`; каталог можно
-переопределить, например `OUTPUT_DIR=results/example`.
+переопределить, например `OUTPUT_DIR=results/example`. Он должен быть новым
+или пустым. `make run` передаёт его через `--output-dir`; входные пути
+разрешаются относительно каталога, из которого запущен make.
 
 Проверки запускаются командой `ctest --test-dir build --output-on-failure`.
 Каждый тест GoogleTest зарегистрирован в CTest отдельно, поэтому имя
@@ -123,19 +125,19 @@ python3 tools/body_flow_report.py --config configs/body_flow.json \
 
 ### Управление нагрузкой во время расчёта
 
-Включите управление файлом (путь относительно рабочего каталога solver):
+Включите управление нагрузкой через `make run`:
 
 ```bash
-make run CONFIG=configs/example.json OUTPUT_DIR=output/example ARGS="--runtime-control load.control"
+make run CONFIG=configs/example.json OUTPUT_DIR=output/example LOAD_MODE=balanced
 ```
 
 Из другого терминала, из корня репозитория:
 
 ```bash
-python3 tools/control_simulation.py output/example quiet
-python3 tools/control_simulation.py output/example balanced
-python3 tools/control_simulation.py output/example pause
-python3 tools/control_simulation.py output/example full
+make load OUTPUT_DIR=output/example LOAD_MODE=quiet
+make load OUTPUT_DIR=output/example LOAD_MODE=balanced
+make load OUTPUT_DIR=output/example LOAD_MODE=pause
+make load OUTPUT_DIR=output/example LOAD_MODE=full
 ```
 
 | Режим | Рабочие потоки | Доля времени работы между шагами |
@@ -145,11 +147,15 @@ python3 tools/control_simulation.py output/example full
 | `quiet` | Один | 25% |
 | `pause` | Новые шаги не запускаются | 0% |
 
-По умолчанию режим `full`. Команда атомарно записывает запрос; это не
+Без `LOAD_MODE` Makefile не создаёт файл управления. Если управление
+включено напрямую в solver, начальный режим — `full`. `make run LOAD_MODE=...`
+записывает выбранный режим в `OUTPUT_DIR.control` перед запуском.
+`make load` атомарно записывает запрос; это не
 подтверждение, что solver работает или уже применил его. Применение видно
 в логе по `Runtime load:`. Файл можно создать до запуска, чтобы начать в
 нужном режиме. Сохранённый режим действует и при следующем запуске с тем же
-файлом. Для собственного пути используйте `--runtime-control PATH` у solver
+файлом при прямом запуске. Для собственного пути у make используйте
+`CONTROL_FILE=...`; при прямом запуске — `--runtime-control PATH` у solver
 и `--file PATH` у скрипта; каждый расчёт должен иметь отдельный файл.
 
 Изменения применяются между завершёнными шагами; во время отдыха и паузы
@@ -665,7 +671,53 @@ https://doi.org/10.1007/s10765-025-03603-8 (zero-density viscosity, valid 84–1
 The fit uses 32 log-spaced samples over 300–2000 K and validates 1001 points.
 Maximum relative error is 3.098%; the acceptance threshold is 5%.
 The fit is not a validation against a shock-wave experiment.
-Example: `./build/mc3d --config configs/argon/argon_vhs.json` with additional
+Example: `./build/MC3dSolver --config configs/argon/argon_vhs.json` with additional
 geometry/domain options as needed. The report JSON is not a solver configuration.
 
 SPARTA convention reference: https://github.com/sparta/sparta/blob/5702a655006b76fbe41de68d64c8f65249b64d23/src/collide_vss.cpp
+
+### Physical units and run manifests
+
+Ready-to-run checks and SI examples: [configs/README.md](configs/README.md).
+`tools/physical_config.py input_si.json --output-dir prepared_case` generates
+normalized `solver.json`, `units.json`, and a copy of the physical input.
+Physical input uses temperature K, number density m^-3, speed m/s and flow angle
+in the XY plane. Domain/geometry lengths and translations use metres, time uses
+seconds, wall capacity J/K, and reference area m². Unknown or conflicting inputs
+are rejected. Default scales are L0=domain x length and T0=inflow temperature.
+Optional `length_unit_m` and `temperature_unit_k` change normalization, not physics.
+
+`--output-dir DIR` requires a new or empty directory. Without it legacy output
+paths remain unchanged and each manifest is saved under `run_metadata/<id>/`.
+Manifests contain effective configuration, selected seed and thread count, build
+information, executable SHA-256, archived inputs, geometry hash, units, output
+hashes and completion status. SHA-256 is an integrity check, not a signature.
+`--units-file` binds SI scales to the effective configuration; incompatible CLI
+overrides fail. Optional `--provenance-file` accepts JSON describing experimental
+sources or another solver, with a `files` array of local paths to archive.
+Paths in this explicit provenance file are interpreted relative to the launch
+working directory. SI-generator provenance paths are relative to the SI input.
+
+`tools/replay_run.py MANIFEST --output-dir NEW_DIR` verifies inputs and executable
+before replay. `--binary` selects an executable; `--allow-different-binary`
+explicitly allows a changed hash and records that choice. Single-thread replay
+with the same binary/seed is tested for identical physical output; timing data is
+excluded. Multiple threads or changed compiler/platform do not guarantee bitwise
+identity. SIGINT/SIGTERM finish at a step boundary with `interrupted`; SIGKILL can
+leave `running`, which must not be interpreted as successful completion.
+There is no restart from intermediate snapshots.
+
+Unit multipliers: x=L0, t=L0/v0, T=T0, v=v0=sqrt(kB*T0/m), ro=n_inf;
+force=rho0*v0²*L0², absorbed heat=rho0*v0²*L0³,
+wall capacity=rho0*v0²*L0³/T0, pressure=rho0*v0², area=L0².
+Snapshot E is mean kinetic energy per molecule and uses m*v0²; N remains model
+particle count. Physical molecule weight is recorded separately. VHS Kn uses
+lambda_eq(Tref)/physical domain x length; no experimental mean-free-path
+convention is silently substituted. Legacy runs without a unit table are
+explicitly marked `normalized_only`.
+
+Runtime load control is preserved when using --output-dir; its input path is
+resolved before changing directories. The manifest records accepted scheduling
+policy changes (step, time, mode, worker limit). Replay disables live control
+and records this choice, so a stale pause file cannot block a replay. Timing
+policies and multi-worker scheduling are not claimed to replay bitwise.

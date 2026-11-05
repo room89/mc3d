@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
 #include <cstddef>
 #include <string>
 
@@ -10,7 +11,8 @@ class RuntimeControl {
  public:
   RuntimeControl(std::string path, std::size_t capacity);
   void Refresh();
-  std::size_t WaitBeforeStep(std::chrono::steady_clock::duration previous_work);
+  std::size_t WaitBeforeStep(std::chrono::steady_clock::duration previous_work,
+      const std::function<bool()>& should_stop = {});
   std::size_t Threads() const;
   double DutyCycle() const;
   const std::string& Mode() const { return mode_; }

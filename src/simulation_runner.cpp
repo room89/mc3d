@@ -292,8 +292,11 @@ void SimulationRunner::Compute() {
   size_t step = 0;
   RuntimeControl control(runtime_control_path_, cluster_.thread_pool_.GetCapacity());
   std::chrono::steady_clock::duration work{};
-  while (cluster_.t < cluster_.t_end) {
-    cluster_.thread_pool_.SetActiveThreadCount(control.WaitBeforeStep(work));
+  while (cluster_.t < cluster_.t_end && !stop_requested) {
+    auto workers=control.WaitBeforeStep(work, [] { return stop_requested != 0; });
+    if(stop_requested) break;
+    cluster_.thread_pool_.SetActiveThreadCount(workers);
+    if(runtime_progress) runtime_progress(cluster_.t, steps_, control.Mode(), workers);
     const auto started = std::chrono::steady_clock::now();
     {
       LOG_INFO() << "Time step:" << ++step;
@@ -301,6 +304,7 @@ void SimulationRunner::Compute() {
       Step();
     }
     work = std::chrono::steady_clock::now() - started;
+    if(progress) progress(cluster_.t, steps_);
   }
 }
 
@@ -348,6 +352,7 @@ void SimulationRunner::WriteBodyLoads(const StepResult& result) {
 
 StepResult SimulationRunner::Step() {
   const auto result = cluster_.TimeStep();
+  ++steps_;
   WriteBodyLoads(result);
   if (result.inner_particles > 0)
     LOG_WARNING() << "Particles inside body at time " << result.time << ": " << result.inner_particles;

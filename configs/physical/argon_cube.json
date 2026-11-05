@@ -1,0 +1,43 @@
+{
+  "temperature_k": 300,
+  "number_density_m3": 1e+20,
+  "speed_m_s": 500,
+  "domain_m": [
+    0.01,
+    0.01,
+    0.01
+  ],
+  "wall_temperature_k": 300,
+  "end_time_s": 2e-05,
+  "gas": {
+    "model": "vhs"
+  },
+  "geometry": {
+    "type": "cube",
+    "x_m": -0.001,
+    "width_m": 0.002,
+    "length_m": 0.002,
+    "height_m": 0.002
+  },
+  "numerics": {
+    "cells_x": 4,
+    "cells_y": 4,
+    "cells_z": 4,
+    "particles_per_cell": 20,
+    "thread_pool_size": 1,
+    "seed": 123
+  },
+  "outputs": {
+    "final_snapshot": "final.dat",
+    "final_cell_snapshot": "",
+    "write_default_snapshot_before_compute": false,
+    "write_default_snapshot_after_compute": false,
+    "write_speed_before": false,
+    "write_speed_after": false,
+    "write_times": false,
+    "precompute_snapshot": "initial.dat"
+  },
+  "snapshot_interval_s": 5e-06,
+  "force_reference_area_m2": 4e-06,
+  "wall_heat_capacity_j_k": 1e-10
+}

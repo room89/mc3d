@@ -50,11 +50,12 @@ double RuntimeControl::DutyCycle() const {
   return 1;
 }
 
-std::size_t RuntimeControl::WaitBeforeStep(std::chrono::steady_clock::duration previous_work) {
+std::size_t RuntimeControl::WaitBeforeStep(std::chrono::steady_clock::duration previous_work, const std::function<bool()>& should_stop) {
   if (path_.empty()) return capacity_;
   using Clock = std::chrono::steady_clock;
   const auto started = Clock::now();
   for (;;) {
+    if (should_stop && should_stop()) return Threads();
     Refresh();
     const auto duty = DutyCycle();
     if (duty > 0) {

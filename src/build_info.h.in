@@ -1,0 +1,7 @@
+#pragma once
+#include "build_revision.h"
+#define MC3D_COMPILER "@CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@"
+#define MC3D_BUILD_TYPE "@CMAKE_BUILD_TYPE@"
+#define MC3D_BUILD_FLAGS R"flags(@CMAKE_CXX_FLAGS@)flags"
+#define MC3D_RELEASE_FLAGS R"flags(@CMAKE_CXX_FLAGS_RELEASE@)flags"
+#define MC3D_DEBUG_FLAGS R"flags(@CMAKE_CXX_FLAGS_DEBUG@)flags"

@@ -1,4 +1,5 @@
 #include "simulation_runner.h"
+#include "run_manifest.h"
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -10,9 +11,16 @@
 #include "solver_setup.h"
 
 int Run(int argc, char* argv[]) {
-  const auto config = mc3d::LoadSimulationConfig(argc, argv);
+  auto config = mc3d::LoadSimulationConfig(argc, argv);
+  if (!config.seed) config.seed = std::random_device{}();
+  config.thread_pool_size = std::max(1u, config.thread_pool_size);
+  mc3d::RunManifest manifest(config, argc, argv);
+  std::signal(SIGINT, [](int signal) { mc3d::stop_requested = signal; });
+  std::signal(SIGTERM, [](int signal) { mc3d::stop_requested = signal; });
+  try {
 
   auto geometry = mc3d::BuildGeometry(config);
+  manifest.GeometryHash(*geometry);
 
   const mc3d::Point apex(config.apex_x.value_or(-0.5 * config.Lx),
                          config.apex_y.value_or(-0.5 * config.Ly),
@@ -70,8 +78,11 @@ int Run(int argc, char* argv[]) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile(config.precompute_snapshot));
   }
 
+  runner.progress = [&manifest](double t, std::size_t steps) { manifest.Progress(t, steps); };
+  runner.runtime_progress = [&manifest](double t, std::size_t step, const std::string& mode, std::size_t workers) { manifest.RuntimePolicy(t, step, mode, workers); };
   runner.SetRuntimeControl(config.runtime_control);
   runner.Compute();
+  manifest.Progress(runner.Time(), runner.Steps());
 
   std::cout << "Computation is over." << std::endl;
 
@@ -95,7 +106,9 @@ int Run(int argc, char* argv[]) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteSpeedFile());
   }
 
-  return 0;
+  manifest.Finish(mc3d::stop_requested ? "interrupted" : "completed");
+  return mc3d::stop_requested ? 128 + mc3d::stop_requested : 0;
+  } catch(const std::exception& error) { manifest.Finish("failed", error.what()); throw; }
 }
 
 int main(int argc, char* argv[]) {

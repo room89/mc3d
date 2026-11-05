@@ -26,9 +26,12 @@ def main() -> None:
     parser.add_argument("directory", type=Path, help="Solver working/output directory")
     parser.add_argument("mode", choices=("full", "balanced", "quiet", "pause"))
     parser.add_argument("--file", default="load.control", help="Control file name or absolute path")
+    parser.add_argument("--create-parent", action="store_true", help="Create the control file parent directory")
     args = parser.parse_args()
     path = args.directory / args.file
     try:
+        if args.create_parent:
+            path.parent.mkdir(parents=True, exist_ok=True)
         set_mode(path, args.mode)
     except OSError as error:
         parser.exit(1, f"Cannot write {path}: {error}\n")
