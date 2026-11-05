@@ -1,0 +1,971 @@
+{
+  "scope": "Engineering pilot only; not convergence or experimental validation",
+  "command": "python3 tools/check_shock.py --binary build/MC3dSolver --output-dir /tmp/shock-pilot-series --mode pilot",
+  "artifacts": "/tmp/shock-pilot-series",
+  "runs": [
+    {
+      "status": "passed",
+      "fronts": [
+        {
+          "window": 0,
+          "position": 0.004966510833749323,
+          "status": "valid",
+          "crossings": [
+            0.004966510833749323
+          ]
+        },
+        {
+          "window": 1,
+          "position": 0.009240901972107364,
+          "status": "valid",
+          "crossings": [
+            0.009240901972107364
+          ]
+        },
+        {
+          "window": 2,
+          "position": 0.004048414763668527,
+          "status": "valid",
+          "crossings": [
+            0.004048414763668527
+          ]
+        },
+        {
+          "window": 3,
+          "position": 0.005247631549999767,
+          "status": "valid",
+          "crossings": [
+            0.005247631549999767
+          ]
+        },
+        {
+          "window": 4,
+          "position": 0.003524760963026781,
+          "status": "valid",
+          "crossings": [
+            0.003524760963026781
+          ]
+        },
+        {
+          "window": 5,
+          "position": 0.00046577046422481257,
+          "status": "valid",
+          "crossings": [
+            0.00046577046422481257
+          ]
+        },
+        {
+          "window": 6,
+          "position": 0.00132687609995823,
+          "status": "valid",
+          "crossings": [
+            0.00132687609995823
+          ]
+        },
+        {
+          "window": 7,
+          "position": 0.0002044776369586757,
+          "status": "valid",
+          "crossings": [
+            0.0002044776369586757
+          ]
+        },
+        {
+          "window": 8,
+          "position": 0.0022667733401847186,
+          "status": "valid",
+          "crossings": [
+            0.0022667733401847186
+          ]
+        },
+        {
+          "window": 9,
+          "position": 0.0029140533769424987,
+          "status": "valid",
+          "crossings": [
+            0.0029140533769424987
+          ]
+        }
+      ],
+      "interpretation": "Planar shock engineering runs; no convergence or experimental acceptance claim.",
+      "seed": 123,
+      "build": {
+        "compiler": "AppleClang 21.0.0.21000101",
+        "debug_flags": "-g",
+        "dirty": true,
+        "flags": "",
+        "release_flags": "-O3 -DNDEBUG",
+        "revision": "a9204e10a849b3b7802540c5009a93a91d12caea",
+        "type": "Release"
+      },
+      "binary_sha256": "390d4a015fd6bc9793028699616588bcb44ac6fe7a8c235ee80123827b37bfdb",
+      "config": {
+        "alpha": 0.0,
+        "balance_enabled": true,
+        "boundary_x_neg": "hyperfree",
+        "boundary_x_pos": "hyperfree",
+        "boundary_y_neg": "periodic",
+        "boundary_y_pos": "periodic",
+        "boundary_z_neg": "periodic",
+        "boundary_z_pos": "periodic",
+        "cells_x": 400,
+        "cells_y": 1,
+        "cells_z": 1,
+        "collision_courant": 0.1,
+        "collision_model": "vhs",
+        "cu": 0.5,
+        "end_time": 0.4076824574955176,
+        "final_cell_snapshot": "",
+        "final_snapshot": "final.dat",
+        "geometry_cube_height": 0.5,
+        "geometry_cube_length": 0.5,
+        "geometry_cube_width": 0.5,
+        "geometry_cube_x": -0.25,
+        "geometry_cylinder_length": 0.5,
+        "geometry_cylinder_radius": 0.25,
+        "geometry_cylinder_segments": 32,
+        "geometry_cylinder_x": -0.25,
+        "geometry_file": "",
+        "geometry_fix_polygons": false,
+        "geometry_pyramid_height": 0.16,
+        "geometry_pyramid_length": 0.5,
+        "geometry_pyramid_width": 0.5,
+        "geometry_pyramid_x": -0.25,
+        "geometry_reverse_normals": false,
+        "geometry_type": "none",
+        "geometry_wedge_alpha": 0.17453292519943295,
+        "geometry_wedge_length": 0.5,
+        "geometry_wedge_width": 0.5,
+        "geometry_wedge_x": -0.25,
+        "initial_step": {
+          "left": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "right": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          },
+          "x": 0.0
+        },
+        "kn": 0.025,
+        "lx": 1.0,
+        "ly": 0.0025,
+        "lz": 0.0025,
+        "molecular_mass_kg": 6.633521472521616e-26,
+        "particles_per_cell": 80,
+        "precompute_snapshot": "initial.dat",
+        "reservoirs": {
+          "x_neg": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "x_pos": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "resolution_diagnostics": true,
+        "runtime_control": "/tmp/shock-pilot-series/control-123.json",
+        "s": 3.4689095308660516,
+        "seed": 123,
+        "snapshot_interval": 0.0,
+        "snapshots_binary": false,
+        "statistics_enabled": true,
+        "statistics_windows": [
+          [
+            0.0,
+            0.04076824574955176
+          ],
+          [
+            0.04076824574955176,
+            0.08153649149910353
+          ],
+          [
+            0.08153649149910353,
+            0.12230473724865529
+          ],
+          [
+            0.12230473724865529,
+            0.16307298299820705
+          ],
+          [
+            0.16307298299820705,
+            0.2038412287477588
+          ],
+          [
+            0.2038412287477588,
+            0.24460947449731058
+          ],
+          [
+            0.24460947449731058,
+            0.2853777202468623
+          ],
+          [
+            0.2853777202468623,
+            0.3261459659964141
+          ],
+          [
+            0.3261459659964141,
+            0.3669142117459659
+          ],
+          [
+            0.3669142117459659,
+            0.4076824574955176
+          ]
+        ],
+        "temperature": 1.0,
+        "temperature_unit_k": 300.0,
+        "thread_pool_size": 4,
+        "vhs_diameter_m": 3.8774087918641243e-10,
+        "vhs_omega": 0.7115290294715864,
+        "vhs_reference_temperature_k": 300.0,
+        "wall_temperature": 1.0,
+        "write_default_snapshot_after_compute": false,
+        "write_default_snapshot_before_compute": false,
+        "write_speed_after": false,
+        "write_speed_before": false,
+        "write_times": false
+      },
+      "conservation": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 69128,
+          "absolute_momentum": 5.706848219939891e-05,
+          "energy": 0.00013806850723654607,
+          "mass": 1.3501562499999999e-05,
+          "momentum": [
+            3.0671396966384994e-05,
+            1.3699645856924345e-07,
+            3.537163194810925e-08
+          ]
+        },
+        "incoming": {
+          "N": 79850,
+          "absolute_momentum": 7.864493559473316e-05,
+          "energy": 0.00020986833366403265,
+          "mass": 1.5595703124999998e-05,
+          "momentum": [
+            5.662520287866097e-05,
+            1.3449951171194003e-07,
+            -4.371147270297387e-08
+          ]
+        },
+        "initial": {
+          "N": 68987,
+          "absolute_momentum": 5.676115274146983e-05,
+          "energy": 0.00013683367787908836,
+          "mass": 1.34740234375e-05,
+          "momentum": [
+            3.059534434586628e-05,
+            1.2315886827021947e-07,
+            9.691318700121412e-08
+          ]
+        },
+        "max_energy_residual": 1.2733369914030844e-18,
+        "max_momentum_residual": 3.2865111439581515e-19,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 79709,
+          "absolute_momentum": 7.622811847540566e-05,
+          "energy": 0.0002086335043065772,
+          "mass": 1.55681640625e-05,
+          "momentum": [
+            5.6549150258142385e-05,
+            1.2066192141291483e-07,
+            1.7830082350130655e-08
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": 2.6941227027066346e-18,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          1.2115308756222548e-20,
+          -1.1210216782631093e-21,
+          -2.610650411127828e-22
+        ],
+        "schema_version": 1,
+        "steps": 2215,
+        "thermostat_heat": 0.0,
+        "time": 0.4076824574955176,
+        "wall_energy_change": 0.0
+      },
+      "profile_sha256": "64757cde5af99ba1a5e873589c6a84e777d7b1ca8e19ac4470a570d49a4630f3"
+    },
+    {
+      "status": "passed",
+      "fronts": [
+        {
+          "window": 0,
+          "position": 0.004658468368809757,
+          "status": "valid",
+          "crossings": [
+            0.004658468368809757
+          ]
+        },
+        {
+          "window": 1,
+          "position": 0.008499233209821393,
+          "status": "valid",
+          "crossings": [
+            0.008499233209821393
+          ]
+        },
+        {
+          "window": 2,
+          "position": 0.009771803093533827,
+          "status": "valid",
+          "crossings": [
+            0.009771803093533827
+          ]
+        },
+        {
+          "window": 3,
+          "position": 0.004726226350461878,
+          "status": "valid",
+          "crossings": [
+            0.004726226350461878
+          ]
+        },
+        {
+          "window": 4,
+          "position": 0.006059963184565548,
+          "status": "valid",
+          "crossings": [
+            0.006059963184565548
+          ]
+        },
+        {
+          "window": 5,
+          "position": 0.008981138072018861,
+          "status": "valid",
+          "crossings": [
+            0.008981138072018861
+          ]
+        },
+        {
+          "window": 6,
+          "position": 0.006454096376532434,
+          "status": "valid",
+          "crossings": [
+            0.006454096376532434
+          ]
+        },
+        {
+          "window": 7,
+          "position": 0.006144543148587603,
+          "status": "valid",
+          "crossings": [
+            0.006144543148587603
+          ]
+        },
+        {
+          "window": 8,
+          "position": 0.006271522754435832,
+          "status": "valid",
+          "crossings": [
+            0.006271522754435832
+          ]
+        },
+        {
+          "window": 9,
+          "position": 0.00723344893322081,
+          "status": "valid",
+          "crossings": [
+            0.00723344893322081
+          ]
+        }
+      ],
+      "interpretation": "Planar shock engineering runs; no convergence or experimental acceptance claim.",
+      "seed": 456,
+      "build": {
+        "compiler": "AppleClang 21.0.0.21000101",
+        "debug_flags": "-g",
+        "dirty": true,
+        "flags": "",
+        "release_flags": "-O3 -DNDEBUG",
+        "revision": "a9204e10a849b3b7802540c5009a93a91d12caea",
+        "type": "Release"
+      },
+      "binary_sha256": "062f7d4ed323720ba23900105b9129219715400a248baafd63c89617892e7ff5",
+      "config": {
+        "alpha": 0.0,
+        "balance_enabled": true,
+        "boundary_x_neg": "hyperfree",
+        "boundary_x_pos": "hyperfree",
+        "boundary_y_neg": "periodic",
+        "boundary_y_pos": "periodic",
+        "boundary_z_neg": "periodic",
+        "boundary_z_pos": "periodic",
+        "cells_x": 400,
+        "cells_y": 1,
+        "cells_z": 1,
+        "collision_courant": 0.1,
+        "collision_model": "vhs",
+        "cu": 0.5,
+        "end_time": 0.4076824574955176,
+        "final_cell_snapshot": "",
+        "final_snapshot": "final.dat",
+        "geometry_cube_height": 0.5,
+        "geometry_cube_length": 0.5,
+        "geometry_cube_width": 0.5,
+        "geometry_cube_x": -0.25,
+        "geometry_cylinder_length": 0.5,
+        "geometry_cylinder_radius": 0.25,
+        "geometry_cylinder_segments": 32,
+        "geometry_cylinder_x": -0.25,
+        "geometry_file": "",
+        "geometry_fix_polygons": false,
+        "geometry_pyramid_height": 0.16,
+        "geometry_pyramid_length": 0.5,
+        "geometry_pyramid_width": 0.5,
+        "geometry_pyramid_x": -0.25,
+        "geometry_reverse_normals": false,
+        "geometry_type": "none",
+        "geometry_wedge_alpha": 0.17453292519943295,
+        "geometry_wedge_length": 0.5,
+        "geometry_wedge_width": 0.5,
+        "geometry_wedge_x": -0.25,
+        "initial_step": {
+          "left": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "right": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          },
+          "x": 0.0
+        },
+        "kn": 0.025,
+        "lx": 1.0,
+        "ly": 0.0025,
+        "lz": 0.0025,
+        "molecular_mass_kg": 6.633521472521616e-26,
+        "particles_per_cell": 80,
+        "precompute_snapshot": "initial.dat",
+        "reservoirs": {
+          "x_neg": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "x_pos": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "resolution_diagnostics": true,
+        "runtime_control": "/tmp/shock-pilot-series/control-456.json",
+        "s": 3.4689095308660516,
+        "seed": 456,
+        "snapshot_interval": 0.0,
+        "snapshots_binary": false,
+        "statistics_enabled": true,
+        "statistics_windows": [
+          [
+            0.0,
+            0.04076824574955176
+          ],
+          [
+            0.04076824574955176,
+            0.08153649149910353
+          ],
+          [
+            0.08153649149910353,
+            0.12230473724865529
+          ],
+          [
+            0.12230473724865529,
+            0.16307298299820705
+          ],
+          [
+            0.16307298299820705,
+            0.2038412287477588
+          ],
+          [
+            0.2038412287477588,
+            0.24460947449731058
+          ],
+          [
+            0.24460947449731058,
+            0.2853777202468623
+          ],
+          [
+            0.2853777202468623,
+            0.3261459659964141
+          ],
+          [
+            0.3261459659964141,
+            0.3669142117459659
+          ],
+          [
+            0.3669142117459659,
+            0.4076824574955176
+          ]
+        ],
+        "temperature": 1.0,
+        "temperature_unit_k": 300.0,
+        "thread_pool_size": 4,
+        "vhs_diameter_m": 3.8774087918641243e-10,
+        "vhs_omega": 0.7115290294715864,
+        "vhs_reference_temperature_k": 300.0,
+        "wall_temperature": 1.0,
+        "write_default_snapshot_after_compute": false,
+        "write_default_snapshot_before_compute": false,
+        "write_speed_after": false,
+        "write_speed_before": false,
+        "write_times": false
+      },
+      "conservation": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 68562,
+          "absolute_momentum": 5.65060692132449e-05,
+          "energy": 0.00013643212268446293,
+          "mass": 1.3391015625e-05,
+          "momentum": [
+            3.0547535577177406e-05,
+            -2.6721280470575068e-08,
+            8.118730085576991e-08
+          ]
+        },
+        "incoming": {
+          "N": 79850,
+          "absolute_momentum": 7.861999264148245e-05,
+          "energy": 0.00020952462840457295,
+          "mass": 1.5595703124999998e-05,
+          "momentum": [
+            5.658642276388158e-05,
+            -5.958190582415676e-08,
+            1.053348076382848e-07
+          ]
+        },
+        "initial": {
+          "N": 68988,
+          "absolute_momentum": 5.6723958948252205e-05,
+          "energy": 0.00013667410245284003,
+          "mass": 1.347421875e-05,
+          "momentum": [
+            3.073168923564566e-05,
+            -2.2899316611824888e-08,
+            2.13562468611197e-08
+          ]
+        },
+        "max_energy_residual": 1.5187961999174603e-18,
+        "max_momentum_residual": 3.4573225531124324e-19,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 80276,
+          "absolute_momentum": 7.667320666903389e-05,
+          "energy": 0.0002097666081729481,
+          "mass": 1.567890625e-05,
+          "momentum": [
+            5.6770576422349604e-05,
+            -5.575994196540561e-08,
+            4.550375364363474e-08
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -1.4745815679617637e-18,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -1.9371726445172035e-19,
+          9.966040579595327e-22,
+          -2.0860049798620563e-23
+        ],
+        "schema_version": 1,
+        "steps": 2211,
+        "thermostat_heat": 0.0,
+        "time": 0.4076824574955176,
+        "wall_energy_change": 0.0
+      },
+      "profile_sha256": "e30fbfb43df6b6850e23be1ca400806526700ddec0390cd3ea6b94df6536f255"
+    },
+    {
+      "status": "passed",
+      "fronts": [
+        {
+          "window": 0,
+          "position": 0.005027597948731406,
+          "status": "valid",
+          "crossings": [
+            0.005027597948731406
+          ]
+        },
+        {
+          "window": 1,
+          "position": 0.011521581658998713,
+          "status": "valid",
+          "crossings": [
+            0.011521581658998713
+          ]
+        },
+        {
+          "window": 2,
+          "position": 0.009662956865296049,
+          "status": "valid",
+          "crossings": [
+            0.009662956865296049
+          ]
+        },
+        {
+          "window": 3,
+          "position": 0.006545502575521308,
+          "status": "valid",
+          "crossings": [
+            0.006545502575521308
+          ]
+        },
+        {
+          "window": 4,
+          "position": 0.004264881697526414,
+          "status": "valid",
+          "crossings": [
+            0.004264881697526414
+          ]
+        },
+        {
+          "window": 5,
+          "position": 0.0034487516180004008,
+          "status": "valid",
+          "crossings": [
+            0.0034487516180004008
+          ]
+        },
+        {
+          "window": 6,
+          "position": 0.0053758091192111805,
+          "status": "valid",
+          "crossings": [
+            0.0053758091192111805
+          ]
+        },
+        {
+          "window": 7,
+          "position": 0.006432242264654766,
+          "status": "valid",
+          "crossings": [
+            0.006432242264654766
+          ]
+        },
+        {
+          "window": 8,
+          "position": 0.004250939029685735,
+          "status": "valid",
+          "crossings": [
+            0.004250939029685735
+          ]
+        },
+        {
+          "window": 9,
+          "position": 0.0034949411672208566,
+          "status": "valid",
+          "crossings": [
+            0.0034949411672208566
+          ]
+        }
+      ],
+      "interpretation": "Planar shock engineering runs; no convergence or experimental acceptance claim.",
+      "seed": 789,
+      "build": {
+        "compiler": "AppleClang 21.0.0.21000101",
+        "debug_flags": "-g",
+        "dirty": true,
+        "flags": "",
+        "release_flags": "-O3 -DNDEBUG",
+        "revision": "a9204e10a849b3b7802540c5009a93a91d12caea",
+        "type": "Release"
+      },
+      "binary_sha256": "062f7d4ed323720ba23900105b9129219715400a248baafd63c89617892e7ff5",
+      "config": {
+        "alpha": 0.0,
+        "balance_enabled": true,
+        "boundary_x_neg": "hyperfree",
+        "boundary_x_pos": "hyperfree",
+        "boundary_y_neg": "periodic",
+        "boundary_y_pos": "periodic",
+        "boundary_z_neg": "periodic",
+        "boundary_z_pos": "periodic",
+        "cells_x": 400,
+        "cells_y": 1,
+        "cells_z": 1,
+        "collision_courant": 0.1,
+        "collision_model": "vhs",
+        "cu": 0.5,
+        "end_time": 0.4076824574955176,
+        "final_cell_snapshot": "",
+        "final_snapshot": "final.dat",
+        "geometry_cube_height": 0.5,
+        "geometry_cube_length": 0.5,
+        "geometry_cube_width": 0.5,
+        "geometry_cube_x": -0.25,
+        "geometry_cylinder_length": 0.5,
+        "geometry_cylinder_radius": 0.25,
+        "geometry_cylinder_segments": 32,
+        "geometry_cylinder_x": -0.25,
+        "geometry_file": "",
+        "geometry_fix_polygons": false,
+        "geometry_pyramid_height": 0.16,
+        "geometry_pyramid_length": 0.5,
+        "geometry_pyramid_width": 0.5,
+        "geometry_pyramid_x": -0.25,
+        "geometry_reverse_normals": false,
+        "geometry_type": "none",
+        "geometry_wedge_alpha": 0.17453292519943295,
+        "geometry_wedge_length": 0.5,
+        "geometry_wedge_width": 0.5,
+        "geometry_wedge_x": -0.25,
+        "initial_step": {
+          "left": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "right": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          },
+          "x": 0.0
+        },
+        "kn": 0.025,
+        "lx": 1.0,
+        "ly": 0.0025,
+        "lz": 0.0025,
+        "molecular_mass_kg": 6.633521472521616e-26,
+        "particles_per_cell": 80,
+        "precompute_snapshot": "initial.dat",
+        "reservoirs": {
+          "x_neg": {
+            "density_ratio": 1.0,
+            "temperature": 1.0,
+            "velocity": [
+              4.905778905196061,
+              0.0,
+              0.0
+            ]
+          },
+          "x_pos": {
+            "density_ratio": 3.3119266055045875,
+            "temperature": 5.374515235457063,
+            "velocity": [
+              1.4812462622337137,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "resolution_diagnostics": true,
+        "runtime_control": "/tmp/shock-pilot-series/control-789.json",
+        "s": 3.4689095308660516,
+        "seed": 789,
+        "snapshot_interval": 0.0,
+        "snapshots_binary": false,
+        "statistics_enabled": true,
+        "statistics_windows": [
+          [
+            0.0,
+            0.04076824574955176
+          ],
+          [
+            0.04076824574955176,
+            0.08153649149910353
+          ],
+          [
+            0.08153649149910353,
+            0.12230473724865529
+          ],
+          [
+            0.12230473724865529,
+            0.16307298299820705
+          ],
+          [
+            0.16307298299820705,
+            0.2038412287477588
+          ],
+          [
+            0.2038412287477588,
+            0.24460947449731058
+          ],
+          [
+            0.24460947449731058,
+            0.2853777202468623
+          ],
+          [
+            0.2853777202468623,
+            0.3261459659964141
+          ],
+          [
+            0.3261459659964141,
+            0.3669142117459659
+          ],
+          [
+            0.3669142117459659,
+            0.4076824574955176
+          ]
+        ],
+        "temperature": 1.0,
+        "temperature_unit_k": 300.0,
+        "thread_pool_size": 4,
+        "vhs_diameter_m": 3.8774087918641243e-10,
+        "vhs_omega": 0.7115290294715864,
+        "vhs_reference_temperature_k": 300.0,
+        "wall_temperature": 1.0,
+        "write_default_snapshot_after_compute": false,
+        "write_default_snapshot_before_compute": false,
+        "write_speed_after": false,
+        "write_speed_before": false,
+        "write_times": false
+      },
+      "conservation": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 68790,
+          "absolute_momentum": 5.678335823235145e-05,
+          "energy": 0.00013721420873975633,
+          "mass": 1.3435546875e-05,
+          "momentum": [
+            3.064991510122784e-05,
+            1.1185537929502342e-07,
+            -7.469767051892038e-08
+          ]
+        },
+        "incoming": {
+          "N": 79850,
+          "absolute_momentum": 7.862794188450978e-05,
+          "energy": 0.00020968633260838192,
+          "mass": 1.5595703124999998e-05,
+          "momentum": [
+            5.660436127220721e-05,
+            -7.3802385173842905e-09,
+            -6.846902721193819e-08
+          ]
+        },
+        "initial": {
+          "N": 68991,
+          "absolute_momentum": 5.680104539757361e-05,
+          "energy": 0.00013704994587541134,
+          "mass": 1.34748046875e-05,
+          "momentum": [
+            3.079036263374276e-05,
+            -4.693216845145115e-08,
+            -5.3432665419784104e-08
+          ]
+        },
+        "max_energy_residual": 1.3952172750464342e-18,
+        "max_momentum_residual": 3.392508886494152e-19,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 80051,
+          "absolute_momentum": 7.651655247576374e-05,
+          "energy": 0.00020952206974403915,
+          "mass": 1.56349609375e-05,
+          "momentum": [
+            5.6744808804722365e-05,
+            -1.661677862638592e-07,
+            -4.72040221128013e-08
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": 2.680589084036462e-18,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          7.300965387812968e-20,
+          -2.814480419555129e-22,
+          4.679741837099166e-22
+        ],
+        "schema_version": 1,
+        "steps": 2212,
+        "thermostat_heat": 0.0,
+        "time": 0.4076824574955176,
+        "wall_energy_change": 0.0
+      },
+      "profile_sha256": "309d75265f17af4de63cae032a15b7f302c5c1905805432cccac5a6188aa64d1"
+    }
+  ],
+  "limitations": [
+    "Pilot was executed in normalized mode. Full SI manifest/replay path is separately exercised by ShockIntegration.",
+    "Independent source runs predate the metadata-only SI correction. Solver VHS parameters were unchanged."
+  ]
+}

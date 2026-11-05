@@ -27,5 +27,6 @@ if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--output-dir',type=Path,required=True);p.add_argument('--quick',action='store_true');p.add_argument('--seed',type=int,default=123);a=p.parse_args()
     data,reference=setup(a.quick,a.seed);config,units=prepare(data);a.output_dir.mkdir(parents=True,exist_ok=False)
     config['units_file']=str((a.output_dir/'units.json').resolve())
+    units['source_file']=str((a.output_dir/'input_si.json').resolve())
     for name,value in [('input_si.json',data),('solver.json',config),('units.json',units),('reference.json',reference)]:
         (a.output_dir/name).write_text(json.dumps(value,indent=2)+'\n')

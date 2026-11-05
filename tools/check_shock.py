@@ -47,6 +47,7 @@ def main():
     for seed in (123,456,789):
         data,ref=setup(a.mode=='quick',seed);cfg,units=prepare(data);prepared=a.output_dir/f'config-{seed}';prepared.mkdir()
         cfg['units_file']=str((prepared/'units.json').resolve())
+        units['source_file']=str((prepared/'input_si.json').resolve())
         for name,value in [('solver.json',cfg),('input_si.json',data),('units.json',units),('reference.json',ref)]:
             (prepared/name).write_text(json.dumps(value,indent=2))
         out=a.output_dir/f'run-{seed}';control=a.output_dir/f'control-{seed}.json'

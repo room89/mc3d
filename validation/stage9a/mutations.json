@@ -1,0 +1,14 @@
+[
+  {
+    "mutation": "double_density",
+    "detected": true
+  },
+  {
+    "mutation": "swap_reservoirs",
+    "detected": true
+  },
+  {
+    "mutation": "drop_incoming",
+    "detected": true
+  }
+]
