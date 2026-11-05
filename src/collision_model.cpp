@@ -1,11 +1,14 @@
 #include "collision_model.h"
+
 #include <algorithm>
 #include <cmath>
-namespace mc3d {
-namespace { constexpr double Pi = 3.14159265358979; }
-void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, double L, double Kn_l, double dt, utils::RandomStream& random) {
-  if (particles.size() <= 5) return;
 
+#include "collision_scattering.h"
+namespace mc3d {
+void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
+                           double L, double Kn_l, double dt,
+                           utils::RandomStream& random) {
+  if (particles.size() <= 5) return;
 
   // Bound every relative speed by twice the largest peculiar speed. A thermal
   // mean is not an upper bound and causes population-dependent missed events.
@@ -26,8 +29,8 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
 
   auto& rng = random.Engine();
 
-  std::uniform_int_distribution<std::size_t> first(0, particles.size()-1);
-  std::uniform_int_distribution<std::size_t> second(0, particles.size()-2);
+  std::uniform_int_distribution<std::size_t> first(0, particles.size() - 1);
+  std::uniform_int_distribution<std::size_t> second(0, particles.size() - 2);
 
   while (t <= dt) {
     double r = random.Uniform();
@@ -39,7 +42,8 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
     if (t > dt) break;
 
     // Every attempt must sample all particles, even when a time step contains
-    // fewer attempts than N/2. Restarting at the vector prefix biases collisions.
+    // fewer attempts than N/2. Restarting at the vector prefix biases
+    // collisions.
     const auto i = first(rng);
     auto j = second(rng);
     if (j >= i) ++j;
@@ -61,44 +65,19 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
       double r1 = random.Uniform();
       double r2 = random.Uniform();
 
-      double Fi = 2. * Pi * r1;
-      double Eta = 2. * acos(r2);
-
-      double gx = g.x;
-      double gy = g.y;
-      double gz = g.z;
-      double gxz = sqrt(gx * gx + gz * gz);
-
-      Point g1;
-
-      //                              Point g1(gmod * sin(Pi * r1) * cos(2. * Pi
-      //                              * r2),
-      //                                       gmod * sin(Pi * r1) * sin(2. * Pi
-      //                                       * r2), gmod * cos(Pi * r1));
-
-      if (gxz > 1.e-6) {
-        g1.x = gx * cos(Eta) -
-               sin(Eta) * (gmod * gz * cos(Fi) - gx * gy * sin(Fi)) / gxz;
-        g1.y = gy * cos(Eta) - gxz * sin(Fi) * sin(Eta);
-        g1.z = gz * cos(Eta) +
-               sin(Eta) * (gmod * gx * cos(Fi) + gy * gz * sin(Fi)) / gxz;
-      } else {
-        g1.x = -sin(Eta) * gmod * (cos(Fi) - sin(Fi)) / std::sqrt(2.);
-        g1.y = gmod * cos(Eta);
-        g1.z = sin(Eta) * gmod * (cos(Fi) + sin(Fi)) / std::sqrt(2.);
-      }
+      const Point g1 = detail::IsotropicRelativeVelocity(gmod, r1, r2);
 
       v1 = (velocity_sum - g1) * 0.5;
       v2 = (velocity_sum + g1) * 0.5;
 
       particle_1->velocity = v1;
       particle_2->velocity = v2;
-      max_speed_squared = std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
+      max_speed_squared =
+          std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
       g_max = 2 * std::sqrt(max_speed_squared);
       frequency_t = factor / g_max;
     }
-
   }
 }
 
-}
+}  // namespace mc3d
