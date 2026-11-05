@@ -276,3 +276,41 @@ positions for ten windows. Multiple midpoint crossings are ambiguous; missing
 crossings remain missing. Profile alignment translates coordinates only.
 Exit codes: 0 successful checks, 1 failed criterion, 2 incomplete run, 3 solver
 error. Successful balance is not evidence of convergence or experimental agreement.
+
+### Shock validation matrix (stage 9b, work in progress)
+
+`make check-shock SHOCK_MODE=validation OUTPUT_DIR=output/shock-validation LOAD_MODE=balanced SPARTA_BIN=/absolute/path/to/spa_`
+executes the A–G matrix for seeds 123, 456, 789. The default total wall-clock
+budget is 24 hours, each run is limited to eight hours and 8 GiB RSS. The
+RSS monitor requires `ps`; it fails explicitly if process memory cannot be read.
+Use `SHOCK_ARGS=--prepare-only` to inspect configurations without launching runs.
+
+To resume with the **same binary**, call `tools/shock_validation.py` directly:
+`python3 tools/shock_validation.py --binary build/MC3dSolver --output-dir output/shock-validation --resume --sparta-bin /absolute/path/to/spa_`.
+Do not rebuild the solver between runs: binary and completed output hashes are
+checked. Unfinished output directories are retained and never silently restarted.
+The runner counts previously spent time against the same total budget.
+
+The matrix uses four transit times for relaxation and eight for observation,
+with 64 nonoverlapping windows. A/B and D/C retain particle weight while changing
+axial resolution. B/C changes particle count; E halves timestep controls;
+F doubles domain length at unchanged cell size; G doubles transverse lengths
+and cell counts. Physical density and collision parameters remain fixed.
+
+The analyzer keeps execution, stationarity, convergence, cross-code agreement,
+and experiment separate. Exit code 2 means physical validation is incomplete,
+even when every executed process returned success. It compares raw-moment
+profiles, 10–90% width and local-cubic gradient thickness; window merging and
+statistical uncertainty are mandatory gates. The statistical intervals use a
+conservative Student multiplier 4.303 and take the larger seed/block estimate.
+
+SPARTA source is pinned by `validation/stage9b/sparta.lock.json`. Build with
+`cmake -S <sparta>/cmake -B <build> -DBUILD_MPI=OFF -DPKG_MPI_STUBS=ON -DCMAKE_BUILD_TYPE=Release`,
+then `cmake --build <build> --parallel 4`. Run `tools/sparta_preflight.py` with
+`--binary <build>/src/spa_ --output-dir <new-directory>` before production use.
+The independent equilibrium rate check is not shock validation.
+
+Experimental acceptance is currently unavailable: the primary Alsmeyer PDF,
+its length convention and digitization uncertainty have not been verified.
+Engineering runs are not substituted for experimental data. Stage 9 remains
+in progress until the numerical and experimental requirements are resolved.
