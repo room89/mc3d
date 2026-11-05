@@ -28,6 +28,8 @@ enum class BoundaryFace : std::size_t {
 
 struct SimulationConfig {
   CollisionParameters collisions;
+  bool statistics_enabled = true, balance_enabled = true;
+  std::vector<std::array<double, 2>> statistics_windows;
   double Lx = 1.0;
   double Ly = 1.0;
   double Lz = 1.0;

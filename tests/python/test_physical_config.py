@@ -23,6 +23,19 @@ class UnitsTest(unittest.TestCase):
         self.assertEqual(a['kn'],b['kn']);self.assertEqual(a['s'],b['s'])
         d['numerics']={'particles_per_cell':100};_,w=prepare(d)
         self.assertAlmostEqual(w['scales']['molecules_per_model_particle']*2,u['scales']['molecules_per_model_particle'])
+    def test_statistics_windows_and_scales(self):
+        d=self.case();d['statistics_windows_s']=[[0,5e-6],[2e-6,1e-5]]
+        d['numerics']={'statistics_enabled':False,'balance_enabled':True}
+        c,u=prepare(d);scales=u['scales']
+        self.assertFalse(c['statistics_enabled']);self.assertTrue(c['balance_enabled'])
+        for actual,expected in zip(c['statistics_windows'],d['statistics_windows_s']):
+            for a,b in zip(actual,expected):self.assertAlmostEqual(a*scales['time_s'],b,places=18)
+        self.assertAlmostEqual(scales['momentum_kg_m_s'],scales['mass_kg']*scales['velocity_m_s'],places=25)
+        self.assertAlmostEqual(scales['power_w']*scales['time_s'],scales['energy_j'],places=25)
+        self.assertAlmostEqual(scales['heat_flux_w_m2'],scales['pressure_pa']*scales['velocity_m_s'],places=12)
+        for windows in ([[0,2e-5]],[[1e-5,0]],[[-1,1e-5]]):
+            d['statistics_windows_s']=windows
+            with self.assertRaises(ValueError):prepare(d)
     def test_invalid(self):
         for field,value in [('kn',.1),('temperature_k',float('nan')),('speed_m_s',-1),('domain_m',[1,0,1]),('numerics',{'cells_x':0}),('gas',{'model':'unknown'})]:
             d=self.case();d[field]=value

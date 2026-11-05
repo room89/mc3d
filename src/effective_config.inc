@@ -57,3 +57,7 @@
   j["geometry_cylinder_length"]=c.geometry_cylinder_length;
   j["geometry_cylinder_segments"]=c.geometry_cylinder_segments;
   j["runtime_control"]=c.runtime_control;
+
+  j["statistics_enabled"]=c.statistics_enabled;
+  j["balance_enabled"]=c.balance_enabled;
+  j["statistics_windows"]=c.statistics_windows.empty() && c.end_time>0?std::vector<std::array<double,2>>{{0,c.end_time}}:c.statistics_windows;

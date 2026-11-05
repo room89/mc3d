@@ -33,8 +33,14 @@ struct StepResult {
   Point mean_body_force{0, 0, 0};
 };
 
+class StatisticalDiagnostics;
 class CellCluster {
+  friend class StatisticalDiagnostics;
+
  public:
+  ConservedQuantity step_incoming, step_outgoing;
+  Point step_body_impulse{0, 0, 0}, step_mirror_impulse{0, 0, 0};
+  double step_body_heat = 0, step_mirror_heat = 0;
   CollisionParameters collision_parameters;
   double collision_courant = 0.1;
   double transport_dt = std::numeric_limits<double>::infinity();

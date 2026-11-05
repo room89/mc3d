@@ -125,6 +125,10 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
   for (const auto& name :
        {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot}) {
     const auto base = fs::path(name).filename().string();
+    if (base == "conservation.csv" || base == "conservation_summary.json" ||
+        base.starts_with("cell_statistics_") ||
+        base.starts_with("surface_statistics_"))
+      throw std::invalid_argument("Output path reserved for statistics");
     if (base == "resolution_steps.csv" ||
         (base.starts_with("resolution_cells_") && base.ends_with(".csv")))
       throw std::invalid_argument(
@@ -172,6 +176,11 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
       {"status", "running"},
       {"started_unix", Now()},
       {"effective_config", EffectiveConfig(c)},
+      {"statistics",
+       {{"method", "shifted_raw_moments_v1"},
+        {"state", "before_step"},
+        {"wall_sign", "positive_from_gas_to_wall"},
+        {"pressure_convention", "positive_compression; Cauchy_stress=-P"}}},
       {"resolution",
        {{"method", "pair_rms_bound_v1"},
         {"enabled", c.resolution_diagnostics},
@@ -331,7 +340,7 @@ void RunManifest::Finish(const std::string& status, const std::string& error) {
     // Only solver outputs, not unrelated files in a legacy working directory.
     auto ext = path.extension();
     if (!explicit_outputs_.contains(path) && ext != ".dat" && ext != ".csv" &&
-        ext != ".net")
+        ext != ".net" && name != "conservation_summary.json")
       continue;
     data_["outputs"].push_back(
         {{"path", name},

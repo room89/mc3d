@@ -14,6 +14,8 @@
 #include <string_view>
 #include <vector>
 
+#include "../third_party/json.hpp"
+
 namespace mc3d {
 namespace {
 
@@ -238,6 +240,22 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
       throw std::invalid_argument("collision_courant must be in [0,1]");
   } else if (key == "resolution_diagnostics") {
     config.resolution_diagnostics = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "statistics_enabled") {
+    config.statistics_enabled = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "balance_enabled") {
+    config.balance_enabled = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "statistics_windows") {
+    const auto j = nlohmann::json::parse(prepared_value);
+    if (!j.is_array())
+      throw std::invalid_argument("statistics_windows requires array");
+    config.statistics_windows.clear();
+    for (const auto& w : j) {
+      if (!w.is_array() || w.size() != 2 || !w[0].is_number() ||
+          !w[1].is_number())
+        throw std::invalid_argument("Expected [start,end] window");
+      config.statistics_windows.push_back(
+          {w[0].get<double>(), w[1].get<double>()});
+    }
   } else if (key == "cu") {
     config.Cu = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature" || key == "t") {
@@ -644,6 +662,19 @@ class JsonReader {
     if (ch == '"') {
       return ParseString();
     }
+    if (ch == '[') {
+      const auto start = pos_;
+      int depth = 0;
+      do {
+        if (data_[pos_] == '[')
+          ++depth;
+        else if (data_[pos_] == ']')
+          --depth;
+        ++pos_;
+      } while (pos_ < data_.size() && depth > 0);
+      if (depth) Throw("unterminated array");
+      return data_.substr(start, pos_ - start);
+    }
     if (ch == '-' || IsDigit(ch)) {
       return ParseNumber();
     }
@@ -745,6 +776,9 @@ void PrintUsage(const char* program) {
          "0.1; 0 disables)\n"
       << "  --resolution-diagnostics <bool> Write resolution diagnostics "
          "(default true)\n"
+      << "  --statistics-enabled <bool> --balance-enabled <bool> (default "
+         "true)\n"
+      << "  --statistics-windows '[[start,end],...]' (default entire run)\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
       << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl "
          "output\n"
@@ -775,6 +809,11 @@ void PrintUsage(const char* program) {
 SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   SimulationConfig config;
   if (argc <= 1 || argv == nullptr) {
+    for (auto w : config.statistics_windows)
+      if (!std::isfinite(w[0]) || !std::isfinite(w[1]) || w[0] < 0 ||
+          !(w[1] > w[0]) || w[1] > config.end_time)
+        throw std::invalid_argument(
+            "Statistics windows require 0 <= start < end <= end_time");
     config.collisions.Validate();
     return config;
   }
@@ -855,6 +894,11 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
     throw std::runtime_error("Unexpected positional argument '" + arg + "'");
   }
 
+  for (auto w : config.statistics_windows)
+    if (!std::isfinite(w[0]) || !std::isfinite(w[1]) || w[0] < 0 ||
+        !(w[1] > w[0]) || w[1] > config.end_time)
+      throw std::invalid_argument(
+          "Statistics windows require 0 <= start < end <= end_time");
   config.collisions.Validate();
   if (!config.geometry_file.empty() ||
       (config.geometry_type != "none" && config.geometry_type != "cube" &&
