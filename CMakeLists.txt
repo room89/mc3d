@@ -16,6 +16,7 @@ add_library(mc3d_core STATIC
   src/cell_cluster.cpp
   src/cellnet.cpp
   src/config.cpp
+  src/run_manifest.cpp
   src/exception.cpp
   src/free_boundary.cpp
   src/geometry.cpp
@@ -40,6 +41,14 @@ target_include_directories(mc3d_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(mc3d_core PUBLIC Threads::Threads)
+add_custom_target(mc3d_build_revision
+  COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_SOURCE_DIR} -DBINARY_DIR=${CMAKE_BINARY_DIR}
+    -P ${CMAKE_SOURCE_DIR}/tools/write_build_revision.cmake
+  BYPRODUCTS ${CMAKE_BINARY_DIR}/generated/build_revision.h
+  VERBATIM)
+add_dependencies(mc3d_core mc3d_build_revision)
+configure_file(src/build_info.h.in generated/build_info.h @ONLY)
+target_include_directories(mc3d_core PRIVATE "${CMAKE_BINARY_DIR}/generated")
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE mc3d_core)
 
@@ -85,4 +94,16 @@ if(BUILD_TESTING)
   )
 
   gtest_discover_tests(mc3d_tests)
+endif()
+
+if(BUILD_TESTING)
+  find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  add_test(NAME RunManifestIntegration COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_SOURCE_DIR}/tests/run_manifest_integration.py $<TARGET_FILE:${PROJECT_NAME}>)
+  set_tests_properties(RunManifestIntegration PROPERTIES TIMEOUT 120)
+endif()
+if(BUILD_TESTING)
+  add_test(NAME ConfigExamplesIntegration COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_SOURCE_DIR}/tests/config_examples_integration.py $<TARGET_FILE:${PROJECT_NAME}>)
+  set_tests_properties(ConfigExamplesIntegration PROPERTIES TIMEOUT 120)
 endif()

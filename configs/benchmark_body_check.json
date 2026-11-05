@@ -38,5 +38,6 @@
   "geometry_wedge_length": 0.6,
   "geometry_wedge_width": 0.3,
   "geometry_wedge_alpha": 0.2617993877991494,
-  "seed": 123
+  "seed": 123,
+  "collision_model": "hs"
 }

@@ -620,7 +620,47 @@ https://doi.org/10.1007/s10765-025-03603-8 (zero-density viscosity, valid 84–1
 The fit uses 32 log-spaced samples over 300–2000 K and validates 1001 points.
 Maximum relative error is 3.098%; the acceptance threshold is 5%.
 The fit is not a validation against a shock-wave experiment.
-Example: `./build/mc3d --config configs/argon/argon_vhs.json` with additional
+Example: `./build/MC3dSolver --config configs/argon/argon_vhs.json` with additional
 geometry/domain options as needed. The report JSON is not a solver configuration.
 
 SPARTA convention reference: https://github.com/sparta/sparta/blob/5702a655006b76fbe41de68d64c8f65249b64d23/src/collide_vss.cpp
+
+### Physical units and run manifests
+
+Ready-to-run checks and SI examples: [configs/README.md](configs/README.md).
+`tools/physical_config.py input_si.json --output-dir prepared_case` generates
+normalized `solver.json`, `units.json`, and a copy of the physical input.
+Physical input uses temperature K, number density m^-3, speed m/s and flow angle
+in the XY plane. Domain/geometry lengths and translations use metres, time uses
+seconds, wall capacity J/K, and reference area m². Unknown or conflicting inputs
+are rejected. Default scales are L0=domain x length and T0=inflow temperature.
+Optional `length_unit_m` and `temperature_unit_k` change normalization, not physics.
+
+`--output-dir DIR` requires a new or empty directory. Without it legacy output
+paths remain unchanged and each manifest is saved under `run_metadata/<id>/`.
+Manifests contain effective configuration, selected seed and thread count, build
+information, executable SHA-256, archived inputs, geometry hash, units, output
+hashes and completion status. SHA-256 is an integrity check, not a signature.
+`--units-file` binds SI scales to the effective configuration; incompatible CLI
+overrides fail. Optional `--provenance-file` accepts JSON describing experimental
+sources or another solver, with a `files` array of local paths to archive.
+Paths in this explicit provenance file are interpreted relative to the launch
+working directory. SI-generator provenance paths are relative to the SI input.
+
+`tools/replay_run.py MANIFEST --output-dir NEW_DIR` verifies inputs and executable
+before replay. `--binary` selects an executable; `--allow-different-binary`
+explicitly allows a changed hash and records that choice. Single-thread replay
+with the same binary/seed is tested for identical physical output; timing data is
+excluded. Multiple threads or changed compiler/platform do not guarantee bitwise
+identity. SIGINT/SIGTERM finish at a step boundary with `interrupted`; SIGKILL can
+leave `running`, which must not be interpreted as successful completion.
+There is no restart from intermediate snapshots.
+
+Unit multipliers: x=L0, t=L0/v0, T=T0, v=v0=sqrt(kB*T0/m), ro=n_inf;
+force=rho0*v0²*L0², absorbed heat=rho0*v0²*L0³,
+wall capacity=rho0*v0²*L0³/T0, pressure=rho0*v0², area=L0².
+Snapshot E is mean kinetic energy per molecule and uses m*v0²; N remains model
+particle count. Physical molecule weight is recorded separately. VHS Kn uses
+lambda_eq(Tref)/physical domain x length; no experimental mean-free-path
+convention is silently substituted. Legacy runs without a unit table are
+explicitly marked `normalized_only`.

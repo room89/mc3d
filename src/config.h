@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include "collision_parameters.h"
 #include <cstddef>
 #include <optional>
@@ -101,6 +102,9 @@ struct SimulationConfig {
       BoundaryType::HyperFree, BoundaryType::HyperFree};
 
   std::string config_path;
+  std::string output_dir, units_file;
+  std::string provenance_file;
+  std::vector<std::string> input_configs;
 };
 
 SimulationConfig LoadSimulationConfig(int argc, char* argv[]);

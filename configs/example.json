@@ -21,6 +21,7 @@
   "geometry_cube_x": -0.2,
   "geometry_cube_width": 0.4,
   "geometry_cube_length": 0.4,
-  "geometry_cube_height": 0.4
+  "geometry_cube_height": 0.4,
+  "seed": 123,
+  "collision_model": "hs"
 }
-

@@ -290,10 +290,11 @@ bool SimulationRunner::UpdateSnapshotSchedule() {
 
 void SimulationRunner::Compute() {
   size_t step = 0;
-  while (cluster_.t < cluster_.t_end) {
+  while (cluster_.t < cluster_.t_end && !stop_requested) {
     LOG_INFO() << "Time step:" << ++step;
     utils::Stopwatch stopwatch("ClusterStep");
     Step();
+    if(progress) progress(cluster_.t, steps_);
   }
 }
 
@@ -341,6 +342,7 @@ void SimulationRunner::WriteBodyLoads(const StepResult& result) {
 
 StepResult SimulationRunner::Step() {
   const auto result = cluster_.TimeStep();
+  ++steps_;
   WriteBodyLoads(result);
   if (result.inner_particles > 0)
     LOG_WARNING() << "Particles inside body at time " << result.time << ": " << result.inner_particles;

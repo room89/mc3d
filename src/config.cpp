@@ -200,7 +200,10 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
   const auto key = NormalizeKey(raw_key);
   const auto prepared_value = StripQuotes(TrimCopy(raw_value));
 
-  if (key == "collision_model") {
+  if (key == "output_dir") { config.output_dir = prepared_value;
+  } else if (key == "provenance_file") { config.provenance_file = prepared_value;
+  } else if (key == "units_file") { config.units_file = prepared_value;
+  } else if (key == "collision_model") {
     if (prepared_value == "hs") config.collisions.kind = CollisionKind::HS;
     else if (prepared_value == "vhs") config.collisions.kind = CollisionKind::VHS;
     else if (prepared_value == "none") config.collisions.kind = CollisionKind::None;
@@ -340,6 +343,14 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.geometry_cube_length = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "geometry_cube_height") {
     config.geometry_cube_height = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_x") {
+    config.geometry_cylinder_x = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_radius") {
+    config.geometry_cylinder_radius = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_length") {
+    config.geometry_cylinder_length = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_segments") {
+    config.geometry_cylinder_segments = ParseUnsigned(prepared_value, raw_key, ctx);
   } else if (key == "boundary_x_neg") {
     config.boundary_types[ToIndex(BoundaryFace::XNeg)] =
         ParseBoundaryType(prepared_value, raw_key, ctx);
@@ -714,6 +725,8 @@ void PrintUsage(const char* program) {
       << "  --lx, --ly, --lz                 Domain size along axes\n"
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
+      << "  --output-dir DIR              New or empty result directory\n"
+      << "  --units-file FILE             SI scale table from physical_config.py\n"
       << "  --collision-model hs|vhs|none  Molecular collision law (default hs)\n"
       << "  VHS requires --molecular-mass-kg, --vhs-diameter-m,\n"
       << "    --vhs-reference-temperature-k, --vhs-omega, --temperature-unit-k\n"
@@ -777,6 +790,7 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   for (const auto& path : config_paths) {
     LoadConfigFile(config, path);
     config.config_path = path.string();
+    config.input_configs.push_back(path.string());
   }
 
   for (std::size_t i = 0; i < args.size(); ++i) {
