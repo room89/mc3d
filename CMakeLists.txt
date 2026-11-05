@@ -27,6 +27,7 @@ add_library(mc3d_core STATIC
   src/pereodic_boundary.cpp
   src/point.cpp
   src/poligon.cpp
+  src/runtime_control.cpp
   src/simulation_runner.cpp
   src/solver_setup.cpp
   src/utils/logger.cpp
@@ -65,6 +66,7 @@ if(BUILD_TESTING)
     tests/collision_test.cpp
     tests/collision_normalization_test.cpp
     tests/cell_cluster_test.cpp
+    tests/runtime_control_test.cpp
     tests/solver_setup_test.cpp
     tests/conservation_test.cpp
     tests/surface_heating_test.cpp

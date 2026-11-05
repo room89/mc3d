@@ -264,6 +264,8 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
       ThrowOptionError(raw_key, ctx, "thread pool size must be positive");
     }
     config.thread_pool_size = parsed;
+  } else if (key == "runtime_control") {
+    config.runtime_control = ParseStringValue(prepared_value);
   } else if (key == "s" || key == "sigma") {
     config.S = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "end_time" || key == "t_end") {
@@ -725,6 +727,7 @@ void PrintUsage(const char* program) {
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"
       << "  --seed UINT32                    Random seed (logged at startup)\n"
+      << "  --runtime-control PATH          Live load mode file (full/balanced/quiet/pause)\n"
       << "  --thread-pool-size COUNT         Number of worker threads\n"
       << "  --snapshots-binary               Enable binary snapshot output\n"
       << "  --boundary-x-neg TYPE            Boundary type (none, mirror, "

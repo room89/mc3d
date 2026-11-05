@@ -1,5 +1,6 @@
 #pragma once
 #include "cell_cluster.h"
+#include "runtime_control.h"
 namespace mc3d {
 class SnapshotWriter {
  public:
@@ -28,10 +29,12 @@ class SimulationRunner {
   void SetForceReference(double area, double speed, double alpha);
   StepResult Step();
   void Compute();
+  void SetRuntimeControl(const std::string& path) { runtime_control_path_ = path; }
   static void RequireWrite(bool success);
  private:
   CellCluster& cluster_;
   SnapshotWriter writer_;
+  std::string runtime_control_path_;
   double snapshot_interval_ = 0;
   double next_snapshot_time_ = 0;
   bool UpdateSnapshotSchedule();
