@@ -49,6 +49,7 @@ int Run(int argc, char* argv[]) {
                              config.S * std::sqrt(2 * config.temperature), config.alpha);
   runner.Writer().SetBinaryOutput(config.snapshots_binary);
   runner.SetSnapshotInterval(config.snapshot_interval);
+  runner.SetResolutionDiagnostics(config.resolution_diagnostics);
 
   if (config.write_default_snapshot_before_compute) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile());

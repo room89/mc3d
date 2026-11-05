@@ -46,6 +46,7 @@ class CellCluster {
   void CalculateDt();  // вычисление шага по времени для данного кластера
   void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
+  std::function<void()> before_step;
   StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
                            kDefaultThreadPoolSize, uint32_t seed = std::random_device{}());  // конструктор по умолчанию

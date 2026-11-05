@@ -312,14 +312,51 @@ double Cell::CollisionFrequencyBound() const {
 
 double Cell::CalculateDt() {
   ValidateGasPopulation();
+  resolution = {};
+  resolution.count = particles.size();
   if (volume_ == 0) return dt = std::numeric_limits<double>::infinity();
   RefreshMoments();
   dt = std::numeric_limits<double>::infinity();
-  double c = sqrt(2 * T);
+  long double peculiar = 0;
+  for (const auto& particle : particles) {
+    const auto d = particle.velocity - velocity;
+    peculiar += static_cast<long double>(d.x) * d.x +
+                static_cast<long double>(d.y) * d.y +
+                static_cast<long double>(d.z) * d.z;
+  }
+  const double local_temperature =
+      particles.empty() ? 0 : double(peculiar / (3 * particles.size()));
+  double c = std::sqrt(2 * local_temperature);
   double dtt = min(lx / (fabs(velocity.x) + c), ly / (fabs(velocity.y) + c));
   dtt = min(dtt, lz / (fabs(velocity.z) + c));
   if (dtt < dt) dt = dtt;
-  // if(dt < 0.00001) cin>>c;
+  resolution.transport = dt;
+  const double axis_limits[] = {lx / (std::fabs(velocity.x) + c),
+                                ly / (std::fabs(velocity.y) + c),
+                                lz / (std::fabs(velocity.z) + c)};
+  for (int axis = 0; axis < 3; ++axis)
+    if (axis_limits[axis] == dt) {
+      resolution.transport_axis = axis;
+      break;
+    }
+  resolution.frequency = CollisionFrequencyBound();
+  if (particles.size() >= 2 && local_temperature > 0 &&
+      collision_parameters.kind != CollisionKind::None) {
+    const double power = collision_parameters.kind == CollisionKind::HS
+                             ? 1
+                             : 2 - 2 * collision_parameters.omega;
+    const double moment = std::pow(4 * local_temperature, power / 2) *
+                          std::tgamma((power + 3) / 2) / std::tgamma(1.5);
+    const double rate = particles.size() * collision_parameters.Rate(1) *
+                        moment /
+                        (std::sqrt(2.) * L * Kn * reference_particle_count_ *
+                         (volume_ / GetSize().Volume()));
+    if (!(rate > 0) || !std::isfinite(rate))
+      throw std::runtime_error("Invalid equilibrium frequency");
+    resolution.equilibrium_frequency = rate;
+    resolution.mean_free_path =
+        std::sqrt(8 * local_temperature / std::acos(-1.)) / rate;
+  }
   return dt;
 }
 

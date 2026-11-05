@@ -66,3 +66,8 @@ ifneq ($(findstring --runtime-control,$(ARGS)),)
 $(error Use LOAD_MODE or ARGS=--runtime-control, not both)
 endif
 endif
+
+.PHONY: check-resolution
+check-resolution: build
+	$(CMAKE) -E make_directory "$(OUTPUT_DIR)"
+	"$(BUILD_DIR)/mc3d_resolution_comparison" "$(OUTPUT_DIR)/resolution_comparison.csv"

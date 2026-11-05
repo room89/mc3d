@@ -30,7 +30,32 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
             for cell,row in zip(volumes,fields):
                 assert all(math.isfinite(float(value)) for value in row.values())
                 if cell['region']=='solid':assert float(row['N'])==0 and float(row['ro'])==0
+        with (out/'resolution_steps.csv').open() as f:resolution=list(csv.DictReader(f,delimiter=';'))
+        assert resolution
+        for row in resolution:
+            dt=float(row['dt']);start=float(row['time']);end=float(row['end_time'])
+            assert math.isclose(end-start,dt,rel_tol=1e-10,abs_tol=1e-15)
+            assert float(row['max_dt_nu'])<=m['effective_config']['collision_courant']*(1+1e-12)
+            if row['limiter']=='collision':assert math.isclose(float(row['max_dt_nu']),m['effective_config']['collision_courant'],rel_tol=1e-12)
+            limits=[float(row[k]) for k in ['transport_limit','collision_limit'] if row[k]]
+            limits.append(m['effective_config']['end_time']-start)
+            assert math.isclose(dt,min(limits),rel_tol=1e-12,abs_tol=1e-15)
+        assert math.isclose(float(resolution[-1]['end_time']),m['effective_config']['end_time'],rel_tol=1e-12)
+        assert (out/f"resolution_cells_{resolution[-1]['step']}.csv").is_file()
+        for table in out.glob('resolution_cells_*.csv'):
+            with table.open() as f:rows=list(csv.DictReader(f,delimiter=';'))
+            assert [int(r['index']) for r in rows]==list(range(len(rows)))
+            for row in rows:
+                assert all(math.isfinite(float(v)) for k,v in row.items() if v and k!='status')
+                if row['status']!='valid':assert not row['lambda_eq']
         assert (out/'initial.dat').is_file() and (out/'final.dat').is_file()
+    original=json.loads((repo/'configs/checks/vhs_argon_equilibrium.json').read_text())
+    disabled=root/'disabled.json';disabled.write_text(json.dumps(original|{'resolution_diagnostics':False}))
+    off=root/'off'
+    subprocess.run([str(binary),'--config',str(disabled),'--output-dir',str(off)],check=True,capture_output=True)
+    assert not list(off.glob('resolution_*.csv'))
+    for name in ['initial.dat','final.dat','cell_geometry.csv']:
+        assert (off/name).read_bytes()==(root/'vhs_argon_equilibrium'/name).read_bytes()
     # Reject unsupported bodies even when intermolecular collisions are disabled.
     base=json.loads((repo/'configs/checks/cut_cube.json').read_text())
     for i,patch in enumerate([
@@ -38,6 +63,8 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
         {'geometry_file':'nonexistent.stl'}, {'geometry_cube_x':-.5},
         {'geometry_scale':-1}, {'geometry_move_x':1},
         {'final_snapshot':'cell_geometry.csv'},
+        {'final_snapshot':'resolution_steps.csv'}, {'final_snapshot':'resolution_cells_1.csv'},
+        {'collision_courant':-0.1}, {'collision_courant':1.1},
     ]):
         cfg=root/f'invalid-{i}.json';cfg.write_text(json.dumps(base|patch|{'collision_model':'none'}))
         r=subprocess.run([str(binary),'--config',str(cfg),'--output-dir',str(root/f'invalid-out-{i}')],capture_output=True)

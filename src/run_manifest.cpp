@@ -122,6 +122,14 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
                              (output_ / "cell_geometry.csv").lexically_normal())
       throw std::invalid_argument(
           "cell_geometry.csv is reserved for static cell volumes");
+  for (const auto& name :
+       {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot}) {
+    const auto base = fs::path(name).filename().string();
+    if (base == "resolution_steps.csv" ||
+        (base.starts_with("resolution_cells_") && base.ends_with(".csv")))
+      throw std::invalid_argument(
+          "Output path reserved for resolution diagnostics");
+  }
   if (isolated_)
     for (const auto& name :
          {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot}) {
@@ -159,28 +167,38 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
       previous_[entry.path()] = entry.last_write_time();
   for (auto& path : explicit_outputs_)
     if (fs::is_regular_file(path)) previous_[path] = fs::last_write_time(path);
-  data_ = {{"schema_version", 1},
-           {"status", "running"},
-           {"started_unix", Now()},
-           {"effective_config", EffectiveConfig(c)},
-           {"seed", *c.seed},
-           {"thread_pool_size", c.thread_pool_size},
-           {"rng", utils::RandomStream::kAlgorithm},
-           {"units_mode", "normalized_only"},
-           {"build",
-            {{"revision", MC3D_REV},
-             {"dirty", MC3D_DIRTY},
-             {"compiler", MC3D_COMPILER},
-             {"type", MC3D_BUILD_TYPE},
-             {"flags", MC3D_BUILD_FLAGS},
-             {"release_flags", MC3D_RELEASE_FLAGS},
-             {"debug_flags", MC3D_DEBUG_FLAGS}}},
-           {"executable", Executable()},
-           {"binary_sha256", Hash(Executable())},
-           {"working_directory", original_cwd_.string()},
-           {"output_directory", output_.string()},
-           {"argv", Json::array()},
-           {"inputs", Json::array()}};
+  data_ = {
+      {"schema_version", 1},
+      {"status", "running"},
+      {"started_unix", Now()},
+      {"effective_config", EffectiveConfig(c)},
+      {"resolution",
+       {{"method", "pair_rms_bound_v1"},
+        {"enabled", c.resolution_diagnostics},
+        {"collision_courant", c.collision_courant},
+        {"state", "before_step"},
+        {"mean_free_path", "maxwell_equilibrium_estimate"},
+        {"population_bins", {"0", "1", "2-4", "5-9", "10-19", "20-49", ">=50"}},
+        {"spatial_bins", {"<0.5", "[0.5,1)", "[1,2)", "[2,5)", ">=5"}},
+        {"temporal_bins", {"<=0.05", "(0.05,0.1]", "(0.1,0.2]", ">0.2"}}}},
+      {"seed", *c.seed},
+      {"thread_pool_size", c.thread_pool_size},
+      {"rng", utils::RandomStream::kAlgorithm},
+      {"units_mode", "normalized_only"},
+      {"build",
+       {{"revision", MC3D_REV},
+        {"dirty", MC3D_DIRTY},
+        {"compiler", MC3D_COMPILER},
+        {"type", MC3D_BUILD_TYPE},
+        {"flags", MC3D_BUILD_FLAGS},
+        {"release_flags", MC3D_RELEASE_FLAGS},
+        {"debug_flags", MC3D_DEBUG_FLAGS}}},
+      {"executable", Executable()},
+      {"binary_sha256", Hash(Executable())},
+      {"working_directory", original_cwd_.string()},
+      {"output_directory", output_.string()},
+      {"argv", Json::array()},
+      {"inputs", Json::array()}};
   if (std::string(MC3D_REV) == "unknown") data_["build"]["dirty"] = nullptr;
   for (int i = 0; i < argc; ++i) data_["argv"].push_back(argv[i]);
   auto copy = [&](const std::string& source, const std::string& role) {

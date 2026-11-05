@@ -182,6 +182,7 @@ StepResult CellCluster::TimeStep() {
 
   if (t < t_end && (!(dt > 0) || !std::isfinite(dt) || t + dt == t))
     throw std::runtime_error("Time step cannot advance simulation time");
+  if (before_step) before_step();
   LOG_INFO() << "dt = " << dt << " t = " << t;
 
   //  auto cell_iter = cells.begin();
@@ -621,7 +622,7 @@ void CellCluster::CalculateDt() {
   collision_dt = std::numeric_limits<double>::infinity();
   if (collision_courant > 0) {
     for (const auto& cell : cells) {
-      const double rate = cell.CollisionFrequencyBound();
+      const double rate = cell.resolution.frequency;
       if (rate > 0) collision_dt = std::min(collision_dt, collision_courant / rate);
     }
   }
