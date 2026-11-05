@@ -226,3 +226,25 @@ Qthermostat означает отвод тепла термостатом, от�
 оценки температуры на независимых выборках, хеши исходников и бинарника.
 В локальных запусках невязка числа частиц равна нулю, максимальная абсолютная
 невязка энергии меньше 4.4e-15 в единицах решателя.
+
+### Analytical physics acceptance (stage 8)
+
+Full acceptance configurations live in `configs/analytical/`, separately from
+the short examples in `configs/checks/`. CTest runs their reduced variants
+through AnalyticalIntegration; ConfigExamplesIntegration runs short examples only.
+
+Run `make check-physics PHYSICS_MODE=quick OUTPUT_DIR=output/physics-quick LOAD_MODE=balanced`
+for microphysics and nine small integration runs. Run the same command with
+`PHYSICS_MODE=full` and a fresh output directory for full acceptance.
+Full acceptance uses seeds 123, 456, 789 and requires each cube result to meet
+1% force and heat errors; quick mode does not certify that accuracy.
+The closed-system ledger tolerance is 1e-10; the independent legacy snapshot
+energy check allows 1e-7 because gas snapshots print eight significant digits.
+
+Outputs include configs, logs, solver manifests, microphysics XML and report.json.
+Exit codes: 0 passed, 1 physical failure, 2 incomplete, 3 execution/data error.
+Completed runs can be checked again using `python3 tools/check_physics.py
+--binary build/MC3dSolver --mode full --output-dir output/physics-full --resume`.
+Reuse requires identical configuration, binary hash and valid output hashes.
+An interrupted solver run is never silently restarted. Keep the original files
+for diagnosis and use a new directory for a deliberate rerun.

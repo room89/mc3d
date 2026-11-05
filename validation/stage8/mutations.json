@@ -1,0 +1,22 @@
+[
+  {
+    "mutation": "heat_sign",
+    "status": "failed"
+  },
+  {
+    "mutation": "double_weight",
+    "status": "failed"
+  },
+  {
+    "mutation": "missing_face",
+    "status": "failed"
+  },
+  {
+    "mutation": "incomplete_window",
+    "status": "incomplete"
+  },
+  {
+    "mutation": "missing_wall_energy",
+    "status": "failed"
+  }
+]

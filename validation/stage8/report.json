@@ -1,0 +1,923 @@
+{
+  "mode": "full",
+  "binary_sha256": "74de13bc7e9ef324b760eea9f7387124503fa8047fa1542c9ff2108d3e6b3cdd",
+  "runs": [
+    {
+      "scenario": "uniform",
+      "seed": 123,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 6.400568963726982e-13,
+          "expected": 0,
+          "tolerance": 3.501055099586584e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.501055099586584e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.72917680174578e-13,
+          "expected": 0,
+          "tolerance": 9.402216588096206e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 9.358624986077758e-17,
+          "expected": 0,
+          "tolerance": 9.402216588096206e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 8.317790900491674e-17,
+          "expected": 0,
+          "tolerance": 9.402216588096206e-09,
+          "passed": true
+        },
+        "density": {
+          "value": 1.0008351345520015,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "ux": {
+          "value": 7.070249400819891,
+          "expected": 7.0710678118654755,
+          "tolerance": 0.07071067811865477,
+          "passed": true
+        },
+        "uy": {
+          "value": -0.0004912263358848877,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "uz": {
+          "value": -0.0007789677249369631,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "T": {
+          "value": 0.9998824603561326,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "uniform",
+      "seed": 456,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 4.58112481283024e-13,
+          "expected": 0,
+          "tolerance": 3.5000796233522065e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.5000796233522065e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.5991190593922512e-13,
+          "expected": 0,
+          "tolerance": 9.400495893751826e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 8.362199821476679e-17,
+          "expected": 0,
+          "tolerance": 9.400495893751826e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 1.130540105975797e-16,
+          "expected": 0,
+          "tolerance": 9.400495893751826e-09,
+          "passed": true
+        },
+        "density": {
+          "value": 1.000015804681675,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "ux": {
+          "value": 7.070466031535051,
+          "expected": 7.0710678118654755,
+          "tolerance": 0.07071067811865477,
+          "passed": true
+        },
+        "uy": {
+          "value": -0.0005721614281444311,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "uz": {
+          "value": 0.00015054446553256382,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "T": {
+          "value": 0.999129653697905,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "uniform",
+      "seed": 789,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 5.532001523533837e-13,
+          "expected": 0,
+          "tolerance": 3.5009199612652624e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.5009199612652624e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.5107843864825554e-13,
+          "expected": 0,
+          "tolerance": 9.401919903298358e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.9042545318370686e-16,
+          "expected": 0,
+          "tolerance": 9.401919903298358e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 7.465139617579553e-17,
+          "expected": 0,
+          "tolerance": 9.401919903298358e-09,
+          "passed": true
+        },
+        "density": {
+          "value": 0.9998283249153299,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "ux": {
+          "value": 7.071005554339463,
+          "expected": 7.0710678118654755,
+          "tolerance": 0.07071067811865477,
+          "passed": true
+        },
+        "uy": {
+          "value": 0.0008011012557184971,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "uz": {
+          "value": -0.0007313170952063998,
+          "expected": 0,
+          "tolerance": 0.01,
+          "passed": true
+        },
+        "T": {
+          "value": 1.0004271148226795,
+          "expected": 1,
+          "tolerance": 0.01,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "cube",
+      "seed": 123,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 3.7890900383309667e-13,
+          "expected": 0,
+          "tolerance": 3.508980642193601e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.508980642193601e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.690756909478175e-13,
+          "expected": 0,
+          "tolerance": 9.221011034431162e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.165652860693478e-16,
+          "expected": 0,
+          "tolerance": 9.221011034431162e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 1.1117476839302143e-16,
+          "expected": 0,
+          "tolerance": 9.221011034431162e-09,
+          "passed": true
+        },
+        "wall_0": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_1": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_2": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_3": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_4": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_5": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_6": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_7": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_8": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_9": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_10": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_11": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "Fx": {
+          "value": 2.838617097194406,
+          "expected": 2.8458424370193067,
+          "tolerance": 0.028458424370193067,
+          "passed": true
+        },
+        "Qdot": {
+          "value": 8.784054859185856,
+          "expected": 8.808258289708512,
+          "tolerance": 0.08808258289708512,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "cube",
+      "seed": 456,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 4.4474017011358273e-13,
+          "expected": 0,
+          "tolerance": 3.5089948733918575e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.5089948733918575e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.8928608680468528e-13,
+          "expected": 0,
+          "tolerance": 9.220632721704181e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.378969638130001e-16,
+          "expected": 0,
+          "tolerance": 9.220632721704181e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 1.2784776492677508e-16,
+          "expected": 0,
+          "tolerance": 9.220632721704181e-09,
+          "passed": true
+        },
+        "wall_0": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_1": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_2": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_3": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_4": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_5": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_6": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_7": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_8": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_9": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_10": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_11": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "Fx": {
+          "value": 2.851816666626813,
+          "expected": 2.8458424370193067,
+          "tolerance": 0.028458424370193067,
+          "passed": true
+        },
+        "Qdot": {
+          "value": 8.825008102470525,
+          "expected": 8.808258289708512,
+          "tolerance": 0.08808258289708512,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "cube",
+      "seed": 789,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 4.0856553698082314e-13,
+          "expected": 0,
+          "tolerance": 3.509172471630565e-08,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 3.509172471630565e-08,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 2.2541604000059223e-13,
+          "expected": 0,
+          "tolerance": 9.22118141229989e-09,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.0891530800622058e-16,
+          "expected": 0,
+          "tolerance": 9.22118141229989e-09,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 8.443224418230866e-17,
+          "expected": 0,
+          "tolerance": 9.22118141229989e-09,
+          "passed": true
+        },
+        "wall_0": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_1": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_2": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_3": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_4": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_5": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_6": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_7": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_8": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_9": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_10": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "wall_11": {
+          "value": 1.0,
+          "expected": 1,
+          "tolerance": 1e-12,
+          "passed": true
+        },
+        "Fx": {
+          "value": 2.8419725029060254,
+          "expected": 2.8458424370193067,
+          "tolerance": 0.028458424370193067,
+          "passed": true
+        },
+        "Qdot": {
+          "value": 8.791890197230224,
+          "expected": 8.808258289708512,
+          "tolerance": 0.08808258289708512,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "closed",
+      "seed": 123,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 9.72056467667227e-15,
+          "expected": 0,
+          "tolerance": 1.6288556952617136e-10,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 2.699663409488906e-16,
+          "expected": 0,
+          "tolerance": 1.6288556952617136e-10,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 8.890457814381136e-17,
+          "expected": 0,
+          "tolerance": 1.5890388998265746e-10,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 6.461844948013606e-17,
+          "expected": 0,
+          "tolerance": 1.5890388998265746e-10,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 1.3200161450011016e-16,
+          "expected": 0,
+          "tolerance": 1.5890388998265746e-10,
+          "passed": true
+        },
+        "input": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "output": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "energy": {
+          "value": -1.9984014443252818e-15,
+          "expected": 0,
+          "tolerance": 1.6288556952617136e-10,
+          "passed": true
+        },
+        "exchange": {
+          "value": 1,
+          "expected": 1,
+          "tolerance": 0,
+          "passed": true
+        },
+        "snapshot_energy": {
+          "value": -6.017026876747877e-10,
+          "expected": 0,
+          "tolerance": 2.4879999999999995e-07,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "closed",
+      "seed": 456,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 7.919684707995187e-15,
+          "expected": 0,
+          "tolerance": 1.634876520785575e-10,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 2.955535122195485e-16,
+          "expected": 0,
+          "tolerance": 1.634876520785575e-10,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 1.1102230246251565e-16,
+          "expected": 0,
+          "tolerance": 1.5874430878440968e-10,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.1611805267319752e-16,
+          "expected": 0,
+          "tolerance": 1.5874430878440968e-10,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 9.195897895161037e-17,
+          "expected": 0,
+          "tolerance": 1.5874430878440968e-10,
+          "passed": true
+        },
+        "input": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "output": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "energy": {
+          "value": 4.9960036108132044e-15,
+          "expected": 0,
+          "tolerance": 1.634876520785575e-10,
+          "passed": true
+        },
+        "exchange": {
+          "value": 1,
+          "expected": 1,
+          "tolerance": 0,
+          "passed": true
+        },
+        "snapshot_energy": {
+          "value": -2.560334166901157e-09,
+          "expected": 0,
+          "tolerance": 2.4879999999999995e-07,
+          "passed": true
+        }
+      },
+      "reused": true
+    },
+    {
+      "scenario": "closed",
+      "seed": 789,
+      "status": "passed",
+      "checks": {
+        "Rcount": {
+          "value": 0.0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "RE": {
+          "value": 8.714237543462582e-15,
+          "expected": 0,
+          "tolerance": 1.6326706648066284e-10,
+          "passed": true
+        },
+        "Rwall": {
+          "value": 3.0292608699244994e-16,
+          "expected": 0,
+          "tolerance": 1.6326706648066284e-10,
+          "passed": true
+        },
+        "Rp_x": {
+          "value": 9.6710833785707e-17,
+          "expected": 0,
+          "tolerance": 1.5889888740535552e-10,
+          "passed": true
+        },
+        "Rp_y": {
+          "value": 1.1449174941446927e-16,
+          "expected": 0,
+          "tolerance": 1.5889888740535552e-10,
+          "passed": true
+        },
+        "Rp_z": {
+          "value": 1.6197980456933436e-16,
+          "expected": 0,
+          "tolerance": 1.5889888740535552e-10,
+          "passed": true
+        },
+        "input": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "output": {
+          "value": 0,
+          "expected": 0,
+          "tolerance": 0,
+          "passed": true
+        },
+        "energy": {
+          "value": -5.995204332975845e-15,
+          "expected": 0,
+          "tolerance": 1.6326706648066284e-10,
+          "passed": true
+        },
+        "exchange": {
+          "value": 1,
+          "expected": 1,
+          "tolerance": 0,
+          "passed": true
+        },
+        "snapshot_energy": {
+          "value": -6.236229310729868e-10,
+          "expected": 0,
+          "tolerance": 2.4879999999999995e-07,
+          "passed": true
+        }
+      },
+      "reused": true
+    }
+  ],
+  "microphysics": {
+    "status": "passed",
+    "tests": {
+      "tests": "20",
+      "failures": "0",
+      "disabled": "0",
+      "errors": "0",
+      "time": "6.85",
+      "timestamp": "2026-11-05T22:46:16.581",
+      "name": "AllTests"
+    }
+  },
+  "provenance": {
+    "solver_revision": "bef8fa2bcd1205403c626d091a408f08e500b458",
+    "solver_dirty": true,
+    "command": "python3 tools/check_physics.py --binary build/MC3dSolver --output-dir /tmp/mc3d-stage8-full --mode full",
+    "artifacts": "/tmp/mc3d-stage8-full",
+    "source_hashes": {
+      "src/giper_free_boundary.h": "cc09d38542d2338d5284335da6083e43a64119ea2debf3caa0f7506fd2e84a93",
+      "src/particle.cpp": "cbc76669998345473439c48ffae401b7734ed87f74c05cb954a8600eaccbdcac",
+      "src/build_info.h.in": "eb59f927441773cf1d7b315833c0873247133a14abb30d38f2aaf9731cd3834b",
+      "src/inner_boundary.cpp": "b0759eb9a4ddf4f5588e4e66fc10137f8c19077a1130d9d4dc90bf1f8cb4b36b",
+      "src/geometry.cpp": "a9ea0b7b9099188c24b2b555ae7268114bf37856ec168101850edc5a6e113427",
+      "src/runtime_control.h": "a5bd7667d2784104b94e5f4385ef21a36d6532db8395c9ab53e874f77ce4b06e",
+      "src/initial_conditions.h": "b7e3c016d2e237a011d889713d72f6bcb9fe96d2bc9fc39469307bc6674f53e9",
+      "src/statistical_moments.h": "6d123a91fde0d0c0c454eae61751a86916ff20fcb51d1eb82378a277ba838449",
+      "src/free_boundary.cpp": "fb838771fabba811de6801fcfec1522f44fdb27986d775463f9358545e4e2e60",
+      "src/particle_sampler.h": "c81afc658d820e4a95416f9cf0b18c8def43f9dd116c3cba548e473d10425084",
+      "src/point.h": "c83e734524d335d05d1122c9753d3da17730093f11d93e4ab6d896f2ed89ee29",
+      "src/boundary.h": "87d35dc25915c8d44f43c3768932b72a90552dfc280e3c9a61a4fd89dcd15bfc",
+      "src/config.h": "4727ec8009d4cc75e662faa4f7aa1a9d33f281d6b6d9e8de66d63c52e37c1c07",
+      "src/statistical_diagnostics.h": "475728f4c4b325a49f85e148c5db49f759362678b76238ce629aa81f50012392",
+      "src/mirror_boundary.h": "6f31290cd46c86aa7dab02309c64ff098c3fae5023fe06726e6ab1748fceb167",
+      "src/cellnet.cpp": "27cdb1923eac368ef4091d1e265812e5914fc328d6de7ce709a4e3573c3566b3",
+      "src/runtime_control.cpp": "8bead840bbfb405bebaa4b94983e14dcb88d502adeff53bafa039226b1f74384",
+      "src/exception.cpp": "1d09487fb84bf929712d490acbde194c106c3ac386c79d63dc27e92934b8dae5",
+      "src/run_manifest.h": "adeff4d350eaba7a252282ff5d41913ca6edbe09758e16c871f43067276f8328",
+      "src/giper_free_boundary.cpp": "80572928e880e414eb3ca0816b6940c31defe82f1fae67991776b18a71c5584d",
+      "src/var.h": "3a033308a9313cd6c99bd20e0763297ce64f82b45de1fc5e603d7d8c4a703201",
+      "src/cell.h": "51f095620638e90632b826a988ca7ffbb68eab5746dbeacd0ffcd6980ee769e2",
+      "src/collision_model.h": "59db5e7ccd4c31a02a5c1cd811e46919390317af6397557fb9659c677acb975a",
+      "src/simulation_runner.h": "fbc12b6eae068c0ec9fce5614f7206c4bc25bb887e6bdd96bfec529e766a4f5f",
+      "src/cell.cpp": "c0390c8eae4a6fe0acbc8d603932fe44b9cf7b58396a373778d6bf9d3f9f5f40",
+      "src/inner_boundary.h": "f24b949392438d311dfc99a54f530ca4ba46af9af3c54fc2d9a62dbbabd6e3c0",
+      "src/simulation_runner.cpp": "c1bf9394555e68b04eace8986f5b6aca51220ecd2e74b1a77d029b03cedadb7c",
+      "src/pereodic_boundary.h": "ea4988c1a438e42e5ef5f24630af6e1f8ef49097b96c88b6cbbb8a89c656f841",
+      "src/solver_setup.cpp": "c44fcea52daaeefb9c5b69574c4bbcbcf945dbff275f7506292a795dcc3f0fae",
+      "src/particle_sampler.cpp": "456ab8a391e8d2de3080dccc92970321baf95b4403132c34c81d13fa41836627",
+      "src/collision_scattering.h": "b3bd961543cecde024c41967bd0f6712aed813324647d66be2c52bf7fe227bcd",
+      "src/warning.h": "b68b73f3bb65e6b64dbbef2129f86ddbcd3b4250065b014c4112f191084e1c21",
+      "src/statistical_diagnostics.cpp": "713957f1d946f5cca71eae9d7376547e34c4d635ff59adc8d11f1ace65491277",
+      "src/var.cpp": "46a1728a8aa65958ab02293adb32bf3940402dadd0954b75b390360c4f4eaa7f",
+      "src/run_manifest.cpp": "c5bc09e494a31e6da522911a81923863f8256f75042d77d9601fccb7741a2633",
+      "src/boundary.cpp": "aed413ca93dc05dee57b7f51fa0b34c1aa6d7918cac6543870b26e2836b5fcf1",
+      "src/exit_code.h": "cb69f8365870b9822f9db765e03af445621f983097425d91b14b85a6f62ad97f",
+      "src/point.cpp": "e1316cb28c420f4986b37833e84745a10364dad3ba73486cf41e22d1e4e88de4",
+      "src/config.cpp": "a776f6393e585a838ea2561be4e404a660ff9ac4a5289a4aab3732b698d0e883",
+      "src/particle.h": "0b235994e647018bb4314c1521e7259e96b34dbbae98a76877284b0a36560174",
+      "src/effective_config.inc": "be257e78d7da0b3d5ab7fb49e4c4a48230bafd46fe19f187ea3dc4aaf145466b",
+      "src/collision_model.cpp": "84f82bc4bb8ff9c2f7f34432ca36ea608819585bf98a9c87ca7b4d6cb6d14147",
+      "src/poligon.h": "8e230e747a91f40b20042c55800acd7e8ec15883c9ceed64522b02fe17c54f7a",
+      "src/cell_cluster.h": "f684da25d6fc166088ccf03363c4168ff4353a6da17ecbe865f7e1f9b144285d",
+      "src/collision_parameters.h": "c59f4811992ef5c5bb2d6c0ba2a005f41f97e1c802f141ab2976309683545be8",
+      "src/cell_volume.cpp": "ff612dd8b52c1171c48dd00169531b0fd206594cff29ec71cf0d2af5de2028bf",
+      "src/inner_cell.h": "5f4feab8af3ef06ad656614bbda7c800b129be842174069e3332ffe2e0c14adf",
+      "src/cell_volume.h": "e737c59f9d2e67bbb81d928c68ea9f96ed626fd8d0ee20ad2afea0666149ddfa",
+      "src/cellnet.h": "208f6bc3acf380fdef5817b965bab8326e9b0e47ebb85382f6b4d959721e8f3a",
+      "src/mirror_boundary.cpp": "01eb4f45bddcf524f3ef6144ed1db86d5c66f6be91deb247df633c3c940ee887",
+      "src/cell_cluster.cpp": "438dfbbbbd931b44a92642027bb023e09d1be07a0f273f65eec1594e8e967be7",
+      "src/poligon.cpp": "c6fbb9a441f22102f0bf67faccbf206a4ee8cb553da831f7484f4a1ee0f593de",
+      "src/warning.cpp": "160ef27d0c97e9bcd72faf3bf0cf9b7bc2e47b24990687d7d470335bd7881e9d",
+      "src/solver_setup.h": "e8c3fa98e7306da539367a5e266f19f20658417992c2790b84454a21f3727f29",
+      "src/exception.h": "1836b31e01d07cf38acf941367fae5515dfe04a7bd31bbfa701c738e7c0e1c62",
+      "src/inner_cell.cpp": "e3c4f3c7cb221ed4eb5bf9fbb78cb2fd8cdd7ec734aca66dd1156e9c4e1e511f",
+      "src/main.cpp": "41a6184fcc3d17c1af1ccc2e9581d6874eded485d1f4f1fc89da3ba01a7ddd37",
+      "src/pereodic_boundary.cpp": "aa7c54c0718a464adf30f238c20ec3113a3ee5e80e64299889e2abbf0cc8dbe2",
+      "src/free_boundary.h": "7748eb2a40454ea97f068539ac99f4b4e0d1282ccb43af6d8489f0d87fe30da8",
+      "src/geometry.h": "a93a707ecdc0677bfce4b878d44adc343d612a25b14692daf1f69099856301ab",
+      "src/utils/threadpool.hpp": "0889060416e8e1b087d30764e15e9bd98f2acb116b392c0ebda9c2b323d128b3",
+      "src/utils/logger.hpp": "e9d2f6c30a9e57e73ba389f3414860d06e985b23720b88cbba2ae497340c19ff",
+      "src/utils/utils.cpp": "afc67b9f999d16cc9f817ed3606695840d6d3449a0959821b32130bd867f1de4",
+      "src/utils/stopwatch.hpp": "136df176657cb9a684090fe1025e094102a11f6d668bd2708f311c1b67b7e383",
+      "src/utils/threadpool.cpp": "5d9c8ef7daeb959ff033668fbe9cffccf785e2536cfd9d8f3d5a57873b466faf",
+      "src/utils/logger.cpp": "22c7861ba3c13076ca3dda6b635507488a4a0ce6f5893ad61126c271e173745e",
+      "src/utils/utils.hpp": "21cea83baaa58962ef7840e04e07e8ce1be245e42202e8be3d8cb99749c255ae",
+      "src/utils/stopwatch.cpp": "0054ebc1f4c596d5cc16048740575e3c877ff5d36cf7de6afd64d4c8d4f1d366",
+      "src/utils/pcg32.hpp": "8b85e9020ce7999d814e3432767d0e880c2c31efef331917472a0d129917b02b"
+    }
+  }
+}

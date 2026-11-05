@@ -122,3 +122,9 @@ endif()
 if(BUILD_TESTING)
   add_test(NAME StatisticsIntegration COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/statistics_integration.py $<TARGET_FILE:MC3dSolver>)
 endif()
+
+if(BUILD_TESTING)
+  add_test(NAME AnalyticalIntegration COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/analytical_integration.py $<TARGET_FILE:MC3dSolver>)
+  set_tests_properties(AnalyticalIntegration PROPERTIES TIMEOUT 600)
+endif()
