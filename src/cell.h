@@ -6,8 +6,6 @@
 // Description: Program for calculation of rarefaid flows.
 
 #pragma once
-#include "collision_parameters.h"
-
 #include <cstdlib>
 #include <deque>
 #include <fstream>
@@ -16,8 +14,11 @@
 #include <memory>
 #include <mutex>
 #include <span>
-#include <vector>
 #include <variant>
+#include <vector>
+
+#include "collision_parameters.h"
+#include "statistical_moments.h"
 // #include "free_boundary.h"
 #include "geometry.h"
 #include "inner_boundary.h"
@@ -45,7 +46,10 @@ struct CellResolution {
   std::optional<double> equilibrium_frequency, mean_free_path;
 };
 
+class StatisticalDiagnostics;
 class Cell {
+  friend class StatisticalDiagnostics;
+
  private:
   friend class CellCluster;
   friend class CellVolumeTestAccess;
@@ -94,6 +98,9 @@ class Cell {
   std::mutex particles_mutex_;
 
  public:
+  bool defer_surface_exchange = false;
+  std::vector<Geometry::Exchange> surface_exchanges;
+  ConservedQuantity incoming_quantity;
   CellMoments ComputeMoments() const;
   explicit Cell(std::shared_ptr<utils::RandomStream> random = nullptr);
   Cell(uint32_t seed, uint64_t stream_id);

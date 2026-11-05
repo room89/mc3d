@@ -1,0 +1,558 @@
+{
+  "base_revision": "934619785c8977ba23b582fb5d39e51ee97f305e",
+  "uncommitted_implementation": true,
+  "cases": {
+    "closed": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_closed.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/closed",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 1280,
+          "absolute_momentum": 1.6059612179446672,
+          "energy": 1.5,
+          "mass": 1.0,
+          "momentum": [
+            -1.0408340855860844e-18,
+            8.283304597789254e-18,
+            4.5102810375396986e-18
+          ]
+        },
+        "incoming": {
+          "N": 0,
+          "absolute_momentum": 0.0,
+          "energy": 0.0,
+          "mass": 0.0,
+          "momentum": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "initial": {
+          "N": 1280,
+          "absolute_momentum": 1.604725013111361,
+          "energy": 1.5,
+          "mass": 1.0,
+          "momentum": [
+            2.42861286636753e-18,
+            4.163336342344338e-18,
+            -3.4694469519536144e-19
+          ]
+        },
+        "max_energy_residual": 8.881784197001252e-16,
+        "max_momentum_residual": 3.174721694123252e-17,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 0,
+          "absolute_momentum": 0.0,
+          "energy": 0.0,
+          "mass": 0.0,
+          "momentum": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -1.77635683940025e-16,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -3.469446951953612e-18,
+          4.11996825544492e-18,
+          4.857225732735058e-18
+        ],
+        "schema_version": 1,
+        "steps": 11,
+        "thermostat_heat": 0.0,
+        "time": 0.05,
+        "wall_energy_change": 0.0
+      }
+    },
+    "open": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_open.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/open",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 1245,
+          "absolute_momentum": 3.0843681119163264,
+          "energy": 5.31209883655018,
+          "mass": 0.97265625,
+          "momentum": [
+            2.7413586861805683,
+            0.025681232956625617,
+            0.008545419741795854
+          ]
+        },
+        "incoming": {
+          "N": 240,
+          "absolute_momentum": 0.6341183507949432,
+          "energy": 1.1430409075612673,
+          "mass": 0.1875,
+          "momentum": [
+            0.5654151231674888,
+            0.006889339783625371,
+            0.004542036774932798
+          ]
+        },
+        "initial": {
+          "N": 1280,
+          "absolute_momentum": 3.1810729891654077,
+          "energy": 5.500000000000007,
+          "mass": 1.0,
+          "momentum": [
+            2.8284271247461907,
+            4.163336342344338e-18,
+            -3.4694469519536144e-19
+          ]
+        },
+        "max_energy_residual": 2.842170943040401e-15,
+        "max_momentum_residual": 2.909174797309564e-15,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 275,
+          "absolute_momentum": 0.7308232280440224,
+          "energy": 1.3309420710110942,
+          "mass": 0.21484375,
+          "momentum": [
+            0.6524835617331108,
+            -0.018791893173000236,
+            -0.004003382966863045
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -6.661338147750939e-16,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -1.9984014443252865e-16,
+          7.285838599102589e-18,
+          1.006139616066548e-17
+        ],
+        "schema_version": 1,
+        "steps": 3,
+        "thermostat_heat": 0.0,
+        "time": 0.05,
+        "wall_energy_change": 0.0
+      }
+    },
+    "free": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_free.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/free",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 1188,
+          "absolute_momentum": 2.9106782945524063,
+          "energy": 4.958791939057238,
+          "mass": 0.9281250000000001,
+          "momentum": [
+            2.5820056989541014,
+            0.01841406719598246,
+            0.004424362323454503
+          ]
+        },
+        "incoming": {
+          "N": 176,
+          "absolute_momentum": 0.4413028675088317,
+          "energy": 0.7562500000000001,
+          "mass": 0.1375,
+          "momentum": [
+            0.38890872965260126,
+            2.0491421059976036e-18,
+            3.253453550403768e-19
+          ]
+        },
+        "initial": {
+          "N": 1280,
+          "absolute_momentum": 3.1810729891654077,
+          "energy": 5.500000000000007,
+          "mass": 1.0,
+          "momentum": [
+            2.8284271247461907,
+            4.163336342344338e-18,
+            -3.4694469519536144e-19
+          ]
+        },
+        "max_energy_residual": 1.6431300764452318e-15,
+        "max_momentum_residual": 2.2648805870241328e-15,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 268,
+          "absolute_momentum": 0.7116975621218329,
+          "energy": 1.2974580609427686,
+          "mass": 0.209375,
+          "momentum": [
+            0.63533015544469,
+            -0.01841406719598246,
+            -0.0044243623234544996
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -1.2878587085651817e-15,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -7.105427357601002e-16,
+          -7.632783294297952e-18,
+          2.081668171172169e-18
+        ],
+        "schema_version": 1,
+        "steps": 3,
+        "thermostat_heat": 0.0,
+        "time": 0.05,
+        "wall_energy_change": 0.0
+      }
+    },
+    "mirror": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_mirror.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/mirror",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.0,
+        "body_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "final": {
+          "N": 1280,
+          "absolute_momentum": 3.181072989165409,
+          "energy": 5.50000000000001,
+          "mass": 1.0,
+          "momentum": [
+            1.919600946081857,
+            0.003237732004160253,
+            0.008465462353348404
+          ]
+        },
+        "incoming": {
+          "N": 0,
+          "absolute_momentum": 0.0,
+          "energy": 0.0,
+          "mass": 0.0,
+          "momentum": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "initial": {
+          "N": 1280,
+          "absolute_momentum": 3.1810729891654077,
+          "energy": 5.500000000000007,
+          "mass": 1.0,
+          "momentum": [
+            2.8284271247461907,
+            4.163336342344338e-18,
+            -3.4694469519536144e-19
+          ]
+        },
+        "max_energy_residual": 2.842170943040401e-15,
+        "max_momentum_residual": 3.719306297907155e-15,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.9088261786643326,
+          -0.003237732004160252,
+          -0.008465462353348403
+        ],
+        "outgoing": {
+          "N": 0,
+          "absolute_momentum": 0.0,
+          "energy": 0.0,
+          "mass": 0.0,
+          "momentum": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": 2.1316282072803005e-15,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -1.1657341758564144e-15,
+          -6.938893903907228e-18,
+          8.673617379884035e-19
+        ],
+        "schema_version": 1,
+        "steps": 3,
+        "thermostat_heat": 0.0,
+        "time": 0.05,
+        "wall_energy_change": 0.0
+      }
+    },
+    "fixed_wall": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_fixed_wall.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/fixed_wall",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.0504802650587074,
+        "body_impulse": [
+          0.04220853744630948,
+          -0.004968036540859746,
+          0.005289155847307109
+        ],
+        "final": {
+          "N": 1236,
+          "absolute_momentum": 3.0542097169725446,
+          "energy": 5.252174356884233,
+          "mass": 0.9656250000000001,
+          "momentum": [
+            2.692873150085132,
+            0.020593962243230395,
+            -0.0063114127742014865
+          ]
+        },
+        "incoming": {
+          "N": 240,
+          "absolute_momentum": 0.6434280889062024,
+          "energy": 1.1784284729960726,
+          "mass": 0.1875,
+          "momentum": [
+            0.5802063307459776,
+            -0.006811037320154484,
+            -0.005281680935912718
+          ]
+        },
+        "initial": {
+          "N": 1270,
+          "absolute_momentum": 3.1554348733134545,
+          "energy": 5.453600935702404,
+          "mass": 0.9921875,
+          "momentum": [
+            2.806127683275464,
+            0.0009294337839760203,
+            0.0005401654358428966
+          ]
+        },
+        "max_energy_residual": 4.3467487359294605e-15,
+        "max_momentum_residual": 2.1424850630482192e-15,
+        "max_wall_residual": 0.0,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 274,
+          "absolute_momentum": 0.7290371586522157,
+          "energy": 1.329374786755535,
+          "mass": 0.21406250000000002,
+          "momentum": [
+            0.6512523264899998,
+            -0.02150752923854913,
+            -0.003719258573175465
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -5.939959782407635e-16,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -4.950900800437808e-16,
+          -2.0491421059976034e-17,
+          -2.1814147710408348e-17
+        ],
+        "schema_version": 1,
+        "steps": 4,
+        "thermostat_heat": 0.0504802650587074,
+        "time": 0.05,
+        "wall_energy_change": 0.0
+      }
+    },
+    "dynamic_wall": {
+      "command": [
+        "make",
+        "run",
+        "CONFIG=configs/checks/statistics_dynamic_wall.json",
+        "OUTPUT_DIR=/tmp/mc3d-stage7-validation/dynamic_wall",
+        "LOAD_MODE=balanced"
+      ],
+      "summary": {
+        "body_heat": 0.049774583595031355,
+        "body_impulse": [
+          0.04244697066501123,
+          -0.004954373763537242,
+          0.00521899823543426
+        ],
+        "final": {
+          "N": 1236,
+          "absolute_momentum": 3.0545215957317655,
+          "energy": 5.252880038347909,
+          "mass": 0.9656250000000001,
+          "momentum": [
+            2.6926347168664297,
+            0.020580299465907892,
+            -0.006241255162328637
+          ]
+        },
+        "incoming": {
+          "N": 240,
+          "absolute_momentum": 0.6434280889062024,
+          "energy": 1.1784284729960726,
+          "mass": 0.1875,
+          "momentum": [
+            0.5802063307459776,
+            -0.006811037320154484,
+            -0.005281680935912718
+          ]
+        },
+        "initial": {
+          "N": 1270,
+          "absolute_momentum": 3.1554348733134545,
+          "energy": 5.453600935702404,
+          "mass": 0.9921875,
+          "momentum": [
+            2.806127683275464,
+            0.0009294337839760203,
+            0.0005401654358428966
+          ]
+        },
+        "max_energy_residual": 4.122603537204173e-15,
+        "max_momentum_residual": 2.346013606745681e-15,
+        "max_wall_residual": 9.540979117872439e-17,
+        "mirror_heat": 0.0,
+        "mirror_impulse": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "outgoing": {
+          "N": 274,
+          "absolute_momentum": 0.7290371586522157,
+          "energy": 1.329374786755535,
+          "mass": 0.21406250000000002,
+          "momentum": [
+            0.6512523264899998,
+            -0.02150752923854913,
+            -0.003719258573175465
+          ]
+        },
+        "residual_count": 0,
+        "residual_energy": -1.15062956849127e-15,
+        "residual_mass": 0.0,
+        "residual_momentum": [
+          -7.7524792141403515e-16,
+          -2.0491421059976034e-17,
+          -2.216109240560371e-17
+        ],
+        "schema_version": 1,
+        "steps": 4,
+        "thermostat_heat": 0.0,
+        "time": 0.05,
+        "wall_energy_change": 0.049774583595031396
+      }
+    }
+  },
+  "mutations_detected": [
+    "instant_center",
+    "time_weight",
+    "heat_sign",
+    "late_inflow",
+    "double_weight"
+  ],
+  "maxwell": {
+    "pooled_123_1": 1.001923339096142,
+    "legacy_123_1": 0.0,
+    "tolerance_123_1": 0.03386751345948129,
+    "pooled_123_2": 1.0023586342834985,
+    "legacy_123_2": 0.5024884959963097,
+    "tolerance_123_2": 0.025412414523193153,
+    "pooled_123_4": 1.0035092731512136,
+    "legacy_123_4": 0.7533255243332949,
+    "tolerance_123_4": 0.019433756729740646,
+    "pooled_123_20": 1.0002218733949124,
+    "legacy_123_20": 0.9502307131485275,
+    "tolerance_123_20": 0.011454972243679029,
+    "pooled_456_1": 1.0038422114839045,
+    "legacy_456_1": 0.0,
+    "tolerance_456_1": 0.03386751345948129,
+    "pooled_456_2": 1.0036601556632236,
+    "legacy_456_2": 0.5017775987368428,
+    "tolerance_456_2": 0.025412414523193153,
+    "pooled_456_4": 1.0004498988692776,
+    "legacy_456_4": 0.7496936333506548,
+    "tolerance_456_4": 0.019433756729740646,
+    "pooled_456_20": 1.0005241919025012,
+    "legacy_456_20": 0.950182219831072,
+    "tolerance_456_20": 0.011454972243679029,
+    "pooled_789_1": 1.0015293200618247,
+    "legacy_789_1": 0.0,
+    "tolerance_789_1": 0.03386751345948129,
+    "pooled_789_2": 0.9994498568549689,
+    "legacy_789_2": 0.49984687053569876,
+    "tolerance_789_2": 0.025412414523193153,
+    "pooled_789_4": 1.000730273437975,
+    "legacy_789_4": 0.7493805932695639,
+    "tolerance_789_4": 0.019433756729740646,
+    "pooled_789_20": 0.9991899924571351,
+    "legacy_789_20": 0.9489798987405419,
+    "tolerance_789_20": 0.011454972243679029
+  },
+  "source_sha256": {
+    "src/statistical_moments.h": "6d123a91fde0d0c0c454eae61751a86916ff20fcb51d1eb82378a277ba838449",
+    "src/statistical_diagnostics.cpp": "713957f1d946f5cca71eae9d7376547e34c4d635ff59adc8d11f1ace65491277",
+    "src/cell_cluster.cpp": "d13d92a68f8b4506304ba7cd316f76f36b7e1fb8dcb13267bfbae8e32cd580f6",
+    "src/geometry.cpp": "a9ea0b7b9099188c24b2b555ae7268114bf37856ec168101850edc5a6e113427",
+    "src/particle_sampler.cpp": "456ab8a391e8d2de3080dccc92970321baf95b4403132c34c81d13fa41836627",
+    "tests/statistical_moments_test.cpp": "e67896b7329450d1cbfd1b12cf1941d5a6ea5b68b04d304e56bdd09680e435ca"
+  },
+  "binary_sha256": "794dd9c34c4ef84d042ccda92695b862d79379e4a59290559f2cde03a9502ab6"
+}

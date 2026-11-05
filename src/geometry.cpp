@@ -287,10 +287,31 @@ std::optional<Point> Geometry::ExteriorPoint(Point interior) const {
 }
 
 void Geometry::AccumulateForce(Polygon& polygon, Point impulse, double energy) {
+  if (exchange_sink_) {
+    exchange_sink_->push_back({this, &polygon, impulse, energy});
+    return;
+  }
   std::lock_guard<std::mutex> lock(force_mutex_);
   polygon.force += impulse;
   step_impulse_ += impulse;
+  step_heat_ += energy;
+  polygon.step_heat += energy;
+  polygon.step_impulse += impulse;
   if (SurfaceHeatingEnabled()) polygon.pending_heat += thermal_particle_weight_ * energy;
+}
+
+void Geometry::ResetStepSurfaceExchange() {
+  for (auto& polygon : poligons) {
+    polygon->step_heat = 0;
+    polygon->step_impulse = {0, 0, 0};
+  }
+}
+
+double Geometry::TakeStepHeat() {
+  std::lock_guard<std::mutex> lock(force_mutex_);
+  const double result = step_heat_;
+  step_heat_ = 0;
+  return result;
 }
 
 Point Geometry::TakeStepImpulse() {

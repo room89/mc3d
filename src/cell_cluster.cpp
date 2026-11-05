@@ -110,6 +110,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         cell.SetSize(dx, dy, dz);
 
         cell.Initialize(N_, body_);
+        cell.defer_surface_exchange = true;
         if (density > 0)
           cell.SetReferenceParticleCount(density * dx * dy * dz);
 
@@ -175,6 +176,20 @@ void CellCluster::SetSize(double Lx, double Ly, double Lz) {
 }
 
 StepResult CellCluster::TimeStep() {
+  if (body_) body_->ResetStepSurfaceExchange();
+  step_incoming = {};
+  step_outgoing = {};
+  step_body_impulse = {0, 0, 0};
+  step_mirror_impulse = {0, 0, 0};
+  step_body_heat = step_mirror_heat = 0;
+  for (auto& cell : cells) {
+    cell.incoming_quantity = {};
+    cell.surface_exchanges.clear();
+  }
+  for (auto& boundary : boundary_cond_outer) {
+    boundary->step_impulse = {0, 0, 0};
+    boundary->step_heat = 0;
+  }
   {
     utils::Stopwatch sw("TimeStep::SyncDt");
     SyncDt();
@@ -252,9 +267,52 @@ StepResult CellCluster::TimeStep() {
     DistributeParticles(partile_buffer);
   }
   for (const auto& cell : cells) cell.ValidateGasPopulation();
+  // Commit surface exchanges in cell/event order, independently of worker
+  // scheduling.
+  for (auto& cell : cells) {
+    for (const auto& e : cell.surface_exchanges)
+      e.body->AccumulateForce(*e.polygon, e.impulse, e.energy);
+    cell.surface_exchanges.clear();
+  }
   if (body_) body_->UpdateSurfaceTemperatures();
   t += dt;
 
+  std::array<bool, 6> may_escape{true, true, true, true, true, true};
+  for (const auto& boundary : boundary_cond_outer) {
+    if (!dynamic_cast<PeriodicBoundary*>(boundary.get()) &&
+        !dynamic_cast<MirrorBoundary*>(boundary.get()))
+      continue;
+    const auto normal = boundary->GetNormal();
+    const int axis = normal.x != 0 ? 0 : normal.y != 0 ? 1 : 2;
+    const double component = axis == 0   ? normal.x
+                             : axis == 1 ? normal.y
+                                         : normal.z;
+    may_escape[2 * axis + (component > 0 ? 1 : 0)] = false;
+  }
+  for (const auto& particle : partile_buffer) {
+    if (!std::isfinite(particle.position.x) ||
+        !std::isfinite(particle.position.y) ||
+        !std::isfinite(particle.position.z))
+      throw std::runtime_error("Nonfinite outgoing particle");
+    size_t outgoing_index = 0;
+    if (FindCellIndex(particle.position, outgoing_index))
+      throw std::runtime_error("Unrouted particle inside domain");
+    const auto p = particle.position;
+    const bool expected = (p.x < apex.x && may_escape[0]) ||
+                          (p.x >= apex.x + Lx && may_escape[1]) ||
+                          (p.y < apex.y && may_escape[2]) ||
+                          (p.y >= apex.y + Ly && may_escape[3]) ||
+                          (p.z < apex.z && may_escape[4]) ||
+                          (p.z >= apex.z + Lz && may_escape[5]);
+    if (!expected)
+      throw std::runtime_error("Particle escaped a closed boundary");
+    step_outgoing.Add(particle.velocity);
+  }
+  for (const auto& cell : cells) step_incoming += cell.incoming_quantity;
+  for (const auto& boundary : boundary_cond_outer) {
+    step_mirror_impulse += boundary->step_impulse;
+    step_mirror_heat += boundary->step_heat;
+  }
   partile_buffer.clear();
 
   std::size_t inner_particles = 0;
@@ -266,7 +324,9 @@ StepResult CellCluster::TimeStep() {
   }
   Point force(0, 0, 0), mean_force(0, 0, 0);
   if (body_ && body_->PolygonCount() > 0) {
-    const Point impulse = body_->TakeStepImpulse() / density;
+    step_body_impulse = body_->TakeStepImpulse();
+    step_body_heat = body_->TakeStepHeat();
+    const Point impulse = step_body_impulse / density;
     body_impulse_ += impulse;
     if (dt > 0) force = impulse / dt;
     if (t > 0) mean_force = body_impulse_ / t;

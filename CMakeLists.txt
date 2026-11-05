@@ -12,6 +12,7 @@ add_library(mc3d_core STATIC
   src/boundary.cpp
   src/collision_model.cpp
   src/particle_sampler.cpp
+  src/statistical_diagnostics.cpp
   src/cell.cpp
   src/cell_volume.cpp
   src/cell_cluster.cpp
@@ -66,6 +67,7 @@ if(BUILD_TESTING)
   FetchContent_MakeAvailable(googletest)
 
   add_executable(mc3d_tests
+    tests/statistical_moments_test.cpp
     tests/geometry_queries_test.cpp
     tests/random_test.cpp
     tests/point_test.cpp
@@ -116,4 +118,7 @@ if(BUILD_TESTING)
   add_executable(mc3d_resolution_comparison tests/resolution_comparison.cpp)
   target_link_libraries(mc3d_resolution_comparison PRIVATE mc3d_core)
   add_test(NAME ResolutionComparison COMMAND mc3d_resolution_comparison ${CMAKE_CURRENT_BINARY_DIR}/resolution_comparison.csv)
+endif()
+if(BUILD_TESTING)
+  add_test(NAME StatisticsIntegration COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/statistics_integration.py $<TARGET_FILE:MC3dSolver>)
 endif()

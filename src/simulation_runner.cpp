@@ -358,6 +358,7 @@ void SimulationRunner::Compute() {
     if(progress) progress(cluster_.t, steps_);
   }
   if (resolution_diagnostics_ && steps_) FlushLastResolution();
+  if (statistics_) statistics_->Write();
 }
 
 void SimulationRunner::SetForceReference(double area, double speed, double alpha) {
@@ -553,6 +554,7 @@ void SimulationRunner::WriteResolution() {
 StepResult SimulationRunner::Step() {
   cluster_.before_step = [this] {
     if (resolution_diagnostics_) WriteResolution();
+    if (statistics_) statistics_->BeforeStep();
   };
   StepResult result;
   try {
@@ -563,10 +565,12 @@ StepResult SimulationRunner::Step() {
   }
   cluster_.before_step = {};
   ++steps_;
+  if (statistics_) statistics_->AfterStep();
   WriteBodyLoads(result);
   if (result.inner_particles > 0)
     LOG_WARNING() << "Particles inside body at time " << result.time << ": " << result.inner_particles;
   if (UpdateSnapshotSchedule()) {
+    if (statistics_) statistics_->Write();
     std::ostringstream name;
     name << "data" << result.time << ".dat";
     RequireWrite(writer_.WriteFile(name.str()));

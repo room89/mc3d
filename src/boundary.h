@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include <vector>
-#include <limits>
 #include <deque>
 #include <functional>
+#include <limits>
+#include <vector>
 
 #include "particle.h"
 #include "point.h"
+#include "statistical_moments.h"
 
 namespace mc3d {
 class Cell;
@@ -30,6 +31,8 @@ class Boundary {
   Point nrml;  // направление граничного условия
   Point pstn;  // положение граничного условия
  public:
+  Point step_impulse{0, 0, 0};
+  double step_heat = 0;
   virtual void BindCells(std::deque<Cell>& cells) {}
   virtual int ProcessOutgoing(std::vector<Particle>& particles, double dt = 0) { return 0; }
   virtual BoundaryInflow GenerateInflow(double dt) { return {}; }

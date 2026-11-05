@@ -113,6 +113,7 @@ double Cell::GenerateRandom(unsigned int N, double temperature, Point drift) {
 std::vector<Particle> Cell::SampleFreeInflow(unsigned int N, double temperature, Point drift, Point normal) {
   std::vector<Particle> arrivals;
   ParticleSampler::Free(arrivals, apex, GetSize(), N, temperature, drift, normal, Random());
+  for (const auto& p : arrivals) incoming_quantity.Add(p.velocity);
   return arrivals;
 }
 void Cell::AppendGeneratedParticles(std::vector<Particle>&& incoming) {
@@ -121,8 +122,11 @@ void Cell::AppendGeneratedParticles(std::vector<Particle>&& incoming) {
 }
 void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperature,
                                   Point normal, double step, std::vector<Particle>& arrivals) {
-  ParticleSampler::HyperFree(apex, GetSize(), N, drift, temperature, normal, step,
-                            body_boundary, arrivals, Random());
+  Geometry::ExchangeCapture capture(defer_surface_exchange ? &surface_exchanges
+                                                           : nullptr);
+  ParticleSampler::HyperFree(apex, GetSize(), N, drift, temperature, normal,
+                             step, body_boundary, arrivals, Random(),
+                             &incoming_quantity);
 }
 
 void Cell::Collisions() {
@@ -380,6 +384,8 @@ void Cell::CalculateWithPreparedMoments() {
 }
 
 void Cell::AdvanceParticles() {
+  Geometry::ExchangeCapture capture(defer_surface_exchange ? &surface_exchanges
+                                                           : nullptr);
   if (body_boundary.GetGeometryPtr() &&
       body_boundary.GetGeometryPtr()->PolygonCount() > 0)
     body_boundary.BoundaryCondition(particles, dt, Random());

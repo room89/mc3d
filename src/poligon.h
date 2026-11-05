@@ -28,6 +28,8 @@ struct Polygon {
   // Thermal state is initialized after mesh transforms/refinement.
   double wall_temperature = 1;
   double heat_capacity = 0;
+  Point step_impulse{0, 0, 0};
+  double step_heat = 0;
   double pending_heat = 0;
   double absorbed_heat = 0;
   double flux;

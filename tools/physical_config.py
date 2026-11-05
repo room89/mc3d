@@ -20,7 +20,7 @@ def prepare(data):
         if isinstance(value,list):
             for x in value:finite(x)
     finite(data)
-    allowed={'temperature_k','number_density_m3','speed_m_s','flow_angle_rad','domain_m','apex_m','length_unit_m','temperature_unit_k','wall_temperature_k','wall_heat_capacity_j_k','force_reference_area_m2','end_time_s','snapshot_interval_s','gas','geometry','numerics','outputs','provenance'}
+    allowed={'temperature_k','number_density_m3','speed_m_s','flow_angle_rad','domain_m','apex_m','length_unit_m','temperature_unit_k','wall_temperature_k','wall_heat_capacity_j_k','force_reference_area_m2','end_time_s','snapshot_interval_s','statistics_windows_s','gas','geometry','numerics','outputs','provenance'}
     if set(data)-allowed: raise ValueError(f'Unknown SI fields: {set(data)-allowed}')
     t=positive(data['temperature_k'],'temperature_k'); n=positive(data['number_density_m3'],'number_density_m3')
     domain=data['domain_m']
@@ -33,6 +33,7 @@ def prepare(data):
     if model not in ('hs','vhs','none'): raise ValueError('Unknown collision model')
     v0=math.sqrt(KB*t0/m);time0=l0/v0;rho=n*m
     units={'length_m':l0,'temperature_k':t0,'velocity_m_s':v0,'time_s':time0,'number_density_m3':n,'mass_density_kg_m3':rho,'force_n':rho*v0*v0*l0*l0,'energy_j':rho*v0*v0*l0**3,'heat_capacity_j_k':rho*v0*v0*l0**3/t0,'particle_energy_j':m*v0*v0,'pressure_pa':rho*v0*v0,'area_m2':l0*l0}
+    units.update(mass_kg=rho*l0**3,momentum_kg_m_s=rho*l0**3*v0,power_w=rho*v0*v0*l0**3/time0,heat_flux_w_m2=rho*v0**3)
     c=dict(zip(('lx','ly','lz'),(x/l0 for x in domain)))
     speed=data['speed_m_s']
     if not math.isfinite(speed) or speed<0: raise ValueError('speed_m_s must be finite and nonnegative')
@@ -52,7 +53,7 @@ def prepare(data):
             c[target]=positive(data[key],key)/scale
     if speed==0 and 'force_reference_area' in c: raise ValueError('Force coefficients require nonzero flow speed')
     numerics=data.get('numerics',{})
-    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','collision_courant','resolution_diagnostics','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
+    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','collision_courant','resolution_diagnostics','statistics_enabled','balance_enabled','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
     for k in ('cells_x','cells_y','cells_z','particles_per_cell','thread_pool_size'):
         value=numerics.get(k,dict(cells_x=20,cells_y=20,cells_z=3,particles_per_cell=50,thread_pool_size=4)[k])
         if type(value) is not int or value<=0:raise ValueError(k+': expected positive integer')
@@ -65,7 +66,15 @@ def prepare(data):
     if 'seed' in numerics and (type(numerics['seed']) is not int or not 0<=numerics['seed']<=4294967295):raise ValueError('seed: expected uint32')
     for key,value in numerics.items():
         if key.startswith('boundary_') and value not in ('none','mirror','periodic','free','hyperfree'):raise ValueError('Unknown boundary type')
+    for name in ('statistics_enabled','balance_enabled'):
+        if name in numerics and type(numerics[name]) is not bool:raise ValueError(name+': expected bool')
     c.update(numerics)
+    if 'statistics_windows_s' in data:
+        windows=data['statistics_windows_s']
+        if not isinstance(windows,list) or not windows:raise ValueError('statistics_windows_s requires nonempty list')
+        for w in windows:
+            if not isinstance(w,list) or len(w)!=2 or not 0<=w[0]<w[1]<=data['end_time_s']:raise ValueError('Invalid statistics window')
+        c['statistics_windows']=[[a/time0,b/time0] for a,b in windows]
     if 'apex_m' in data:
         if len(data['apex_m'])!=3:raise ValueError('apex_m requires three coordinates')
         for axis,x in zip('xyz',data['apex_m']):c['apex_'+axis]=x/l0

@@ -1,8 +1,10 @@
 #pragma once
 #include <csignal>
 #include <functional>
+
 #include "cell_cluster.h"
 #include "runtime_control.h"
+#include "statistical_diagnostics.h"
 namespace mc3d {
 inline volatile std::sig_atomic_t stop_requested = 0;
 class SnapshotWriter {
@@ -34,6 +36,10 @@ class SimulationRunner {
   void SetResolutionDiagnostics(bool enabled) {
     resolution_diagnostics_ = enabled;
   }
+  void ConfigureStatistics(const SimulationConfig& config) {
+    if (config.statistics_enabled || config.balance_enabled)
+      statistics_ = std::make_unique<StatisticalDiagnostics>(cluster_, config);
+  }
   StepResult Step();
   void Compute();
   std::function<void(double, std::size_t)> progress;
@@ -49,6 +55,7 @@ class SimulationRunner {
   std::string runtime_control_path_;
   double snapshot_interval_ = 0;
   double next_snapshot_time_ = 0;
+  std::unique_ptr<StatisticalDiagnostics> statistics_;
   bool resolution_diagnostics_ = false;
   std::string last_resolution_rows_;
   void WriteResolution();

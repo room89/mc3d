@@ -49,6 +49,7 @@ int MirrorBoundary::ProcessOutgoing(std::vector<Particle>& particles,
     t = (pstn - data->position) * nrml;
 
     if (t < 0 || (t == 0 && data->velocity * nrml > 0)) {
+      const auto incoming = data->velocity;
       t /= nrml * nrml;
 
       data->position += nrml * t * 2.;
@@ -60,6 +61,8 @@ int MirrorBoundary::ProcessOutgoing(std::vector<Particle>& particles,
         data->velocity.z = -data->velocity.z;
       } else
         return -1;
+      step_impulse += incoming - data->velocity;
+      step_heat += .5 * (incoming * incoming - data->velocity * data->velocity);
     }
 
     // Keep exact upper-face hits inside the half-open cell domain.

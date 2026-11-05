@@ -59,8 +59,32 @@ class Geometry {
   std::optional<double> query_tolerance_;
   double thermal_particle_weight_ = 0;
   Point step_impulse_{0, 0, 0};
+  double step_heat_ = 0;
 
  public:
+  struct Exchange {
+    Geometry* body;
+    Polygon* polygon;
+    Point impulse;
+    double energy;
+  };
+
+ private:
+  inline static thread_local std::vector<Exchange>* exchange_sink_ = nullptr;
+
+ public:
+  class ExchangeCapture {
+    std::vector<Exchange>* previous_;
+
+   public:
+    explicit ExchangeCapture(std::vector<Exchange>* sink)
+        : previous_(exchange_sink_) {
+      exchange_sink_ = sink;
+    }
+    ~ExchangeCapture() { exchange_sink_ = previous_; }
+    ExchangeCapture(const ExchangeCapture&) = delete;
+    ExchangeCapture& operator=(const ExchangeCapture&) = delete;
+  };
   struct SurfaceHit {
     Polygon* polygon;
     double fraction;
@@ -98,6 +122,8 @@ class Geometry {
   void AccumulateForce(Polygon& polygon, Point impulse, double energy = 0);
   // Call setup/update only when particle workers are idle.
   Point TakeStepImpulse();
+  double TakeStepHeat();
+  void ResetStepSurfaceExchange();
   void ConfigureSurfaceHeating(double temperature, double heat_capacity,
                                double particle_weight);
   bool SurfaceHeatingEnabled() const { return thermal_particle_weight_ > 0; }
