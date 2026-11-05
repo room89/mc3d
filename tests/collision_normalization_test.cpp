@@ -5,11 +5,13 @@
 #include <memory>
 #include <stdexcept>
 #include "cell.h"
+#include "collision_model.h"
 #include "utils/utils.hpp"
 
 namespace mc3d {
 class CellCollisionTestAccess {
  public:
+  static void CollidePrepared(Cell& cell) { cell.CollisionsWithPreparedMoments(); }
   static void CalculatePrepared(Cell& cell) { cell.CalculateWithPreparedMoments(); }
   static double StoredTemperature(const Cell& cell) { return cell.T; }
   static std::vector<Particle>& Particles(Cell& cell) { return cell.particles; }
@@ -199,7 +201,7 @@ TEST(CellPreparedMomentsTest, MatchesStandaloneStepAndRandomState) {
       body->CreateCube(-.5, 1, 1, 1);
       body->PrepareQueries();
     }
-    for (int count : {0, 1, 5, 6, 64}) {
+    for (int count : {0, 1, 2, 3, 4, 5, 6, 64}) {
       SCOPED_TRACE(with_body);
       SCOPED_TRACE(count);
       auto rng_a = std::make_shared<utils::RandomStream>(123);
@@ -266,4 +268,22 @@ TEST(CellPreparedMomentsTest, PublicCalculateKeepsVirtualCollisionDispatch) {
   cell.Calculate();
   EXPECT_TRUE(cell.collided);
   EXPECT_TRUE(cell.moved);
+}
+
+TEST(LowPopulationCellTest, BothPathsMatchKernelAndActuallyCollide) {
+ for(int count:{2,3,4,5,6}) for(bool prepared:{false,true}) {
+  auto rng=std::make_shared<utils::RandomStream>(123); utils::RandomStream expected_rng(123);
+  mc3d::Cell cell(rng); cell.SetApex({0,0,0}); cell.SetSize(1,1,1);
+  cell.SetKn(.1);cell.SetCharacteristicLength(1);cell.SetReferenceParticleCount(count);
+  auto &particles=mc3d::CellCollisionTestAccess::Particles(cell);
+  mc3d::Point momentum(0,0,0);
+  for(int i=0;i<count;++i){particles.emplace_back(mc3d::Point(.5,.5,.5),mc3d::Point(i%2?1.:-1.,0,0));momentum+=particles.back().velocity;}
+  auto expected=particles;
+  cell.CalculateDt();cell.SetDt(1);
+  if(prepared)mc3d::CellCollisionTestAccess::CollidePrepared(cell);else cell.Collisions();
+  auto stats=mc3d::CollisionModel::ApplyWithStats(expected,momentum/double(count),1,.1,1,expected_rng);
+  ASSERT_GT(stats.accepted_collisions,0u);
+  for(int i=0;i<count;++i){EXPECT_DOUBLE_EQ((particles[i].velocity-expected[i].velocity).Mod(),0);EXPECT_DOUBLE_EQ((particles[i].position-expected[i].position).Mod(),0);}
+  EXPECT_EQ(rng->Engine()(),expected_rng.Engine()());
+ }
 }

@@ -115,13 +115,13 @@ void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperatu
 }
 
 void Cell::Collisions() {
-  if (particles.size() <= 5) return;
+  if (particles.size() < 2 || dt <= 0) return;
   RefreshMoments();
   CollisionsWithPreparedMoments();
 }
 
 void Cell::CollisionsWithPreparedMoments() {
-  if (particles.size() <= 5) return;
+  if (particles.size() < 2 || dt <= 0) return;
   CalculateKn();
   CollisionModel::Apply(particles, velocity, L, Kn_l, dt, Random());
 }
