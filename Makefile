@@ -80,4 +80,4 @@ check-physics: build
 SHOCK_MODE ?= quick
 .PHONY: check-shock
 check-shock: build
-	$(PYTHON) tools/check_shock.py --binary "$(BUILD_DIR)/MC3dSolver" --mode "$(SHOCK_MODE)" --output-dir "$(OUTPUT_DIR)" --load-mode "$(if $(LOAD_MODE),$(LOAD_MODE),balanced)"
+	$(PYTHON) tools/check_shock.py --binary "$(BUILD_DIR)/MC3dSolver" --mode "$(SHOCK_MODE)" --output-dir "$(OUTPUT_DIR)" --load-mode "$(if $(LOAD_MODE),$(LOAD_MODE),balanced)" $(if $(SPARTA_BIN),--sparta-bin "$(SPARTA_BIN)") $(SHOCK_ARGS)
