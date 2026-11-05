@@ -279,14 +279,15 @@ StepResult CellCluster::TimeStep() {
 
   std::array<bool, 6> may_escape{true, true, true, true, true, true};
   for (const auto& boundary : boundary_cond_outer) {
+    if (!dynamic_cast<PeriodicBoundary*>(boundary.get()) &&
+        !dynamic_cast<MirrorBoundary*>(boundary.get()))
+      continue;
     const auto normal = boundary->GetNormal();
     const int axis = normal.x != 0 ? 0 : normal.y != 0 ? 1 : 2;
     const double component = axis == 0   ? normal.x
                              : axis == 1 ? normal.y
                                          : normal.z;
-    if (dynamic_cast<PeriodicBoundary*>(boundary.get()) ||
-        dynamic_cast<MirrorBoundary*>(boundary.get()))
-      may_escape[2 * axis + (component > 0 ? 1 : 0)] = false;
+    may_escape[2 * axis + (component > 0 ? 1 : 0)] = false;
   }
   for (const auto& particle : partile_buffer) {
     if (!std::isfinite(particle.position.x) ||
