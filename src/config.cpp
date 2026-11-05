@@ -232,6 +232,12 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.Lz = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "kn") {
     config.Kn = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "collision_courant") {
+    config.collision_courant = ParseDouble(prepared_value, raw_key, ctx);
+    if (!std::isfinite(config.collision_courant) || config.collision_courant < 0 || config.collision_courant > 1)
+      throw std::invalid_argument("collision_courant must be in [0,1]");
+  } else if (key == "resolution_diagnostics") {
+    config.resolution_diagnostics = ParseBool(prepared_value, raw_key, ctx);
   } else if (key == "cu") {
     config.Cu = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature" || key == "t") {
@@ -728,19 +734,30 @@ void PrintUsage(const char* program) {
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
       << "  --output-dir DIR              New or empty result directory\n"
-      << "  --units-file FILE             SI scale table from physical_config.py\n"
-      << "  --collision-model hs|vhs|none  Molecular collision law (default hs)\n"
+      << "  --units-file FILE             SI scale table from "
+         "physical_config.py\n"
+      << "  --collision-model hs|vhs|none  Molecular collision law (default "
+         "hs)\n"
       << "  VHS requires --molecular-mass-kg, --vhs-diameter-m,\n"
-      << "    --vhs-reference-temperature-k, --vhs-omega, --temperature-unit-k\n"
+      << "    --vhs-reference-temperature-k, --vhs-omega, "
+         "--temperature-unit-k\n"
+      << "  --collision-courant <0..1>       Collision time limit (default "
+         "0.1; 0 disables)\n"
+      << "  --resolution-diagnostics <bool> Write resolution diagnostics "
+         "(default true)\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
-      << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl output\n"
-      << "  --wall-heat-capacity VALUE      Enable per-polygon heating (total capacity)\n"
-      << "  --wall-temperature VALUE        Diffuse body temperature (default 1)\n"
+      << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl "
+         "output\n"
+      << "  --wall-heat-capacity VALUE      Enable per-polygon heating (total "
+         "capacity)\n"
+      << "  --wall-temperature VALUE        Diffuse body temperature (default "
+         "1)\n"
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"
       << "  --seed UINT32                    Random seed (logged at startup)\n"
-      << "  --runtime-control PATH          Live load mode file (full/balanced/quiet/pause)\n"
+      << "  --runtime-control PATH          Live load mode file "
+         "(full/balanced/quiet/pause)\n"
       << "  --thread-pool-size COUNT         Number of worker threads\n"
       << "  --snapshots-binary               Enable binary snapshot output\n"
       << "  --boundary-x-neg TYPE            Boundary type (none, mirror, "

@@ -52,11 +52,15 @@ def prepare(data):
             c[target]=positive(data[key],key)/scale
     if speed==0 and 'force_reference_area' in c: raise ValueError('Force coefficients require nonzero flow speed')
     numerics=data.get('numerics',{})
-    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
+    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','collision_courant','resolution_diagnostics','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
     for k in ('cells_x','cells_y','cells_z','particles_per_cell','thread_pool_size'):
         value=numerics.get(k,dict(cells_x=20,cells_y=20,cells_z=3,particles_per_cell=50,thread_pool_size=4)[k])
         if type(value) is not int or value<=0:raise ValueError(k+': expected positive integer')
         c[k]=value
+    if 'collision_courant' in numerics:
+        v=numerics['collision_courant']
+        if isinstance(v,bool) or not math.isfinite(v) or not 0<=v<=1:raise ValueError('collision_courant must be in [0,1]')
+    if 'resolution_diagnostics' in numerics and type(numerics['resolution_diagnostics']) is not bool:raise ValueError('resolution_diagnostics must be boolean')
     if 'cu' in numerics:positive(numerics['cu'],'cu')
     if 'seed' in numerics and (type(numerics['seed']) is not int or not 0<=numerics['seed']<=4294967295):raise ValueError('seed: expected uint32')
     for key,value in numerics.items():

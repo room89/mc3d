@@ -31,6 +31,9 @@ class SimulationRunner {
   double NextSnapshotTime() const { return next_snapshot_time_; }
   // rho_infinity = 1 in normalized solver units.
   void SetForceReference(double area, double speed, double alpha);
+  void SetResolutionDiagnostics(bool enabled) {
+    resolution_diagnostics_ = enabled;
+  }
   StepResult Step();
   void Compute();
   std::function<void(double, std::size_t)> progress;
@@ -46,6 +49,10 @@ class SimulationRunner {
   std::string runtime_control_path_;
   double snapshot_interval_ = 0;
   double next_snapshot_time_ = 0;
+  bool resolution_diagnostics_ = false;
+  std::string last_resolution_rows_;
+  void WriteResolution();
+  void FlushLastResolution();
   bool UpdateSnapshotSchedule();
   void WriteBodyLoads(const StepResult& result);
   std::ofstream body_loads_;

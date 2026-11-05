@@ -33,6 +33,7 @@ int Run(int argc, char* argv[]) {
   mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
   cluster.collision_parameters = config.collisions;
+  cluster.collision_courant = config.collision_courant;
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 
@@ -48,6 +49,7 @@ int Run(int argc, char* argv[]) {
                              config.S * std::sqrt(2 * config.temperature), config.alpha);
   runner.Writer().SetBinaryOutput(config.snapshots_binary);
   runner.SetSnapshotInterval(config.snapshot_interval);
+  runner.SetResolutionDiagnostics(config.resolution_diagnostics);
 
   if (config.write_default_snapshot_before_compute) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile());

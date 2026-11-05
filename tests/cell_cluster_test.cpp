@@ -682,9 +682,10 @@ TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
     };
     const auto initial = totals();
     ASSERT_EQ(initial[0], 720);
+    for (auto* cell : cells) cell->SetReferenceParticleCount(24);
     bool finished = false;
     int steps = 0;
-    while (!finished && steps < 1000) {
+    while (!finished && steps < 20000) {
       SCOPED_TRACE(steps);
       const double previous_time =
           mc3d::CellClusterTestAccess::GetTime(cluster);
@@ -1090,7 +1091,7 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
         std::vector<double> local_dt;
         std::vector<mc3d::CellMoments> moments;
         std::vector<utils::Pcg32> engines;
-        double expected = 1000000.;
+        double expected = std::numeric_limits<double>::infinity();
         for (auto* cell : cells) {
           engines.push_back(Access::Engine(*cell));
           const auto local = cell->CalculateDt();
@@ -1103,6 +1104,10 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
           cell->SetDt(-1);
         }
         expected *= cu;
+        for (auto* cell : cells) {
+          const double rate = cell->CollisionFrequencyBound();
+          if (rate > 0) expected = std::min(expected, cluster.collision_courant/rate);
+        }
         if (t + expected > end) expected = end - t;
         cluster.CalculateDt();
         EXPECT_EQ(Access::GetDt(cluster),expected);
@@ -1593,4 +1598,34 @@ TEST(DirectDistributionTest, SubmissionFailureRetainsSourceBuffers) {
   EXPECT_THROW(A::RouteGathered(c),std::runtime_error);
   EXPECT_EQ(local.size(),4097);
   EXPECT_TRUE(A::Buffer(c).empty());
+}
+
+TEST(CellClusterTimeStepTest, DenseGasReachesEndWithIndependentCollisionLimit) {
+  using Access = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster cluster(1, 123);
+  cluster.SetApex({0, 0, 0});
+  cluster.SetSize(1, 1, 1);
+  cluster.SetEndTime(.05);
+  ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0, .1, .8,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  auto* cell = Access::GetLookup(cluster).front();
+  cell->SetReferenceParticleCount(1);
+  for (int i = 0; i < 24; ++i) {
+    mc3d::Particle particle({.5, .5, .5}, {i % 2 ? 1. : -1., 0, 0});
+    ASSERT_TRUE(cell->TryAcceptParticle(particle));
+  }
+  const double expected_rate = 23 * std::sqrt(48. / 23) / (std::sqrt(2.) * .1);
+  cluster.CalculateDt();
+  EXPECT_NEAR(Access::GetDt(cluster), .1 / expected_rate, 1e-14);
+  bool finished = false;
+  int steps = 0;
+  while (!finished && steps++ < 20000) {
+    finished = Access::RunTimeStep(cluster);
+    EXPECT_EQ(cell->GetParticleCount(), 24);
+    const auto moments = cell->ComputeMoments();
+    EXPECT_NEAR(moments.energy, .5, 1e-12);
+    EXPECT_NEAR(moments.velocity.Mod(), 0, 1e-12);
+  }
+  EXPECT_TRUE(finished);
+  EXPECT_DOUBLE_EQ(Access::GetTime(cluster), .05);
 }

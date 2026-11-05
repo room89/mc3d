@@ -38,6 +38,13 @@ struct CellMoments {
   double energy = 0;
 };
 
+struct CellResolution {
+  std::size_t count = 0;
+  double frequency = 0, transport = INFINITY;
+  int transport_axis = -1;
+  std::optional<double> equilibrium_frequency, mean_free_path;
+};
+
 class Cell {
  private:
   friend class CellCluster;
@@ -147,6 +154,8 @@ class Cell {
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();
+  double CollisionFrequencyBound() const;
+  CellResolution resolution;
   void AddNeighbor(Cell& neighbor);
   friend ostream& operator<<(ostream& o, const Cell& c);
   friend class CellCollisionTestAccess;

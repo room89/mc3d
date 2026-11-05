@@ -273,3 +273,56 @@ TEST(CellVolumeTest, CentroidTangencyAndNormals) {
   EXPECT_EQ(solid.region, CellRegion::Solid);
   EXPECT_FALSE(solid.gas_center);
 }
+
+TEST(CellVolumeTest, FrequencyBoundAgainstDirectPairs) {
+  for (double fraction : {1., .5, .01}) {
+    for (double omega : {.5, .75, 1.}) {
+      auto body = std::make_unique<Geometry>();
+      body->CreateCube(fraction, 4, 2, 4);
+      Cell cell(123, 0);
+      cell.SetApex({0, -.5, -.5});
+      cell.SetSize(1, 1, 1);
+      cell.SetParameters(0, 0, 1);
+      cell.SetKn(.1);
+      cell.SetCharacteristicLength(1);
+      cell.Initialize(0, body);
+      cell.SetReferenceParticleCount(20);
+      cell.collision_parameters = {
+          CollisionKind::VHS, 6.6335e-26, 4e-10, 300, omega, 300};
+      auto& particles = CellVolumeTestAccess::Particles(cell);
+      for (int i = 0; i < 20; ++i)
+        particles.emplace_back(Point(fraction / 2, 0, 0),
+                               Point(i % 3 - 1, i % 5 - 2, i % 7 - 3));
+      const double p = 2 - 2 * omega;
+      const double coefficient =
+          std::sqrt(2.) * std::sqrt(8 / std::acos(-1.)) /
+          (std::pow(4., p / 2) * std::tgamma((p + 3) / 2) / std::tgamma(1.5));
+      double sum = 0;
+      for (size_t i = 0; i < particles.size(); ++i)
+        for (size_t j = i + 1; j < particles.size(); ++j)
+          sum += coefficient *
+                 std::pow((particles[i].velocity - particles[j].velocity).Mod(),
+                          p);
+      const double actual = 2 * sum / (20 * std::sqrt(2.) * .1 * 20 * fraction);
+      const double bound = cell.CollisionFrequencyBound();
+      EXPECT_LE(actual, bound * (1 + 1e-12));
+      for (auto& particle : particles) particle.velocity += Point(100, -50, 20);
+      EXPECT_NEAR(cell.CollisionFrequencyBound(), bound, 1e-12 * bound);
+      cell.CalculateDt();
+      EXPECT_DOUBLE_EQ(cell.resolution.frequency,
+                       cell.CollisionFrequencyBound());
+      ASSERT_TRUE(cell.resolution.mean_free_path);
+      particles.resize(1);
+      EXPECT_EQ(cell.CollisionFrequencyBound(), 0);
+      particles.push_back(particles.front());
+      if (omega == 1)
+        EXPECT_GT(cell.CollisionFrequencyBound(), 0);
+      else
+        EXPECT_EQ(cell.CollisionFrequencyBound(), 0);
+      cell.CalculateDt();
+      EXPECT_FALSE(cell.resolution.mean_free_path);
+      particles.clear();
+      EXPECT_EQ(cell.CollisionFrequencyBound(), 0);
+    }
+  }
+}

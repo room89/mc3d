@@ -3,6 +3,8 @@
   j["lz"]=c.Lz;
   j["kn"]=c.Kn;
   j["cu"]=c.Cu;
+  j["collision_courant"]=c.collision_courant;
+  j["resolution_diagnostics"]=c.resolution_diagnostics;
   j["temperature"]=c.temperature;
   j["wall_temperature"]=c.wall_temperature;
   if(c.wall_heat_capacity) j["wall_heat_capacity"]=*c.wall_heat_capacity;

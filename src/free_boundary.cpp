@@ -33,6 +33,17 @@ FreeBoundary::FreeBoundary(Point pstn, Point nrml, unsigned int np, double S,
               << ") Vn: " << Vn << " pstn " << pstn;
 }
 
+double FreeBoundary::TransportTimeLimit() const {
+  double limit = std::numeric_limits<double>::infinity();
+  if (np == 0) return limit;
+  const double thermal = std::sqrt(2*T);
+  for (const auto& entry : cells_) {
+    const auto size = entry.cell.get().GetSize();
+    limit = std::min({limit, size.x/(std::abs(V.x)+thermal), size.y/(std::abs(V.y)+thermal), size.z/(std::abs(V.z)+thermal)});
+  }
+  return limit;
+}
+
 void FreeBoundary::BindCells(std::deque<Cell>& cluster_cells) {
   cells_.clear();
   for (auto& cell : cluster_cells) {

@@ -36,6 +36,9 @@ struct StepResult {
 class CellCluster {
  public:
   CollisionParameters collision_parameters;
+  double collision_courant = 0.1;
+  double transport_dt = std::numeric_limits<double>::infinity();
+  double collision_dt = std::numeric_limits<double>::infinity();
   inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
   friend class SnapshotWriter;
@@ -43,6 +46,7 @@ class CellCluster {
   void CalculateDt();  // вычисление шага по времени для данного кластера
   void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
+  std::function<void()> before_step;
   StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
                            kDefaultThreadPoolSize, uint32_t seed = std::random_device{}());  // конструктор по умолчанию

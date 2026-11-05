@@ -330,6 +330,16 @@ bool SimulationRunner::UpdateSnapshotSchedule() {
 }
 
 void SimulationRunner::Compute() {
+  if (resolution_diagnostics_ && !steps_) {
+    std::ofstream out("resolution_steps.csv");
+    out << "step;time;end_time;dt;transport_limit;collision_limit;max_dt_nu;"
+           "solid;unavailable;N0;N1;N2_4;N5_9;N10_19;N20_49;N50_plus;dx_lt05;"
+           "dx_05_1;dx_1_2;dx_2_5;dx_ge5;dy_lt05;dy_05_1;dy_1_2;dy_2_5;dy_ge5;"
+           "dz_lt05;dz_05_1;dz_1_2;dz_2_5;dz_ge5;dt_le005;dt_005_01;dt_01_02;"
+           "dt_gt02;limiter;limiting_cell;axis;boundary\n";
+    out.close();
+    RequireWrite(bool(out));
+  }
   size_t step = 0;
   RuntimeControl control(runtime_control_path_, cluster_.thread_pool_.GetCapacity());
   std::chrono::steady_clock::duration work{};
@@ -347,6 +357,7 @@ void SimulationRunner::Compute() {
     work = std::chrono::steady_clock::now() - started;
     if(progress) progress(cluster_.t, steps_);
   }
+  if (resolution_diagnostics_ && steps_) FlushLastResolution();
 }
 
 void SimulationRunner::SetForceReference(double area, double speed, double alpha) {
@@ -391,8 +402,166 @@ void SimulationRunner::WriteBodyLoads(const StepResult& result) {
   RequireWrite(bool(body_loads_));
 }
 
+void SimulationRunner::FlushLastResolution() {
+  if (last_resolution_rows_.empty()) return;
+  std::ofstream out("resolution_cells_" + std::to_string(steps_) + ".csv");
+  out << last_resolution_rows_;
+  out.close();
+  RequireWrite(bool(out));
+}
+
+void SimulationRunner::WriteResolution() {
+  const auto step = steps_ + 1;
+  const bool detailed =
+      steps_ == 0 || cluster_.t + cluster_.dt >= cluster_.t_end ||
+      (snapshot_interval_ <= 0 ||
+       cluster_.t + cluster_.dt + kSnapshotTolerance >= next_snapshot_time_);
+  std::ofstream summary("resolution_steps.csv",
+                        steps_ ? std::ios::app : std::ios::out);
+  summary.precision(17);
+  if (!steps_)
+    summary << "step;time;end_time;dt;transport_limit;collision_limit;max_dt_"
+               "nu;solid;unavailable;N0;N1;N2_4;N5_9;N10_19;N20_49;N50_plus;dx_"
+               "lt05;dx_05_1;dx_1_2;dx_2_5;dx_ge5;dy_lt05;dy_05_1;dy_1_2;dy_2_"
+               "5;dy_ge5;dz_lt05;dz_05_1;dz_1_2;dz_2_5;dz_ge5;dt_le005;dt_005_"
+               "01;dt_01_02;dt_gt02;limiter;limiting_cell;axis;boundary\n";
+  std::ostringstream detail;
+  {
+    detail.precision(17);
+    detail << "step;time;end_time;index;region;status;N;gas_fraction;nu_bound;"
+              "nu_eq;"
+              "lambda_eq;dx_lambda;dy_lambda;dz_lambda;dt_nu;transport_limit\n";
+  }
+  std::array<std::size_t, 7> population{};
+  std::array<std::size_t, 15> spatial{};
+  std::array<std::size_t, 4> temporal{};
+  std::size_t index = 0, solid = 0, unavailable = 0;
+  double max_ratio = 0;
+  long collision_cell = -1, transport_cell = -1;
+  int transport_axis = -1;
+  for (const auto& cell : cluster_.cells) {
+    const auto& r = cell.resolution;
+    const auto size = cell.GetSize();
+    const auto n = r.count;
+    if (r.frequency > 0 &&
+        cluster_.collision_courant / r.frequency == cluster_.collision_dt &&
+        collision_cell < 0)
+      collision_cell = index;
+    if (r.transport * cluster_.Cu == cluster_.transport_dt &&
+        transport_cell < 0) {
+      transport_cell = index;
+      transport_axis = r.transport_axis;
+    }
+    if (cell.GetVolume() == 0)
+      ++solid;
+    else
+      ++population[n == 0   ? 0
+                   : n == 1 ? 1
+                   : n < 5  ? 2
+                   : n < 10 ? 3
+                   : n < 20 ? 4
+                   : n < 50 ? 5
+                            : 6];
+    if (!r.mean_free_path) ++unavailable;
+    const double ratio = cluster_.dt * r.frequency;
+    if (cell.GetVolume() > 0)
+      ++temporal[ratio <= .05 ? 0 : ratio <= .1 ? 1 : ratio <= .2 ? 2 : 3];
+    if (r.mean_free_path) {
+      int axis = 0;
+      for (double extent : {size.x, size.y, size.z}) {
+        const double q = extent / *r.mean_free_path;
+        ++spatial[5 * axis + (q < .5  ? 0
+                              : q < 1 ? 1
+                              : q < 2 ? 2
+                              : q < 5 ? 3
+                                      : 4)];
+        ++axis;
+      }
+    }
+    max_ratio = std::max(max_ratio, ratio);
+    {
+      detail << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt
+             << ';' << index << ';'
+             << (cell.GetVolume() == 0               ? "solid"
+                 : cell.GetVolume() == size.Volume() ? "gas"
+                                                     : "cut")
+             << ';'
+             << (cell.GetVolume() == 0 ? "solid"
+                 : r.mean_free_path    ? "valid"
+                 : r.count < 2         ? "low_population"
+                 : cell.collision_parameters.kind == CollisionKind::None
+                     ? "collisions_disabled"
+                     : "cold")
+             << ';' << n << ';' << cell.GetVolume() / size.Volume() << ';'
+             << r.frequency << ';';
+      if (r.equilibrium_frequency) detail << *r.equilibrium_frequency;
+      detail << ';';
+      if (r.mean_free_path) detail << *r.mean_free_path;
+      for (double extent : {size.x, size.y, size.z}) {
+        detail << ';';
+        if (r.mean_free_path) detail << extent / *r.mean_free_path;
+      }
+      detail << ';' << cluster_.dt * r.frequency << ';';
+      if (std::isfinite(r.transport)) detail << r.transport;
+      detail << '\n';
+    }
+    ++index;
+  }
+  summary << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt << ';'
+          << cluster_.dt << ';';
+  if (std::isfinite(cluster_.transport_dt)) summary << cluster_.transport_dt;
+  summary << ';';
+  if (std::isfinite(cluster_.collision_dt)) summary << cluster_.collision_dt;
+  summary << ';' << max_ratio << ';' << solid << ';' << unavailable;
+  for (auto count : population) summary << ';' << count;
+  for (auto count : spatial) summary << ';' << count;
+  for (auto count : temporal) summary << ';' << count;
+  const char* limiter = cluster_.dt == cluster_.t_end - cluster_.t ? "end_time"
+                        : cluster_.collision_dt <= cluster_.transport_dt
+                            ? "collision"
+                            : "transport";
+  summary << ';' << limiter << ';';
+  if (std::string(limiter) == "collision")
+    summary << collision_cell << ";;";
+  else if (std::string(limiter) == "transport") {
+    if (transport_cell >= 0)
+      summary << transport_cell << ';' << transport_axis << ';';
+    else {
+      summary << ";;";
+      for (size_t b = 0; b < cluster_.boundary_cond_outer.size(); ++b)
+        if (cluster_.boundary_cond_outer[b]->TransportTimeLimit() *
+                cluster_.Cu ==
+            cluster_.transport_dt) {
+          summary << b;
+          break;
+        }
+    }
+  } else
+    summary << ";;";
+  summary << '\n';
+  summary.close();
+  RequireWrite(bool(summary));
+  last_resolution_rows_ = detail.str();
+  if (detailed) {
+    std::ofstream out("resolution_cells_" + std::to_string(step) + ".csv");
+    out << last_resolution_rows_;
+    out.close();
+    RequireWrite(bool(out));
+  }
+}
+
 StepResult SimulationRunner::Step() {
-  const auto result = cluster_.TimeStep();
+  cluster_.before_step = [this] {
+    if (resolution_diagnostics_) WriteResolution();
+  };
+  StepResult result;
+  try {
+    result = cluster_.TimeStep();
+  } catch (...) {
+    cluster_.before_step = {};
+    throw;
+  }
+  cluster_.before_step = {};
   ++steps_;
   WriteBodyLoads(result);
   if (result.inner_particles > 0)
