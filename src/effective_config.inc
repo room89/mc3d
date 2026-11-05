@@ -54,3 +54,4 @@
   j["geometry_cylinder_radius"]=c.geometry_cylinder_radius;
   j["geometry_cylinder_length"]=c.geometry_cylinder_length;
   j["geometry_cylinder_segments"]=c.geometry_cylinder_segments;
+  j["runtime_control"]=c.runtime_control;

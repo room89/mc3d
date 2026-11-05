@@ -1,16 +1,17 @@
 # Готовые проверочные запуски
 
-Из корня репозитория после сборки `cmake --build build -j4`:
+Из корня репозитория (`make run` сам обновит сборку):
 
 ```bash
-build/MC3dSolver --config configs/checks/hs_low_population.json --output-dir output/check-hs
-build/MC3dSolver --config configs/checks/vhs_hs_limit.json --output-dir output/check-vhs-hs
-build/MC3dSolver --config configs/checks/vhs_argon_equilibrium.json --output-dir output/check-argon
-build/MC3dSolver --config configs/checks/none_cube_heating.json --output-dir output/check-wall
+make run CONFIG=configs/checks/hs_low_population.json OUTPUT_DIR=output/check-hs LOAD_MODE=balanced
+make run CONFIG=configs/checks/vhs_hs_limit.json OUTPUT_DIR=output/check-vhs-hs LOAD_MODE=balanced
+make run CONFIG=configs/checks/vhs_argon_equilibrium.json OUTPUT_DIR=output/check-argon LOAD_MODE=balanced
+make run CONFIG=configs/checks/none_cube_heating.json OUTPUT_DIR=output/check-wall LOAD_MODE=balanced
 ```
 
 Каждый каталог должен быть новым или пустым. Все случаи используют seed 123
-и один поток. Ожидается `status: completed` в `manifest.json`, файлы
+и один поток. `LOAD_MODE=balanced` добавляет отдых между шагами; для этих
+однопоточных проверок число потоков остаётся равным одному. Ожидается `status: completed` в `manifest.json`, файлы
 `initial.dat` и `final.dat` и конечные численные значения.
 
 | Конфигурация | Что проверяет |
@@ -29,11 +30,32 @@ ctest --test-dir build --output-on-failure -R 'HsScatteringTest|CollisionFrequen
 ctest --test-dir build --output-on-failure -R 'RunManifestIntegration|ConfigExamplesIntegration'
 ```
 
+## Управление нагрузкой
+
+`LOAD_MODE` принимает `full`, `balanced`, `quiet`, `pause`. Без параметра
+управление выключено, если оно не задано в конфигурации. При указанном
+параметре создаётся соседний файл `OUTPUT_DIR.control`; каталог результатов
+остаётся пустым до запуска. Режим можно менять из другого терминала:
+
+```bash
+make load OUTPUT_DIR=output/check-hs LOAD_MODE=quiet
+make load OUTPUT_DIR=output/check-hs LOAD_MODE=pause
+make load OUTPUT_DIR=output/check-hs LOAD_MODE=balanced
+make load OUTPUT_DIR=output/check-hs LOAD_MODE=full
+```
+
+Для собственного пути передавайте одинаковый `CONTROL_FILE=...` обеим
+командам. `make load` только меняет запрос, не собирает и не запускает solver.
+`pause` удерживает живой процесс; SIGINT/SIGTERM завершают его и на паузе.
+Короткая проверка может закончиться раньше ручного переключения — для
+наблюдения используйте более длинный сценарий. Инициализация и сборка
+этими режимами не ограничиваются.
+
 ## Физический случай в SI
 
 ```bash
 python3 tools/physical_config.py configs/physical/argon_cube.json --output-dir output/prepared-argon
-build/MC3dSolver --config output/prepared-argon/solver.json --output-dir output/check-si
+make run CONFIG=output/prepared-argon/solver.json OUTPUT_DIR=output/check-si LOAD_MODE=balanced
 python3 tools/replay_run.py output/check-si/manifest.json --output-dir output/check-si-repeat
 ```
 

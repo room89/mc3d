@@ -12,6 +12,8 @@ class RunManifest {
  public:
   RunManifest(SimulationConfig& config, int argc, char** argv);
   void GeometryHash(const Geometry& geometry);
+  void RuntimePolicy(double time, std::size_t step, const std::string& mode,
+                     std::size_t workers);
   void Progress(double time, std::size_t steps);
   void Finish(const std::string& status, const std::string& error = "");
 

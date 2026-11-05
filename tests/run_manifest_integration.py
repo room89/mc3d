@@ -81,6 +81,21 @@ with tempfile.TemporaryDirectory(prefix='mc3d manifest ') as tmp:
             time.sleep(.01)
         process.send_signal(signal.SIGTERM);process.wait(timeout=20)
     assert json.loads((root/'signal'/'manifest.json').read_text())['status']=='interrupted'
+    # A paused runtime controller must also respond to SIGTERM.
+    control=root/'pause.control';control.write_text('pause\n')
+    paused=root/'paused'
+    with (root/'pause.log').open('w') as log:
+        process=subprocess.Popen([str(binary),'--config',str(path),'--runtime-control',str(control),'--output-dir',str(paused)],stdout=log,stderr=log)
+        deadline=time.monotonic()+20
+        while time.monotonic()<deadline:
+            try:
+                if json.loads((paused/'manifest.json').read_text()).get('geometry_sha256'):break
+            except (FileNotFoundError,json.JSONDecodeError):pass
+            time.sleep(.01)
+        process.send_signal(signal.SIGTERM);process.wait(timeout=20)
+    paused_manifest=json.loads((paused/'manifest.json').read_text())
+    assert paused_manifest['status']=='interrupted' and paused_manifest['steps']==0
+    assert any(x['role']=='runtime_control_initial' for x in paused_manifest['inputs'])
     # Corruption must be detected before starting a replay.
     archived=out/'manifest.json'
     origin=root/'original'/'manifest.json';data=json.loads(origin.read_text())

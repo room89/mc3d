@@ -52,7 +52,7 @@ def prepare(data):
             c[target]=positive(data[key],key)/scale
     if speed==0 and 'force_reference_area' in c: raise ValueError('Force coefficients require nonzero flow speed')
     numerics=data.get('numerics',{})
-    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','seed','thread_pool_size','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
+    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
     for k in ('cells_x','cells_y','cells_z','particles_per_cell','thread_pool_size'):
         value=numerics.get(k,dict(cells_x=20,cells_y=20,cells_z=3,particles_per_cell=50,thread_pool_size=4)[k])
         if type(value) is not int or value<=0:raise ValueError(k+': expected positive integer')
@@ -108,6 +108,7 @@ if __name__=='__main__':
     data=json.loads(args.input.read_text());config,units=prepare(data)
     if args.output_dir.exists() and any(args.output_dir.iterdir()):raise ValueError('Preparation directory must be empty')
     args.output_dir.mkdir(parents=True,exist_ok=True)
+    if config.get('runtime_control'):config['runtime_control']=str((args.input.resolve().parent/config['runtime_control']).resolve());units['normalized_parameters']['runtime_control']=config['runtime_control']
     if config.get('geometry_file'):config['geometry_file']=str((args.input.resolve().parent/config['geometry_file']).resolve());units['normalized_parameters']['geometry_file']=config['geometry_file']
     units['source_file']=str((args.output_dir/'input_si.json').resolve())
     if isinstance(units.get('provenance'),dict) and 'files' in units['provenance']:

@@ -131,6 +131,8 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
         if (part == "..")
           throw std::runtime_error("Output path escapes directory");
     }
+  if (!c.runtime_control.empty())
+    c.runtime_control = fs::absolute(c.runtime_control).string();
   if (!c.geometry_file.empty())
     c.geometry_file = fs::absolute(c.geometry_file).string();
   if (!c.units_file.empty()) c.units_file = fs::absolute(c.units_file).string();
@@ -189,6 +191,8 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
   };
   Save();
   try {
+    if (!c.runtime_control.empty() && fs::is_regular_file(c.runtime_control))
+      copy(c.runtime_control, "runtime_control_initial");
     for (auto& path : c.input_configs) copy(path, "config");
     if (!c.geometry_file.empty())
       data_["effective_config"]["geometry_file"] =
@@ -203,6 +207,9 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
       auto effective = EffectiveConfig(c);
       for (auto it = units.at("normalized_parameters").begin();
            it != units.at("normalized_parameters").end(); ++it) {
+        if (it.key() == "runtime_control" || it.key() == "thread_pool_size" ||
+            it.key() == "seed")
+          continue;
         if (!effective.contains(it.key()) || effective[it.key()] != it.value())
           throw std::runtime_error("Units mismatch: " + it.key());
       }
@@ -250,6 +257,17 @@ void RunManifest::GeometryHash(const Geometry& geometry) {
   }
   data_["geometry_sha256"] = picosha2::hash256_hex_string(points.dump());
   Save();
+}
+void RunManifest::RuntimePolicy(double time, std::size_t step,
+                                const std::string& mode, std::size_t workers) {
+  auto& history = data_["runtime_policy"];
+  if (history.is_null()) history = Json::array();
+  if (history.empty() || history.back()["mode"] != mode ||
+      history.back()["workers"] != workers) {
+    history.push_back(
+        {{"time", time}, {"step", step}, {"mode", mode}, {"workers", workers}});
+    Save();
+  }
 }
 void RunManifest::Progress(double t, size_t steps) {
   data_["simulation_time"] = t;

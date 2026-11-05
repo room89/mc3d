@@ -79,6 +79,8 @@ int Run(int argc, char* argv[]) {
   }
 
   runner.progress = [&manifest](double t, std::size_t steps) { manifest.Progress(t, steps); };
+  runner.runtime_progress = [&manifest](double t, std::size_t step, const std::string& mode, std::size_t workers) { manifest.RuntimePolicy(t, step, mode, workers); };
+  runner.SetRuntimeControl(config.runtime_control);
   runner.Compute();
   manifest.Progress(runner.Time(), runner.Steps());
 

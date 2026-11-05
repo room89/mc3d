@@ -41,7 +41,9 @@ make clean
 использует демонстрационный набор `configs/example.json`, а `make run-smoke`
 запускает короткий расчёт на маленькой сетке без геометрии тела. Все файлы,
 созданные при запуске через Makefile, сохраняются в `output/`; каталог можно
-переопределить, например `OUTPUT_DIR=results/example`.
+переопределить, например `OUTPUT_DIR=results/example`. Он должен быть новым
+или пустым. `make run` передаёт его через `--output-dir`; входные пути
+разрешаются относительно каталога, из которого запущен make.
 
 Проверки запускаются командой `ctest --test-dir build --output-on-failure`.
 Каждый тест GoogleTest зарегистрирован в CTest отдельно, поэтому имя
@@ -120,6 +122,55 @@ python3 tools/body_flow_report.py --config configs/body_flow.json \
   ```bash
   ./build/MC3dSolver --geometry-type wedge --geometry-wedge-alpha 0.349
   ```
+
+### Управление нагрузкой во время расчёта
+
+Включите управление нагрузкой через `make run`:
+
+```bash
+make run CONFIG=configs/example.json OUTPUT_DIR=output/example LOAD_MODE=balanced
+```
+
+Из другого терминала, из корня репозитория:
+
+```bash
+make load OUTPUT_DIR=output/example LOAD_MODE=quiet
+make load OUTPUT_DIR=output/example LOAD_MODE=balanced
+make load OUTPUT_DIR=output/example LOAD_MODE=pause
+make load OUTPUT_DIR=output/example LOAD_MODE=full
+```
+
+| Режим | Рабочие потоки | Доля времени работы между шагами |
+|---|---|---|
+| `full` | Все заданные `--threads` | 100% |
+| `balanced` | Половина, округляя вверх | 60% |
+| `quiet` | Один | 25% |
+| `pause` | Новые шаги не запускаются | 0% |
+
+Без `LOAD_MODE` Makefile не создаёт файл управления. Если управление
+включено напрямую в solver, начальный режим — `full`. `make run LOAD_MODE=...`
+записывает выбранный режим в `OUTPUT_DIR.control` перед запуском.
+`make load` атомарно записывает запрос; это не
+подтверждение, что solver работает или уже применил его. Применение видно
+в логе по `Runtime load:`. Файл можно создать до запуска, чтобы начать в
+нужном режиме. Сохранённый режим действует и при следующем запуске с тем же
+файлом при прямом запуске. Для собственного пути у make используйте
+`CONTROL_FILE=...`; при прямом запуске — `--runtime-control PATH` у solver
+и `--file PATH` у скрипта; каждый расчёт должен иметь отдельный файл.
+
+Изменения применяются между завершёнными шагами; во время отдыха и паузы
+файл проверяется каждые 200 мс. Длинный шаг задерживает переключение.
+Инициализация и финальная запись снимков не ограничиваются. Пауза сохраняет
+расчёт в памяти, это не контрольная точка для перезапуска процесса.
+Ошибочный, удалённый или недоступный файл оставляет последний принятый режим.
+Без `--runtime-control` управление выключено.
+
+Доли относятся к реальному времени работы и отдыха, а не к показанию CPU в
+Activity Monitor. Это ограничение средней нагрузки, не гарантия температуры
+или шума: внутри шага выбранные потоки могут работать на полной скорости.
+Параметры физики, `dt` и состояние частиц не меняются, но изменение числа
+потоков может изменить порядок переноса частиц, как и обычный многопоточный
+запуск. Старому уже работающему бинарнику эта возможность недоступна.
 
 ### Конфигурационный файл
 Любую опцию можно перенести в JSON-файл:
@@ -664,3 +715,9 @@ particle count. Physical molecule weight is recorded separately. VHS Kn uses
 lambda_eq(Tref)/physical domain x length; no experimental mean-free-path
 convention is silently substituted. Legacy runs without a unit table are
 explicitly marked `normalized_only`.
+
+Runtime load control is preserved when using --output-dir; its input path is
+resolved before changing directories. The manifest records accepted scheduling
+policy changes (step, time, mode, worker limit). Replay disables live control
+and records this choice, so a stale pause file cannot block a replay. Timing
+policies and multi-worker scheduling are not claimed to replay bitwise.

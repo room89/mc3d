@@ -290,10 +290,20 @@ bool SimulationRunner::UpdateSnapshotSchedule() {
 
 void SimulationRunner::Compute() {
   size_t step = 0;
+  RuntimeControl control(runtime_control_path_, cluster_.thread_pool_.GetCapacity());
+  std::chrono::steady_clock::duration work{};
   while (cluster_.t < cluster_.t_end && !stop_requested) {
-    LOG_INFO() << "Time step:" << ++step;
-    utils::Stopwatch stopwatch("ClusterStep");
-    Step();
+    auto workers=control.WaitBeforeStep(work, [] { return stop_requested != 0; });
+    if(stop_requested) break;
+    cluster_.thread_pool_.SetActiveThreadCount(workers);
+    if(runtime_progress) runtime_progress(cluster_.t, steps_, control.Mode(), workers);
+    const auto started = std::chrono::steady_clock::now();
+    {
+      LOG_INFO() << "Time step:" << ++step;
+      utils::Stopwatch stopwatch("ClusterStep");
+      Step();
+    }
+    work = std::chrono::steady_clock::now() - started;
     if(progress) progress(cluster_.t, steps_);
   }
 }
