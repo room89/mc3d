@@ -26,7 +26,16 @@ enum class BoundaryFace : std::size_t {
   ZPos,
 };
 
+inline constexpr std::array<const char*,6> ReservoirFaces{"x_neg","x_pos","y_neg","y_pos","z_neg","z_pos"};
+struct GasState {
+  double density_ratio = 1, temperature = 1;
+  std::array<double,3> velocity{0,0,0};
+};
+struct InitialStep { double x; GasState left, right; };
+
 struct SimulationConfig {
+  std::array<std::optional<GasState>,6> reservoirs;
+  std::optional<InitialStep> initial_step;
   CollisionParameters collisions;
   bool statistics_enabled = true, balance_enabled = true;
   std::vector<std::array<double, 2>> statistics_windows;

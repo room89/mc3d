@@ -43,6 +43,7 @@ int Run(int argc, char* argv[]) {
                      reference_density, config.Kn, config.Cu, std::move(geometry),
                      config.S, config.alpha, config.temperature, config.wall_temperature,
                      config.wall_heat_capacity);
+  cluster.ApplyInitialStep(config);
   manifest.CellGeometry(runner.Writer().WriteCellGeometry());
   if (config.force_reference_area)
     runner.SetForceReference(*config.force_reference_area,
@@ -64,6 +65,10 @@ int Run(int argc, char* argv[]) {
     const auto descriptor = mc3d::MakeBoundaryDescriptor(face, config);
     auto boundary =
         mc3d::MakeBoundary(descriptor, config.boundary_types[idx], config);
+    if(config.reservoirs[idx]) {
+      const auto& s=*config.reservoirs[idx];
+      dynamic_cast<mc3d::FreeBoundary&>(*boundary).SetReservoir(s.density_ratio,s.temperature,{s.velocity[0],s.velocity[1],s.velocity[2]});
+    }
     if (boundary) {
       boundaries.emplace_back(std::move(boundary));
     }

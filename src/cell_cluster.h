@@ -1,5 +1,6 @@
 #pragma once
 #include "collision_parameters.h"
+#include "config.h"
 
 #include <cell.h>
 #include <exit_code.h>
@@ -71,6 +72,7 @@ class CellCluster {
   void SetBoundaryCondition(
       std::vector<std::unique_ptr<Boundary>>&& boundaries);
   void SetBoundaryCondition(std::unique_ptr<Boundary> boundary);
+  void ApplyInitialStep(const SimulationConfig& config);
   void FragmentCells();
   void TestCells();
   void CleanInnerParticles();

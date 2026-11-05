@@ -13,6 +13,12 @@ namespace mc3d {
 
 void ValidateSimulationGeometry(const SimulationConfig& c,
                                 const Geometry& body) {
+  for(size_t i=0;i<6;++i) if(c.reservoirs[i] && c.boundary_types[i]!=BoundaryType::HyperFree) throw std::invalid_argument("Reservoir overrides require hyperfree");
+  if(c.initial_step) {
+    const double x=c.initial_step->x, left=c.apex_x.value_or(-c.Lx/2), dx=c.Lx/c.cells_x;
+    const double index=(x-left)/dx;
+    if(c.geometry_type!="none" || !c.geometry_file.empty() || !std::isfinite(x) || !(index>0 && index<c.cells_x) || std::abs(index-std::round(index))>1e-9) throw std::invalid_argument("Initial step requires no body and an interior cell face");
+  }
   if (!c.geometry_file.empty() ||
       (c.geometry_type != "none" && c.geometry_type != "cube" &&
        c.geometry_type != "wedge") ||

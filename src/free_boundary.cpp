@@ -33,6 +33,10 @@ FreeBoundary::FreeBoundary(Point pstn, Point nrml, unsigned int np, double S,
               << ") Vn: " << Vn << " pstn " << pstn;
 }
 
+void FreeBoundary::SetReservoir(double ratio,double temperature,Point velocity) {
+  if(!(ratio>0) || !std::isfinite(ratio) || !(temperature>0) || !std::isfinite(temperature) || !std::isfinite(velocity.Mod())) throw std::invalid_argument("Invalid reservoir");
+  density_ratio_=ratio;T=temperature;V=velocity;Vn=-(V*nrml);
+}
 double FreeBoundary::TransportTimeLimit() const {
   double limit = std::numeric_limits<double>::infinity();
   if (np == 0) return limit;
@@ -57,9 +61,11 @@ void FreeBoundary::BindCells(std::deque<Cell>& cluster_cells) {
 unsigned int FreeBoundary::AccumulateInflow(InflowCell& entry, double dt,
                                           unsigned int minimum_batch) {
   if (dt <= 0 || np == 0) return 0;
-  const double incoming = dt * np * utils::IncomingFlux(Vn, T) /
+  const double incoming = dt * np * density_ratio_ * utils::IncomingFlux(Vn, T) /
                           abs(entry.cell.get().GetSize() * nrml);
   // Keep the fractional flux in this cell across variable time steps.
+  if (!std::isfinite(incoming) || incoming > std::numeric_limits<unsigned int>::max()-entry.pending_particles)
+    throw std::overflow_error("Reservoir inflow exceeds batch capacity");
   entry.pending_particles += std::max(0.0, incoming);
   if (entry.pending_particles < minimum_batch) return 0;
   const auto count = static_cast<unsigned int>(entry.pending_particles);

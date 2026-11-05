@@ -20,7 +20,7 @@ def prepare(data):
         if isinstance(value,list):
             for x in value:finite(x)
     finite(data)
-    allowed={'temperature_k','number_density_m3','speed_m_s','flow_angle_rad','domain_m','apex_m','length_unit_m','temperature_unit_k','wall_temperature_k','wall_heat_capacity_j_k','force_reference_area_m2','end_time_s','snapshot_interval_s','statistics_windows_s','gas','geometry','numerics','outputs','provenance'}
+    allowed={'temperature_k','number_density_m3','speed_m_s','flow_angle_rad','domain_m','apex_m','length_unit_m','temperature_unit_k','wall_temperature_k','wall_heat_capacity_j_k','force_reference_area_m2','end_time_s','snapshot_interval_s','statistics_windows_s','gas','geometry','numerics','outputs','provenance','reservoirs','initial_step'}
     if set(data)-allowed: raise ValueError(f'Unknown SI fields: {set(data)-allowed}')
     t=positive(data['temperature_k'],'temperature_k'); n=positive(data['number_density_m3'],'number_density_m3')
     domain=data['domain_m']
@@ -69,6 +69,17 @@ def prepare(data):
     for name in ('statistics_enabled','balance_enabled'):
         if name in numerics and type(numerics[name]) is not bool:raise ValueError(name+': expected bool')
     c.update(numerics)
+    def gas_state(state):
+        if set(state)!={'number_density_m3','temperature_k','velocity_m_s'}:raise ValueError('Invalid gas state fields')
+        velocity=state['velocity_m_s']
+        if len(velocity)!=3 or any(not math.isfinite(x) for x in velocity):raise ValueError('Invalid gas velocity')
+        return dict(density_ratio=positive(state['number_density_m3'],'number_density_m3')/n,temperature=positive(state['temperature_k'],'temperature_k')/t0,velocity=[x/v0 for x in velocity])
+    if 'reservoirs' in data:c['reservoirs']={face:gas_state(state) for face,state in data['reservoirs'].items()}
+    if 'initial_step' in data:
+        step=data['initial_step']
+        if set(step)!={'x_m','left','right'}:raise ValueError('Invalid initial step fields')
+        c['initial_step']=dict(x=step['x_m']/l0,left=gas_state(step['left']),right=gas_state(step['right']))
+
     if 'statistics_windows_s' in data:
         windows=data['statistics_windows_s']
         if not isinstance(windows,list) or not windows:raise ValueError('statistics_windows_s requires nonempty list')

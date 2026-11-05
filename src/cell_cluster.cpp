@@ -720,3 +720,27 @@ void CellCluster::CleanInnerParticles() {
   }
 }
 }  // namespace mc3d
+
+namespace mc3d {
+void CellCluster::ApplyInitialStep(const SimulationConfig& config) {
+  if(!config.initial_step) return;
+  for(auto& cell:cells) {
+    const auto& s=cell.GetCenter().x<config.initial_step->x?config.initial_step->left:config.initial_step->right;
+    const double expected=density*cell.GetVolume()*s.density_ratio;
+    if(!std::isfinite(expected) || expected>std::numeric_limits<unsigned int>::max()) throw std::invalid_argument("Initial population overflow");
+    auto& random=cell.Random();
+    const size_t count=static_cast<size_t>(expected)+(random.Uniform()<expected-std::floor(expected));
+    cell.particles.clear();
+    std::normal_distribution<double> normal(0,std::sqrt(s.temperature));
+    auto origin=cell.GetCenter()-cell.GetSize()*.5; auto size=cell.GetSize();
+    for(size_t i=0;i<count;++i) {
+      Particle p;
+      p.position=origin+Point(random.Uniform()*size.x,random.Uniform()*size.y,random.Uniform()*size.z);
+      p.velocity={s.velocity[0]+normal(random.Engine()),s.velocity[1]+normal(random.Engine()),s.velocity[2]+normal(random.Engine())};
+      cell.particles.push_back(p);
+    }
+    cell.SetTemperature(s.temperature);cell.SetVelocity({s.velocity[0],s.velocity[1],s.velocity[2]});
+    cell.RefreshMoments();cell.GetDt();
+  }
+}
+}

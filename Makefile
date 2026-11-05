@@ -76,3 +76,8 @@ PHYSICS_MODE ?= quick
 .PHONY: check-physics
 check-physics: build
 	$(PYTHON) tools/check_physics.py --binary "$(BUILD_DIR)/MC3dSolver" --mode "$(PHYSICS_MODE)" --output-dir "$(OUTPUT_DIR)" --load-mode "$(if $(LOAD_MODE),$(LOAD_MODE),balanced)"
+
+SHOCK_MODE ?= quick
+.PHONY: check-shock
+check-shock: build
+	$(PYTHON) tools/check_shock.py --binary "$(BUILD_DIR)/MC3dSolver" --mode "$(SHOCK_MODE)" --output-dir "$(OUTPUT_DIR)" --load-mode "$(if $(LOAD_MODE),$(LOAD_MODE),balanced)"
