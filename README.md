@@ -593,3 +593,34 @@ python3 tools/benchmark_solver.py --baseline /path/to/old/MC3dSolver \
 сценариях и на 15–27% в увеличенном сценарии. Полный шаг ускорился на 1–8%
 во всех девяти случаях. Это результаты конкретных сценариев; многопоточный
 порядок поступления частиц и траектории могут различаться.
+
+### VHS and argon
+
+`collision_model` (CLI `--collision-model`) accepts `hs` (default), `vhs`,
+`none`. VHS requires finite positive `molecular_mass_kg`, `vhs_diameter_m`,
+`vhs_reference_temperature_k`, `temperature_unit_k`, and `vhs_omega` in [0.5,1].
+Temperature in kelvin is solver temperature times `temperature_unit_k`;
+velocity scale is sqrt(kB*temperature_unit_k/mass). Full SI input is not yet provided.
+
+VHS uses isotropic scattering and the SPARTA/Bird diameter convention:
+K(g)=pi*d_ref^2/Gamma(2.5-omega)*(4*kB*Tref/mass)^(omega-0.5)*g^(2-2*omega).
+At zero speed K is zero for omega<1 and its finite limit for omega=1.
+For omega=1 even a cold pair has counted events without velocity changes.
+
+VHS Kn means lambda_eq(Tref)/L, where lambda_eq=mean thermal speed/(n*mean K).
+The Maxwell relative-speed moment is
+E[g^p]=(4*kB*T/mass)^(p/2)*Gamma((p+3)/2)/Gamma(1.5).
+At fixed Kn diameter fixes physical reference density, not another multiplier
+on the normalized collision rate. Experimental definitions of mean free path
+must be converted separately. At omega=0.5 the normalized rate is exactly HS.
+
+`python3 tools/argon_vhs.py --output configs/argon` reproduces the argon
+configuration and report offline from Eq. 2/Table 3 of
+https://doi.org/10.1007/s10765-025-03603-8 (zero-density viscosity, valid 84–10000 K).
+The fit uses 32 log-spaced samples over 300–2000 K and validates 1001 points.
+Maximum relative error is 3.098%; the acceptance threshold is 5%.
+The fit is not a validation against a shock-wave experiment.
+Example: `./build/mc3d --config configs/argon/argon_vhs.json` with additional
+geometry/domain options as needed. The report JSON is not a solver configuration.
+
+SPARTA convention reference: https://github.com/sparta/sparta/blob/5702a655006b76fbe41de68d64c8f65249b64d23/src/collide_vss.cpp

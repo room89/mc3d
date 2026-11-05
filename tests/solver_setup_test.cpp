@@ -270,3 +270,12 @@ TEST(SimulationConfigTest, ParsesAndValidatesSurfaceCapacityAndReferenceArea) {
   args[4] = invalid;
   EXPECT_THROW(mc3d::LoadSimulationConfig(5, args), std::invalid_argument);
 }
+
+TEST(SimulationConfigTest, VhsRequiresExplicitPhysicalParameters) {
+ const char* args[]={"mc3d","--collision-model","vhs","--molecular-mass-kg","6.63e-26","--vhs-diameter-m","4e-10","--vhs-reference-temperature-k","300","--vhs-omega","0.75","--temperature-unit-k","300"};
+ auto argv=const_cast<char**>(args);
+ EXPECT_THROW(mc3d::LoadSimulationConfig(3,argv),std::invalid_argument);
+ auto config=mc3d::LoadSimulationConfig(13,argv);
+ EXPECT_EQ(config.collisions.kind,mc3d::CollisionKind::VHS);
+ EXPECT_DOUBLE_EQ(config.collisions.omega,.75);
+}

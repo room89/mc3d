@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include "collision_parameters.h"
 #include <cstddef>
 #include <optional>
 #include <string>
@@ -25,6 +26,7 @@ enum class BoundaryFace : std::size_t {
 };
 
 struct SimulationConfig {
+  CollisionParameters collisions;
   double Lx = 1.0;
   double Ly = 1.0;
   double Lz = 1.0;

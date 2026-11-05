@@ -14,8 +14,16 @@ CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
                                               Point velocity, double L,
                                               double Kn_l, double dt,
                                               utils::RandomStream& random) {
+  return ApplyWithStats(particles, velocity, L, Kn_l, dt, random, {});
+}
+CollisionStats CollisionModel::ApplyWithStats(
+    std::vector<Particle>& particles, Point velocity, double L, double Kn_l,
+    double dt, utils::RandomStream& random,
+    const CollisionParameters& parameters) {
+  parameters.Validate();
   CollisionStats stats;
-  if (particles.size() < 2 || dt <= 0) return stats;
+  if (particles.size() < 2 || dt <= 0 || parameters.kind == CollisionKind::None)
+    return stats;
 
   // Bound every relative speed by twice the largest peculiar speed. A thermal
   // mean is not an upper bound and causes population-dependent missed events.
@@ -26,11 +34,11 @@ CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
   };
   for (const auto& p : particles)
     max_speed_squared = std::max(max_speed_squared, speed_squared(p.velocity));
-  if (max_speed_squared == 0) return stats;
+  if (max_speed_squared == 0 && parameters.Rate(0) == 0) return stats;
   double g_max = 2 * std::sqrt(max_speed_squared);
   // N*(N-1)/2 distinct unordered pairs, with particle weight set by N0.
   double factor = 2 * sqrt(2.) * L * Kn_l / (particles.size() - 1);
-  double frequency_t = factor / g_max;
+  double frequency_t = factor / parameters.Rate(g_max);
 
   double t = 0;
 
@@ -67,8 +75,9 @@ CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
 
     double rr = random.Uniform();
 
-    if (gmod / g_max > rr)  // g == gmod?
-    {
+    if (parameters.Rate(gmod) > parameters.Rate(g_max) * (1 + 1e-12))
+      throw std::logic_error("Collision rate exceeds majorant");
+    if (parameters.Rate(gmod) / parameters.Rate(g_max) > rr) {
       double r1 = random.Uniform();
       double r2 = random.Uniform();
 
@@ -83,7 +92,7 @@ CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
       max_speed_squared =
           std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
       g_max = 2 * std::sqrt(max_speed_squared);
-      frequency_t = factor / g_max;
+      frequency_t = factor / parameters.Rate(g_max);
     }
   }
   return stats;

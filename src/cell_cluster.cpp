@@ -115,6 +115,7 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
 
         cell.SetCharacteristicLength(Lx);
         cell.SetKn(Kn);
+        cell.collision_parameters = collision_parameters;
 
         N += N_;
         double dtt = cell.GetDt();

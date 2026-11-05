@@ -6,6 +6,7 @@
 // Description: Program for calculation of rarefaid flows.
 
 #pragma once
+#include "collision_parameters.h"
 
 #include <cstdlib>
 #include <deque>
@@ -107,6 +108,7 @@ class Cell {
   void SetParameters(double S, double alpha, double T);
   void SetVelocity(Point velocity);
   void SetKn(double Kn);
+  CollisionParameters collision_parameters;
   void SetReferenceParticleCount(double count);
   void SetInnerBoundary(InnerBoundary bound);
   void SetBodyMark(bool mark);

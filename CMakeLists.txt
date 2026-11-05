@@ -61,6 +61,7 @@ if(BUILD_TESTING)
     tests/value_types_test.cpp
     tests/collision_scattering_test.cpp
     tests/collision_frequency_test.cpp
+    tests/vhs_test.cpp
     tests/collision_test.cpp
     tests/collision_normalization_test.cpp
     tests/cell_cluster_test.cpp

@@ -1,4 +1,5 @@
 #pragma once
+#include "collision_parameters.h"
 
 #include <cell.h>
 #include <exit_code.h>
@@ -34,6 +35,7 @@ struct StepResult {
 
 class CellCluster {
  public:
+  CollisionParameters collision_parameters;
   inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
   friend class SnapshotWriter;
