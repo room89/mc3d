@@ -229,6 +229,10 @@ Qthermostat означает отвод тепла термостатом, от�
 
 ### Analytical physics acceptance (stage 8)
 
+Full acceptance configurations live in `configs/analytical/`, separately from
+the short examples in `configs/checks/`. CTest runs their reduced variants
+through AnalyticalIntegration; ConfigExamplesIntegration runs short examples only.
+
 Run `make check-physics PHYSICS_MODE=quick OUTPUT_DIR=output/physics-quick LOAD_MODE=balanced`
 for microphysics and nine small integration runs. Run the same command with
 `PHYSICS_MODE=full` and a fresh output directory for full acceptance.

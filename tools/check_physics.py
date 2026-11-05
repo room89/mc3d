@@ -61,7 +61,7 @@ def main():
     report['microphysics']={'status':'passed','tests':ET.parse(micro_xml).getroot().attrib}
     for name in ('uniform','cube','closed'):
         for seed in (123,456,789):
-            dest=a.output_dir/f'{name}-{seed}';cfg=json.loads((repo/f'configs/checks/analytical_{name}.json').read_text());cfg['seed']=seed
+            dest=a.output_dir/f'{name}-{seed}';cfg=json.loads((repo/f'configs/analytical/{name}.json').read_text());cfg['seed']=seed
             if a.mode=='quick':cfg.update(cells_x=5,cells_y=5,cells_z=5,particles_per_cell=20,end_time=.1,statistics_windows=[[0,.1]])
             config=a.output_dir/f'{name}-{seed}.json'
             if dest.exists():
