@@ -8,7 +8,14 @@ namespace mc3d {
 void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
                            double L, double Kn_l, double dt,
                            utils::RandomStream& random) {
-  if (particles.size() <= 5) return;
+  (void)ApplyWithStats(particles, velocity, L, Kn_l, dt, random);
+}
+CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
+                                              Point velocity, double L,
+                                              double Kn_l, double dt,
+                                              utils::RandomStream& random) {
+  CollisionStats stats;
+  if (particles.size() < 2 || dt <= 0) return stats;
 
   // Bound every relative speed by twice the largest peculiar speed. A thermal
   // mean is not an upper bound and causes population-dependent missed events.
@@ -19,7 +26,7 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
   };
   for (const auto& p : particles)
     max_speed_squared = std::max(max_speed_squared, speed_squared(p.velocity));
-  if (max_speed_squared == 0) return;
+  if (max_speed_squared == 0) return stats;
   double g_max = 2 * std::sqrt(max_speed_squared);
   // N*(N-1)/2 distinct unordered pairs, with particle weight set by N0.
   double factor = 2 * sqrt(2.) * L * Kn_l / (particles.size() - 1);
@@ -70,6 +77,7 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
       v1 = (velocity_sum - g1) * 0.5;
       v2 = (velocity_sum + g1) * 0.5;
 
+      ++stats.accepted_collisions;
       particle_1->velocity = v1;
       particle_2->velocity = v2;
       max_speed_squared =
@@ -78,6 +86,7 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
       frequency_t = factor / g_max;
     }
   }
+  return stats;
 }
 
 }  // namespace mc3d
