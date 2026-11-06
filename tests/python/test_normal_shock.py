@@ -17,4 +17,5 @@ class NormalShockTest(unittest.TestCase):
         self.assertGreater(c['reservoirs']['x_pos']['density_ratio'],1)
         self.assertAlmostEqual(c['initial_step']['right']['temperature'],data['initial_step']['right']['temperature_k']/300)
         self.assertEqual(c['boundary_y_neg'],'periodic')
+        self.assertAlmostEqual(c['snapshot_interval'],c['end_time']/10)
         self.assertEqual(u['reference_gas']['omega'],c['vhs_omega'])
