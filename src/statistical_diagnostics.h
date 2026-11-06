@@ -18,6 +18,8 @@ class StatisticalDiagnostics {
     double start, end, elapsed = 0;
     std::vector<WindowMoments> cells;
     std::vector<SurfaceSum> surface;
+    double written_elapsed = -1;
+    bool written_complete = false;
   };
   CellCluster& cluster_;
   bool statistics_, balance_;
