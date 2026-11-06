@@ -1,0 +1,9 @@
+{
+  "binary_sha256": "274737d78ba40ead459be213d2fee6f99dc242e66b44bfdbc0eb455e77d2927e",
+  "verified_completed_runs": {
+    "A-123": true,
+    "A-456": true,
+    "A-789": true,
+    "B-123": true
+  }
+}

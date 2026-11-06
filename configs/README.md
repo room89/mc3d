@@ -257,6 +257,12 @@ runs three engineering checks. `SHOCK_MODE=pilot` uses 400 axial cells,
 configurations are generated outside `configs/checks`; their parameters are
 specified by `tools/normal_shock.py`. Use a fresh output directory.
 
+Normal-shock generated configs save intermediate snapshots every one tenth of
+the setup duration (`snapshot_interval_s`). Statistics still accumulate on every
+step and flush at window boundaries and at shutdown. Unchanged cell statistics
+are not rewritten; dynamic surface temperatures retain their output-time meaning.
+The legacy `snapshot_interval: 0` behavior (a snapshot every step) is unchanged.
+
 These are engineering conditions (M=3.8, T1=300 K, n1=1e20/m³), not an
 Alsmeyer experimental reconstruction. The length is 40 upstream VHS collision
 mean free paths; this is not claimed to be Alsmeyer's length convention.
@@ -314,3 +320,9 @@ Experimental acceptance is currently unavailable: the primary Alsmeyer PDF,
 its length convention and digitization uncertainty have not been verified.
 Engineering runs are not substituted for experimental data. Stage 9 remains
 in progress until the numerical and experimental requirements are resolved.
+
+For a deliberately unbudgeted validation run, pass
+`SHOCK_ARGS=--no-time-budget` to `make check-shock SHOCK_MODE=validation`.
+This disables the total and per-simulation time limits; memory limits remain.
+The report records `time_budget_hours: null`. Use a permanent `OUTPUT_DIR`
+under the project `output/` directory, never `/tmp`, for long series.

@@ -156,44 +156,57 @@ void StatisticalDiagnostics::AfterStep() {
 void StatisticalDiagnostics::Write() {
   if (statistics_)
     for (size_t k = 0; k < windows_.size(); ++k) {
-      const auto& w = windows_[k];
-      std::ostringstream f;
-      f << std::setprecision(17);
-      f << "window;start;end;observed_time;complete;cell;status;Vgas;A0;origin_"
-           "x;origin_y;origin_z;A1x;A1y;A1z;A2xx;A2xy;A2xz;A2yy;A2yz;A2zz;A3x;"
-           "A3y;A3z;mean_N;density;ux;uy;uz;Tstat;Pxx;Pxy;Pxz;Pyy;Pyz;Pzz;qx;"
-           "qy;qz\n";
-      for (size_t i = 0; i < w.cells.size(); ++i) {
-        const auto& a = w.cells[i];
-        const auto& cell = cluster_.cells[i];
-        const double volume = cell.GetVolume();
-        const char* status = volume == 0      ? "solid"
-                             : w.elapsed == 0 ? "unobserved"
-                             : a.a0 == 0      ? "empty"
-                                              : "valid";
-        f << k << ';' << w.start << ';' << w.end << ';' << w.elapsed << ';'
-          << (cluster_.t >= w.end) << ';' << i << ';' << status << ';' << volume
-          << ';' << a.a0;
-        for (auto x : a.origin) f << ';' << x;
-        for (auto x : a.a1) f << ';' << x;
-        for (int j : {0, 1, 2, 4, 5, 8}) f << ';' << a.a2[j];
-        for (auto x : a.a3) f << ';' << x;
-        if (w.elapsed > 0 && volume > 0)
-          f << ';' << a.a0 / w.elapsed << ';'
-            << weight_ * a.a0 / (volume * w.elapsed);
-        else
-          f << ";;";
-        if (a.a0 > 0 && volume > 0) {
-          const auto r = a.Evaluate(weight_, volume);
-          Vector(f, r.velocity);
-          f << ';' << r.temperature;
-          for (int j : {0, 1, 2, 4, 5, 8}) f << ';' << r.pressure[j];
-          Vector(f, r.heat);
-        } else
-          f << ";;;;;;;;;;;;;";
-        f << '\n';
+      auto& w = windows_[k];
+      const bool complete = cluster_.t >= w.end;
+      const bool changed =
+          w.written_elapsed != w.elapsed || w.written_complete != complete;
+      // Moments and geometry are unchanged outside the window. Dynamic wall
+      // temperatures are output-time values, so their surface rows still
+      // refresh.
+      const bool dynamic =
+          cluster_.body_ && cluster_.body_->SurfaceHeatingEnabled();
+      if (!changed && !dynamic) continue;
+      if (changed) {
+        std::ostringstream f;
+        f << std::setprecision(17);
+        f << "window;start;end;observed_time;complete;cell;status;Vgas;A0;"
+             "origin_"
+             "x;origin_y;origin_z;A1x;A1y;A1z;A2xx;A2xy;A2xz;A2yy;A2yz;A2zz;"
+             "A3x;"
+             "A3y;A3z;mean_N;density;ux;uy;uz;Tstat;Pxx;Pxy;Pxz;Pyy;Pyz;Pzz;qx;"
+             "qy;qz\n";
+        for (size_t i = 0; i < w.cells.size(); ++i) {
+          const auto& a = w.cells[i];
+          const auto& cell = cluster_.cells[i];
+          const double volume = cell.GetVolume();
+          const char* status = volume == 0      ? "solid"
+                               : w.elapsed == 0 ? "unobserved"
+                               : a.a0 == 0      ? "empty"
+                                                : "valid";
+          f << k << ';' << w.start << ';' << w.end << ';' << w.elapsed << ';'
+            << (cluster_.t >= w.end) << ';' << i << ';' << status << ';'
+            << volume << ';' << a.a0;
+          for (auto x : a.origin) f << ';' << x;
+          for (auto x : a.a1) f << ';' << x;
+          for (int j : {0, 1, 2, 4, 5, 8}) f << ';' << a.a2[j];
+          for (auto x : a.a3) f << ';' << x;
+          if (w.elapsed > 0 && volume > 0)
+            f << ';' << a.a0 / w.elapsed << ';'
+              << weight_ * a.a0 / (volume * w.elapsed);
+          else
+            f << ";;";
+          if (a.a0 > 0 && volume > 0) {
+            const auto r = a.Evaluate(weight_, volume);
+            Vector(f, r.velocity);
+            f << ';' << r.temperature;
+            for (int j : {0, 1, 2, 4, 5, 8}) f << ';' << r.pressure[j];
+            Vector(f, r.heat);
+          } else
+            f << ";;;;;;;;;;;;;";
+          f << '\n';
+        }
+        AtomicWrite("cell_statistics_" + std::to_string(k) + ".csv", f.str());
       }
-      AtomicWrite("cell_statistics_" + std::to_string(k) + ".csv", f.str());
       std::ostringstream s;
       s << std::setprecision(17)
         << "window;start;end;observed_time;complete;polygon;area;wall_"
@@ -218,6 +231,8 @@ void StatisticalDiagnostics::Write() {
         s << '\n';
       }
       AtomicWrite("surface_statistics_" + std::to_string(k) + ".csv", s.str());
+      w.written_elapsed = w.elapsed;
+      w.written_complete = complete;
     }
   if (balance_) {
     auto quantity = [&](const ConservedQuantity& x) {
