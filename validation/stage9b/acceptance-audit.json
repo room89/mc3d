@@ -1,0 +1,1447 @@
+{
+  "source_report_sha256": "132a2e29b3838c2d2f62f559310ccda3e7934653295eddef7c2b5b53b6325504",
+  "interpretation": "Diagnostics only; original gates and report are unchanged",
+  "binary_sha256": "330d9ed03dea9c36e39c281edbd4150aeb1c4b8e186003316ffa72f432f489b1",
+  "sparta_sha256": "0d6dedda6d90b1f703d5cd0f745dbeb976cac7f74bf57e9a13016b26e8b10afb",
+  "profile_sha256": {
+    "A": "2705484447d16411dd8f16037ca00756bda5f65a4586e4aed0b712612686bd41",
+    "B": "4aac834a05572c8f7cea134737a2e01e46c182c653ab5500baf22879ac12be19",
+    "C": "9cf137d23ddb1df48c48c5de9990e015a81bfc8476d0f60ae57fecd35eba15ab",
+    "D": "60f60ce48e8f915471f3b752157a66fd6a3f338dccae5b5e29717042ec153b71",
+    "E": "e7fe804578cf6d6993fafd33cf10b4b0e232577c407932aafea6aef603b7de6e",
+    "F": "a9aa5d0202a515d4bc860ed8f0cf1468436a9cc8cda31d4b76f6a3979e628ed9",
+    "G": "9bbd9e7f4ce1c69204986005482cec1a28725de1fe3eaabeb4ba502044c4057a"
+  },
+  "mc3d": {
+    "A": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 9,
+          "plateau_max": 0.02274427861844975,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.575412553475115,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.021621413304792725,
+              "uncertainty": 0.44514060577214987,
+              "tolerance": 0.1392111568248834,
+              "precision_limit": 0.0696055784124417,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.16891669705134182,
+              "uncertainty": 0.4753339762270986,
+              "tolerance": 0.09718461349995064,
+              "precision_limit": 0.04859230674997532,
+              "mean_outside_tolerance": true,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            2.700494980114594e-05,
+            -8.361111821899962e-05
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 10,
+          "plateau_max": 0.016305297017234027,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.597744470715384,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.009415505846980032,
+              "uncertainty": 0.34691234376608143,
+              "tolerance": 0.1392111568248834,
+              "precision_limit": 0.0696055784124417,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.022432340536617357,
+              "uncertainty": 0.5721846179360885,
+              "tolerance": 0.09718461349995064,
+              "precision_limit": 0.04859230674997532,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            1.0765676001578394e-05,
+            7.729085548651739e-05
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 12,
+          "plateau_max": 0.01759296934807302,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.518615023272844,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.060483532837276144,
+              "uncertainty": 0.3146506178753297,
+              "tolerance": 0.1392111568248834,
+              "precision_limit": 0.0696055784124417,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.016074682022570563,
+              "uncertainty": 0.5247055750753948,
+              "tolerance": 0.09718461349995064,
+              "precision_limit": 0.04859230674997532,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -9.092820493063298e-05,
+            -0.0013187254917937444
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.04491565931669091,
+          "blocks": {
+            "8": [
+              0.16073810078572376,
+              0.11395691774313958,
+              0.12020846253551735
+            ],
+            "16": [
+              0.06830619685366629,
+              0.09159101842206512,
+              0.11898092709592259
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.08206971718482527,
+          "blocks": {
+            "8": [
+              0.2079488219147205,
+              0.1882876018043061,
+              0.1837404284308836
+            ],
+            "16": [
+              0.21322257475797204,
+              0.17258585697414341,
+              0.2589193331593734
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.644258129413182,
+            "gradient_thickness": 3.973460817145783,
+            "processing_uncertainty": 0.26641102447895415
+          },
+          {
+            "width_10_90": 4.620433632552569,
+            "gradient_thickness": 4.086694355473882,
+            "processing_uncertainty": 0.3453123656284163
+          },
+          {
+            "width_10_90": 4.653094767427891,
+            "gradient_thickness": 3.900617456862149,
+            "processing_uncertainty": 0.19422412963536262
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.641386958520796,
+          "gradient_thickness": 3.9867581247023267,
+          "processing_uncertainty": 0.24908530814005791
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "B": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 8,
+          "plateau_max": 0.020735223976517572,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.698090772146536,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.08933491179202946,
+              "uncertainty": 0.5516296906304244,
+              "tolerance": 0.13985877627032992,
+              "precision_limit": 0.06992938813516496,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.031132097153289795,
+              "uncertainty": 0.5403417667083565,
+              "tolerance": 0.09289901422151377,
+              "precision_limit": 0.046449507110756884,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            0.00012622419997316794,
+            -0.0007742288851038635
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 15,
+          "plateau_max": 0.019228136591550263,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.487410965614114,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.04605483393579313,
+              "uncertainty": 0.26035595529170596,
+              "tolerance": 0.13985877627032992,
+              "precision_limit": 0.06992938813516496,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.06563273392496827,
+              "uncertainty": 0.5125577252383077,
+              "tolerance": 0.09289901422151377,
+              "precision_limit": 0.046449507110756884,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            2.932153401301574e-05,
+            -0.0005323669226986617
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 17,
+          "plateau_max": 0.021793750412564202,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.750927680609994,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.014378521750415096,
+              "uncertainty": 0.38321061725769395,
+              "tolerance": 0.13985877627032992,
+              "precision_limit": 0.06992938813516496,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.2299461631633819,
+              "uncertainty": 1.0641942356100678,
+              "tolerance": 0.09289901422151377,
+              "precision_limit": 0.046449507110756884,
+              "mean_outside_tolerance": true,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            6.748967944247099e-05,
+            0.001991873325878737
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.05351636379455058,
+          "blocks": {
+            "8": [
+              0.1946791725616661,
+              0.10005556329124426,
+              0.1495723055936593
+            ],
+            "16": [
+              0.12874819694627476,
+              0.13061666652541645,
+              0.08927019826909163
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.08670875685227482,
+          "blocks": {
+            "8": [
+              0.19571089610182804,
+              0.1840149262877813,
+              0.39728301341307093
+            ],
+            "16": [
+              0.23406805081024243,
+              0.14859461703311608,
+              0.29198324975400763
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.616633485395372,
+            "gradient_thickness": 3.9583293610313888,
+            "processing_uncertainty": 0.4347166961394562
+          },
+          {
+            "width_10_90": 4.666624183547508,
+            "gradient_thickness": 3.8856539378488133,
+            "processing_uncertainty": 0.3036291371014994
+          },
+          {
+            "width_10_90": 4.6312991635478955,
+            "gradient_thickness": 4.126935482743546,
+            "processing_uncertainty": 0.2692355072519632
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.641446705783104,
+          "gradient_thickness": 4.009625969011341,
+          "processing_uncertainty": 0.3575792192881089
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "C": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 3,
+          "plateau_max": 0.013270414768070744,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.723783125581626,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.01442563961554022,
+              "uncertainty": 0.17026792737802518,
+              "tolerance": 0.14010876953460197,
+              "precision_limit": 0.07005438476730098,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.07833797438337609,
+              "uncertainty": 0.2626584125079944,
+              "tolerance": 0.10384493198389487,
+              "precision_limit": 0.051922465991947435,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -4.886140899276798e-05,
+            -0.00010546625443663173
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 1,
+          "plateau_max": 0.010203771541819685,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.71727288617278,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.0005674580024273013,
+              "uncertainty": 0.3022800682025931,
+              "tolerance": 0.14010876953460197,
+              "precision_limit": 0.07005438476730098,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.09567005417472885,
+              "uncertainty": 0.7077050219106655,
+              "tolerance": 0.10384493198389487,
+              "precision_limit": 0.051922465991947435,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -6.390109426569669e-05,
+            0.000464966384524982
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 5,
+          "plateau_max": 0.01394567791001231,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.618326049171493,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.03958325784849581,
+              "uncertainty": 0.3647578007079433,
+              "tolerance": 0.14010876953460197,
+              "precision_limit": 0.07005438476730098,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.00660501487659193,
+              "uncertainty": 0.4422035308768725,
+              "tolerance": 0.10384493198389487,
+              "precision_limit": 0.051922465991947435,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            6.908679962123188e-05,
+            0.0003109885827530783
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.034159630992725586,
+          "blocks": {
+            "8": [
+              0.06074051323992499,
+              0.11205905958928031,
+              0.12368072179897784
+            ],
+            "16": [
+              0.03166152459984223,
+              0.05612852626119773,
+              0.1631470965584034
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.07962196101165692,
+          "blocks": {
+            "8": [
+              0.10743683535388208,
+              0.25589229771734767,
+              0.1630676970157625
+            ],
+            "16": [
+              0.10901645876002239,
+              0.300142345773963,
+              0.034129810834184884
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.631037818865433,
+            "gradient_thickness": 3.9645807095544345,
+            "processing_uncertainty": 0.11844650329286166
+          },
+          {
+            "width_10_90": 4.655457877063856,
+            "gradient_thickness": 3.955342578050089,
+            "processing_uncertainty": 0.11380118780473536
+          },
+          {
+            "width_10_90": 4.676328733493953,
+            "gradient_thickness": 4.046659243059817,
+            "processing_uncertainty": 0.12713594874627843
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.653181559106763,
+          "gradient_thickness": 3.996013178937073,
+          "processing_uncertainty": 0.12117970376149367
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "D": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 7,
+          "plateau_max": 0.013731565648890129,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.71090816137242,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.07623826564842062,
+              "uncertainty": 0.2521620987414237,
+              "tolerance": 0.14008133421894797,
+              "precision_limit": 0.07004066710947399,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.02849457229499741,
+              "uncertainty": 0.3622773874118579,
+              "tolerance": 0.10491492050215087,
+              "precision_limit": 0.052457460251075436,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -8.907668776578356e-05,
+            -0.00016235148302549962
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 2,
+          "plateau_max": 0.011248513920405089,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.67080958017965,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.0348786379142938,
+              "uncertainty": 0.2813049006141963,
+              "tolerance": 0.14008133421894797,
+              "precision_limit": 0.07004066710947399,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.013776905698571262,
+              "uncertainty": 0.34886229693594273,
+              "tolerance": 0.10491492050215087,
+              "precision_limit": 0.052457460251075436,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -0.00012881511569285637,
+            -0.0006569452498390044
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 1,
+          "plateau_max": 0.012349393254453797,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.6597589929348,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.03889553385608391,
+              "uncertainty": 0.23456595422631404,
+              "tolerance": 0.14008133421894797,
+              "precision_limit": 0.07004066710947399,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.04489512061644385,
+              "uncertainty": 0.6518217847853844,
+              "tolerance": 0.10491492050215087,
+              "precision_limit": 0.052457460251075436,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            2.9164185027258435e-05,
+            0.000247321587641661
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.03155076535700407,
+          "blocks": {
+            "8": [
+              0.10436683505564988,
+              0.09975601830161168,
+              0.08375945024876853
+            ],
+            "16": [
+              0.1172736414540742,
+              0.09349000688518347,
+              0.10513969786039065
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.0420202806372333,
+          "blocks": {
+            "8": [
+              0.12175740387690562,
+              0.11893022424618929,
+              0.21747256299117898
+            ],
+            "16": [
+              0.09125187077274893,
+              0.10154679708091524,
+              0.1989928249351453
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.673881818081989,
+            "gradient_thickness": 3.882219616766004,
+            "processing_uncertainty": 0.14183243960687442
+          },
+          {
+            "width_10_90": 4.6348777528197,
+            "gradient_thickness": 3.954013116500138,
+            "processing_uncertainty": 0.17859541205670526
+          },
+          {
+            "width_10_90": 4.665607726413546,
+            "gradient_thickness": 3.9533487194105983,
+            "processing_uncertainty": 0.06316759828679341
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.656170346244767,
+          "gradient_thickness": 3.9328403978840383,
+          "processing_uncertainty": 0.08836635687577932
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "E": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 6,
+          "plateau_max": 0.019048626948094626,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.71076667773366,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.024788442618890016,
+              "uncertainty": 0.4354437498817723,
+              "tolerance": 0.13948621670215303,
+              "precision_limit": 0.06974310835107651,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.10244760149085952,
+              "uncertainty": 0.4592474620158281,
+              "tolerance": 0.10365302001417873,
+              "precision_limit": 0.05182651000708936,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            1.939773871887807e-06,
+            0.001100108831410946
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 1,
+          "plateau_max": 0.011286024339707122,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.744068514930692,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.00602455437973326,
+              "uncertainty": 0.1622111912769608,
+              "tolerance": 0.13948621670215303,
+              "precision_limit": 0.06974310835107651,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.06154467028707611,
+              "uncertainty": 0.32993312648941814,
+              "tolerance": 0.10365302001417873,
+              "precision_limit": 0.05182651000708936,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -6.574374738768548e-05,
+            -0.0003841787309258396
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 2,
+          "plateau_max": 0.010592529456295189,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.74248872640311,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.04256790569646274,
+              "uncertainty": 0.2844370689836293,
+              "tolerance": 0.13948621670215303,
+              "precision_limit": 0.06974310835107651,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.22331633424447084,
+              "uncertainty": 0.31579273373484057,
+              "tolerance": 0.10365302001417873,
+              "precision_limit": 0.05182651000708936,
+              "mean_outside_tolerance": true,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            0.00018408929939353383,
+            0.00036476579064932853
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.06810772795352871,
+          "blocks": {
+            "8": [
+              0.1477253593151886,
+              0.055649439576041404,
+              0.10024804464632783
+            ],
+            "16": [
+              0.044134184458253276,
+              0.05176611163552473,
+              0.08632464518759153
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.022460554509322765,
+          "blocks": {
+            "8": [
+              0.17297893232238584,
+              0.11903405381193893,
+              0.21861387280720215
+            ],
+            "16": [
+              0.1348275673427663,
+              0.11378662412955375,
+              0.27991405746840803
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.636847753226693,
+            "gradient_thickness": 3.9204309042697076,
+            "processing_uncertainty": 0.0952428655562585
+          },
+          {
+            "width_10_90": 4.635026258121436,
+            "gradient_thickness": 3.9885734107809845,
+            "processing_uncertainty": 0.08748522196661934
+          },
+          {
+            "width_10_90": 4.682667599794366,
+            "gradient_thickness": 4.1176501022355785,
+            "processing_uncertainty": 0.20556279136472044
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.651625040720766,
+          "gradient_thickness": 4.013795012818822,
+          "processing_uncertainty": 0.08436784732985059
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "F": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 0,
+          "plateau_max": 0.006397318598449121,
+          "boundary_failed_windows": 0,
+          "boundary_min": 39.73032958637208,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.09374911871820757,
+              "uncertainty": 0.4385471005402466,
+              "tolerance": 0.1396861899300654,
+              "precision_limit": 0.0698430949650327,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.0377347710560052,
+              "uncertainty": 0.7982530869495541,
+              "tolerance": 0.10340582225095693,
+              "precision_limit": 0.051702911125478465,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            3.4902743583947595e-05,
+            0.0010366369631703235
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 3,
+          "plateau_max": 0.011094761365550909,
+          "boundary_failed_windows": 0,
+          "boundary_min": 39.60829283917273,
+          "halves": {
+            "width_10_90": {
+              "difference": -0.01621508941624583,
+              "uncertainty": 0.32488670788296503,
+              "tolerance": 0.1396861899300654,
+              "precision_limit": 0.0698430949650327,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.22124148485285833,
+              "uncertainty": 0.31322213818136413,
+              "tolerance": 0.10340582225095693,
+              "precision_limit": 0.051702911125478465,
+              "mean_outside_tolerance": true,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            3.268919058323684e-05,
+            4.59357143969448e-05
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 0,
+          "plateau_max": 0.008746842081323966,
+          "boundary_failed_windows": 0,
+          "boundary_min": 39.804526072652436,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.03784535781271359,
+              "uncertainty": 0.3179076213215695,
+              "tolerance": 0.1396861899300654,
+              "precision_limit": 0.0698430949650327,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.17374467862500298,
+              "uncertainty": 0.5011855496494885,
+              "tolerance": 0.10340582225095693,
+              "precision_limit": 0.051702911125478465,
+              "mean_outside_tolerance": true,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            0.00013151828499545436,
+            0.0003937951952985193
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.04157709499187789,
+          "blocks": {
+            "8": [
+              0.1707916730083716,
+              0.10816560176153,
+              0.11675623745281977
+            ],
+            "16": [
+              0.11712474334613422,
+              0.08151358420294966,
+              0.06099290011577504
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.0696915497024502,
+          "blocks": {
+            "8": [
+              0.26319963896465903,
+              0.20753102659490427,
+              0.21753802414444445
+            ],
+            "16": [
+              0.0860864093557977,
+              0.28883893125671034,
+              0.2923808826624821
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.6417745824181225,
+            "gradient_thickness": 4.040166201437203,
+            "processing_uncertainty": 0.14960811421146003
+          },
+          {
+            "width_10_90": 4.638005487758411,
+            "gradient_thickness": 3.970429215081889,
+            "processing_uncertainty": 0.18796490546081168
+          },
+          {
+            "width_10_90": 4.6536459585637076,
+            "gradient_thickness": 3.9976934773618122,
+            "processing_uncertainty": 0.07660093121876832
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.644578067434333,
+          "gradient_thickness": 4.01997746941608,
+          "processing_uncertainty": 0.15619587081095165
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    },
+    "G": {
+      "seeds": [
+        {
+          "seed": 123,
+          "plateau_failed_windows": 0,
+          "plateau_max": 0.007017953795984178,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.821513626941833,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.030342241026206196,
+              "uncertainty": 0.20981992690915413,
+              "tolerance": 0.13936971787413135,
+              "precision_limit": 0.06968485893706568,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": 0.031248130690048725,
+              "uncertainty": 0.20831142337196684,
+              "tolerance": 0.11475086192833737,
+              "precision_limit": 0.05737543096416869,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            -3.92196473433938e-05,
+            -1.381091134940865e-05
+          ]
+        },
+        {
+          "seed": 456,
+          "plateau_failed_windows": 0,
+          "plateau_max": 0.005851126012341985,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.798189232526113,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.04406029269512679,
+              "uncertainty": 0.1474730043918075,
+              "tolerance": 0.13936971787413135,
+              "precision_limit": 0.06968485893706568,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.0283972293822794,
+              "uncertainty": 0.1822951828402951,
+              "tolerance": 0.11475086192833737,
+              "precision_limit": 0.05737543096416869,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            4.6723734043837e-06,
+            -0.00034749540527060675
+          ]
+        },
+        {
+          "seed": 789,
+          "plateau_failed_windows": 0,
+          "plateau_max": 0.006138777576531735,
+          "boundary_failed_windows": 0,
+          "boundary_min": 19.860421131562216,
+          "halves": {
+            "width_10_90": {
+              "difference": 0.023785496018895458,
+              "uncertainty": 0.1857396469587197,
+              "tolerance": 0.13936971787413135,
+              "precision_limit": 0.06968485893706568,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": false,
+              "passed": false
+            },
+            "gradient_thickness": {
+              "difference": -0.0039052649726736277,
+              "uncertainty": 0.10601590589838716,
+              "tolerance": 0.11475086192833737,
+              "precision_limit": 0.05737543096416869,
+              "mean_outside_tolerance": false,
+              "precision_pass": false,
+              "coverage_pass": true,
+              "passed": false
+            }
+          },
+          "mean_plateau_offsets": [
+            2.10906030004632e-06,
+            0.0005919501881052631
+          ]
+        }
+      ],
+      "uncertainty_sources": {
+        "width_10_90": {
+          "between_seeds": 0.0315181596794251,
+          "blocks": {
+            "8": [
+              0.07487609365577108,
+              0.06041939291463729,
+              0.06505734924308855
+            ],
+            "16": [
+              0.05708466875763785,
+              0.07546034295074922,
+              0.06936153753562382
+            ]
+          }
+        },
+        "gradient_thickness": {
+          "between_seeds": 0.08755910308726624,
+          "blocks": {
+            "8": [
+              0.08016484573021052,
+              0.0640282372154621,
+              0.034890946760719334
+            ],
+            "16": [
+              0.09388240371152616,
+              0.05719459210202546,
+              0.04559774850091152
+            ]
+          }
+        }
+      },
+      "aligned_mean_profile_diagnostic": {
+        "per_seed": [
+          {
+            "width_10_90": 4.6208344582958825,
+            "gradient_thickness": 4.040802016173696,
+            "processing_uncertainty": 0.0024773850026065247
+          },
+          {
+            "width_10_90": 4.644827484702596,
+            "gradient_thickness": 4.068050276192608,
+            "processing_uncertainty": 0.10671528984110035
+          },
+          {
+            "width_10_90": 4.639382366481808,
+            "gradient_thickness": 4.094798877224516,
+            "processing_uncertainty": 0.004946202291722379
+          }
+        ],
+        "all_seeds": {
+          "width_10_90": 4.636169315644286,
+          "gradient_thickness": 4.079976454087437,
+          "processing_uncertainty": 0.023668600936852968
+        },
+        "warning": "Exploratory estimator change, not an acceptance result"
+      }
+    }
+  },
+  "comparisons": {
+    "A-B": {
+      "density": {
+        "points": 201,
+        "passed": 45,
+        "means_outside": 0,
+        "precision_fail": 156,
+        "max_absolute_difference": 0.004632599059276821,
+        "max_uncertainty": 0.04340271941504922
+      },
+      "width_10_90": {
+        "difference": -0.021587314848217964,
+        "uncertainty": 0.3554172733473898,
+        "tolerance": 0.13985877627032992,
+        "precision_limit": 0.06992938813516496,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.3554172733473898,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.14285330928122875,
+        "uncertainty": 5.476538553145265,
+        "tolerance": 0.09289901422151377,
+        "precision_limit": 0.046449507110756884,
+        "mean_outside_tolerance": true,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.6562023465724443,
+        "processing_uncertainty": 4.820336206572821
+      }
+    },
+    "B-C": {
+      "density": {
+        "points": 201,
+        "passed": 49,
+        "means_outside": 0,
+        "precision_fail": 152,
+        "max_absolute_difference": 0.004940996650852125,
+        "max_uncertainty": 0.038454172828925395
+      },
+      "width_10_90": {
+        "difference": -0.00833310880906879,
+        "uncertainty": 0.3578262691200695,
+        "tolerance": 0.14010876953460197,
+        "precision_limit": 0.07005438476730098,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.3578262691200695,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": -0.3648639254127035,
+        "uncertainty": 5.906004940015143,
+        "tolerance": 0.10384493198389487,
+        "precision_limit": 0.051922465991947435,
+        "mean_outside_tolerance": true,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.6974253591870339,
+        "processing_uncertainty": 5.2085795808281095
+      }
+    },
+    "D-C": {
+      "density": {
+        "points": 201,
+        "passed": 64,
+        "means_outside": 0,
+        "precision_fail": 137,
+        "max_absolute_difference": 0.0045510529499180885,
+        "max_uncertainty": 0.03223067624722825
+      },
+      "width_10_90": {
+        "difference": -0.0009145105217998051,
+        "uncertainty": 0.2804207380124776,
+        "tolerance": 0.14010876953460197,
+        "precision_limit": 0.07005438476730098,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.2804207380124776,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.03566628394186644,
+        "uncertainty": 4.498609905022057,
+        "tolerance": 0.10384493198389487,
+        "precision_limit": 0.051922465991947435,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.5176149087651419,
+        "processing_uncertainty": 3.980994996256915
+      }
+    },
+    "E-C": {
+      "density": {
+        "points": 201,
+        "passed": 60,
+        "means_outside": 0,
+        "precision_fail": 141,
+        "max_absolute_difference": 0.003647109148883443,
+        "max_uncertainty": 0.037791083915348356
+      },
+      "width_10_90": {
+        "difference": -0.020751761081632125,
+        "uncertainty": 0.310872455873592,
+        "tolerance": 0.14010876953460197,
+        "precision_limit": 0.07005438476730098,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.310872455873592,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": -0.00639706565720477,
+        "uncertainty": 5.464865964919077,
+        "tolerance": 0.10384493198389487,
+        "precision_limit": 0.051922465991947435,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.580056403242371,
+        "processing_uncertainty": 4.884809561676706
+      }
+    },
+    "F-C": {
+      "density": {
+        "points": 201,
+        "passed": 61,
+        "means_outside": 0,
+        "precision_fail": 140,
+        "max_absolute_difference": 0.003988248130846861,
+        "max_uncertainty": 0.03381702830964209
+      },
+      "width_10_90": {
+        "difference": -0.014085986817885754,
+        "uncertainty": 0.333938769566775,
+        "tolerance": 0.14010876953460197,
+        "precision_limit": 0.07005438476730098,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.333938769566775,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": -0.014636991097931595,
+        "uncertainty": 5.430337090576181,
+        "tolerance": 0.10384493198389487,
+        "precision_limit": 0.051922465991947435,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.592523228436445,
+        "processing_uncertainty": 4.837813862139736
+      }
+    },
+    "G-C": {
+      "density": {
+        "points": 201,
+        "passed": 67,
+        "means_outside": 0,
+        "precision_fail": 134,
+        "max_absolute_difference": 0.003374326453030707,
+        "max_uncertainty": 0.02747345258973421
+      },
+      "width_10_90": {
+        "difference": -0.02463505534902044,
+        "uncertainty": 0.2386074395091526,
+        "tolerance": 0.14010876953460197,
+        "precision_limit": 0.07005438476730098,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.2386074395091526,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.3635309981480832,
+        "uncertainty": 4.675031907871437,
+        "tolerance": 0.10384493198389487,
+        "precision_limit": 0.051922465991947435,
+        "mean_outside_tolerance": true,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.39402474948548916,
+        "processing_uncertainty": 4.281007158385949
+      }
+    }
+  },
+  "cross_code": {
+    "grid": {
+      "density": {
+        "points": 201,
+        "passed": 64,
+        "means_outside": 0,
+        "precision_fail": 137,
+        "max_absolute_difference": 0.0033096319756947823,
+        "max_uncertainty": 0.03436719158230015
+      },
+      "width_10_90": {
+        "difference": 0.004194027672839162,
+        "uncertainty": 0.2726547186074169,
+        "tolerance": 0.13953346476368245,
+        "precision_limit": 0.06976673238184122,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.2726547186074169,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.07622308785016019,
+        "uncertainty": 4.690146817834294,
+        "tolerance": 0.10221707542242099,
+        "precision_limit": 0.051108537711210496,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.48320255758056396,
+        "processing_uncertainty": 4.20694426025373
+      }
+    },
+    "time": {
+      "density": {
+        "points": 201,
+        "passed": 62,
+        "means_outside": 0,
+        "precision_fail": 139,
+        "max_absolute_difference": 0.004186036569872265,
+        "max_uncertainty": 0.030319895162076636
+      },
+      "width_10_90": {
+        "difference": 0.011170455679564206,
+        "uncertainty": 0.25522436244197527,
+        "tolerance": 0.13953346476368245,
+        "precision_limit": 0.06976673238184122,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.25522436244197527,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.042853593750500796,
+        "uncertainty": 6.169081580701597,
+        "tolerance": 0.10221707542242099,
+        "precision_limit": 0.051108537711210496,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.5212261126963279,
+        "processing_uncertainty": 5.647855468005269
+      }
+    },
+    "mc3d": {
+      "density": {
+        "points": 201,
+        "passed": 64,
+        "means_outside": 0,
+        "precision_fail": 137,
+        "max_absolute_difference": 0.004570442686146703,
+        "max_uncertainty": 0.02993713641243881
+      },
+      "width_10_90": {
+        "difference": 0.01917682569731749,
+        "uncertainty": 0.3109490000195073,
+        "tolerance": 0.13953346476368245,
+        "precision_limit": 0.06976673238184122,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.3109490000195073,
+        "processing_uncertainty": 0
+      },
+      "gradient_thickness": {
+        "difference": 0.05426188538246279,
+        "uncertainty": 5.779895785007084,
+        "tolerance": 0.10221707542242099,
+        "precision_limit": 0.051108537711210496,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_uncertainty": 0.5765498937990758,
+        "processing_uncertainty": 5.203345891208008
+      }
+    }
+  }
+}
