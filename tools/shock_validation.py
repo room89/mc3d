@@ -49,10 +49,13 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--binary',type=Path,required=True);p.add_argument('--output-dir',type=Path,required=True)
     p.add_argument('--memory-limit-mb',type=int,default=8192);p.add_argument('--sparta-bin',type=Path);p.add_argument('--resume',action='store_true');p.add_argument('--prepare-only',action='store_true')
+    p.add_argument('--no-time-budget',action='store_true',help='Disable total and per-run time limits (explicit opt-in)')
     p.add_argument('--budget-hours',type=float,default=24);p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced')
     a=p.parse_args()
     if a.memory_limit_mb<=0:raise ValueError('Memory limit must be positive')
-    if not 0<a.budget_hours<=24:raise ValueError('Budget must be in (0,24] hours')
+    if not a.no_time_budget and not 0<a.budget_hours<=24:raise ValueError('Budget must be in (0,24] hours')
+    budget_seconds=float('inf') if a.no_time_budget else a.budget_hours*3600
+    run_limit=float('inf') if a.no_time_budget else 28800
     root=a.output_dir.resolve();root.mkdir(parents=True,exist_ok=a.resume)
     binary=a.binary.resolve();binary_hash=digest(binary);report_file=root/'validation.json'
     report=json.loads(report_file.read_text()) if a.resume and report_file.exists() else {'schema_version':1,'binary_sha256':binary_hash,'spent_seconds':0,'runs':{},'stationarity':{'status':'incomplete'},'convergence':{'status':'incomplete'},'cross_code':{'status':'incomplete'},'experiment':{'status':'incomplete','reason':'Primary experimental data not yet verified'}}
@@ -62,15 +65,16 @@ def main():
         except ProcessLookupError:pass
         else:raise ValueError('Another validation runner may still be active')
     report['owner_pid']=os.getpid()
+    report['time_budget_hours']=None if a.no_time_budget else a.budget_hours
     for entry in report['runs'].values():
         if entry.get('reason')=='Running':
-            report['spent_seconds']+=min(28800,max(0,time.time()-entry['started_at']))
+            report['spent_seconds']+=min(run_limit,max(0,time.time()-entry['started_at']))
             entry.update(status='incomplete',reason='Interrupted runner; output retained')
-    if a.sparta_bin and not a.prepare_only and not report.get('sparta_preflight') and report['spent_seconds']<a.budget_hours*3600:
+    if a.sparta_bin and not a.prepare_only and not report.get('sparta_preflight') and report['spent_seconds']<budget_seconds:
         preflight=root/'sparta-preflight'
         if preflight.exists():raise ValueError('Incomplete preflight retained; inspect before retry')
         began=time.monotonic()
-        subprocess.run([sys.executable,str(Path(__file__).with_name('sparta_preflight.py')),'--binary',str(a.sparta_bin.resolve()),'--output-dir',str(preflight)],check=True,timeout=min(1200,max(1,a.budget_hours*3600-report['spent_seconds'])))
+        subprocess.run([sys.executable,str(Path(__file__).with_name('sparta_preflight.py')),'--binary',str(a.sparta_bin.resolve()),'--output-dir',str(preflight)],check=True,timeout=min(1200,max(1,budget_seconds-report['spent_seconds'])))
         report['spent_seconds']+=time.monotonic()-began
         report['sparta_preflight']=json.loads((preflight/'report.json').read_text())
     save(report_file,report)
@@ -90,21 +94,21 @@ def main():
                 continue
             if out.exists():
                 item['reason']='Existing unfinished output retained; not restarted';save(report_file,report);continue
-            remaining=a.budget_hours*3600-report['spent_seconds']
+            remaining=budget_seconds-report['spent_seconds']
             if a.prepare_only or remaining<=0:
                 item['reason']='Prepared only' if a.prepare_only else 'Budget exhausted';save(report_file,report);continue
             # Conservative projection from completed runs, scaled by particle count and axial cells.
             previous=[v for v in report['runs'].values() if v.get('seconds') and v['status']=='passed']
             scale=cfg['cells_x']**2*cfg['cells_y']*cfg['cells_z']*cfg['particles_per_cell']
             estimate=max((v['seconds']/v['cost_scale']*scale for v in previous),default=0)*1.5
-            if estimate>min(remaining,28800):
+            if estimate>min(remaining,run_limit):
                 item['reason']='Projected cost exceeds remaining/per-run budget';save(report_file,report);continue
             control=folder/'control.json'
             subprocess.run([sys.executable,str(Path(__file__).with_name('control_simulation.py')),'.',a.load_mode,'--file',str(control)],check=True)
             start=time.monotonic();item.update(status='incomplete',reason='Running',started_at=time.time());save(report_file,report)
             try:
                 with (folder/'run.log').open('w') as log:
-                    result=run_limited([str(binary),'--config',str(folder/'solver.json'),'--output-dir',str(out),'--runtime-control',str(control)],log,min(28800,remaining),a.memory_limit_mb)
+                    result=run_limited([str(binary),'--config',str(folder/'solver.json'),'--output-dir',str(out),'--runtime-control',str(control)],log,min(run_limit,remaining),a.memory_limit_mb)
                 item['status']='passed' if result.returncode==0 and verify_run(out,binary_hash) else 'incomplete' if result.returncode==130 else 'error'
                 item['reason']='Execution only; physical acceptance is separate'
             except subprocess.TimeoutExpired:item.update(status='incomplete',reason='Time budget exceeded')
@@ -128,13 +132,13 @@ def main():
                         if digest(folder/name)!=sha:raise ValueError('SPARTA output hash mismatch')
                     continue
                 if folder.exists():entry['reason']='Unfinished output retained';continue
-                remaining=a.budget_hours*3600-report['spent_seconds']
+                remaining=budget_seconds-report['spent_seconds']
                 if a.prepare_only or remaining<=0:entry['reason']='Not executed within budget';continue
                 export(folder,variant,seed)
                 start=time.monotonic()
                 try:
                     with (folder/'run.log').open('w') as log:
-                        result=run_limited([str(sparta),'-in',str(folder/'in.shock')],log,min(remaining,28800),a.memory_limit_mb,cwd=folder)
+                        result=run_limited([str(sparta),'-in',str(folder/'in.shock')],log,min(remaining,run_limit),a.memory_limit_mb,cwd=folder)
                     reference=json.loads((folder/'reference.json').read_text());expected=96*reference['steps_per_window']
                     complete=(folder/f'profile.{expected}').exists()
                     entry['status']='passed' if result.returncode==0 and complete else 'error'

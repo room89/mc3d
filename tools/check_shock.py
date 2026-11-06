@@ -42,13 +42,15 @@ def inspect(out,config,reference):
     return dict(status='passed',fronts=fronts,interpretation=__doc__)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--mode',choices=['quick','pilot','validation'],default='quick');p.add_argument('--output-dir',type=Path,required=True);p.add_argument('--sparta-bin',type=Path);p.add_argument('--resume',action='store_true');p.add_argument('--prepare-only',action='store_true');p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--mode',choices=['quick','pilot','validation'],default='quick');p.add_argument('--output-dir',type=Path,required=True);p.add_argument('--sparta-bin',type=Path);p.add_argument('--resume',action='store_true');p.add_argument('--prepare-only',action='store_true');p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced');p.add_argument('--no-time-budget',action='store_true');a=p.parse_args()
     if a.mode=='validation':
         command=[sys.executable,str(Path(__file__).with_name('shock_validation.py')),'--binary',str(a.binary),'--output-dir',str(a.output_dir),'--load-mode',a.load_mode]
         if a.sparta_bin:command+=['--sparta-bin',str(a.sparta_bin)]
         if a.resume:command+=['--resume']
         if a.prepare_only:command+=['--prepare-only']
+        if a.no_time_budget:command+=['--no-time-budget']
         return subprocess.call(command)
+    if a.no_time_budget:p.error('--no-time-budget requires --mode validation')
     a.output_dir.mkdir(parents=True,exist_ok=False);results=[];repo=Path(__file__).resolve().parents[1]
     for seed in (123,456,789):
         data,ref=setup(a.mode=='quick',seed);cfg,units=prepare(data);prepared=a.output_dir/f'config-{seed}';prepared.mkdir()
