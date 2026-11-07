@@ -1,0 +1,2 @@
+# Only offline experimental profile reanalysis requires NumPy.
+numpy>=2,<3
