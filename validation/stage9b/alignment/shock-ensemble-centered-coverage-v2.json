@@ -1,0 +1,319 @@
+{
+  "status": "coverage_study_with_failures",
+  "group_count": 12,
+  "seed_start": 14000000,
+  "center_profile": true,
+  "protocol": {
+    "group_count": 12,
+    "bootstrap_repeats": 1024,
+    "seed_start": 14000000,
+    "center_profile": true,
+    "sources": {
+      "calibrate_shock_ensemble.py": "6c46a79bd73b16843ffbee9737af313088207c33378d1e5510618efba8660a87",
+      "shock_ensemble_estimator.py": "3b60b19228e6de217eecc549e2cea90e00049abd51b323de44c78677dff8d0ce",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006"
+    }
+  },
+  "cases": [
+    {
+      "shape": "logistic",
+      "noise": 0.015,
+      "phi": 0.0,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9765625,
+        0.9140625
+      ],
+      "with_processing_coverage": [
+        0.9765625,
+        1.0
+      ],
+      "density_coverage": 0.9921875
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.03,
+      "phi": 0.0,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9375,
+        0.9609375
+      ],
+      "with_processing_coverage": [
+        0.9375,
+        1.0
+      ],
+      "density_coverage": 0.9921875
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.015,
+      "phi": 0.0,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9296875,
+        0.9453125
+      ],
+      "with_processing_coverage": [
+        0.9296875,
+        0.984375
+      ],
+      "density_coverage": 0.96875
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.03,
+      "phi": 0.0,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.8515625,
+        0.96875
+      ],
+      "with_processing_coverage": [
+        0.8515625,
+        1.0
+      ],
+      "density_coverage": 0.953125
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.015,
+      "phi": 0.8,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.96875,
+        0.9296875
+      ],
+      "with_processing_coverage": [
+        0.96875,
+        0.9765625
+      ],
+      "density_coverage": 0.96875
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.96875,
+        0.9375
+      ],
+      "with_processing_coverage": [
+        0.96875,
+        1.0
+      ],
+      "density_coverage": 0.9765625
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.015,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9609375,
+        0.921875
+      ],
+      "with_processing_coverage": [
+        0.9609375,
+        0.953125
+      ],
+      "density_coverage": 0.9609375
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9453125,
+        0.9296875
+      ],
+      "with_processing_coverage": [
+        0.9453125,
+        0.9765625
+      ],
+      "density_coverage": 0.953125
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.015,
+      "phi": 0.0,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.890625,
+        0.390625
+      ],
+      "with_processing_coverage": [
+        0.890625,
+        0.96875
+      ],
+      "density_coverage": 0.9375
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.03,
+      "phi": 0.0,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9453125,
+        0.796875
+      ],
+      "with_processing_coverage": [
+        0.9453125,
+        0.984375
+      ],
+      "density_coverage": 0.984375
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.015,
+      "phi": 0.0,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.921875,
+        0.796875
+      ],
+      "with_processing_coverage": [
+        0.921875,
+        0.9609375
+      ],
+      "density_coverage": 0.9609375
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.03,
+      "phi": 0.0,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.8671875,
+        0.953125
+      ],
+      "with_processing_coverage": [
+        0.8671875,
+        0.984375
+      ],
+      "density_coverage": 0.953125
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.015,
+      "phi": 0.8,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9296875,
+        0.4921875
+      ],
+      "with_processing_coverage": [
+        0.9296875,
+        0.9609375
+      ],
+      "density_coverage": 0.953125
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.0,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.96875,
+        0.828125
+      ],
+      "with_processing_coverage": [
+        0.96875,
+        0.96875
+      ],
+      "density_coverage": 0.9609375
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.015,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 128,
+      "errors": [],
+      "statistical_coverage": [
+        0.9453125,
+        0.859375
+      ],
+      "with_processing_coverage": [
+        0.9453125,
+        0.953125
+      ],
+      "density_coverage": 0.953125
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "trial_count": 128,
+      "valid_count": 127,
+      "errors": [
+        {
+          "repetition": 76,
+          "error": "Ambiguous minimum"
+        }
+      ],
+      "statistical_coverage": [
+        0.9140625,
+        0.9296875
+      ],
+      "with_processing_coverage": [
+        0.9140625,
+        0.9453125
+      ],
+      "density_coverage": 0.9375
+    }
+  ],
+  "full_artifact": "output/shock-ensemble-centered-coverage-v2.json",
+  "full_artifact_sha256": "e7b6ec5c701b10ea4c21b0da4b862ccecc1b9aa664e7f6217b811c1efd2e508a"
+}

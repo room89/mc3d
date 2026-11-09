@@ -1,0 +1,118 @@
+{
+  "status": "diagnostic_only",
+  "method": "Residuals about each seed mean after refined alignment; core abs(x)<4; correlations pooled across seeds/windows/points; not a fitted noise law",
+  "variants": {
+    "A": {
+      "residual_std_min": 0.004960497813252926,
+      "residual_std_median": 0.011760701997936367,
+      "residual_std_max": 0.020195242880969244,
+      "pooled_temporal_lag1": 0.09729048636265626,
+      "pooled_spatial_correlation": {
+        "0.2": 0.5470573205996832,
+        "0.5": 0.28418378664337784,
+        "1.0": 0.08484485056724078
+      }
+    },
+    "B": {
+      "residual_std_min": 0.006419045375041668,
+      "residual_std_median": 0.013608232452999759,
+      "residual_std_max": 0.022608220336768462,
+      "pooled_temporal_lag1": 0.11122764254522632,
+      "pooled_spatial_correlation": {
+        "0.2": 0.48512081885505137,
+        "0.5": 0.2720347937327276,
+        "1.0": 0.11630174095221175
+      }
+    },
+    "C": {
+      "residual_std_min": 0.004189196248251398,
+      "residual_std_median": 0.008947743172755032,
+      "residual_std_max": 0.015724274137980998,
+      "pooled_temporal_lag1": 0.1092662539477913,
+      "pooled_spatial_correlation": {
+        "0.2": 0.460831556574534,
+        "0.5": 0.22390568606350267,
+        "1.0": 0.08039944325897844
+      }
+    },
+    "D": {
+      "residual_std_min": 0.003952500277316986,
+      "residual_std_median": 0.008239779592473706,
+      "residual_std_max": 0.014731367253744024,
+      "pooled_temporal_lag1": 0.1097523445966531,
+      "pooled_spatial_correlation": {
+        "0.2": 0.5471960418507545,
+        "0.5": 0.2890334642655162,
+        "1.0": 0.12034909808587224
+      }
+    },
+    "E": {
+      "residual_std_min": 0.004238634766174027,
+      "residual_std_median": 0.009057705099046347,
+      "residual_std_max": 0.0165676266500094,
+      "pooled_temporal_lag1": 0.11355399248404972,
+      "pooled_spatial_correlation": {
+        "0.2": 0.4443238156314684,
+        "0.5": 0.2170350898915522,
+        "1.0": 0.06573941479329655
+      }
+    },
+    "F": {
+      "residual_std_min": 0.004530411106220301,
+      "residual_std_median": 0.008967579168321164,
+      "residual_std_max": 0.016091413108663907,
+      "pooled_temporal_lag1": 0.10453486822165074,
+      "pooled_spatial_correlation": {
+        "0.2": 0.4933037657662529,
+        "0.5": 0.2800043132434175,
+        "1.0": 0.11043334914386838
+      }
+    },
+    "G": {
+      "residual_std_min": 0.002040207407522132,
+      "residual_std_median": 0.004620633472665071,
+      "residual_std_max": 0.008083638900598633,
+      "pooled_temporal_lag1": 0.08024601229454235,
+      "pooled_spatial_correlation": {
+        "0.2": 0.4773964350803587,
+        "0.5": 0.2623054288710152,
+        "1.0": 0.11943494324935244
+      }
+    },
+    "sparta-C": {
+      "residual_std_min": 0.004099310736080513,
+      "residual_std_median": 0.008824860210702501,
+      "residual_std_max": 0.016065117634116374,
+      "pooled_temporal_lag1": 0.10314021867820473,
+      "pooled_spatial_correlation": {
+        "0.2": 0.4597440939828193,
+        "0.5": 0.238004753321402,
+        "1.0": 0.08894109553913433
+      }
+    },
+    "sparta-D": {
+      "residual_std_min": 0.004217487036600364,
+      "residual_std_median": 0.008388340813914022,
+      "residual_std_max": 0.014564289306515465,
+      "pooled_temporal_lag1": 0.1052625380101428,
+      "pooled_spatial_correlation": {
+        "0.2": 0.5438512870240143,
+        "0.5": 0.24254205988193756,
+        "1.0": 0.05072131961526802
+      }
+    },
+    "sparta-E": {
+      "residual_std_min": 0.003952105476333703,
+      "residual_std_median": 0.009109778852564216,
+      "residual_std_max": 0.015526316402703685,
+      "pooled_temporal_lag1": 0.06827544102567919,
+      "pooled_spatial_correlation": {
+        "0.2": 0.46597346512145227,
+        "0.5": 0.23463334125436142,
+        "1.0": 0.06714893523957702
+      }
+    }
+  },
+  "full_artifact": "output/shock-window-noise.json",
+  "full_artifact_sha256": "d36bd705ca9dc3565c141b378aa4746f6a897c90a229a25e0a541681c570a937"
+}

@@ -9,6 +9,22 @@ from shock_validation import main
 
 
 class ShockSeedIdentityTest(unittest.TestCase):
+    def test_selected_case_is_explicit_and_cannot_expand_on_resume(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);binary=root/'binary';binary.write_bytes(b'preparation-only')
+            output=root/'matrix'
+            args=['shock_validation','--binary',str(binary),'--sparta-bin',str(binary),
+                  '--output-dir',str(output),'--prepare-only','--variants','C']
+            with patch.object(sys,'argv',args):self.assertEqual(main(),2)
+            report=output/'validation.json';before=report.read_bytes();data=json.loads(before)
+            self.assertEqual(data['variants'],['C'])
+            self.assertEqual(set(data['runs']),{'C-123','C-456','C-789'})
+            self.assertEqual(set(data['sparta_runs']),{'C-123','C-456','C-789'})
+            self.assertEqual(data['convergence']['status'],'incomplete')
+            with patch.object(sys,'argv',args[:-1]+['D','--resume']):
+                with self.assertRaisesRegex(ValueError,'different variants'):main()
+            self.assertEqual(before,report.read_bytes())
+
     def test_custom_seed_preparation_and_resume_guard(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);binary=root/'binary';binary.write_bytes(b'preparation-only')

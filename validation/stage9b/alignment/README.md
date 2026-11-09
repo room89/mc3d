@@ -41,3 +41,8 @@ the unrefined candidate above. Coverage and physical precision are still open.
 The [independent-group interval study](INDEPENDENT_GROUP_INTERVALS.md) tests
 inference from 12 independent groups, final-profile centering and resumable
 coverage diagnostics. It does not change the physical acceptance verdict.
+
+The completed 2048-trial study exposes width undercoverage and a deterministic
+gradient bias. [Paired controls and the density-band width candidate](ENSEMBLE_WIDTH_BAND.md)
+separate these effects. The new width interval has 256/256 preliminary coverage
+hits; lower noise and fresh full-matrix validation remain separate requirements.

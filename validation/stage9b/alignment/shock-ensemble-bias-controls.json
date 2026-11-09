@@ -1,0 +1,241 @@
+{
+  "status": "diagnostic_only",
+  "protocol": {
+    "seed_start": 18000000,
+    "group_count": 12,
+    "sources": {
+      "diagnose_shock_ensemble_bias.py": "47cac3b5af5c3a9860465288bfdb717ebf95ee7290bf5eb7941566b2ec24ce5e",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006"
+    }
+  },
+  "cases": [
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "valid_count": 64,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.0006274258276801059,
+          "sd": 0.002349475006212397,
+          "mean_two_se": 0.0005873687515530993
+        },
+        "refined_width": {
+          "mean": -0.0017493120351698439,
+          "sd": 0.002285074153243567,
+          "mean_two_se": 0.0005712685383108917
+        },
+        "oracle_cubic": {
+          "mean": 0.0013721920287148772,
+          "sd": 0.006245139570966586,
+          "mean_two_se": 0.0015612848927416465
+        },
+        "oracle_quintic": {
+          "mean": 0.0006002478017214583,
+          "sd": 0.00892127828042859,
+          "mean_two_se": 0.0022303195701071474
+        },
+        "refined_cubic": {
+          "mean": 0.0029067250693700416,
+          "sd": 0.007493707234370488,
+          "mean_two_se": 0.001873426808592622
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.0021051355585280946,
+          "sd": 0.009889152654916574,
+          "mean_two_se": 0.0024722881637291435
+        },
+        "alignment_width": {
+          "mean": -0.0023767378628499498,
+          "sd": 0.00044598620385991993,
+          "mean_two_se": 0.00011149655096497998
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 0.0015345330406551644,
+          "sd": 0.003684181517240344,
+          "mean_two_se": 0.000921045379310086
+        },
+        "derivative_order_gradient": {
+          "mean": -0.000801589510841947,
+          "sd": 0.0031625824903453808,
+          "mean_two_se": 0.0007906456225863452
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "valid_count": 64,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.001050241460535237,
+          "sd": 0.0026822927070850365,
+          "mean_two_se": 0.0006705731767712591
+        },
+        "refined_width": {
+          "mean": -0.0009797855898908883,
+          "sd": 0.0026455958577832135,
+          "mean_two_se": 0.0006613989644458034
+        },
+        "oracle_cubic": {
+          "mean": 0.0028124116094738975,
+          "sd": 0.004234316410404907,
+          "mean_two_se": 0.0010585791026012268
+        },
+        "oracle_quintic": {
+          "mean": 0.0011950997871821214,
+          "sd": 0.006022774885715163,
+          "mean_two_se": 0.0015056937214287908
+        },
+        "refined_cubic": {
+          "mean": 0.0014225966659819345,
+          "sd": 0.004494627862469058,
+          "mean_two_se": 0.0011236569656172645
+        },
+        "refined_quintic_same_peak": {
+          "mean": 4.1004866000289575e-05,
+          "sd": 0.006304313408193814,
+          "mean_two_se": 0.0015760783520484534
+        },
+        "alignment_width": {
+          "mean": -0.0020300270504261253,
+          "sd": 0.0003750178199987155,
+          "mean_two_se": 9.375445499967888e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": -0.001389814943491963,
+          "sd": 0.001292257541144871,
+          "mean_two_se": 0.0003230643852862178
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0013815917999816449,
+          "sd": 0.002237922983892673,
+          "mean_two_se": 0.0005594807459731682
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "valid_count": 64,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.0003497300756761558,
+          "sd": 0.0008611480702656313,
+          "mean_two_se": 0.00021528701756640782
+        },
+        "refined_width": {
+          "mean": 9.371092320638492e-05,
+          "sd": 0.0008543079899808009,
+          "mean_two_se": 0.00021357699749520022
+        },
+        "oracle_cubic": {
+          "mean": 0.0011201623589364822,
+          "sd": 0.001913097228053211,
+          "mean_two_se": 0.00047827430701330274
+        },
+        "oracle_quintic": {
+          "mean": 0.0003765830410306717,
+          "sd": 0.003404675257948231,
+          "mean_two_se": 0.0008511688144870578
+        },
+        "refined_cubic": {
+          "mean": 0.0014891938041385628,
+          "sd": 0.0019146076476393428,
+          "mean_two_se": 0.0004786519119098357
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.0006972154837676207,
+          "sd": 0.003413285860319704,
+          "mean_two_se": 0.000853321465079926
+        },
+        "alignment_width": {
+          "mean": -0.0002560191524697709,
+          "sd": 0.00021807097630051854,
+          "mean_two_se": 5.4517744075129636e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 0.00036903144520208063,
+          "sd": 0.00043960024028457675,
+          "mean_two_se": 0.00010990006007114419
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0007919783203709421,
+          "sd": 0.002248220700486954,
+          "mean_two_se": 0.0005620551751217385
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "valid_count": 64,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.0008964256266159772,
+          "sd": 0.0008787202236567155,
+          "mean_two_se": 0.00021968005591417887
+        },
+        "refined_width": {
+          "mean": 0.0007532812132003235,
+          "sd": 0.0008908134732731623,
+          "mean_two_se": 0.00022270336831829057
+        },
+        "oracle_cubic": {
+          "mean": 0.0026481822504487267,
+          "sd": 0.0012970047417026139,
+          "mean_two_se": 0.00032425118542565347
+        },
+        "oracle_quintic": {
+          "mean": 0.001057837608821591,
+          "sd": 0.002281909947019704,
+          "mean_two_se": 0.000570477486754926
+        },
+        "refined_cubic": {
+          "mean": 0.002718171313268151,
+          "sd": 0.0013384580494617809,
+          "mean_two_se": 0.0003346145123654452
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.0013242156533465436,
+          "sd": 0.0023489689390488342,
+          "mean_two_se": 0.0005872422347622086
+        },
+        "alignment_width": {
+          "mean": -0.0001431444134156537,
+          "sd": 0.0001799980039145562,
+          "mean_two_se": 4.499950097863905e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 6.998906281942448e-05,
+          "sd": 0.0002456231074207735,
+          "mean_two_se": 6.140577685519337e-05
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0013939556599216075,
+          "sd": 0.0015378663207253878,
+          "mean_two_se": 0.00038446658018134695
+        }
+      }
+    }
+  ],
+  "limitation": "Oracle controls use known synthetic front positions; not an estimator for physical data. Bias summaries are conditional on successful evaluation; failures remain explicit.",
+  "full_artifact": "output/shock-ensemble-bias-controls.json",
+  "full_artifact_sha256": "a48ca7a08176bdc718ba38b0e24afb8bc48a5fd1140c72191a8733781f8f2a56"
+}
