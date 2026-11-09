@@ -55,10 +55,13 @@ def analyze(trials):
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('series',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     if a.output.exists():raise FileExistsError(a.output)
+    report=json.loads((a.series/'validation.json').read_text())
+    seeds=tuple(report.get('seeds',(123,456,789)))
+    if len(seeds)!=3 or len(set(seeds))!=3:raise ValueError('Invalid seed identities')
     result=dict(status='diagnostic_only',input_hashes={},variants={})
     for name in list('ABCDEFG')+['sparta-C','sparta-D','sparta-E']:
         if name.startswith('sparta'):
-            trials=[sparta_density(a.series/f'{name}-{s}',result['input_hashes']) for s in (123,456,789)]
+            trials=[sparta_density(a.series/f'{name}-{s}',result['input_hashes']) for s in seeds]
         else:
             path=a.series/f'profiles-{name}.json';raw=path.read_bytes();result['input_hashes'][path.name]=hashlib.sha256(raw).hexdigest();trials=json.loads(raw)
         result['variants'][name]=analyze(trials);print(name,result['variants'][name],flush=True)

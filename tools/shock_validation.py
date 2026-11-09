@@ -50,8 +50,10 @@ def main():
     p.add_argument('--binary',type=Path,required=True);p.add_argument('--output-dir',type=Path,required=True)
     p.add_argument('--memory-limit-mb',type=int,default=8192);p.add_argument('--sparta-bin',type=Path);p.add_argument('--resume',action='store_true');p.add_argument('--prepare-only',action='store_true')
     p.add_argument('--no-time-budget',action='store_true',help='Disable total and per-run time limits (explicit opt-in)')
-    p.add_argument('--budget-hours',type=float,default=24);p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced')
+    p.add_argument('--seeds',nargs=3,type=int,default=SEEDS,help='Three distinct positive seeds; defaults preserve the original matrix');p.add_argument('--budget-hours',type=float,default=24);p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced')
     a=p.parse_args()
+    seeds=tuple(a.seeds)
+    if len(set(seeds))!=3 or any(seed<=0 or seed>=2**31 for seed in seeds):raise ValueError('Three distinct positive 31-bit seeds required')
     if a.memory_limit_mb<=0:raise ValueError('Memory limit must be positive')
     if not a.no_time_budget and not 0<a.budget_hours<=24:raise ValueError('Budget must be in (0,24] hours')
     budget_seconds=float('inf') if a.no_time_budget else a.budget_hours*3600
@@ -59,6 +61,8 @@ def main():
     root=a.output_dir.resolve();root.mkdir(parents=True,exist_ok=a.resume)
     binary=a.binary.resolve();binary_hash=digest(binary);report_file=root/'validation.json'
     report=json.loads(report_file.read_text()) if a.resume and report_file.exists() else {'schema_version':1,'binary_sha256':binary_hash,'spent_seconds':0,'runs':{},'stationarity':{'status':'incomplete'},'convergence':{'status':'incomplete'},'cross_code':{'status':'incomplete'},'experiment':{'status':'incomplete','reason':'Primary experimental data not yet verified'}}
+    if report_file.exists() and tuple(report.get('seeds',SEEDS))!=seeds:raise ValueError('Cannot resume with different seeds')
+    report['seeds']=list(seeds)
     if report['binary_sha256']!=binary_hash:raise ValueError('Cannot resume with changed binary')
     if report.get('owner_pid'):
         try:os.kill(report['owner_pid'],0)
@@ -79,7 +83,7 @@ def main():
         report['sparta_preflight']=json.loads((preflight/'report.json').read_text())
     save(report_file,report)
     for variant in VARIANTS:
-        for seed in SEEDS:
+        for seed in seeds:
             key=f'{variant}-{seed}';data,ref=configuration(variant,seed)
             folder=root/key;folder.mkdir(exist_ok=True)
             input_file=folder/'input_si.json'
@@ -124,7 +128,7 @@ def main():
         report['sparta_sha256']=sparta_hash
         independent=report.setdefault('sparta_runs',{})
         for variant in ('C','D','E'):
-            for seed in SEEDS:
+            for seed in seeds:
                 key=f'{variant}-{seed}';folder=root/('sparta-'+key)
                 entry=independent.setdefault(key,{'status':'incomplete'})
                 if entry['status']=='passed':

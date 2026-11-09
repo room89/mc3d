@@ -53,6 +53,8 @@ def main():
     repeats=a.bootstrap_repeats if a.bootstrap_repeats is not None else (128 if a.alignment=='template_refined' else 512)
     if a.output.exists():raise FileExistsError(a.output)
     raw=(a.series/'validation.json').read_bytes();report=json.loads(raw)
+    seeds=tuple(report.get('seeds',(123,456,789)))
+    if len(seeds)!=3 or len(set(seeds))!=3:raise ValueError('Invalid seed identities')
     if any(r['status']!='passed' for k in ('runs','sparta_runs') for r in report[k].values()):raise ValueError('Completed matrix required')
     result=dict(numpy_version=np.__version__,status='incomplete_experimental_estimator',source_report_sha256=hashlib.sha256(raw).hexdigest(),input_hashes={},method=dict(alignment=a.alignment,grid_step=.05,fit_width=1.,sensitivity_width=.5,blocks=[8,16],bootstrap_repeats=repeats,rng_seed=20261109 if a.alignment=='template_refined' else 20261107,confidence='Nominal 95% resampling envelopes; coverage not established for this physical series'),summaries={},half_comparisons={},lag1={},comparisons={})
     checkpoint=a.output.with_suffix('.partial.json')
@@ -70,7 +72,7 @@ def main():
     for name in list('ABCDEFG')+['sparta-C','sparta-D','sparta-E']:
         if name in result['summaries']:continue
         if name.startswith('sparta'):
-            trials=[sparta_density(a.series/f'{name}-{seed}',result['input_hashes']) for seed in (123,456,789)]
+            trials=[sparta_density(a.series/f'{name}-{seed}',result['input_hashes']) for seed in seeds]
         else:
             path=a.series/f'profiles-{name}.json';data=path.read_bytes();result['input_hashes'][path.name]=hashlib.sha256(data).hexdigest();trials=json.loads(data)
         if a.alignment in ('template','template_refined'):

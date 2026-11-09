@@ -37,3 +37,7 @@ candidate should refine training translations without using the held-out seed.
 The [one-pass refined estimator](REFINED_TEMPLATE_ESTIMATOR.md) passes the
 fresh 256-repeat, 3%-noise metric screen in all 12 cases. This is distinct from
 the unrefined candidate above. Coverage and physical precision are still open.
+
+The [independent-group interval study](INDEPENDENT_GROUP_INTERVALS.md) tests
+inference from 12 independent groups, final-profile centering and resumable
+coverage diagnostics. It does not change the physical acceptance verdict.
