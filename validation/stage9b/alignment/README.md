@@ -33,3 +33,7 @@ The [controlled smoothing/training study](PEAK_SMOOTHING_DIAGNOSTIC.md)
 finds that noisy crossing50 alignment of training windows adds 0.285–0.878
 percentage points of thickness bias on Gompertz. Smoothing helps; the next
 candidate should refine training translations without using the held-out seed.
+
+The [one-pass refined estimator](REFINED_TEMPLATE_ESTIMATOR.md) passes the
+fresh 256-repeat, 3%-noise metric screen in all 12 cases. This is distinct from
+the unrefined candidate above. Coverage and physical precision are still open.

@@ -1,0 +1,627 @@
+{
+  "status": "diagnostic_only",
+  "variants": {
+    "A": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -1.7719193042636202e-05,
+          "uncertainty": 0.0001587956270466604,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": -0.0004416819181753938,
+          "uncertainty": 0.0019776125551942978,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -0.00022034281398325672,
+          "uncertainty": 0.00047874879487776943,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": -0.0025620160761399813,
+          "uncertainty": 0.00517999066688664,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          0.00013552480093777065,
+          0.0017690798251005291
+        ],
+        "16": [
+          0.00012869096318111485,
+          0.0019776125551942978
+        ]
+      },
+      "minimum_boundary_distance": 19.518615023272844,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 31,
+      "total_windows": 192
+    },
+    "B": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": 7.434513780955157e-05,
+          "uncertainty": 0.00016633222375290248,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0002284258393587263,
+          "uncertainty": 0.003805933631757619,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": 6.196719804178921e-05,
+          "uncertainty": 0.0006377288677341344,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.002144744787290289,
+          "uncertainty": 0.010317528889428244,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": false,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          0.00016633222375290248,
+          0.0016589489530022938
+        ],
+        "16": [
+          0.00015996302401315664,
+          0.0014899695978467047
+        ]
+      },
+      "minimum_boundary_distance": 19.487410965614114,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 40,
+      "total_windows": 192
+    },
+    "C": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -1.4558567879077564e-05,
+          "uncertainty": 0.0001809300836600886,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.00022349623761381358,
+          "uncertainty": 0.0011425937257841298,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -2.290701809900354e-05,
+          "uncertainty": 0.0004895265284943225,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0013126811678274228,
+          "uncertainty": 0.006013816749925524,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.935170657942015e-05,
+          0.001053507570900293
+        ],
+        "16": [
+          9.28628334394879e-05,
+          0.0011425937257841298
+        ]
+      },
+      "minimum_boundary_distance": 19.618326049171493,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 9,
+      "total_windows": 192
+    },
+    "D": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -6.290920614379382e-05,
+          "uncertainty": 0.00020415331987264822,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": -0.0001906583817409367,
+          "uncertainty": 0.0011786376472885858,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -9.690771919428233e-05,
+          "uncertainty": 0.0004996374326718284,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": -0.00021507158021255465,
+          "uncertainty": 0.00653185337478763,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.59582597515922e-05,
+          0.0011221099421415725
+        ],
+        "16": [
+          7.885397202432008e-05,
+          0.0011786376472885858
+        ]
+      },
+      "minimum_boundary_distance": 19.6597589929348,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 10,
+      "total_windows": 192
+    },
+    "E": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": 4.0095108625912066e-05,
+          "uncertainty": 0.00032100889505034917,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.00036023196371148293,
+          "uncertainty": 0.0018437619552538352,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": 3.18562650613202e-05,
+          "uncertainty": 0.0007656520214312298,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0005613403692788105,
+          "uncertainty": 0.006554688552755053,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          8.449375752689784e-05,
+          0.0010325790028328273
+        ],
+        "16": [
+          7.521842412158567e-05,
+          0.001028327990549378
+        ]
+      },
+      "minimum_boundary_distance": 19.71076667773366,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 9,
+      "total_windows": 192
+    },
+    "F": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": 6.637007305421288e-05,
+          "uncertainty": 0.0001401933445593855,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0004921226242886045,
+          "uncertainty": 0.0012486696407024499,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -0.00023637161168334143,
+          "uncertainty": 0.0007263291919404887,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0030587769785991826,
+          "uncertainty": 0.005457784369702326,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.569476803394385e-05,
+          0.0010052094212198784
+        ],
+        "16": [
+          9.794970596734587e-05,
+          0.000988462311098681
+        ]
+      },
+      "minimum_boundary_distance": 39.60829283917273,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 3,
+      "total_windows": 192
+    },
+    "G": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -1.0812737879654605e-05,
+          "uncertainty": 6.374751950682025e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 7.688129049507562e-05,
+          "uncertainty": 0.001183151073870825,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -6.23845583595697e-05,
+          "uncertainty": 0.0003268873160570293,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.00039073988579401325,
+          "uncertainty": 0.003971554609235195,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "block_radii": {
+        "8": [
+          6.374751950682025e-05,
+          0.0005620798469272895
+        ],
+        "16": [
+          6.134289894645621e-05,
+          0.0005702091238769301
+        ]
+      },
+      "minimum_boundary_distance": 19.798189232526113,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 0,
+      "total_windows": 192
+    },
+    "sparta-C": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": 4.544914905554904e-05,
+          "uncertainty": 9.847122914610902e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0011033363321927483,
+          "uncertainty": 0.0013024857268645006,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -0.00013195424772043427,
+          "uncertainty": 0.00025980201365397135,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0006673024376531526,
+          "uncertainty": 0.005171502660863848,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.847122914610902e-05,
+          0.0013024857268645006
+        ],
+        "16": [
+          9.796275382974645e-05,
+          0.0011520824290775047
+        ]
+      },
+      "minimum_boundary_distance": 19.61804252549853,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 15,
+      "total_windows": 192
+    },
+    "sparta-D": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -2.3957944807619526e-06,
+          "uncertainty": 0.00019059891138320764,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0017170690235527933,
+          "uncertainty": 0.0018188535569321925,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -0.00014603431551143696,
+          "uncertainty": 0.0004109488880967434,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0003276890195778614,
+          "uncertainty": 0.0039334692642690045,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.206744172478079e-05,
+          0.0010530692469344705
+        ],
+        "16": [
+          8.960073527473831e-05,
+          0.0009669873689119776
+        ]
+      },
+      "minimum_boundary_distance": 19.536684047257648,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 9,
+      "total_windows": 192
+    },
+    "sparta-E": {
+      "status": "diagnostic_only",
+      "criterion": "Mean plateau and half comparison use original 1% tolerance and half-tolerance precision requirement; not the legacy every-window gate",
+      "mean_plateaus": {
+        "upstream": {
+          "difference": -1.8736586334746795e-05,
+          "uncertainty": 0.00028514475970824177,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.000686819070981916,
+          "uncertainty": 0.002294338933452233,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      },
+      "half_changes": {
+        "upstream": {
+          "difference": -0.0001406164909767396,
+          "uncertainty": 0.0005755830630930221,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        "downstream": {
+          "difference": 0.0015225935633572582,
+          "uncertainty": 0.006913446994864663,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": false,
+          "coverage_pass": true,
+          "passed": false
+        }
+      },
+      "block_radii": {
+        "8": [
+          9.574823851640372e-05,
+          0.0012986719573396372
+        ],
+        "16": [
+          9.596560467923106e-05,
+          0.0013615783780433067
+        ]
+      },
+      "minimum_boundary_distance": 19.61865211706086,
+      "boundary_pass": true,
+      "windows_outside_one_percent": 10,
+      "total_windows": 192
+    }
+  },
+  "source_artifact": "output/refined-plateau-diagnostics.json",
+  "source_sha256": "61677ca4662a0265cbd35ba3500bbda846ff602a7914234bf9afebecbdf082e2"
+}

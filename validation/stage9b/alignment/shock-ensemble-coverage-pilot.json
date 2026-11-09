@@ -1,0 +1,39 @@
+{
+  "status": "pilot_only",
+  "group_count": 12,
+  "seed_start": 12000000,
+  "cases": [
+    {
+      "shape": "logistic",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "statistical_coverage": [
+        0.9375,
+        0.96875
+      ],
+      "with_processing_coverage": [
+        0.9375,
+        0.96875
+      ],
+      "density_coverage": 1.0
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.03,
+      "phi": 0.8,
+      "spatial": 0.2,
+      "statistical_coverage": [
+        0.9375,
+        0.96875
+      ],
+      "with_processing_coverage": [
+        0.9375,
+        0.96875
+      ],
+      "density_coverage": 0.96875
+    }
+  ],
+  "source_artifact": "output/shock-ensemble-coverage-pilot.json",
+  "source_sha256": "380b81af367c0368428e0685407889305b491d77afd1b5d6e01c7eda95130254"
+}

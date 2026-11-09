@@ -1,0 +1,1353 @@
+{
+  "numpy_version": "2.5.4",
+  "status": "incomplete_experimental_estimator",
+  "source_report_sha256": "132a2e29b3838c2d2f62f559310ccda3e7934653295eddef7c2b5b53b6325504",
+  "method": {
+    "alignment": "template_refined",
+    "grid_step": 0.05,
+    "fit_width": 1.5,
+    "blocks": [
+      8,
+      16
+    ],
+    "bootstrap_repeats": 128,
+    "rng_seed": 20261109,
+    "confidence": "Nominal 95% block envelope with seed-t heuristic; coverage unverified",
+    "sensitivity_widths": [
+      1.0,
+      2.0
+    ],
+    "refine_passes": 1,
+    "resampling": "Full raw-window estimator rebuilt; fixed original seed identities"
+  },
+  "summaries": {
+    "A": {
+      "width_10_90": {
+        "mean": 4.6311236020842985,
+        "statistical_radius": 0.055339612618885085,
+        "seed_t_radius": 0.055339612618885085,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.13667952326425,
+        "statistical_radius": 0.18934063406371998,
+        "seed_t_radius": 0.18934063406371998,
+        "processing_sensitivity": 0.02668392314891843
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.03584118276327786,
+            0.09053292577378702
+          ],
+          "density_simultaneous_radius": 0.004718254848478065
+        },
+        "16": {
+          "metric_radius": [
+            0.03931524906583661,
+            0.08375512211803304
+          ],
+          "density_simultaneous_radius": 0.004626701187964416
+        }
+      },
+      "seed_metrics": [
+        [
+          4.639945487326946,
+          4.051562626254326
+        ],
+        [
+          4.6038678803040884,
+          4.19469731074043
+        ],
+        [
+          4.64092071803218,
+          4.166583889845998
+        ]
+      ],
+      "density_simultaneous_radius": 0.014514153514107423,
+      "density_max_pointwise_radius": 0.014514153514107423
+    },
+    "B": {
+      "width_10_90": {
+        "mean": 4.634925472858538,
+        "statistical_radius": 0.03815316027635518,
+        "seed_t_radius": 0.03403518893596918,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.143711751752248,
+        "statistical_radius": 0.35958365354192373,
+        "seed_t_radius": 0.35958365354192373,
+        "processing_sensitivity": 0.024476028465586275
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.03815316027635518,
+            0.070704533858164
+          ],
+          "density_simultaneous_radius": 0.005791368465964047
+        },
+        "16": {
+          "metric_radius": [
+            0.027640547117608882,
+            0.07696687269575087
+          ],
+          "density_simultaneous_radius": 0.0052937940925056656
+        }
+      },
+      "seed_metrics": [
+        [
+          4.6248287001611565,
+          4.103773420139499
+        ],
+        [
+          4.648498109005858,
+          4.030110812182304
+        ],
+        [
+          4.626950059874105,
+          4.307035141331501
+        ]
+      ],
+      "density_simultaneous_radius": 0.016178224799800404,
+      "density_max_pointwise_radius": 0.016178224799800404
+    },
+    "C": {
+      "width_10_90": {
+        "mean": 4.65291508911789,
+        "statistical_radius": 0.04984361399464687,
+        "seed_t_radius": 0.04984361399464687,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.096279154828294,
+        "statistical_radius": 0.06328963230157332,
+        "seed_t_radius": 0.06328963230157332,
+        "processing_sensitivity": 0.053864940310997866
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.022284091487724034,
+            0.06018808998518832
+          ],
+          "density_simultaneous_radius": 0.004106008391592208
+        },
+        "16": {
+          "metric_radius": [
+            0.01788434220037427,
+            0.042481254105021016
+          ],
+          "density_simultaneous_radius": 0.003668764266221929
+        }
+      },
+      "seed_metrics": [
+        [
+          4.63503416759538,
+          4.100856908993642
+        ],
+        [
+          4.650927776548225,
+          4.06901207283449
+        ],
+        [
+          4.6744634785462535,
+          4.119284797085617
+        ]
+      ],
+      "density_simultaneous_radius": 0.011541779493116019,
+      "density_max_pointwise_radius": 0.011541779493116019
+    },
+    "D": {
+      "width_10_90": {
+        "mean": 4.650118253951014,
+        "statistical_radius": 0.03360197623756236,
+        "seed_t_radius": 0.03360197623756236,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.038161146880815,
+        "statistical_radius": 0.09215610080515392,
+        "seed_t_radius": 0.09215610080515392,
+        "processing_sensitivity": 0.03531141895701051
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.027208176652584015,
+            0.05008976270696408
+          ],
+          "density_simultaneous_radius": 0.00356079937113265
+        },
+        "16": {
+          "metric_radius": [
+            0.022309070886792348,
+            0.06185895115772322
+          ],
+          "density_simultaneous_radius": 0.003540441797620408
+        }
+      },
+      "seed_metrics": [
+        [
+          4.658071552965467,
+          3.999090169678623
+        ],
+        [
+          4.636162218550773,
+          4.0435086265130895
+        ],
+        [
+          4.659479800089766,
+          4.072564056496264
+        ]
+      ],
+      "density_simultaneous_radius": 0.010706042463482801,
+      "density_max_pointwise_radius": 0.010706042463482801
+    },
+    "E": {
+      "width_10_90": {
+        "mean": 4.650234522063231,
+        "statistical_radius": 0.06248410142343988,
+        "seed_t_radius": 0.06248410142343988,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.066446113706804,
+        "statistical_radius": 0.17109380946325176,
+        "seed_t_radius": 0.17109380946325176,
+        "processing_sensitivity": 0.010692089707021957
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.02213287949421705,
+            0.04316245852565981
+          ],
+          "density_simultaneous_radius": 0.0038881287868707424
+        },
+        "16": {
+          "metric_radius": [
+            0.02245351283043817,
+            0.04318549088957546
+          ],
+          "density_simultaneous_radius": 0.0038568044805567356
+        }
+      },
+      "seed_metrics": [
+        [
+          4.628883995914645,
+          4.036888883766736
+        ],
+        [
+          4.6429853787201,
+          4.019036360634325
+        ],
+        [
+          4.677404971116087,
+          4.145704027359244
+        ]
+      ],
+      "density_simultaneous_radius": 0.009870005060374902,
+      "density_max_pointwise_radius": 0.009870005060374902
+    },
+    "F": {
+      "width_10_90": {
+        "mean": 4.640286326945405,
+        "statistical_radius": 0.032494264948147666,
+        "seed_t_radius": 0.017620836115847763,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.049255209559941,
+        "statistical_radius": 0.1494073306997259,
+        "seed_t_radius": 0.1494073306997259,
+        "processing_sensitivity": 0.033479899708924066
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.032494264948147666,
+            0.056273750959840996
+          ],
+          "density_simultaneous_radius": 0.0037742902247620445
+        },
+        "16": {
+          "metric_radius": [
+            0.03155513688345479,
+            0.05940790965510789
+          ],
+          "density_simultaneous_radius": 0.0035642698076140946
+        }
+      },
+      "seed_metrics": [
+        [
+          4.63601266837782,
+          4.11563758889764
+        ],
+        [
+          4.635270051716246,
+          4.035430370917438
+        ],
+        [
+          4.647404003386056,
+          3.998460993971662
+        ]
+      ],
+      "density_simultaneous_radius": 0.009292669499838528,
+      "density_max_pointwise_radius": 0.009292669499838528
+    },
+    "G": {
+      "width_10_90": {
+        "mean": 4.6350044068763925,
+        "statistical_radius": 0.03565498692368412,
+        "seed_t_radius": 0.03565498692368412,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.092495233272422,
+        "statistical_radius": 0.027733385325074522,
+        "seed_t_radius": 0.019468319809947707,
+        "processing_sensitivity": 0.00395182237641567
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.015093753049118419,
+            0.027733385325074522
+          ],
+          "density_simultaneous_radius": 0.002003093058441546
+        },
+        "16": {
+          "metric_radius": [
+            0.01367567078867804,
+            0.022553491597665953
+          ],
+          "density_simultaneous_radius": 0.0019926524366878696
+        }
+      },
+      "seed_metrics": [
+        [
+          4.61890199033386,
+          4.088780596190663
+        ],
+        [
+          4.646512355162879,
+          4.0872301640077024
+        ],
+        [
+          4.638441804840751,
+          4.1015048879233085
+        ]
+      ],
+      "density_simultaneous_radius": 0.004949904380807047,
+      "density_max_pointwise_radius": 0.004949904380807047
+    },
+    "sparta-C": {
+      "width_10_90": {
+        "mean": 4.643169775650687,
+        "statistical_radius": 0.07223458539711657,
+        "seed_t_radius": 0.07223458539711657,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.099015778678497,
+        "statistical_radius": 0.11349621645460564,
+        "seed_t_radius": 0.11349621645460564,
+        "processing_sensitivity": 0.0434567051369692
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.03452561292121992,
+            0.04191254999371896
+          ],
+          "density_simultaneous_radius": 0.004173913059046113
+        },
+        "16": {
+          "metric_radius": [
+            0.030350724750245917,
+            0.034227113901755146
+          ],
+          "density_simultaneous_radius": 0.0038025436318785463
+        }
+      },
+      "seed_metrics": [
+        [
+          4.630536868839928,
+          4.057597753906354
+        ],
+        [
+          4.625394208413787,
+          4.147927038863603
+        ],
+        [
+          4.677268319416182,
+          4.092532338538738
+        ]
+      ],
+      "density_simultaneous_radius": 0.011892228028983026,
+      "density_max_pointwise_radius": 0.011892228028983026
+    },
+    "sparta-D": {
+      "width_10_90": {
+        "mean": 4.641748924562503,
+        "statistical_radius": 0.048385766096993056,
+        "seed_t_radius": 0.048385766096993056,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.063608172914479,
+        "statistical_radius": 0.16537606595200557,
+        "seed_t_radius": 0.16537606595200557,
+        "processing_sensitivity": 0.00735420723934066
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.028774794238930035,
+            0.06113989674901976
+          ],
+          "density_simultaneous_radius": 0.003664153304166595
+        },
+        "16": {
+          "metric_radius": [
+            0.024559666098287636,
+            0.05466232716835062
+          ],
+          "density_simultaneous_radius": 0.0033559577130943246
+        }
+      },
+      "seed_metrics": [
+        [
+          4.648928354884829,
+          4.088714307017624
+        ],
+        [
+          4.652361127456119,
+          4.114966373109279
+        ],
+        [
+          4.61835034301976,
+          3.9893222830274433
+        ]
+      ],
+      "density_simultaneous_radius": 0.007486249880711422,
+      "density_max_pointwise_radius": 0.007486249880711422
+    },
+    "sparta-E": {
+      "width_10_90": {
+        "mean": 4.648885527128291,
+        "statistical_radius": 0.11185779614906233,
+        "seed_t_radius": 0.11185779614906233,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "mean": 4.075509442909214,
+        "statistical_radius": 0.11624706294264964,
+        "seed_t_radius": 0.11624706294264964,
+        "processing_sensitivity": 0.012336794809537643
+      },
+      "status": "experimental_coverage_unverified",
+      "resampling": "Stratified circular blocks; original seed identities preserved; full estimator rebuilt",
+      "seed_envelope": "Conservative seed-t heuristic; cross-fold dependence requires coverage calibration",
+      "blocks": {
+        "8": {
+          "metric_radius": [
+            0.022020399849610683,
+            0.03356804223226906
+          ],
+          "density_simultaneous_radius": 0.003854919953560742
+        },
+        "16": {
+          "metric_radius": [
+            0.01997476453154068,
+            0.024494234045359775
+          ],
+          "density_simultaneous_radius": 0.0036506504205148
+        }
+      },
+      "seed_metrics": [
+        [
+          4.596020199321266,
+          4.124643051177942
+        ],
+        [
+          4.679061760777058,
+          4.071265410301814
+        ],
+        [
+          4.659257730446814,
+          4.031685932767388
+        ]
+      ],
+      "density_simultaneous_radius": 0.01052002994460648,
+      "density_max_pointwise_radius": 0.01052002994460648
+    }
+  },
+  "half_comparisons": {
+    "A": {
+      "width_10_90": {
+        "difference": 0.025265869152491405,
+        "uncertainty": 0.1455473427819634,
+        "tolerance": 0.13854956323528123,
+        "precision_limit": 0.06927478161764061,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.1455473427819634,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.05126604366651755,
+        "uncertainty": 0.46081538160438595,
+        "tolerance": 0.12331202115239363,
+        "precision_limit": 0.06165601057619682,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.38246960439826905,
+        "processing_sensitivity": 0.0783457772061169
+      },
+      "density": {
+        "difference": 0.008763200243758207,
+        "uncertainty": 0.04532525763122337,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "B": {
+      "width_10_90": {
+        "difference": 0.013296606739639394,
+        "uncertainty": 0.15292955763489463,
+        "tolerance": 0.138863280770855,
+        "precision_limit": 0.0694316403854275,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.15292955763489463,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.06823823669220097,
+        "uncertainty": 0.8615701310105895,
+        "tolerance": 0.1232823506696795,
+        "precision_limit": 0.06164117533483975,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.7786247661413831,
+        "processing_sensitivity": 0.08294536486920645
+      },
+      "density": {
+        "difference": 0.006412867071075468,
+        "uncertainty": 0.04604278330317314,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "C": {
+      "width_10_90": {
+        "difference": -0.026481676242777752,
+        "uncertainty": 0.11917030560389241,
+        "tolerance": 0.13999036148521804,
+        "precision_limit": 0.06999518074260902,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.11917030560389241,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.04522076651469664,
+        "uncertainty": 0.3029009386170116,
+        "tolerance": 0.12225052555469566,
+        "precision_limit": 0.06112526277734783,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.19376143770819065,
+        "processing_sensitivity": 0.10913950090882096
+      },
+      "density": {
+        "difference": 0.005014077274452244,
+        "uncertainty": 0.02521977086750129,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "D": {
+      "width_10_90": {
+        "difference": 0.012439841004702856,
+        "uncertainty": 0.12268978287931148,
+        "tolerance": 0.1393344301201107,
+        "precision_limit": 0.06966721506005535,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.12268978287931148,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.04655787671425937,
+        "uncertainty": 0.4651888605533345,
+        "tolerance": 0.12184827221536071,
+        "precision_limit": 0.060924136107680354,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.3544324800442584,
+        "processing_sensitivity": 0.1107563805090761
+      },
+      "density": {
+        "difference": 0.004372478322085871,
+        "uncertainty": 0.03172070782347797,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "E": {
+      "width_10_90": {
+        "difference": 0.01974823741328624,
+        "uncertainty": 0.14179472864479975,
+        "tolerance": 0.13922732678940905,
+        "precision_limit": 0.06961366339470453,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.14179472864479975,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.0031870487819327664,
+        "uncertainty": 0.39772011223291454,
+        "tolerance": 0.12192461825266152,
+        "precision_limit": 0.06096230912633076,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.36551490612772003,
+        "processing_sensitivity": 0.032205206105194506
+      },
+      "density": {
+        "difference": 0.007298019322630189,
+        "uncertainty": 0.033723568366776785,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "F": {
+      "width_10_90": {
+        "difference": 0.04094682315860254,
+        "uncertainty": 0.1740974078724709,
+        "tolerance": 0.13855902524924854,
+        "precision_limit": 0.06927951262462427,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.1740974078724709,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.004860215818057512,
+        "uncertainty": 0.3876908959863373,
+        "tolerance": 0.12165093751056312,
+        "precision_limit": 0.06082546875528156,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.3208898601606581,
+        "processing_sensitivity": 0.0668010358256792
+      },
+      "density": {
+        "difference": 0.006234416851408686,
+        "uncertainty": 0.033194151714769776,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "G": {
+      "width_10_90": {
+        "difference": 0.03072540772449539,
+        "uncertainty": 0.0726533557635749,
+        "tolerance": 0.13859263251955684,
+        "precision_limit": 0.06929631625977842,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.0726533557635749,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.014961196697463208,
+        "uncertainty": 0.12198220755185171,
+        "tolerance": 0.12259810876914336,
+        "precision_limit": 0.06129905438457168,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.08328563919223828,
+        "processing_sensitivity": 0.03869656835961344
+      },
+      "density": {
+        "difference": 0.0027178320642157194,
+        "uncertainty": 0.017808258781592194,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-C": {
+      "width_10_90": {
+        "difference": -0.036844397386003536,
+        "uncertainty": 0.16839749582660263,
+        "tolerance": 0.13988199382340205,
+        "precision_limit": 0.06994099691170103,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.16839749582660263,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.0016313867112067726,
+        "uncertainty": 0.31049684217906315,
+        "tolerance": 0.12296474663537234,
+        "precision_limit": 0.06148237331768617,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.23335407506336656,
+        "processing_sensitivity": 0.07714276711569656
+      },
+      "density": {
+        "difference": 0.007758616298505494,
+        "uncertainty": 0.029887473583144267,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-D": {
+      "width_10_90": {
+        "difference": -0.045866906979593836,
+        "uncertainty": 0.13908295601679016,
+        "tolerance": 0.13997497133014544,
+        "precision_limit": 0.06998748566507272,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.13908295601679016,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.03564432799715611,
+        "uncertainty": 0.385840998623369,
+        "tolerance": 0.12155337939938926,
+        "precision_limit": 0.06077668969969463,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.31983464694175207,
+        "processing_sensitivity": 0.06600635168161695
+      },
+      "density": {
+        "difference": 0.004500874206384453,
+        "uncertainty": 0.028670130432607317,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-E": {
+      "width_10_90": {
+        "difference": 0.003752111820194415,
+        "uncertainty": 0.24365620369234192,
+        "tolerance": 0.1394014466621838,
+        "precision_limit": 0.0697007233310919,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.24365620369234192,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.01239655375276083,
+        "uncertainty": 0.306689326554588,
+        "tolerance": 0.12215321230567995,
+        "precision_limit": 0.061076606152839975,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.2803424909241057,
+        "processing_sensitivity": 0.026346835630482346
+      },
+      "density": {
+        "difference": 0.007615385653009454,
+        "uncertainty": 0.027440672627215786,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    }
+  },
+  "lag1": {
+    "A": [
+      {
+        "width_10_90": 0.18602130632830882,
+        "gradient_thickness": 0.03169223259584732
+      },
+      {
+        "width_10_90": -0.0068368187303003616,
+        "gradient_thickness": -0.0204817978275485
+      },
+      {
+        "width_10_90": 0.16855200320205255,
+        "gradient_thickness": -0.25190608233517664
+      }
+    ],
+    "B": [
+      {
+        "width_10_90": 0.2854136701371383,
+        "gradient_thickness": -0.014945811638443435
+      },
+      {
+        "width_10_90": 0.1697564864251158,
+        "gradient_thickness": -0.05566130103801198
+      },
+      {
+        "width_10_90": 0.24907487608546786,
+        "gradient_thickness": 0.000491734307764684
+      }
+    ],
+    "C": [
+      {
+        "width_10_90": 0.12163303454704254,
+        "gradient_thickness": -0.23975187164882084
+      },
+      {
+        "width_10_90": 0.32656025209843337,
+        "gradient_thickness": 0.0354941882943227
+      },
+      {
+        "width_10_90": 0.0032561659722788773,
+        "gradient_thickness": 0.2432196456665365
+      }
+    ],
+    "D": [
+      {
+        "width_10_90": 0.19926094781900003,
+        "gradient_thickness": 0.06120447810917206
+      },
+      {
+        "width_10_90": 0.23573765831994078,
+        "gradient_thickness": 0.04508249409416944
+      },
+      {
+        "width_10_90": 0.21009965371762773,
+        "gradient_thickness": 0.19151722742380928
+      }
+    ],
+    "E": [
+      {
+        "width_10_90": 0.23960256723252232,
+        "gradient_thickness": 0.08500174576387787
+      },
+      {
+        "width_10_90": 0.13807896122649713,
+        "gradient_thickness": 0.07108174917379494
+      },
+      {
+        "width_10_90": 0.0790483524906882,
+        "gradient_thickness": -0.017518398275721415
+      }
+    ],
+    "F": [
+      {
+        "width_10_90": 0.4516671645306117,
+        "gradient_thickness": 0.06990584583253955
+      },
+      {
+        "width_10_90": 0.09783111948272813,
+        "gradient_thickness": 0.028638793828165122
+      },
+      {
+        "width_10_90": 0.24062690968478695,
+        "gradient_thickness": 0.24334341827819417
+      }
+    ],
+    "G": [
+      {
+        "width_10_90": 0.2452376805032789,
+        "gradient_thickness": 0.009230024139990457
+      },
+      {
+        "width_10_90": 0.3164796776651334,
+        "gradient_thickness": -0.12072092546746749
+      },
+      {
+        "width_10_90": 0.10541947474284284,
+        "gradient_thickness": -0.03946720308169938
+      }
+    ],
+    "sparta-C": [
+      {
+        "width_10_90": -0.11534335373277937,
+        "gradient_thickness": 0.03219701333955034
+      },
+      {
+        "width_10_90": 0.30523853025413245,
+        "gradient_thickness": -0.1878384831830728
+      },
+      {
+        "width_10_90": 0.3014286381070246,
+        "gradient_thickness": 0.07418214706251736
+      }
+    ],
+    "sparta-D": [
+      {
+        "width_10_90": 0.1827294047016483,
+        "gradient_thickness": -0.0880559721518673
+      },
+      {
+        "width_10_90": 0.07529266233205485,
+        "gradient_thickness": 0.08109779869844577
+      },
+      {
+        "width_10_90": -0.09375798967281275,
+        "gradient_thickness": 0.10214180868557168
+      }
+    ],
+    "sparta-E": [
+      {
+        "width_10_90": 0.08384631272660116,
+        "gradient_thickness": -0.04072834135133728
+      },
+      {
+        "width_10_90": 0.11660851268268665,
+        "gradient_thickness": 0.06784165502453092
+      },
+      {
+        "width_10_90": 0.011210999253950254,
+        "gradient_thickness": 0.026492235841828193
+      }
+    ]
+  },
+  "comparisons": {
+    "A vs B": {
+      "width_10_90": {
+        "difference": -0.0038018707742395463,
+        "uncertainty": 0.09349277289524027,
+        "tolerance": 0.13904776418575612,
+        "precision_limit": 0.06952388209287806,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.09349277289524027,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.007032228487998005,
+        "uncertainty": 0.6000842392201484,
+        "tolerance": 0.12431135255256742,
+        "precision_limit": 0.06215567627628371,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.5489242876056437,
+        "processing_sensitivity": 0.051159951614504706
+      },
+      "density": {
+        "difference": 0.006225942393397688,
+        "uncertainty": 0.03069237831390783,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "B vs C": {
+      "width_10_90": {
+        "difference": -0.017989616259352026,
+        "uncertainty": 0.08799677427100205,
+        "tolerance": 0.1395874526735367,
+        "precision_limit": 0.06979372633676835,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08799677427100205,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.04743259692395352,
+        "uncertainty": 0.5012142546200812,
+        "tolerance": 0.12288837464484882,
+        "precision_limit": 0.06144418732242441,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.42287328584349704,
+        "processing_sensitivity": 0.07834096877658414
+      },
+      "density": {
+        "difference": 0.005596180520108351,
+        "uncertainty": 0.027720004292916423,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "D vs C": {
+      "width_10_90": {
+        "difference": -0.0027968351668761215,
+        "uncertainty": 0.08344559023220922,
+        "tolerance": 0.1395874526735367,
+        "precision_limit": 0.06979372633676835,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08344559023220922,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.058118007947479455,
+        "uncertainty": 0.24462209237473562,
+        "tolerance": 0.12288837464484882,
+        "precision_limit": 0.06144418732242441,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.15544573310672724,
+        "processing_sensitivity": 0.08917635926800838
+      },
+      "density": {
+        "difference": 0.004707380393683347,
+        "uncertainty": 0.022247821956598822,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "E vs C": {
+      "width_10_90": {
+        "difference": -0.002680567054659022,
+        "uncertainty": 0.11232771541808675,
+        "tolerance": 0.1395874526735367,
+        "precision_limit": 0.06979372633676835,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.11232771541808675,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.02983304112149021,
+        "uncertainty": 0.2989404717828449,
+        "tolerance": 0.12288837464484882,
+        "precision_limit": 0.06144418732242441,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.23438344176482506,
+        "processing_sensitivity": 0.06455703001801982
+      },
+      "density": {
+        "difference": 0.0037997501548160395,
+        "uncertainty": 0.021411784553490923,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "F vs C": {
+      "width_10_90": {
+        "difference": -0.01262876217248543,
+        "uncertainty": 0.08233787894279454,
+        "tolerance": 0.1395874526735367,
+        "precision_limit": 0.06979372633676835,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08233787894279454,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.04702394526835363,
+        "uncertainty": 0.30004180302122113,
+        "tolerance": 0.12288837464484882,
+        "precision_limit": 0.06144418732242441,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.2126969630012992,
+        "processing_sensitivity": 0.08734484001992193
+      },
+      "density": {
+        "difference": 0.004820068369679742,
+        "uncertainty": 0.020834448992954547,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "G vs C": {
+      "width_10_90": {
+        "difference": -0.01791068224149761,
+        "uncertainty": 0.08549860091833099,
+        "tolerance": 0.1395874526735367,
+        "precision_limit": 0.06979372633676835,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08549860091833099,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.0037839215558719275,
+        "uncertainty": 0.14883978031406137,
+        "tolerance": 0.12288837464484882,
+        "precision_limit": 0.06144418732242441,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.09102301762664784,
+        "processing_sensitivity": 0.057816762687413537
+      },
+      "density": {
+        "difference": 0.0032464811134353955,
+        "uncertainty": 0.016491683873923066,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-D vs sparta-C": {
+      "width_10_90": {
+        "difference": -0.0014208510881843495,
+        "uncertainty": 0.12062035149410963,
+        "tolerance": 0.1392950932695206,
+        "precision_limit": 0.0696475466347603,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.12062035149410963,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.03540760576401869,
+        "uncertainty": 0.3296831947829211,
+        "tolerance": 0.12297047336035491,
+        "precision_limit": 0.061485236680177455,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.2788722824066112,
+        "processing_sensitivity": 0.05081091237630986
+      },
+      "density": {
+        "difference": 0.003834769866796872,
+        "uncertainty": 0.019378477909694446,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-E vs sparta-C": {
+      "width_10_90": {
+        "difference": 0.0057157514776040586,
+        "uncertainty": 0.1840923815461789,
+        "tolerance": 0.1392950932695206,
+        "precision_limit": 0.0696475466347603,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.1840923815461789,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.023506335769283737,
+        "uncertainty": 0.2855367793437621,
+        "tolerance": 0.12297047336035491,
+        "precision_limit": 0.061485236680177455,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.22974327939725528,
+        "processing_sensitivity": 0.05579349994650684
+      },
+      "density": {
+        "difference": 0.004225526776431621,
+        "uncertainty": 0.022412257973589506,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "C vs sparta-C": {
+      "width_10_90": {
+        "difference": 0.009745313467202976,
+        "uncertainty": 0.12207819939176343,
+        "tolerance": 0.1392950932695206,
+        "precision_limit": 0.0696475466347603,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.12207819939176343,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.0027366238502031237,
+        "uncertainty": 0.27410749420414604,
+        "tolerance": 0.12297047336035491,
+        "precision_limit": 0.061485236680177455,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.17678584875617898,
+        "processing_sensitivity": 0.09732164544796706
+      },
+      "density": {
+        "difference": 0.0035136948933660594,
+        "uncertainty": 0.023434007522099044,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    }
+  },
+  "algorithm_sources": {
+    "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+    "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+    "shock_refined_estimator.py": "0b69e0b7ff93a0a01e8c0d83872952eb2d0e17c1b1349db862302091cf125236",
+    "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058"
+  },
+  "source_artifact": "output/refined-full-reanalysis.json",
+  "source_sha256": "5f9e15b137808ff104c3dd270a131fde13e0a630c927be93f9bfa0fe02bd9409"
+}

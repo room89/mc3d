@@ -1,0 +1,41 @@
+{
+  "status": "coverage_diagnostic_only",
+  "noise": 0.03,
+  "seed_start": 8400000,
+  "replicates": 32,
+  "bootstrap_repeats": 128,
+  "protocol": {
+    "bootstrap_repeats": 128,
+    "seed_start": 8400000,
+    "sources": {
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_refined_estimator.py": "0b69e0b7ff93a0a01e8c0d83872952eb2d0e17c1b1349db862302091cf125236",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2"
+    }
+  },
+  "cases": [
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "statistical_coverage": [
+        0.90625,
+        1.0
+      ],
+      "with_processing_coverage": [
+        0.90625,
+        1.0
+      ],
+      "block_only_coverage": [
+        0.8125,
+        0.9375
+      ],
+      "density_coverage": 1.0
+    }
+  ],
+  "limitation": "Finite coverage counts; not proof of exact 95% coverage or full physical qualification",
+  "source_artifact": "output/refined-interval-coverage-pilot.json",
+  "source_sha256": "dddb459c927c896276d20ae3d60eb064c7b5b0b75788bdee34ec4d2fe6a579f3"
+}
