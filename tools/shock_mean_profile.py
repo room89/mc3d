@@ -34,7 +34,11 @@ def measure(profiles, grid=GRID, fit_width=1.):
     return np.asarray(result)
 
 
-def aligned(trials,grid=GRID):
+def aligned(trials,grid=GRID,alignment="crossing50"):
+    if alignment=="template":
+        from shock_alignment import align
+        return align(trials,grid)[0]
+    if alignment!="crossing50":raise ValueError("Unknown alignment")
     if len(trials)<3 or len({len(r) for r in trials})!=1:raise ValueError('Equal-length runs, at least three seeds required')
     result=[]
     for run in trials:

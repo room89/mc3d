@@ -1,0 +1,344 @@
+{
+  "status": "incomplete_experimental_estimator",
+  "source_report_sha256": "132a2e29b3838c2d2f62f559310ccda3e7934653295eddef7c2b5b53b6325504",
+  "method": {
+    "alignment": "template",
+    "grid_step": 0.05,
+    "fit_width": 1.0,
+    "sensitivity_width": 0.5,
+    "blocks": [
+      8,
+      16
+    ],
+    "bootstrap_repeats": 512,
+    "rng_seed": 20261107,
+    "confidence": "Nominal 95% resampling envelopes; coverage not established for this physical series"
+  },
+  "comparisons": {
+    "A vs B": {
+      "width_10_90": {
+        "difference": -0.0033473765196196936,
+        "uncertainty": 0.09320739482785341,
+        "tolerance": 0.13902757017120987,
+        "precision_limit": 0.06951378508560493,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.09320739482785341,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.03848646679329004,
+        "uncertainty": 0.7031968208678627,
+        "tolerance": 0.124071288142941,
+        "precision_limit": 0.0620356440714705,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.45536352615576187,
+        "processing_sensitivity": 0.24783329471210092
+      },
+      "density": {
+        "difference": 0.0062015541159106125,
+        "uncertainty": 0.030213568117610813,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "B vs C": {
+      "width_10_90": {
+        "difference": -0.01916531026785595,
+        "uncertainty": 0.08808016969359024,
+        "tolerance": 0.13960252947924554,
+        "precision_limit": 0.06980126473962277,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08808016969359024,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.09769385160109856,
+        "uncertainty": 0.5548349924125258,
+        "tolerance": 0.12114047259490804,
+        "precision_limit": 0.06057023629745402,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.3628155646910624,
+        "processing_sensitivity": 0.1920194277214633
+      },
+      "density": {
+        "difference": 0.005419357712359574,
+        "uncertainty": 0.027099481677924406,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "D vs C": {
+      "width_10_90": {
+        "difference": -0.0028576391225865194,
+        "uncertainty": 0.08397174578413404,
+        "tolerance": 0.13960252947924554,
+        "precision_limit": 0.06980126473962277,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08397174578413404,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.04079337245917891,
+        "uncertainty": 0.2761993972639552,
+        "tolerance": 0.12114047259490804,
+        "precision_limit": 0.06057023629745402,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.22108780654927213,
+        "processing_sensitivity": 0.05511159071468308
+      },
+      "density": {
+        "difference": 0.00475113006259098,
+        "uncertainty": 0.022123873056162344,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "E vs C": {
+      "width_10_90": {
+        "difference": -0.0034722439082965906,
+        "uncertainty": 0.11134997988267276,
+        "tolerance": 0.13960252947924554,
+        "precision_limit": 0.06980126473962277,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.11134997988267276,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.031534514423639415,
+        "uncertainty": 0.39175626061317126,
+        "tolerance": 0.12114047259490804,
+        "precision_limit": 0.06057023629745402,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.2879365278127073,
+        "processing_sensitivity": 0.10381973280046397
+      },
+      "density": {
+        "difference": 0.0038262014648330345,
+        "uncertainty": 0.0212478192877813,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "F vs C": {
+      "width_10_90": {
+        "difference": -0.013164355703479735,
+        "uncertainty": 0.08810379738391984,
+        "tolerance": 0.13960252947924554,
+        "precision_limit": 0.06980126473962277,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08810379738391984,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.02617551861922074,
+        "uncertainty": 0.29620747857871277,
+        "tolerance": 0.12114047259490804,
+        "precision_limit": 0.06057023629745402,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.2353356400518256,
+        "processing_sensitivity": 0.060871838526887156
+      },
+      "density": {
+        "difference": 0.0048331178211338255,
+        "uncertainty": 0.020489048531130257,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "G vs C": {
+      "width_10_90": {
+        "difference": -0.01844717055208278,
+        "uncertainty": 0.085935084128785,
+        "tolerance": 0.13960252947924554,
+        "precision_limit": 0.06980126473962277,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.085935084128785,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": 0.055994473537380074,
+        "uncertainty": 0.24532307493196315,
+        "tolerance": 0.12114047259490804,
+        "precision_limit": 0.06057023629745402,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.19913194512537113,
+        "processing_sensitivity": 0.04619112980659201
+      },
+      "density": {
+        "difference": 0.0032848985177893475,
+        "uncertainty": 0.016386909804280102,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-D vs sparta-C": {
+      "width_10_90": {
+        "difference": -0.0008187073602563544,
+        "uncertainty": 0.1176240920860005,
+        "tolerance": 0.13928567913949966,
+        "precision_limit": 0.06964283956974983,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.1176240920860005,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.0014431921750830412,
+        "uncertainty": 0.48369726740691377,
+        "tolerance": 0.12165614869262989,
+        "precision_limit": 0.060828074346314945,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.4427227761895187,
+        "processing_sensitivity": 0.04097449121739505
+      },
+      "density": {
+        "difference": 0.0037303525891589917,
+        "uncertainty": 0.01954649682980439,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "sparta-E vs sparta-C": {
+      "width_10_90": {
+        "difference": 0.005820081984862391,
+        "uncertainty": 0.18118864530917866,
+        "tolerance": 0.13928567913949966,
+        "precision_limit": 0.06964283956974983,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.18118864530917866,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.002601537621655936,
+        "uncertainty": 0.5301678414185191,
+        "tolerance": 0.12165614869262989,
+        "precision_limit": 0.060828074346314945,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.4013004358929939,
+        "processing_sensitivity": 0.12886740552552522
+      },
+      "density": {
+        "difference": 0.004248616761359236,
+        "uncertainty": 0.022753912091834968,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    },
+    "C vs sparta-C": {
+      "width_10_90": {
+        "difference": 0.010561677991529628,
+        "uncertainty": 0.11875750469435467,
+        "tolerance": 0.13928567913949966,
+        "precision_limit": 0.06964283956974983,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.11875750469435467,
+        "processing_sensitivity": 0.0
+      },
+      "gradient_thickness": {
+        "difference": -0.017189203257395036,
+        "uncertainty": 0.39488139607339046,
+        "tolerance": 0.12165614869262989,
+        "precision_limit": 0.060828074346314945,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false,
+        "statistical_radius": 0.322248082857863,
+        "processing_sensitivity": 0.07263331321552746
+      },
+      "density": {
+        "difference": 0.003545229855756671,
+        "uncertainty": 0.023554181387599862,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": false,
+        "passed": false
+      }
+    }
+  },
+  "qualification_status": "pending"
+}

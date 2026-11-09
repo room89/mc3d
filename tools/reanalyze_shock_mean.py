@@ -25,7 +25,7 @@ def sparta_density(folder,hashes):
             density=sum(v*r['f_avg[1]'] for v,r in zip(volumes,rows))/sum(volumes)
             x.append((lo+rows[0]['xhi'])/(2*lam));y.append((density-n1)/(n2-n1))
         front=crossing(x,monotone(y),.5)
-        windows.append(dict(x_aligned=[v-front for v in x],density_normalized=y))
+        windows.append(dict(front=front,x_aligned=[v-front for v in x],density_normalized=y))
     return windows
 
 
@@ -49,17 +49,22 @@ def lag1(values):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('series',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('series',type=Path);p.add_argument('--output',type=Path,required=True);p.add_argument('--alignment',choices=['crossing50','template'],default='crossing50');a=p.parse_args()
     if a.output.exists():raise FileExistsError(a.output)
     raw=(a.series/'validation.json').read_bytes();report=json.loads(raw)
     if any(r['status']!='passed' for k in ('runs','sparta_runs') for r in report[k].values()):raise ValueError('Completed matrix required')
-    result=dict(numpy_version=np.__version__,status='incomplete_experimental_estimator',source_report_sha256=hashlib.sha256(raw).hexdigest(),input_hashes={},method=dict(grid_step=.05,fit_width=1.,sensitivity_width=.5,blocks=[8,16],bootstrap_repeats=512,rng_seed=20261107,confidence='Nominal 95% resampling envelopes; coverage not established for this physical series'),summaries={},half_comparisons={},lag1={},comparisons={})
+    result=dict(numpy_version=np.__version__,status='incomplete_experimental_estimator',source_report_sha256=hashlib.sha256(raw).hexdigest(),input_hashes={},method=dict(alignment=a.alignment,grid_step=.05,fit_width=1.,sensitivity_width=.5,blocks=[8,16],bootstrap_repeats=512,rng_seed=20261107,confidence='Nominal 95% resampling envelopes; coverage not established for this physical series'),summaries={},half_comparisons={},lag1={},comparisons={})
     for name in list('ABCDEFG')+['sparta-C','sparta-D','sparta-E']:
         if name.startswith('sparta'):
             trials=[sparta_density(a.series/f'{name}-{seed}',result['input_hashes']) for seed in (123,456,789)]
         else:
             path=a.series/f'profiles-{name}.json';data=path.read_bytes();result['input_hashes'][path.name]=hashlib.sha256(data).hexdigest();trials=json.loads(data)
-        data=aligned(trials);summary=estimate(data);result['summaries'][name]=summary
+        if a.alignment=='template':
+            from shock_alignment import align
+            data,diagnostics=align(trials)
+            result.setdefault('alignment_diagnostics',{})[name]=diagnostics
+        else:data=aligned(trials)
+        summary=estimate(data);result['summaries'][name]=summary
         first=estimate(data[:,:32],repeats=256);last=estimate(data[:,32:],repeats=256)
         result['half_comparisons'][name]=compare(first,last)
         result['lag1'][name]=[dict(zip(('width_10_90','gradient_thickness'),[lag1(v) for v in measure(run).T])) for run in data]
