@@ -33,11 +33,24 @@ def run_cached(task):
         if saved['protocol']!=protocol or saved['spec']!=list(spec):
             raise ValueError('Checkpoint protocol mismatch')
         return saved['result']
-    row=run(spec)
+    try:
+        row=run(spec)
+    except ValueError as error:
+        # An unresolved estimator is a failed trial, never an omitted observation.
+        row=dict(repetition=i,error=str(error))
     temporary=checkpoint.with_suffix('.tmp')
     temporary.write_text(json.dumps(dict(protocol=protocol,spec=spec,result=row),allow_nan=False)+'\n')
     temporary.replace(checkpoint)
     return row
+
+
+def summarize(rows):
+    if not rows:raise ValueError('At least one trial required')
+    return dict(trial_count=len(rows),valid_count=sum('error' not in r for r in rows),
+        errors=[r for r in rows if 'error' in r],
+        statistical_coverage=np.mean([r.get('statistical_covers',[False,False]) for r in rows],axis=0).tolist(),
+        with_processing_coverage=np.mean([r.get('with_processing_covers',[False,False]) for r in rows],axis=0).tolist(),
+        density_coverage=float(np.mean([r.get('density_covers',False) for r in rows])),runs=rows)
 
 
 def main():
@@ -66,12 +79,10 @@ def main():
             tasks=[((kind,phi,spatial,noise,i,a.seed_start,a.center_profile),str(folder),protocol) for i in range(a.replicates)]
             for row in pool.map(run_cached,tasks):
                 rows.append(row);print(kind,phi,spatial,noise,len(rows),'/',a.replicates,flush=True)
-            cases.append(dict(shape=kind,noise=noise,phi=phi,spatial=spatial,
-                statistical_coverage=np.mean([r['statistical_covers'] for r in rows],axis=0).tolist(),
-                with_processing_coverage=np.mean([r['with_processing_covers'] for r in rows],axis=0).tolist(),
-                density_coverage=float(np.mean([r['density_covers'] for r in rows])),runs=rows))
+            cases.append(dict(shape=kind,noise=noise,phi=phi,spatial=spatial,**summarize(rows)))
     a.output.parent.mkdir(parents=True,exist_ok=True)
-    a.output.write_text(json.dumps(dict(status='coverage_study_only',group_count=GROUPS,seed_start=a.seed_start,
+    status='coverage_study_with_failures' if any(c['errors'] for c in cases) else 'coverage_study_only'
+    a.output.write_text(json.dumps(dict(status=status,group_count=GROUPS,seed_start=a.seed_start,
         center_profile=a.center_profile,protocol=protocol,cases=cases),indent=2,allow_nan=False)+'\n')
 
 
