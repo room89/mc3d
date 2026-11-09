@@ -55,6 +55,22 @@ with tempfile.TemporaryDirectory(prefix='mc3d-statistics-') as temporary:
         for f in off.iterdir():
             if f.suffix in ('.dat','.net','.csv'):
                 assert f.read_bytes()==(out/f.name).read_bytes(),(name,f.name)
+    # Output cadence must not change any accumulated moment, balance or final state.
+    # Include overlapping windows and output-time temperatures of a dynamic wall.
+    for model in ('closed', 'dynamic_wall'):
+        source=json.loads((repo/f'configs/checks/statistics_{model}.json').read_text())
+        outputs=[]
+        for label,interval in [('dense',0),('sparse',source['end_time'])]:
+            config=root/f'{model}-{label}.json'
+            config.write_text(json.dumps(source|{'snapshot_interval':interval}))
+            out=root/f'{model}-{label}'
+            subprocess.run([str(binary),'--config',str(config),'--output-dir',str(out)],check=True,capture_output=True)
+            outputs.append(out)
+            # The first window closes before the final step and must stay untouched.
+            assert (out/'cell_statistics_0.csv').stat().st_mtime_ns < (out/'conservation.csv').stat().st_mtime_ns
+        for pattern in ('*statistics_*.csv','conservation*','final.dat*'):
+            for path in outputs[0].glob(pattern):
+                assert path.read_bytes()==(outputs[1]/path.name).read_bytes(),(model,path.name)
     empty=root/'zero.json';empty.write_text(json.dumps(data|{'end_time':0,'statistics_windows':[]}))
     zero=root/'zero'
     subprocess.run([str(binary),'--config',str(empty),'--output-dir',str(zero)],check=True,capture_output=True)
