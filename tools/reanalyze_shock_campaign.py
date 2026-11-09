@@ -64,7 +64,7 @@ def plateau_checks(groups):
 
 def check_coverage(path,windows):
     report=json.loads(path.read_text());p=report['protocol']
-    if not all(p.get(k) for k in ('center_profile','width_band','interpolation_sensitivity')) or p.get('windows')!=windows:
+    if not all(p.get(k) for k in ('center_profile','width_band','interpolation_sensitivity')) or p.get('windows')!=windows or p.get('subgroups',1)!=1:
         raise ValueError('Coverage protocol does not match estimator')
     for name in ('shock_ensemble_estimator.py','shock_alignment.py','shock_crossfit_gradient.py','shock_mean_profile.py','shock_analysis.py'):
         if p['sources'][name]!=digest(Path(__file__).with_name(name)):

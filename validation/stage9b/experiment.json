@@ -32,7 +32,28 @@
         "temperature_K": 300,
         "pressure_Pa": 6.667
       },
-      "status": "secondary_reproduction; dimensional coordinate conversion needs verification"
+      "status": "secondary_reproduction; dimensional coordinate conversion needs verification",
+      "extracted_artifact": "output/alsmeyer-source/m38-secondary-dimensional-points.json",
+      "extracted_sha256": "f5bd32cc0b18068a0bde1d50a4e46c9d3cd04e3c403242dcde60152a9af18365",
+      "source_marker_count": 30,
+      "visible_marker_count": 28
     }
-  ]
+  ],
+  "exploratory_dimensional_comparison": {
+    "status": "not_acceptance",
+    "pressure_Pa": 6.667,
+    "temperature_K": 300,
+    "number_density_m3": 1.6096294810146049e+21,
+    "mc3d_collision_mean_free_path_m": 0.0009300922600458222,
+    "secondary_width_10_90_m": 0.004394968454212978,
+    "secondary_width_in_mc3d_units": 4.725303760722032,
+    "mc3d_width_in_mc3d_units": 4.647265148765509,
+    "method": "Linear level crossings on secondary vector markers; solver collision mean free path scaled inversely with number density at fixed temperature and collision model. No fitted spatial rescaling.",
+    "limitations": [
+      "Original experimental-to-metres conversion by secondary authors remains unverified.",
+      "Experimental and prior digitization uncertainty are not established.",
+      "Density similarity assumes dilute Boltzmann regime and matched remaining dimensionless parameters.",
+      "No experimental acceptance gate has been evaluated."
+    ]
+  }
 }

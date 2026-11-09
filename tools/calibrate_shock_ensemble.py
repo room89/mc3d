@@ -6,6 +6,7 @@ import numpy as np
 from experiment_crossfit_gradient import fixture
 from shock_alignment import GRID
 from shock_ensemble_estimator import group_point,estimate,GROUPS
+from shock_group_pooling import pool_points
 from validate_shock_estimator import truth,shape
 
 
@@ -14,8 +15,12 @@ def run(spec):
     width_band=spec[7] if len(spec)>7 else False
     interpolation_sensitivity=spec[8] if len(spec)>8 else False
     windows=spec[9] if len(spec)>9 else 64
-    groups=[group_point([r[:windows] for r in fixture(kind,seed_start+i*100+g,phi,spatial,noise=noise)[0]],center_profile=center_profile,
-        interpolation_sensitivity=interpolation_sensitivity) for g in range(GROUPS)]
+    subgroups=spec[10] if len(spec)>10 else 1
+    groups=[]
+    for g in range(GROUPS):
+        points=[group_point([r[:windows] for r in fixture(kind,seed_start+i*100+g*subgroups+j,phi,spatial,noise=noise)[0]],
+            center_profile=center_profile,interpolation_sensitivity=interpolation_sensitivity) for j in range(subgroups)]
+        groups.append(pool_points(points))
     r=estimate(groups,repeats=1024,seed=seed_start+1000000+i,center_profile=center_profile,width_band=width_band,
         interpolation_sensitivity=interpolation_sensitivity)
     exact=truth(kind);center=-math.log(math.log(2)) if kind=='gompertz' else 0.
@@ -71,6 +76,7 @@ def main():
     p.add_argument('--noise-levels',nargs='+',type=float)
     p.add_argument('--interpolation-sensitivity',action='store_true')
     p.add_argument('--windows',type=int,choices=[32,64],default=64)
+    p.add_argument('--subgroups',type=int,choices=[1,6],default=1,help='Independent three-seed subgroups averaged within each of 12 groups')
     p.add_argument('--resume',action='store_true')
     a=p.parse_args()
     if a.noise_levels is None:a.noise_levels=[.015,.03] if a.matrix or a.focused else [.03]
@@ -84,8 +90,8 @@ def main():
     folder.mkdir(parents=True,exist_ok=True)
     protocol=dict(group_count=GROUPS,bootstrap_repeats=1024,seed_start=a.seed_start,
         center_profile=a.center_profile,width_band=a.width_band,interpolation_sensitivity=a.interpolation_sensitivity,
-        noise_levels=a.noise_levels,windows=a.windows,sources={name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
-            for name in ('calibrate_shock_ensemble.py','shock_ensemble_estimator.py','shock_alignment.py',
+        noise_levels=a.noise_levels,windows=a.windows,subgroups=a.subgroups,sources={name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+            for name in ('calibrate_shock_ensemble.py','shock_group_pooling.py','shock_ensemble_estimator.py','shock_alignment.py',
                          'shock_crossfit_gradient.py','shock_mean_profile.py','shock_analysis.py',
                          'experiment_crossfit_gradient.py','validate_shock_estimator.py')})
     cases=[]
@@ -94,7 +100,7 @@ def main():
         if a.focused:specs=[(k,0.,s,n) for k in ('logistic','gompertz') for s,n in ((.2,max(a.noise_levels)),(0.,min(a.noise_levels)))]
         for kind,phi,spatial,noise in specs:
             rows=[]
-            tasks=[((kind,phi,spatial,noise,i,a.seed_start,a.center_profile,a.width_band,a.interpolation_sensitivity,a.windows),str(folder),protocol) for i in range(a.replicates)]
+            tasks=[((kind,phi,spatial,noise,i,a.seed_start,a.center_profile,a.width_band,a.interpolation_sensitivity,a.windows,a.subgroups),str(folder),protocol) for i in range(a.replicates)]
             for row in pool.map(run_cached,tasks):
                 rows.append(row);print(kind,phi,spatial,noise,len(rows),'/',a.replicates,flush=True)
             cases.append(dict(shape=kind,noise=noise,phi=phi,spatial=spatial,**summarize(rows)))

@@ -1,0 +1,410 @@
+{
+  "status": "candidate_pilot_diagnostics_only",
+  "physical_acceptance": "incomplete",
+  "variants": [
+    "C"
+  ],
+  "comparisons": {
+    "C vs sparta-C": {
+      "width_10_90": {
+        "difference": 0.019514959599017168,
+        "uncertainty": 0.0639311323745595,
+        "tolerance": 0.13883250567499475,
+        "precision_limit": 0.06941625283749737,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true,
+        "statistical_radius": 0.06020662363061202,
+        "processing_sensitivity": 0.0037245087439474744
+      },
+      "gradient_thickness": {
+        "difference": 0.0167151383957016,
+        "uncertainty": 0.06485001600325813,
+        "tolerance": 0.12212016931041918,
+        "precision_limit": 0.06106008465520959,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.038025540962060234,
+        "processing_sensitivity": 0.026824475041197893
+      },
+      "density": {
+        "difference": 0.001955520051221016,
+        "uncertainty": 0.002594947212303915,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true
+      }
+    }
+  },
+  "half_comparisons": {
+    "C": {
+      "width_10_90": {
+        "difference": 0.006817661670749153,
+        "uncertainty": 0.08679630919969217,
+        "tolerance": 0.13930851942865902,
+        "precision_limit": 0.06965425971432951,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.08168866818168041,
+        "processing_sensitivity": 0.005107641018011755
+      },
+      "gradient_thickness": {
+        "difference": 0.005001696482549001,
+        "uncertainty": 0.09298223951845053,
+        "tolerance": 0.12261953923608737,
+        "precision_limit": 0.061309769618043686,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.05880491873785676,
+        "processing_sensitivity": 0.03417732078059377
+      },
+      "density": {
+        "difference": 0.0019006394514938796,
+        "uncertainty": 0.0035986364169950376,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true
+      }
+    },
+    "sparta-C": {
+      "width_10_90": {
+        "difference": -0.0026647104303565428,
+        "uncertainty": 0.09718685379976577,
+        "tolerance": 0.13886774578303648,
+        "precision_limit": 0.06943387289151824,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.09118954707093962,
+        "processing_sensitivity": 0.005997306728826146
+      },
+      "gradient_thickness": {
+        "difference": 0.014985228820973973,
+        "uncertainty": 0.06638055409409116,
+        "tolerance": 0.12191223220359133,
+        "precision_limit": 0.06095611610179567,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.03597270747128256,
+        "processing_sensitivity": 0.0304078466228086
+      },
+      "density": {
+        "difference": 0.0014555180055727535,
+        "uncertainty": 0.0038542922331432014,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true
+      }
+    }
+  },
+  "window_length_comparisons": {
+    "C": {
+      "width_10_90": {
+        "difference": -0.00041980791529461214,
+        "uncertainty": 0.06180564090061402,
+        "tolerance": 0.13943054870042412,
+        "precision_limit": 0.06971527435021206,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true,
+        "statistical_radius": 0.05841772443983828,
+        "processing_sensitivity": 0.0033879164607757417
+      },
+      "gradient_thickness": {
+        "difference": 2.451535723491105e-05,
+        "uncertainty": 0.06946581692673792,
+        "tolerance": 0.12262088800157318,
+        "precision_limit": 0.06131044400078659,
+        "mean_outside_tolerance": false,
+        "precision_pass": false,
+        "coverage_pass": true,
+        "passed": false,
+        "statistical_radius": 0.046649750293425996,
+        "processing_sensitivity": 0.022816066633311927
+      },
+      "density": {
+        "difference": 0.00017678406365417842,
+        "uncertainty": 0.0025734842053318826,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true
+      }
+    },
+    "sparta-C": {
+      "width_10_90": {
+        "difference": -0.0003082327003305352,
+        "uncertainty": 0.06607277852980875,
+        "tolerance": 0.13884175265600468,
+        "precision_limit": 0.06942087632800234,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true,
+        "statistical_radius": 0.062201012416174706,
+        "processing_sensitivity": 0.0038717661136340453
+      },
+      "gradient_thickness": {
+        "difference": -0.001038306830121627,
+        "uncertainty": 0.060074034037264745,
+        "tolerance": 0.12215131851532283,
+        "precision_limit": 0.06107565925766142,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true,
+        "statistical_radius": 0.02992142766166772,
+        "processing_sensitivity": 0.030152606375597024
+      },
+      "density": {
+        "difference": 0.00017698208381244918,
+        "uncertainty": 0.0026089624089835547,
+        "tolerance": 0.01,
+        "precision_limit": 0.005,
+        "mean_outside_tolerance": false,
+        "precision_pass": true,
+        "coverage_pass": true,
+        "passed": true
+      }
+    }
+  },
+  "plateaus": {
+    "C": {
+      "method": "Nominal Student-t intervals on 12 independent group mean edge offsets",
+      "mean": [
+        {
+          "difference": -1.5709901142151688e-05,
+          "uncertainty": 4.071450133242634e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        {
+          "difference": 5.333670333144071e-05,
+          "uncertainty": 0.00028983042999076216,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      ],
+      "half_change": [
+        {
+          "difference": -2.4597398504809455e-05,
+          "uncertainty": 9.485109313746186e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        {
+          "difference": 2.0587886271258867e-05,
+          "uncertainty": 0.0008583866651239561,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      ],
+      "boundary_min": 19.548835610059676,
+      "boundaries_pass": true,
+      "window_outliers": 100,
+      "window_count": 2304
+    },
+    "sparta-C": {
+      "method": "Nominal Student-t intervals on 12 independent group mean edge offsets",
+      "mean": [
+        {
+          "difference": 1.7887223072071547e-05,
+          "uncertainty": 2.6685394359940306e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        {
+          "difference": 0.0009395653834814994,
+          "uncertainty": 0.00030285725083804767,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      ],
+      "half_change": [
+        {
+          "difference": 2.9264461312421347e-05,
+          "uncertainty": 7.142828725441911e-05,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        },
+        {
+          "difference": -0.0006698946981960825,
+          "uncertainty": 0.0009321485553770227,
+          "tolerance": 0.01,
+          "precision_limit": 0.005,
+          "mean_outside_tolerance": false,
+          "precision_pass": true,
+          "coverage_pass": true,
+          "passed": true
+        }
+      ],
+      "boundary_min": 19.516251122279478,
+      "boundaries_pass": true,
+      "window_outliers": 111,
+      "window_count": 2304
+    }
+  },
+  "full_artifact": "output/shock-independent-c-analysis.json",
+  "full_artifact_sha256": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01",
+  "protocol": {
+    "campaign_sha256": "cf9015399978bb71ebd6512385e327f5fe8ee8a45422805ec9706f5179e07a33",
+    "sources": {
+      "reanalyze_shock_campaign.py": "a391ada7bcf762808e83381c0146f4ed507bf7a996b787e3e46da490b7355fa1",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "analyze_shock_validation.py": "b6c44ac60fef7a8d9f4d56791ddaf156d7a3ef91de013e0aef7a22628925fdb0",
+      "reanalyze_shock_mean.py": "8bb2d20d3bb08d533e3e072ea04427b610feac0844de9a85e562deaf458ef558",
+      "shock_independent_campaign.py": "261c27c921553d2e1ad71960bfddd2d97786326bae6e5b0227aebf94c1aa96e3",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+      "normal_shock.py": "0dd8bf9ec9975e756c8b673631bbfd33db3604d3be65a0bc0cddf17d7f8cde95",
+      "physical_config.py": "dc6233f2e93d584738980ada40fb0c90bf02996b8ff33878f7dc5d771887b09a",
+      "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689"
+    },
+    "coverage": [
+      {
+        "sha256": "c807e769d0a06b4739e98acdf12a30db24d06c34a061dce412cb38dfb2477ef4",
+        "status": "coverage_study_only",
+        "windows": 64,
+        "minimum_total_metric_coverage": [
+          1.0,
+          0.96875
+        ],
+        "minimum_density_coverage": 0.96875,
+        "rejected_trials": 0,
+        "limitation": "Completion and matching code are checked; this does not certify nominal coverage"
+      },
+      {
+        "sha256": "64ad6181b528c6cdbd6c46c91e0f9b6aab5fbe7b14e6a77a6e8efbad1865a843",
+        "status": "coverage_study_only",
+        "windows": 32,
+        "minimum_total_metric_coverage": [
+          1.0,
+          0.96875
+        ],
+        "minimum_density_coverage": 0.984375,
+        "rejected_trials": 0,
+        "limitation": "Completion and matching code are checked; this does not certify nominal coverage"
+      }
+    ],
+    "bootstrap_repeats": 1024,
+    "resampling_seed": 20261109
+  },
+  "planning_forecast": {
+    "assumption": "Independent sampling radius decreases as inverse square root of sample count; processing sensitivity stays fixed. This is a planning approximation, not an acceptance test or prediction guarantee.",
+    "cases": [
+      {
+        "section": "comparisons",
+        "case": "C vs sparta-C",
+        "metric": "gradient_thickness",
+        "statistical_radius": 0.038025540962060234,
+        "processing_sensitivity": 0.026824475041197893,
+        "precision_limit": 0.06106008465520959,
+        "estimated_sample_multiplier": 1.233657693003178,
+        "predicted_radius_at_sixfold": 0.04234833713292258
+      },
+      {
+        "section": "half_comparisons",
+        "case": "C",
+        "metric": "width_10_90",
+        "statistical_radius": 0.08168866818168041,
+        "processing_sensitivity": 0.005107641018011755,
+        "precision_limit": 0.06965425971432951,
+        "estimated_sample_multiplier": 1.6016832658109637,
+        "predicted_radius_at_sixfold": 0.038456900153452545
+      },
+      {
+        "section": "half_comparisons",
+        "case": "C",
+        "metric": "gradient_thickness",
+        "statistical_radius": 0.05880491873785676,
+        "processing_sensitivity": 0.03417732078059377,
+        "precision_limit": 0.061309769618043686,
+        "estimated_sample_multiplier": 4.697311085163776,
+        "predicted_radius_at_sixfold": 0.05818432832619018
+      },
+      {
+        "section": "half_comparisons",
+        "case": "sparta-C",
+        "metric": "width_10_90",
+        "statistical_radius": 0.09118954707093962,
+        "processing_sensitivity": 0.005997306728826146,
+        "precision_limit": 0.06943387289151824,
+        "estimated_sample_multiplier": 2.066382828790761,
+        "predicted_radius_at_sixfold": 0.043225283428711216
+      },
+      {
+        "section": "half_comparisons",
+        "case": "sparta-C",
+        "metric": "gradient_thickness",
+        "statistical_radius": 0.03597270747128256,
+        "processing_sensitivity": 0.0304078466228086,
+        "precision_limit": 0.06095611610179567,
+        "estimated_sample_multiplier": 1.386669700287125,
+        "predicted_radius_at_sixfold": 0.045093642951316334
+      },
+      {
+        "section": "window_length_comparisons",
+        "case": "C",
+        "metric": "gradient_thickness",
+        "statistical_radius": 0.046649750293425996,
+        "processing_sensitivity": 0.022816066633311927,
+        "precision_limit": 0.06131044400078659,
+        "estimated_sample_multiplier": 1.468601771923444,
+        "predicted_radius_at_sixfold": 0.04186074744116919
+      }
+    ]
+  }
+}

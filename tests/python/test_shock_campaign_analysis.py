@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'tools'))
-from reanalyze_shock_campaign import merged_pairs,plateau_checks,main
+from reanalyze_shock_campaign import merged_pairs,plateau_checks,main,check_coverage
 from shock_alignment import initial
 
 
@@ -29,6 +29,14 @@ class CampaignAnalysisTest(unittest.TestCase):
         self.assertTrue(r['boundaries_pass'])
         groups[0]['boundary_min']=9.
         self.assertFalse(plateau_checks(groups)['boundaries_pass'])
+
+    def test_pooled_coverage_cannot_qualify_unpooled_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'coverage.json'
+            path.write_text(json.dumps({'protocol':dict(center_profile=True,width_band=True,
+                interpolation_sensitivity=True,windows=64,subgroups=6)}))
+            with self.assertRaisesRegex(ValueError,'protocol does not match'):
+                check_coverage(path,64)
 
     def test_preparation_is_not_analyzable_as_completed_data(self):
         with tempfile.TemporaryDirectory() as directory:
