@@ -1,0 +1,1230 @@
+{
+  "status": "diagnostic_only",
+  "seed_start": 3600000,
+  "repeats": 256,
+  "noise": 0.03,
+  "numpy_version": "2.5.4",
+  "smoothing_sigma": 0.25,
+  "derivative_width": 1.0,
+  "noiseless": [
+    {
+      "shape": "logistic",
+      "methods": {
+        "raw": {
+          "mean_relative_slope": -0.0005571156804460298,
+          "slope_sd": 5.776763427791945e-06,
+          "thickness_bias": 0.0005574262605887448,
+          "thickness_mc_se": 2.0446666665395067e-06,
+          "inverse_mean_slope_bias": 0.0005574262313401412,
+          "reciprocal_jensen_gap": 2.9248603539144824e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "smooth": {
+          "mean_relative_slope": -0.0005571156804460298,
+          "slope_sd": 5.776763427791945e-06,
+          "thickness_bias": 0.0005574262605887448,
+          "thickness_mc_se": 2.0446666665395067e-06,
+          "inverse_mean_slope_bias": 0.0005574262313401412,
+          "reciprocal_jensen_gap": 2.9248603539144824e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "monotone": {
+          "mean_relative_slope": -0.0005571156804460298,
+          "slope_sd": 5.776763427791945e-06,
+          "thickness_bias": 0.0005574262605887448,
+          "thickness_mc_se": 2.0446666665395067e-06,
+          "inverse_mean_slope_bias": 0.0005574262313401412,
+          "reciprocal_jensen_gap": 2.9248603539144824e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "smooth_monotone": {
+          "mean_relative_slope": -0.0005571156804460298,
+          "slope_sd": 5.776763427791945e-06,
+          "thickness_bias": 0.0005574262605887448,
+          "thickness_mc_se": 2.0446666665395067e-06,
+          "inverse_mean_slope_bias": 0.0005574262313401412,
+          "reciprocal_jensen_gap": 2.9248603539144824e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "known_peak": {
+          "mean_relative_slope": -0.0005571156804460298,
+          "slope_sd": 5.776763427791945e-06,
+          "thickness_bias": 0.0005574262605887448,
+          "thickness_mc_se": 2.0446666665395067e-06,
+          "inverse_mean_slope_bias": 0.0005574262313401412,
+          "reciprocal_jensen_gap": 2.9248603539144824e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        }
+      },
+      "paired_thickness_contrasts": {
+        "smooth minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "monotone minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus smooth": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus known_peak": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "methods": {
+        "raw": {
+          "mean_relative_slope": -0.0012358978805654397,
+          "slope_sd": 9.284307989793892e-06,
+          "thickness_bias": 0.0012374272899409178,
+          "thickness_mc_se": 3.2906271235346473e-06,
+          "inverse_mean_slope_bias": 0.0012374272142368081,
+          "reciprocal_jensen_gap": 7.57041096477451e-11,
+          "peak_mean_error": 0.016512920581664703,
+          "peak_rmse": 0.016512920581664703
+        },
+        "smooth": {
+          "mean_relative_slope": -0.0012358978805654397,
+          "slope_sd": 9.284307989793892e-06,
+          "thickness_bias": 0.0012374272899409178,
+          "thickness_mc_se": 3.2906271235346473e-06,
+          "inverse_mean_slope_bias": 0.0012374272142368081,
+          "reciprocal_jensen_gap": 7.57041096477451e-11,
+          "peak_mean_error": 0.016512920581664703,
+          "peak_rmse": 0.016512920581664703
+        },
+        "monotone": {
+          "mean_relative_slope": -0.0012358978805654397,
+          "slope_sd": 9.284307989793892e-06,
+          "thickness_bias": 0.0012374272899409178,
+          "thickness_mc_se": 3.2906271235346473e-06,
+          "inverse_mean_slope_bias": 0.0012374272142368081,
+          "reciprocal_jensen_gap": 7.57041096477451e-11,
+          "peak_mean_error": 0.016512920581664703,
+          "peak_rmse": 0.016512920581664703
+        },
+        "smooth_monotone": {
+          "mean_relative_slope": -0.0012358978805654397,
+          "slope_sd": 9.284307989793892e-06,
+          "thickness_bias": 0.0012374272899409178,
+          "thickness_mc_se": 3.2906271235346473e-06,
+          "inverse_mean_slope_bias": 0.0012374272142368081,
+          "reciprocal_jensen_gap": 7.57041096477451e-11,
+          "peak_mean_error": 0.016512920581664703,
+          "peak_rmse": 0.016512920581664703
+        },
+        "known_peak": {
+          "mean_relative_slope": -0.0014129020095978717,
+          "slope_sd": 5.1718668587316775e-06,
+          "thickness_bias": 0.001414901149746628,
+          "thickness_mc_se": 1.833705827738486e-06,
+          "inverse_mean_slope_bias": 0.0014149011262425404,
+          "reciprocal_jensen_gap": 2.350408756512934e-11,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        }
+      },
+      "paired_thickness_contrasts": {
+        "smooth minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "monotone minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus smooth": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus known_peak": {
+          "mean": -0.00017747385980590447,
+          "mc_se": 1.8672765618704135e-06
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "methods": {
+        "raw": {
+          "mean_relative_slope": 8.91959117490515e-05,
+          "slope_sd": 4.013801799075343e-07,
+          "thickness_bias": -8.91879564068887e-05,
+          "thickness_mc_se": 1.41884027102621e-07,
+          "inverse_mean_slope_bias": -8.918795654799805e-05,
+          "reciprocal_jensen_gap": 1.411093464298574e-13,
+          "peak_mean_error": -0.004166666666666578,
+          "peak_rmse": 0.014433756729740337
+        },
+        "smooth": {
+          "mean_relative_slope": 8.928001879393577e-05,
+          "slope_sd": 2.833066262254806e-07,
+          "thickness_bias": -8.927204851361115e-05,
+          "thickness_mc_se": 1.001461285299571e-07,
+          "inverse_mean_slope_bias": -8.927204858377724e-05,
+          "reciprocal_jensen_gap": 7.016609515630989e-14,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "monotone": {
+          "mean_relative_slope": 8.91959117490515e-05,
+          "slope_sd": 4.013801799075343e-07,
+          "thickness_bias": -8.91879564068887e-05,
+          "thickness_mc_se": 1.41884027102621e-07,
+          "inverse_mean_slope_bias": -8.918795654799805e-05,
+          "reciprocal_jensen_gap": 1.411093464298574e-13,
+          "peak_mean_error": -0.004166666666666578,
+          "peak_rmse": 0.014433756729740337
+        },
+        "smooth_monotone": {
+          "mean_relative_slope": 8.928001879393577e-05,
+          "slope_sd": 2.833066262254806e-07,
+          "thickness_bias": -8.927204851361115e-05,
+          "thickness_mc_se": 1.001461285299571e-07,
+          "inverse_mean_slope_bias": -8.927204858377724e-05,
+          "reciprocal_jensen_gap": 7.016609515630989e-14,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        },
+        "known_peak": {
+          "mean_relative_slope": 8.928001879393577e-05,
+          "slope_sd": 2.833066262254806e-07,
+          "thickness_bias": -8.927204851361115e-05,
+          "thickness_mc_se": 1.001461285299571e-07,
+          "inverse_mean_slope_bias": -8.927204858377724e-05,
+          "reciprocal_jensen_gap": 7.016609515630989e-14,
+          "peak_mean_error": 0.0,
+          "peak_rmse": 0.0
+        }
+      },
+      "paired_thickness_contrasts": {
+        "smooth minus raw": {
+          "mean": -8.409210675019985e-08,
+          "mc_se": 5.581054319136891e-08
+        },
+        "monotone minus raw": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus smooth": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        },
+        "smooth_monotone minus raw": {
+          "mean": -8.409210675019985e-08,
+          "mc_se": 5.581054319136891e-08
+        },
+        "smooth_monotone minus known_peak": {
+          "mean": 0.0,
+          "mc_se": 0.0
+        }
+      }
+    }
+  ],
+  "source_artifact": "output/peak-smoothing-experiment.json",
+  "source_sha256": "a8489be9e5f82751beb3ae962bb30129d62b657b5dbc7db4ae907c62ec2c599b",
+  "cases": [
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.008945560802610109,
+            "slope_sd": 0.028849168798798168,
+            "thickness_bias": 0.009882619305445761,
+            "thickness_mc_se": 0.0018467636695837521,
+            "inverse_mean_slope_bias": 0.009026306173306464,
+            "reciprocal_jensen_gap": 0.0008563131321392969,
+            "peak_mean_error": 0.005338541666667376,
+            "peak_rmse": 0.19268862511835
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0027058463588347514,
+            "slope_sd": 0.02318230180386271,
+            "thickness_bias": 0.003257762980158674,
+            "thickness_mc_se": 0.0014707682015870657,
+            "inverse_mean_slope_bias": 0.002713187828240704,
+            "reciprocal_jensen_gap": 0.0005445751519179698,
+            "peak_mean_error": 0.005078125000000724,
+            "peak_rmse": 0.08955910525085288
+          },
+          "monotone": {
+            "mean_relative_slope": -0.008945560802610109,
+            "slope_sd": 0.028849168798798168,
+            "thickness_bias": 0.009882619305445761,
+            "thickness_mc_se": 0.0018467636695837521,
+            "inverse_mean_slope_bias": 0.009026306173306464,
+            "reciprocal_jensen_gap": 0.0008563131321392969,
+            "peak_mean_error": 0.005338541666667376,
+            "peak_rmse": 0.19268862511835
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0027058463588347514,
+            "slope_sd": 0.02318230180386271,
+            "thickness_bias": 0.003257762980158674,
+            "thickness_mc_se": 0.0014707682015870657,
+            "inverse_mean_slope_bias": 0.002713187828240704,
+            "reciprocal_jensen_gap": 0.0005445751519179698,
+            "peak_mean_error": 0.005078125000000724,
+            "peak_rmse": 0.08955910525085288
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0003626605949231809,
+            "slope_sd": 0.021180947282342683,
+            "thickness_bias": 0.0008118344452288095,
+            "thickness_mc_se": 0.0013301867227287665,
+            "inverse_mean_slope_bias": 0.00036279216534573777,
+            "reciprocal_jensen_gap": 0.00044904227988307177,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.0066248563252873024,
+            "mc_se": 0.001281941257059652
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.0066248563252873024,
+            "mc_se": 0.001281941257059652
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.002445928534929767,
+            "mc_se": 0.0008889025978592153
+          }
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.010051876655902459,
+            "slope_sd": 0.03468269161017792,
+            "thickness_bias": 0.011410058117857558,
+            "thickness_mc_se": 0.0022514870001313007,
+            "inverse_mean_slope_bias": 0.010153942836869767,
+            "reciprocal_jensen_gap": 0.0012561152809877907,
+            "peak_mean_error": 0.017122395833333998,
+            "peak_rmse": 0.2275535079016216
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0042454294115474855,
+            "slope_sd": 0.030659374161870225,
+            "thickness_bias": 0.0052316700245063075,
+            "thickness_mc_se": 0.0019748299036472057,
+            "inverse_mean_slope_bias": 0.004263529926896048,
+            "reciprocal_jensen_gap": 0.0009681400976102594,
+            "peak_mean_error": 0.0064453125000007,
+            "peak_rmse": 0.14419089993824163
+          },
+          "monotone": {
+            "mean_relative_slope": -0.010051876655902459,
+            "slope_sd": 0.03468269161017792,
+            "thickness_bias": 0.011410058117857558,
+            "thickness_mc_se": 0.0022514870001313007,
+            "inverse_mean_slope_bias": 0.010153942836869767,
+            "reciprocal_jensen_gap": 0.0012561152809877907,
+            "peak_mean_error": 0.017122395833333998,
+            "peak_rmse": 0.2275535079016216
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0042454294115474855,
+            "slope_sd": 0.030659374161870225,
+            "thickness_bias": 0.0052316700245063075,
+            "thickness_mc_se": 0.0019748299036472057,
+            "inverse_mean_slope_bias": 0.004263529926896048,
+            "reciprocal_jensen_gap": 0.0009681400976102594,
+            "peak_mean_error": 0.0064453125000007,
+            "peak_rmse": 0.14419089993824163
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0007090126144537745,
+            "slope_sd": 0.02747201339330267,
+            "thickness_bias": 0.0014723541812529106,
+            "thickness_mc_se": 0.0017423466022772405,
+            "inverse_mean_slope_bias": 0.0007095156700138716,
+            "reciprocal_jensen_gap": 0.000762838511239039,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.0061783880933509155,
+            "mc_se": 0.0010043797125100344
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.0061783880933509155,
+            "mc_se": 0.0010043797125100344
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0037593158432536987,
+            "mc_se": 0.0012513147919014532
+          }
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.012748223405914638,
+            "slope_sd": 0.03139832152870718,
+            "thickness_bias": 0.013932334171279814,
+            "thickness_mc_se": 0.002012996332184485,
+            "inverse_mean_slope_bias": 0.012912839164386902,
+            "reciprocal_jensen_gap": 0.001019495006892912,
+            "peak_mean_error": -0.0011067708333326414,
+            "peak_rmse": 0.19616273272039553
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0036323976451502205,
+            "slope_sd": 0.024939477401919926,
+            "thickness_bias": 0.004275466323807153,
+            "thickness_mc_se": 0.0015798787436430459,
+            "inverse_mean_slope_bias": 0.0036456400595175076,
+            "reciprocal_jensen_gap": 0.0006298262642896457,
+            "peak_mean_error": -0.0007161458333326404,
+            "peak_rmse": 0.09383676540496623
+          },
+          "monotone": {
+            "mean_relative_slope": -0.012748223405914638,
+            "slope_sd": 0.03139832152870718,
+            "thickness_bias": 0.013932334171279814,
+            "thickness_mc_se": 0.002012996332184485,
+            "inverse_mean_slope_bias": 0.012912839164386902,
+            "reciprocal_jensen_gap": 0.001019495006892912,
+            "peak_mean_error": -0.0011067708333326414,
+            "peak_rmse": 0.19616273272039553
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0036323976451502205,
+            "slope_sd": 0.024939477401919926,
+            "thickness_bias": 0.004275466323807153,
+            "thickness_mc_se": 0.0015798787436430459,
+            "inverse_mean_slope_bias": 0.0036456400595175076,
+            "reciprocal_jensen_gap": 0.0006298262642896457,
+            "peak_mean_error": -0.0007161458333326404,
+            "peak_rmse": 0.09383676540496623
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.00023713318576057407,
+            "slope_sd": 0.02277548724069349,
+            "thickness_bias": 0.0007536095789850705,
+            "thickness_mc_se": 0.0014230046261182695,
+            "inverse_mean_slope_bias": 0.0002371894312460654,
+            "reciprocal_jensen_gap": 0.0005164201477390051,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.009656867847472647,
+            "mc_se": 0.00113253105106868
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.009656867847472647,
+            "mc_se": 0.00113253105106868
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.003521856744822003,
+            "mc_se": 0.0009401734120018912
+          }
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.014573105146355458,
+            "slope_sd": 0.04341808503566064,
+            "thickness_bias": 0.016777902983457604,
+            "thickness_mc_se": 0.002837129133758961,
+            "inverse_mean_slope_bias": 0.014788621279227199,
+            "reciprocal_jensen_gap": 0.0019892817042304056,
+            "peak_mean_error": -0.0059244791666659665,
+            "peak_rmse": 0.23429165184658202
+          },
+          "smooth": {
+            "mean_relative_slope": -0.007078510083632805,
+            "slope_sd": 0.038459555176406125,
+            "thickness_bias": 0.008651830131481297,
+            "thickness_mc_se": 0.0024701628320768984,
+            "inverse_mean_slope_bias": 0.00712897258798284,
+            "reciprocal_jensen_gap": 0.001522857543498457,
+            "peak_mean_error": -0.0062499999999993255,
+            "peak_rmse": 0.15848402916382454
+          },
+          "monotone": {
+            "mean_relative_slope": -0.014573105146355458,
+            "slope_sd": 0.04341808503566064,
+            "thickness_bias": 0.016777902983457604,
+            "thickness_mc_se": 0.002837129133758961,
+            "inverse_mean_slope_bias": 0.014788621279227199,
+            "reciprocal_jensen_gap": 0.0019892817042304056,
+            "peak_mean_error": -0.0059244791666659665,
+            "peak_rmse": 0.23429165184658202
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.007078510083632805,
+            "slope_sd": 0.038459555176406125,
+            "thickness_bias": 0.008651830131481297,
+            "thickness_mc_se": 0.0024701628320768984,
+            "inverse_mean_slope_bias": 0.00712897258798284,
+            "reciprocal_jensen_gap": 0.001522857543498457,
+            "peak_mean_error": -0.0062499999999993255,
+            "peak_rmse": 0.15848402916382454
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0010216022215294718,
+            "slope_sd": 0.03222556286235612,
+            "thickness_bias": 0.002060622832530168,
+            "thickness_mc_se": 0.002020913290207467,
+            "inverse_mean_slope_bias": 0.0010226469599354804,
+            "reciprocal_jensen_gap": 0.0010379758725946875,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.008126072851976147,
+            "mc_se": 0.0010295301548213288
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.008126072851976147,
+            "mc_se": 0.0010295301548213288
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.006591207298951058,
+            "mc_se": 0.0015195450776811607
+          }
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.006864392767835015,
+            "slope_sd": 0.018657388130209694,
+            "thickness_bias": 0.007267960356091008,
+            "thickness_mc_se": 0.0011897680832762259,
+            "inverse_mean_slope_bias": 0.006911838340955212,
+            "reciprocal_jensen_gap": 0.0003561220151357958,
+            "peak_mean_error": 0.010848858081665072,
+            "peak_rmse": 0.11161838106993041
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0021301733161152026,
+            "slope_sd": 0.014859274445767796,
+            "thickness_bias": 0.002357311211743651,
+            "thickness_mc_se": 0.0009381604283586299,
+            "inverse_mean_slope_bias": 0.0021347206410622377,
+            "reciprocal_jensen_gap": 0.00022259057068141352,
+            "peak_mean_error": 0.03350510808166507,
+            "peak_rmse": 0.04729537634056392
+          },
+          "monotone": {
+            "mean_relative_slope": -0.006864392767835015,
+            "slope_sd": 0.018657388130209694,
+            "thickness_bias": 0.007267960356091008,
+            "thickness_mc_se": 0.0011897680832762259,
+            "inverse_mean_slope_bias": 0.006911838340955212,
+            "reciprocal_jensen_gap": 0.0003561220151357958,
+            "peak_mean_error": 0.010848858081665072,
+            "peak_rmse": 0.11161838106993041
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0021301733161152026,
+            "slope_sd": 0.014859274445767796,
+            "thickness_bias": 0.002357311211743651,
+            "thickness_mc_se": 0.0009381604283586299,
+            "inverse_mean_slope_bias": 0.0021347206410622377,
+            "reciprocal_jensen_gap": 0.00022259057068141352,
+            "peak_mean_error": 0.03350510808166507,
+            "peak_rmse": 0.04729537634056392
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0012852841891007882,
+            "slope_sd": 0.014163355198207316,
+            "thickness_bias": 0.0014880000966071005,
+            "thickness_mc_se": 0.0008897153613628745,
+            "inverse_mean_slope_bias": 0.0012869382705122945,
+            "reciprocal_jensen_gap": 0.00020106182609480605,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.00491064914434753,
+            "mc_se": 0.0007092089025273141
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.00491064914434753,
+            "mc_se": 0.0007092089025273141
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0008693111151364188,
+            "mc_se": 0.00032741430371590685
+          }
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.006970594099778404,
+            "slope_sd": 0.022312847344041476,
+            "thickness_bias": 0.0075352605750862445,
+            "thickness_mc_se": 0.0014411211491948562,
+            "inverse_mean_slope_bias": 0.007019524354829443,
+            "reciprocal_jensen_gap": 0.0005157362202568017,
+            "peak_mean_error": 0.01482021224833171,
+            "peak_rmse": 0.11008094792583564
+          },
+          "smooth": {
+            "mean_relative_slope": -0.002873075820804205,
+            "slope_sd": 0.019329530434424088,
+            "thickness_bias": 0.0032616027562690775,
+            "thickness_mc_se": 0.0012314547117796815,
+            "inverse_mean_slope_bias": 0.0028813541698007317,
+            "reciprocal_jensen_gap": 0.0003802485864683458,
+            "peak_mean_error": 0.03591396224833174,
+            "peak_rmse": 0.06313738142566187
+          },
+          "monotone": {
+            "mean_relative_slope": -0.006970594099778404,
+            "slope_sd": 0.022312847344041476,
+            "thickness_bias": 0.0075352605750862445,
+            "thickness_mc_se": 0.0014411211491948562,
+            "inverse_mean_slope_bias": 0.007019524354829443,
+            "reciprocal_jensen_gap": 0.0005157362202568017,
+            "peak_mean_error": 0.01482021224833171,
+            "peak_rmse": 0.11008094792583564
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.002873075820804205,
+            "slope_sd": 0.019329530434424088,
+            "thickness_bias": 0.0032616027562690775,
+            "thickness_mc_se": 0.0012314547117796815,
+            "inverse_mean_slope_bias": 0.0028813541698007317,
+            "reciprocal_jensen_gap": 0.0003802485864683458,
+            "peak_mean_error": 0.03591396224833174,
+            "peak_rmse": 0.06313738142566187
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0015130323255655442,
+            "slope_sd": 0.01854015312286984,
+            "thickness_bias": 0.0018620411282683769,
+            "thickness_mc_se": 0.0011719966841032433,
+            "inverse_mean_slope_bias": 0.0015153250613670899,
+            "reciprocal_jensen_gap": 0.000346716066901287,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.004273657818817207,
+            "mc_se": 0.0004540194846244851
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.004273657818817207,
+            "mc_se": 0.0004540194846244851
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0013995616280006147,
+            "mc_se": 0.00034421270607596407
+          }
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.008225952944899584,
+            "slope_sd": 0.020116793729078004,
+            "thickness_bias": 0.008709267994346792,
+            "thickness_mc_se": 0.0012845440771659963,
+            "inverse_mean_slope_bias": 0.008294180483271463,
+            "reciprocal_jensen_gap": 0.0004150875110753294,
+            "peak_mean_error": 0.010913962248331743,
+            "peak_rmse": 0.11193378617530815
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0020192762391588737,
+            "slope_sd": 0.015545318217395222,
+            "thickness_bias": 0.0022655248792835536,
+            "thickness_mc_se": 0.0009757070895306247,
+            "inverse_mean_slope_bias": 0.002023361965899806,
+            "reciprocal_jensen_gap": 0.00024216291338374774,
+            "peak_mean_error": 0.030380108081665056,
+            "peak_rmse": 0.047374296331380926
+          },
+          "monotone": {
+            "mean_relative_slope": -0.008225952944899584,
+            "slope_sd": 0.020116793729078004,
+            "thickness_bias": 0.008709267994346792,
+            "thickness_mc_se": 0.0012845440771659963,
+            "inverse_mean_slope_bias": 0.008294180483271463,
+            "reciprocal_jensen_gap": 0.0004150875110753294,
+            "peak_mean_error": 0.010913962248331743,
+            "peak_rmse": 0.11193378617530815
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0020192762391588737,
+            "slope_sd": 0.015545318217395222,
+            "thickness_bias": 0.0022655248792835536,
+            "thickness_mc_se": 0.0009757070895306247,
+            "inverse_mean_slope_bias": 0.002023361965899806,
+            "reciprocal_jensen_gap": 0.00024216291338374774,
+            "peak_mean_error": 0.030380108081665056,
+            "peak_rmse": 0.047374296331380926
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.001176755802560825,
+            "slope_sd": 0.015201885716203,
+            "thickness_bias": 0.0014089251439322048,
+            "thickness_mc_se": 0.0009516143392956992,
+            "inverse_mean_slope_bias": 0.0011781421882171017,
+            "reciprocal_jensen_gap": 0.0002307829557151031,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.006443743115063157,
+            "mc_se": 0.0006796390110438089
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.006443743115063157,
+            "mc_se": 0.0006796390110438089
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0008565997353515544,
+            "mc_se": 0.00032440487877288777
+          }
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.008422860452005798,
+            "slope_sd": 0.02648103275596503,
+            "thickness_bias": 0.009216672784931434,
+            "thickness_mc_se": 0.0016981205400990469,
+            "inverse_mean_slope_bias": 0.008494407662368308,
+            "reciprocal_jensen_gap": 0.000722265122563126,
+            "peak_mean_error": 0.01065354558166508,
+            "peak_rmse": 0.11490938063565566
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0034118055643344025,
+            "slope_sd": 0.02252447152149465,
+            "thickness_bias": 0.003935567765556591,
+            "thickness_mc_se": 0.0014224338155972643,
+            "inverse_mean_slope_bias": 0.003423485832346529,
+            "reciprocal_jensen_gap": 0.0005120819332100623,
+            "peak_mean_error": 0.031031149748331766,
+            "peak_rmse": 0.0652534493461267
+          },
+          "monotone": {
+            "mean_relative_slope": -0.008422860452005798,
+            "slope_sd": 0.02648103275596503,
+            "thickness_bias": 0.009216672784931434,
+            "thickness_mc_se": 0.0016981205400990469,
+            "inverse_mean_slope_bias": 0.008494407662368308,
+            "reciprocal_jensen_gap": 0.000722265122563126,
+            "peak_mean_error": 0.01065354558166508,
+            "peak_rmse": 0.11490938063565566
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0034118055643344025,
+            "slope_sd": 0.02252447152149465,
+            "thickness_bias": 0.003935567765556591,
+            "thickness_mc_se": 0.0014224338155972643,
+            "inverse_mean_slope_bias": 0.003423485832346529,
+            "reciprocal_jensen_gap": 0.0005120819332100623,
+            "peak_mean_error": 0.031031149748331766,
+            "peak_rmse": 0.0652534493461267
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0017368762529270665,
+            "slope_sd": 0.021766469686163404,
+            "thickness_bias": 0.002214109644305129,
+            "thickness_mc_se": 0.0013652205981608604,
+            "inverse_mean_slope_bias": 0.0017398982408640684,
+            "reciprocal_jensen_gap": 0.0004742114034410605,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.0052811050193747825,
+            "mc_se": 0.0005549552736253903
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.0052811050193747825,
+            "mc_se": 0.0005549552736253903
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0017214581212514498,
+            "mc_se": 0.000377646644680285
+          }
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -2.783081303636692e-06,
+            "slope_sd": 0.02704855321725375,
+            "thickness_bias": 0.0007274998100723629,
+            "thickness_mc_se": 0.0016819961105576254,
+            "inverse_mean_slope_bias": 2.7830890492186455e-06,
+            "reciprocal_jensen_gap": 0.0007247167210231442,
+            "peak_mean_error": -0.03242187499999933,
+            "peak_rmse": 0.46243665106693266
+          },
+          "smooth": {
+            "mean_relative_slope": 0.0016121801682698056,
+            "slope_sd": 0.026025926941426292,
+            "thickness_bias": -0.0009357835653076574,
+            "thickness_mc_se": 0.001627857858862627,
+            "inverse_mean_slope_bias": -0.0016095852268879218,
+            "reciprocal_jensen_gap": 0.0006738016615802644,
+            "peak_mean_error": 0.009830729166667357,
+            "peak_rmse": 0.3539076871751541
+          },
+          "monotone": {
+            "mean_relative_slope": -2.783081303636692e-06,
+            "slope_sd": 0.02704855321725375,
+            "thickness_bias": 0.0007274998100723629,
+            "thickness_mc_se": 0.0016819961105576254,
+            "inverse_mean_slope_bias": 2.7830890492186455e-06,
+            "reciprocal_jensen_gap": 0.0007247167210231442,
+            "peak_mean_error": -0.03242187499999933,
+            "peak_rmse": 0.46243665106693266
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": 0.0016121801682698056,
+            "slope_sd": 0.026025926941426292,
+            "thickness_bias": -0.0009357835653076574,
+            "thickness_mc_se": 0.001627857858862627,
+            "inverse_mean_slope_bias": -0.0016095852268879218,
+            "reciprocal_jensen_gap": 0.0006738016615802644,
+            "peak_mean_error": 0.009830729166667357,
+            "peak_rmse": 0.3539076871751541
+          },
+          "known_peak": {
+            "mean_relative_slope": 0.00028405619439775265,
+            "slope_sd": 0.021181041993437087,
+            "thickness_bias": 0.00016419964296288114,
+            "thickness_mc_se": 0.001328470461551782,
+            "inverse_mean_slope_bias": -0.0002839755293895241,
+            "reciprocal_jensen_gap": 0.0004481751723524052,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.0016632833753799409,
+            "mc_se": 0.0013273860386268206
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.0016632833753799409,
+            "mc_se": 0.0013273860386268206
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": -0.001099983208270548,
+            "mc_se": 0.002179524875495719
+          }
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.0006262809927554125,
+            "slope_sd": 0.03435183772746538,
+            "thickness_bias": 0.0018093497530926594,
+            "thickness_mc_se": 0.002161053821700796,
+            "inverse_mean_slope_bias": 0.0006266734664361895,
+            "reciprocal_jensen_gap": 0.00118267628665647,
+            "peak_mean_error": 0.0029296875000006314,
+            "peak_rmse": 0.49594383397551517
+          },
+          "smooth": {
+            "mean_relative_slope": 0.0017657637157837414,
+            "slope_sd": 0.034714885488103066,
+            "thickness_bias": -0.0005601688755167977,
+            "thickness_mc_se": 0.002179332646400859,
+            "inverse_mean_slope_bias": -0.001762651290092121,
+            "reciprocal_jensen_gap": 0.0012024824145753232,
+            "peak_mean_error": 0.003385416666667314,
+            "peak_rmse": 0.42369591591926714
+          },
+          "monotone": {
+            "mean_relative_slope": -0.0006262809927554125,
+            "slope_sd": 0.03435183772746538,
+            "thickness_bias": 0.0018093497530926594,
+            "thickness_mc_se": 0.002161053821700796,
+            "inverse_mean_slope_bias": 0.0006266734664361895,
+            "reciprocal_jensen_gap": 0.00118267628665647,
+            "peak_mean_error": 0.0029296875000006314,
+            "peak_rmse": 0.49594383397551517
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": 0.0017657637157837414,
+            "slope_sd": 0.034714885488103066,
+            "thickness_bias": -0.0005601688755167977,
+            "thickness_mc_se": 0.002179332646400859,
+            "inverse_mean_slope_bias": -0.001762651290092121,
+            "reciprocal_jensen_gap": 0.0012024824145753232,
+            "peak_mean_error": 0.003385416666667314,
+            "peak_rmse": 0.42369591591926714
+          },
+          "known_peak": {
+            "mean_relative_slope": -6.229582513295195e-05,
+            "slope_sd": 0.027472076749389125,
+            "thickness_bias": 0.0008236558341350175,
+            "thickness_mc_se": 0.00174008047401534,
+            "inverse_mean_slope_bias": 6.229970614457514e-05,
+            "reciprocal_jensen_gap": 0.0007613561279904424,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.002369518628609428,
+            "mc_se": 0.0011564509959851473
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.002369518628609428,
+            "mc_se": 0.0011564509959851473
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": -0.001383824709651853,
+            "mc_se": 0.002802413978656823
+          }
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.004364561057025873,
+            "slope_sd": 0.02951062185198805,
+            "thickness_bias": 0.00525641753840711,
+            "thickness_mc_se": 0.0018487422591024407,
+            "inverse_mean_slope_bias": 0.004383693956956369,
+            "reciprocal_jensen_gap": 0.0008727235814507406,
+            "peak_mean_error": -0.013411458333332682,
+            "peak_rmse": 0.49198656612757236
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0016282184823602774,
+            "slope_sd": 0.026480205903184235,
+            "thickness_bias": 0.002330672974093728,
+            "thickness_mc_se": 0.0016565589805134346,
+            "inverse_mean_slope_bias": 0.0016308739013888296,
+            "reciprocal_jensen_gap": 0.0006997990727048986,
+            "peak_mean_error": -0.004622395833332671,
+            "peak_rmse": 0.38634319938149986
+          },
+          "monotone": {
+            "mean_relative_slope": -0.004364561057025873,
+            "slope_sd": 0.02951062185198805,
+            "thickness_bias": 0.00525641753840711,
+            "thickness_mc_se": 0.0018487422591024407,
+            "inverse_mean_slope_bias": 0.004383693956956369,
+            "reciprocal_jensen_gap": 0.0008727235814507406,
+            "peak_mean_error": -0.013411458333332682,
+            "peak_rmse": 0.49198656612757236
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0016282184823602774,
+            "slope_sd": 0.026480205903184235,
+            "thickness_bias": 0.002330672974093728,
+            "thickness_mc_se": 0.0016565589805134346,
+            "inverse_mean_slope_bias": 0.0016308739013888296,
+            "reciprocal_jensen_gap": 0.0006997990727048986,
+            "peak_mean_error": -0.004622395833332671,
+            "peak_rmse": 0.38634319938149986
+          },
+          "known_peak": {
+            "mean_relative_slope": 0.0004095836035604705,
+            "slope_sd": 0.022775646127320658,
+            "thickness_bias": 0.00010601093524265082,
+            "thickness_mc_se": 0.0014211756043179678,
+            "inverse_mean_slope_bias": -0.0004094159135152875,
+            "reciprocal_jensen_gap": 0.0005154268487579383,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.0029257445643131102,
+            "mc_se": 0.0013920253492555037
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.0029257445643131102,
+            "mc_se": 0.0013920253492555037
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0022246620388510934,
+            "mc_se": 0.0021637292860905233
+          }
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "errors": [],
+      "summary": {
+        "methods": {
+          "raw": {
+            "mean_relative_slope": -0.005972131349110232,
+            "slope_sd": 0.04155764057305045,
+            "thickness_bias": 0.0077607037976372695,
+            "thickness_mc_se": 0.0026344717378724634,
+            "inverse_mean_slope_bias": 0.006008011985836781,
+            "reciprocal_jensen_gap": 0.0017526918118004886,
+            "peak_mean_error": 0.015039062500000614,
+            "peak_rmse": 0.5632315844378166
+          },
+          "smooth": {
+            "mean_relative_slope": -0.0017312890378056167,
+            "slope_sd": 0.03929847793887446,
+            "thickness_bias": 0.0032828051471833763,
+            "thickness_mc_se": 0.0024717625757372896,
+            "inverse_mean_slope_bias": 0.0017342915978373341,
+            "reciprocal_jensen_gap": 0.0015485135493460422,
+            "peak_mean_error": -0.025065104166666,
+            "peak_rmse": 0.488370616821897
+          },
+          "monotone": {
+            "mean_relative_slope": -0.005972131349110232,
+            "slope_sd": 0.04155764057305045,
+            "thickness_bias": 0.0077607037976372695,
+            "thickness_mc_se": 0.0026344717378724634,
+            "inverse_mean_slope_bias": 0.006008011985836781,
+            "reciprocal_jensen_gap": 0.0017526918118004886,
+            "peak_mean_error": 0.015039062500000614,
+            "peak_rmse": 0.5632315844378166
+          },
+          "smooth_monotone": {
+            "mean_relative_slope": -0.0017312890378056167,
+            "slope_sd": 0.03929847793887446,
+            "thickness_bias": 0.0032828051471833763,
+            "thickness_mc_se": 0.0024717625757372896,
+            "inverse_mean_slope_bias": 0.0017342915978373341,
+            "reciprocal_jensen_gap": 0.0015485135493460422,
+            "peak_mean_error": -0.025065104166666,
+            "peak_rmse": 0.488370616821897
+          },
+          "known_peak": {
+            "mean_relative_slope": -0.0003748854322085382,
+            "slope_sd": 0.03222568522274512,
+            "thickness_bias": 0.0014109955281038644,
+            "thickness_mc_se": 0.002018302666781841,
+            "inverse_mean_slope_bias": 0.00037502602400163454,
+            "reciprocal_jensen_gap": 0.0010359695041022299,
+            "peak_mean_error": 0.0,
+            "peak_rmse": 0.0
+          }
+        },
+        "paired_thickness_contrasts": {
+          "smooth minus raw": {
+            "mean": -0.004477898650453701,
+            "mc_se": 0.0011834958451525145
+          },
+          "monotone minus raw": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus smooth": {
+            "mean": 0.0,
+            "mc_se": 0.0
+          },
+          "smooth_monotone minus raw": {
+            "mean": -0.004477898650453701,
+            "mc_se": 0.0011834958451525145
+          },
+          "smooth_monotone minus known_peak": {
+            "mean": 0.0018718096190794278,
+            "mc_se": 0.00290388954731715
+          }
+        }
+      }
+    }
+  ]
+}

@@ -28,3 +28,8 @@ The follow-up [slope/reciprocal decomposition](GRADIENT_BIAS_DECOMPOSITION.md)
 completed 128 fresh repetitions per case. Reciprocal nonlinearity contributes
 only 0.022–0.109 percentage points for the template candidate; no bias correction
 or physical-acceptance change was applied.
+
+The [controlled smoothing/training study](PEAK_SMOOTHING_DIAGNOSTIC.md)
+finds that noisy crossing50 alignment of training windows adds 0.285–0.878
+percentage points of thickness bias on Gompertz. Smoothing helps; the next
+candidate should refine training translations without using the held-out seed.
