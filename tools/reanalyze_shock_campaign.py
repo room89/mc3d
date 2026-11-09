@@ -148,7 +148,8 @@ def main():
     names=('reanalyze_shock_campaign.py','shock_ensemble_estimator.py','shock_alignment.py',
         'shock_crossfit_gradient.py','shock_mean_profile.py','shock_analysis.py','analyze_shock_validation.py','reanalyze_shock_mean.py',
         'shock_independent_campaign.py','shock_validation.py','normal_shock.py','physical_config.py','argon_vhs.py')
-    protocol=dict(campaign_sha256=digest(source),sources={n:digest(Path(__file__).with_name(n)) for n in names},coverage=coverage)
+    protocol=dict(campaign_sha256=digest(source),sources={n:digest(Path(__file__).with_name(n)) for n in names},coverage=coverage,
+        bootstrap_repeats=1024,resampling_seed=20261109)
     parts=a.output.with_suffix('.parts')
     if parts.exists() and not a.resume:raise FileExistsError(parts)
     parts.mkdir(parents=True,exist_ok=True);results={};input_hashes={}
@@ -159,7 +160,7 @@ def main():
     summaries={};halves={};windows={};plateaus={}
     keys=list(variants)+['sparta-'+v for v in variants if v in ('C','D','E')]
     for key in keys:
-        phases={phase:estimate([results[g][key][phase] for g in sorted(groups)],repeats=4096,
+        phases={phase:estimate([results[g][key][phase] for g in sorted(groups)],repeats=protocol['bootstrap_repeats'],seed=protocol['resampling_seed'],
             center_profile=True,width_band=True,interpolation_sensitivity=True) for phase in ('full','first','last','doubled')}
         summaries[key]=phases['full'];halves[key]=compare(phases['first'],phases['last'])
         windows[key]=compare(phases['full'],phases['doubled'])

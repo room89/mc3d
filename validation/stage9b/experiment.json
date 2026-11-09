@@ -1,5 +1,38 @@
 {
   "status": "incomplete",
   "source_doi": "10.1017/S0022112076001912",
-  "reason": "Primary PDF retrieval timed out; conditions, experimental length convention and digitization uncertainty not yet verified. Engineering data are not experimental data."
+  "reason": "Publisher DOI and PDF routes returned the article landing page (HTML), not a PDF; the indexed mirror timed out. Conditions, experimental length convention and digitization uncertainty remain unverified. Engineering data are not experimental data.",
+  "retrieval_evidence": {
+    "date": "2026-11-09",
+    "crossref_url": "https://api.crossref.org/works/10.1017/S0022112076001912",
+    "publisher_route": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/S0022112076001912",
+    "publisher_pdf_received": false,
+    "openalex_url": "https://api.openalex.org/works/https://doi.org/10.1017/S0022112076001912",
+    "openalex_oa_status": "closed",
+    "local_artifact_hashes": {
+      "output/alsmeyer-source/crossref.json": "d945277b1abe084ded560e5158d2375d3369e990341ce20e5b5501ce3ecf0ac2",
+      "output/alsmeyer-source/openalex.json": "64455428984f2706c2b3f366d5e51a3be5ab0b5d133efadc078e480dba26be5f",
+      "output/alsmeyer-source/publisher-pdf-response.bin": "9f72f17472098ab9f9ce76a5cd5cbaf83f2098ed542a45fc4f36093af6675fbc"
+    }
+  },
+  "secondary_sources": [
+    {
+      "url": "https://arxiv.org/pdf/1909.02631",
+      "figure": "2(d), page 7",
+      "experimental_marker_count": 40,
+      "extracted_artifact": "output/alsmeyer-source/m38-secondary-vector-points.json",
+      "extracted_sha256": "92f6a108db11f09115a14e4804a4fdfcec0afc62ee5d57b321388caa43433fdd",
+      "status": "normalization_and_uncertainty_unverified"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2411.13423",
+      "figure": "9(b), page 18",
+      "reported_conditions": {
+        "mach": 3.8,
+        "temperature_K": 300,
+        "pressure_Pa": 6.667
+      },
+      "status": "secondary_reproduction; dimensional coordinate conversion needs verification"
+    }
+  ]
 }
