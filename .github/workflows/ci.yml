@@ -33,8 +33,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Python analysis dependencies
+        run: |
+          python3 -m venv .venv-analysis
+          .venv-analysis/bin/python -m pip install -r requirements-analysis.txt
+
       - name: Test Python diagnostics
-        run: python3 -m unittest discover -s tests/python -v
+        run: .venv-analysis/bin/python -m unittest discover -s tests/python -v
 
       - name: Verify toolchain
         run: |
