@@ -111,7 +111,13 @@ endif()
 if(BUILD_TESTING)
   add_test(NAME ConfigExamplesIntegration COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_SOURCE_DIR}/tests/config_examples_integration.py $<TARGET_FILE:${PROJECT_NAME}>)
-  set_tests_properties(ConfigExamplesIntegration PROPERTIES TIMEOUT 120)
+  # Instrumented runs execute the complete config matrix much more slowly.
+  set(config_examples_timeout 120)
+  string(TOUPPER "${CMAKE_BUILD_TYPE}" config_examples_build_type)
+  if("${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${config_examples_build_type}} ${CMAKE_EXE_LINKER_FLAGS}" MATCHES "-fsanitize=")
+    set(config_examples_timeout 600)
+  endif()
+  set_tests_properties(ConfigExamplesIntegration PROPERTIES TIMEOUT ${config_examples_timeout})
 endif()
 
 if(BUILD_TESTING)
