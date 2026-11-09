@@ -320,3 +320,9 @@ Experimental acceptance is currently unavailable: the primary Alsmeyer PDF,
 its length convention and digitization uncertainty have not been verified.
 Engineering runs are not substituted for experimental data. Stage 9 remains
 in progress until the numerical and experimental requirements are resolved.
+
+For a deliberately unbudgeted validation run, pass
+`SHOCK_ARGS=--no-time-budget` to `make check-shock SHOCK_MODE=validation`.
+This disables the total and per-simulation time limits; memory limits remain.
+The report records `time_budget_hours: null`. Use a permanent `OUTPUT_DIR`
+under the project `output/` directory, never `/tmp`, for long series.
