@@ -5,9 +5,11 @@ then fits only translation with Huber loss over its 10–90% transition.
 The default remains crossing50; enable the candidate with `--alignment template`.
 No solver changes or new physical runs are involved.
 
-Synthetic qualification is running. Do not regard this candidate as qualified
-until all fixed cases finish and the separate noiseless/edge-case checks are
-reviewed. The complete planned qualification and final plots are not yet delivered.
+The noisy alignment qualification finished: 11 of 16 cases pass; the candidate
+is not qualified. The separate noiseless/edge-case checks and final plots remain
+outstanding. A follow-up independent gradient-selection pilot passes 0 of 12
+cases; see [the pilot report](CROSSFIT_GRADIENT_PILOT.md). Neither candidate is
+ready for physical acceptance.
 
 Commands (NumPy environment):
 
