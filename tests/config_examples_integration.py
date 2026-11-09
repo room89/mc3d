@@ -11,6 +11,7 @@ binary=Path(sys.argv[1]).resolve();repo=Path(__file__).resolve().parents[1]
 with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
     root=Path(tmp);manifests={}
     for config in sorted((repo/'configs/checks').glob('*.json')):
+        print(f'Running config: {config.relative_to(repo)}',flush=True)
         out=root/config.stem
         r=subprocess.run([str(binary),'--config',str(config),'--output-dir',str(out)],capture_output=True)
         assert r.returncode==0,(config,r.stderr.decode())
@@ -51,6 +52,7 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
                 assert row['region'] in ('gas','cut','solid')
                 if row['region']=='solid':assert float(row['N'])==0
         assert (out/'initial.dat').is_file() and (out/'final.dat').is_file()
+    print('Checking diagnostics-disabled equivalence',flush=True)
     original=json.loads((repo/'configs/checks/vhs_argon_equilibrium.json').read_text())
     disabled=root/'disabled.json';disabled.write_text(json.dumps(original|{'resolution_diagnostics':False}))
     off=root/'off'
@@ -58,6 +60,7 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
     assert not list(off.glob('resolution_*.csv'))
     for name in ['initial.dat','final.dat','cell_geometry.csv']:
         assert (off/name).read_bytes()==(root/'vhs_argon_equilibrium'/name).read_bytes()
+    print('Checking rejected configurations',flush=True)
     # Reject unsupported bodies even when intermolecular collisions are disabled.
     base=json.loads((repo/'configs/checks/cut_cube.json').read_text())
     for i,patch in enumerate([
@@ -74,6 +77,7 @@ with tempfile.TemporaryDirectory(prefix='mc3d examples ') as tmp:
     # Identical HS law, RNG and configuration must produce identical physical data.
     def hashes(m):return {x['path']:x['sha256'] for x in m['outputs'] if x['kind']=='physical'}
     assert hashes(manifests['hs_low_population'])==hashes(manifests['vhs_hs_limit'])
+    print('Running SI config: configs/physical/argon_cube.json',flush=True)
     prep=root/'prepared'
     subprocess.run([sys.executable,str(repo/'tools/physical_config.py'),str(repo/'configs/physical/argon_cube.json'),'--output-dir',str(prep)],check=True,capture_output=True)
     out=root/'physical'
