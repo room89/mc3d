@@ -3,6 +3,7 @@ from pathlib import Path
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'tools'))
 from shock_group_pooling import pool_points
+from plan_shock_pooling import assignments
 
 class PoolingTest(unittest.TestCase):
     def test_average_slopes_before_inversion(self):
@@ -17,3 +18,14 @@ class PoolingTest(unittest.TestCase):
     def test_identity_for_one_subgroup(self):
         a=dict(density=[0,1],slopes=[1,2,3],density_cubic=[0,1],slope_cubic=2)
         self.assertEqual(pool_points([a]),a)
+
+    def test_physical_seed_plan_is_disjoint_and_preserves_baseline(self):
+        old=[[123,456,789]]+[[10000+3*i+j for j in range(3)] for i in range(1,12)]
+        groups=assignments(old)
+        self.assertEqual([g[0] for g in groups],old)
+        self.assertEqual(len({s for g in groups for triplet in g for s in triplet}),216)
+        self.assertEqual(groups[0][1],[20000,20001,20002])
+        self.assertEqual(groups[-1][-1],[20177,20178,20179])
+        with self.assertRaises(ValueError):assignments(old,10000)
+        with self.assertRaises(ValueError):assignments(old,2**31-1)
+        with self.assertRaises(ValueError):assignments(old[:11])
