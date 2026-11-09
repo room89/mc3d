@@ -37,3 +37,7 @@ OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 python tools/experiment_crossfit
 ```
 
 Aggregate results and the full local artifact SHA-256 are in [crossfit-gradient-pilot.json](crossfit-gradient-pilot.json). Full repetitions and fold diagnostics remain in `output/crossfit-gradient-pilot.json` in the primary checkout. No new solver runs were needed.
+
+Follow-up: the [128-repeat decomposition](GRADIENT_BIAS_DECOMPOSITION.md)
+does not reproduce the uniformly positive bias of this smaller pilot. Treat
+the values above as results of this batch, not calibrated correction constants.

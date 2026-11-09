@@ -9,14 +9,14 @@ from shock_crossfit_gradient import derivative,estimate_gradient
 from validate_shock_estimator import shape,truth
 
 
-def fixture(kind,seed,phi,spatial):
+def fixture(kind,seed,phi,spatial,noise=.03):
     rng=np.random.default_rng(seed);x=np.linspace(-14,14,281);trials=[];exact=[]
     def sample():
         v=rng.normal(size=len(x))
         if spatial:
             z=np.arange(-6,7)*.1;k=np.exp(-.5*(z/spatial)**2);k/=np.sqrt(sum(k*k))
             v=np.convolve(np.pad(v,6,mode='reflect'),k,'valid')
-        return .03*v
+        return noise*v
     for _ in range(3):
         run=[];previous=sample()
         for _ in range(64):

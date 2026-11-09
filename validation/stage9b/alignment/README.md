@@ -23,3 +23,8 @@ The reanalysis keeps the original validation report unchanged and remains
 experimental. Its intervals do not fully include template-estimation uncertainty.
 Input hashes, per-seed templates and per-window shifts are retained in the new
 report. Local artifacts use permanent project output directories.
+
+The follow-up [slope/reciprocal decomposition](GRADIENT_BIAS_DECOMPOSITION.md)
+completed 128 fresh repetitions per case. Reciprocal nonlinearity contributes
+only 0.022–0.109 percentage points for the template candidate; no bias correction
+or physical-acceptance change was applied.

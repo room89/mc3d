@@ -1,0 +1,544 @@
+{
+  "status": "diagnostic_only",
+  "seed_start": 2400000,
+  "repeats": 128,
+  "numpy_version": "2.5.4",
+  "noise": 0.03,
+  "noiseless": [
+    {
+      "shape": "logistic",
+      "direct": {
+        "normalized_slope": 0.999859400456955,
+        "thickness_bias": 0.00014061931405628947
+      },
+      "translated": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.0005593886081344257,
+          "slope_sd": 5.062637365416489e-06,
+          "thickness_bias": 0.0005597017213530009,
+          "thickness_mc_se": 1.7919211349906514e-06,
+          "inverse_mean_slope_bias": 0.0005597016988887482,
+          "reciprocal_jensen_gap": 2.2464252680265417e-11
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.0005593886081339816,
+          "slope_sd": 5.062637365253586e-06,
+          "thickness_bias": 0.0005597017213525568,
+          "thickness_mc_se": 1.7919211349185818e-06,
+          "inverse_mean_slope_bias": 0.0005597016988883041,
+          "reciprocal_jensen_gap": 2.2464252680265417e-11
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.00055989568085546,
+          "slope_sd": 5.021796361410015e-06,
+          "thickness_bias": 0.0005602093617484982,
+          "thickness_mc_se": 1.777467248481237e-06,
+          "inverse_mean_slope_bias": 0.000560209339645068,
+          "reciprocal_jensen_gap": 2.210343019726224e-11
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "direct": {
+        "normalized_slope": 0.9994212079399256,
+        "thickness_bias": 0.0005791272543309578
+      },
+      "translated": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.001410033367909569,
+          "slope_sd": 5.7343793492614054e-06,
+          "thickness_bias": 0.001412024398281586,
+          "thickness_mc_se": 2.0331419722862254e-06,
+          "inverse_mean_slope_bias": 0.0014120243693866996,
+          "reciprocal_jensen_gap": 2.889488648349925e-11
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.0012315088376881889,
+          "slope_sd": 8.518471757591202e-06,
+          "thickness_bias": 0.0012330273854610496,
+          "thickness_mc_se": 3.0191653838178736e-06,
+          "inverse_mean_slope_bias": 0.0012330273217320276,
+          "reciprocal_jensen_gap": 6.372902205953324e-11
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.001381763854290119,
+          "slope_sd": 9.034236659456413e-06,
+          "thickness_bias": 0.001383675839163434,
+          "thickness_mc_se": 3.202916040967654e-06,
+          "inverse_mean_slope_bias": 0.0013836757674516864,
+          "reciprocal_jensen_gap": 7.171174765119304e-11
+        }
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "direct": {
+        "normalized_slope": 1.0000894029206182,
+        "thickness_bias": -8.939492845050356e-05
+      },
+      "translated": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 8.927467965458291e-05,
+          "slope_sd": 1.5881298698862947e-07,
+          "thickness_bias": -8.926671037534639e-05,
+          "thickness_mc_se": 5.613884777411846e-08,
+          "inverse_mean_slope_bias": -8.926671039766187e-05,
+          "reciprocal_jensen_gap": 2.2315482794965646e-14
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": 8.922063422822646e-05,
+          "slope_sd": 2.885070707065576e-07,
+          "thickness_bias": -8.921267454398141e-05,
+          "thickness_mc_se": 1.0198449775816115e-07,
+          "inverse_mean_slope_bias": -8.921267461681204e-05,
+          "reciprocal_jensen_gap": 7.283063041541027e-14
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 8.927349320630995e-05,
+          "slope_sd": 1.585530310883388e-07,
+          "thickness_bias": -8.9265524139015e-05,
+          "thickness_mc_se": 5.604695600175792e-08,
+          "inverse_mean_slope_bias": -8.926552416110844e-05,
+          "reciprocal_jensen_gap": 2.2093438190040615e-14
+        }
+      }
+    }
+  ],
+  "source_artifact": "output/gradient-bias-decomposition.json",
+  "source_sha256": "e4322a643430e870fe5347346fe715f7dfc0fc9ba8cde94aa9aca1a7f7f3f9af",
+  "cases": [
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.0014191644744188103,
+          "slope_sd": 0.020970548607638993,
+          "thickness_bias": -0.0009822850319796128,
+          "thickness_mc_se": 0.001850544433210271,
+          "inverse_mean_slope_bias": -0.0014171533007995007,
+          "reciprocal_jensen_gap": 0.00043486826881988794
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.005570704521077219,
+          "slope_sd": 0.025940631750897766,
+          "thickness_bias": 0.00628365603297798,
+          "thickness_mc_se": 0.00232935007151733,
+          "inverse_mean_slope_bias": 0.00560191111263908,
+          "reciprocal_jensen_gap": 0.0006817449203389003
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.0023322642662333415,
+          "slope_sd": 0.02135069374432583,
+          "thickness_bias": -0.0018763405291793989,
+          "thickness_mc_se": 0.0018847603020333233,
+          "inverse_mean_slope_bias": -0.002326837466357201,
+          "reciprocal_jensen_gap": 0.00045049693717780226
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.0072659410649575954,
+        "mc_se": 0.002086573055078876
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.003663480183588641,
+          "slope_sd": 0.026485657857031455,
+          "thickness_bias": -0.0029611158629294643,
+          "thickness_mc_se": 0.0023273030958735094,
+          "inverse_mean_slope_bias": -0.0036501080849514755,
+          "reciprocal_jensen_gap": 0.0006889922220220113
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.0052769530678073995,
+          "slope_sd": 0.032972948101870354,
+          "thickness_bias": 0.0064083514849753165,
+          "thickness_mc_se": 0.0029678839812924238,
+          "inverse_mean_slope_bias": 0.0053049470242816366,
+          "reciprocal_jensen_gap": 0.00110340446069368
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.006888977140625752,
+          "slope_sd": 0.027041749908401604,
+          "thickness_bias": -0.006127839972250415,
+          "thickness_mc_se": 0.002369973074589108,
+          "inverse_mean_slope_bias": -0.006841843834847761,
+          "reciprocal_jensen_gap": 0.0007140038625973455
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.009369467347904864,
+        "mc_se": 0.0020099366540170254
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.00047394056824368036,
+          "slope_sd": 0.02484613166401098,
+          "thickness_bias": 0.0010862755269305246,
+          "thickness_mc_se": 0.0021949040391445866,
+          "inverse_mean_slope_bias": 0.0004741652944126873,
+          "reciprocal_jensen_gap": 0.0006121102325178374
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.007380409359810214,
+          "slope_sd": 0.030802465290516657,
+          "thickness_bias": 0.008398961922373882,
+          "thickness_mc_se": 0.0027688125436132758,
+          "inverse_mean_slope_bias": 0.007435284805380693,
+          "reciprocal_jensen_gap": 0.000963677116993189
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.0007219098064041862,
+          "slope_sd": 0.024610605158925283,
+          "thickness_bias": 0.0013255263805720396,
+          "thickness_mc_se": 0.0021829721939637128,
+          "inverse_mean_slope_bias": 0.0007224313366704926,
+          "reciprocal_jensen_gap": 0.000603095043901547
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.007312686395443356,
+        "mc_se": 0.0024284065889477696
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.00015691324660382922,
+          "slope_sd": 0.03149876773431117,
+          "thickness_bias": 0.0011413584048782788,
+          "thickness_mc_se": 0.0027857327124238304,
+          "inverse_mean_slope_bias": 0.00015693787223480804,
+          "reciprocal_jensen_gap": 0.0009844205326434707
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.007143615042561002,
+          "slope_sd": 0.03835751092790127,
+          "thickness_bias": 0.008698394948642107,
+          "thickness_mc_se": 0.003470740574069371,
+          "inverse_mean_slope_bias": 0.007195013448865639,
+          "reciprocal_jensen_gap": 0.0015033814997764683
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.0026930607996447087,
+          "slope_sd": 0.0319659395347757,
+          "thickness_bias": -0.0016751479134645697,
+          "thickness_mc_se": 0.002826192675340545,
+          "inverse_mean_slope_bias": -0.002685827702344934,
+          "reciprocal_jensen_gap": 0.0010106797888803642
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.007557036543763765,
+        "mc_se": 0.00251539968635224
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -4.127430049760683e-05,
+          "slope_sd": 0.013963580015141424,
+          "thickness_bias": 0.00023479881373211775,
+          "thickness_mc_se": 0.0012347490442229535,
+          "inverse_mean_slope_bias": 4.1276004135726296e-05,
+          "reciprocal_jensen_gap": 0.00019352280959639145
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.004754466873427732,
+          "slope_sd": 0.017552373758809386,
+          "thickness_bias": 0.005089269135118091,
+          "thickness_mc_se": 0.001576908693676004,
+          "inverse_mean_slope_bias": 0.0047771798166142965,
+          "reciprocal_jensen_gap": 0.0003120893185037943
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.0029643659932253597,
+          "slope_sd": 0.014688809831067257,
+          "thickness_bias": 0.003189596773074399,
+          "thickness_mc_se": 0.0013088756990035876,
+          "inverse_mean_slope_bias": 0.002973179585680885,
+          "reciprocal_jensen_gap": 0.0002164171873935139
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.004854470321385733,
+        "mc_se": 0.0010733036128079225
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.001430000991098801,
+          "slope_sd": 0.017873427600682938,
+          "thickness_bias": -0.0011123050934602752,
+          "thickness_mc_se": 0.0015759556084771855,
+          "inverse_mean_slope_bias": -0.0014279590083017268,
+          "reciprocal_jensen_gap": 0.00031565391484145167
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.002259738342258566,
+          "slope_sd": 0.020300200041974532,
+          "thickness_bias": 0.002677929141944757,
+          "thickness_mc_se": 0.0018092757810465405,
+          "inverse_mean_slope_bias": 0.0022648563249356712,
+          "reciprocal_jensen_gap": 0.0004130728170090858
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.007269140822000919,
+          "slope_sd": 0.01988358543288012,
+          "thickness_bias": 0.007725012132411724,
+          "thickness_mc_se": 0.001791599806165888,
+          "inverse_mean_slope_bias": 0.007322368147213654,
+          "reciprocal_jensen_gap": 0.0004026439851980701
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.0037902342354048987,
+        "mc_se": 0.0007391321207042088
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.001390249342520633,
+          "slope_sd": 0.016472555328539196,
+          "thickness_bias": 0.0016620454958595765,
+          "thickness_mc_se": 0.0014577593013865612,
+          "inverse_mean_slope_bias": 0.0013921848265603387,
+          "reciprocal_jensen_gap": 0.0002698606692992378
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.006507635354476848,
+          "slope_sd": 0.02001147567932749,
+          "thickness_bias": 0.006955849930681879,
+          "thickness_mc_se": 0.0017944376166131551,
+          "inverse_mean_slope_bias": 0.006550262071514545,
+          "reciprocal_jensen_gap": 0.0004055878591673334
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.005658045957242286,
+          "slope_sd": 0.016749137116570324,
+          "thickness_bias": 0.0059744233408285385,
+          "thickness_mc_se": 0.0015034010591458591,
+          "inverse_mean_slope_bias": 0.005690241605755375,
+          "reciprocal_jensen_gap": 0.00028418173507316347
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.0052938044348221965,
+        "mc_se": 0.0010731742997540036
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": -0.001145562244056153,
+          "slope_sd": 0.021250600720095027,
+          "thickness_bias": 0.0015960891903725738,
+          "thickness_mc_se": 0.0018816095595265746,
+          "inverse_mean_slope_bias": 0.0011468760619712803,
+          "reciprocal_jensen_gap": 0.00044921312840129346
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.0055553344489776,
+          "slope_sd": 0.024857185657971428,
+          "thickness_bias": 0.006212740134639905,
+          "thickness_mc_se": 0.0022336445903762703,
+          "inverse_mean_slope_bias": 0.005586368594877378,
+          "reciprocal_jensen_gap": 0.0006263715397625269
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": -0.008617255236151311,
+          "slope_sd": 0.02208587957703895,
+          "thickness_bias": 0.009188875041644229,
+          "thickness_mc_se": 0.0019869170835773065,
+          "inverse_mean_slope_bias": 0.008692157778279697,
+          "reciprocal_jensen_gap": 0.0004967172633645323
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.004616650944267221,
+        "mc_se": 0.0009393082144117901
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.0020650648051256937,
+          "slope_sd": 0.020970732871263827,
+          "thickness_bias": -0.0016267740373945294,
+          "thickness_mc_se": 0.001848173045691033,
+          "inverse_mean_slope_bias": -0.0020608091007815466,
+          "reciprocal_jensen_gap": 0.00043403506338701714
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": 0.0005774268851845843,
+          "slope_sd": 0.023314064502038365,
+          "thickness_bias": -3.848989476784581e-05,
+          "thickness_mc_se": 0.002060195657561875,
+          "inverse_mean_slope_bias": -0.0005770936557925044,
+          "reciprocal_jensen_gap": 0.0005386037610246586
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.0027459251941106544,
+          "slope_sd": 0.021181303851480395,
+          "thickness_bias": -0.0022959122593783077,
+          "thickness_mc_se": 0.001866862342813867,
+          "inverse_mean_slope_bias": -0.002738405736806282,
+          "reciprocal_jensen_gap": 0.0004424934774279743
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.0015882841426267,
+        "mc_se": 0.00255743383506298
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.004309380514295746,
+          "slope_sd": 0.026485516513735197,
+          "thickness_bias": -0.003603233861300903,
+          "thickness_mc_se": 0.0023242934374982046,
+          "inverse_mean_slope_bias": -0.004290889438958501,
+          "reciprocal_jensen_gap": 0.0006876555776575977
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": -0.003997891675050713,
+          "slope_sd": 0.03260009511327867,
+          "thickness_bias": 0.005075579917213746,
+          "thickness_mc_se": 0.0028921189899757246,
+          "inverse_mean_slope_bias": 0.004013938968235875,
+          "reciprocal_jensen_gap": 0.001061640948977871
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.0072257897358349865,
+          "slope_sd": 0.0269853367496716,
+          "thickness_bias": -0.006464170887940712,
+          "thickness_mc_se": 0.0023618021550938168,
+          "inverse_mean_slope_bias": -0.007173952265191796,
+          "reciprocal_jensen_gap": 0.0007097813772510841
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.008678813778514635,
+        "mc_se": 0.003299309753051891
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.00017195976246342504,
+          "slope_sd": 0.024845945660205985,
+          "thickness_bias": 0.0004389850884121138,
+          "thickness_mc_se": 0.0021920495011343104,
+          "inverse_mean_slope_bias": -0.00017193019738748205,
+          "reciprocal_jensen_gap": 0.0006109152857995959
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": 0.004338175394728028,
+          "slope_sd": 0.02825233234122392,
+          "thickness_bias": -0.0035372869177017208,
+          "thickness_mc_se": 0.00247820437584264,
+          "inverse_mean_slope_bias": -0.004319436919763664,
+          "reciprocal_jensen_gap": 0.0007821500020619432
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.0003686446694206591,
+          "slope_sd": 0.024770856867970974,
+          "thickness_bias": 0.0002423881835693642,
+          "thickness_mc_se": 0.002199283917649523,
+          "inverse_mean_slope_bias": -0.00036850882060834866,
+          "reciprocal_jensen_gap": 0.0006108970041777129
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": -0.003976272006113936,
+        "mc_se": 0.003029437203335575
+      }
+    },
+    {
+      "shape": "flat_peak",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "summary": {
+        "oracle_known_peak": {
+          "mean_relative_slope": 0.0004889870841029431,
+          "slope_sd": 0.03149833775920683,
+          "thickness_bias": 0.0004937388495380723,
+          "thickness_mc_se": 0.0027820921639887075,
+          "inverse_mean_slope_bias": -0.0004887480925982457,
+          "reciprocal_jensen_gap": 0.000982486942136318
+        },
+        "oracle_selected_peak": {
+          "mean_relative_slope": 0.0006664484788219127,
+          "slope_sd": 0.04153555261588987,
+          "thickness_bias": 0.0010517885366416735,
+          "thickness_mc_se": 0.0036913436325161624,
+          "inverse_mean_slope_bias": -0.0006660046210553716,
+          "reciprocal_jensen_gap": 0.001717793157697045
+        },
+        "template_selected_peak": {
+          "mean_relative_slope": 0.003074506452312331,
+          "slope_sd": 0.03330313186904852,
+          "thickness_bias": -0.0019702493500807217,
+          "thickness_mc_se": 0.0029397876653165724,
+          "inverse_mean_slope_bias": -0.0030650828353581128,
+          "reciprocal_jensen_gap": 0.001094833485277391
+        }
+      },
+      "errors": [],
+      "paired_peak_selection_effect": {
+        "mean": 0.0005580496871039169,
+        "mc_se": 0.003857650446195216
+      }
+    }
+  ]
+}
