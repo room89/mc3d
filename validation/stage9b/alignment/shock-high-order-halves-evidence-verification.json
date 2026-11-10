@@ -1,0 +1,22 @@
+{
+  "windows": 32,
+  "trial_count": 3072,
+  "rejected_trials": 1,
+  "minimum_metric_coverage": [
+    0.9921875,
+    0.9765625
+  ],
+  "minimum_density_coverage": 0.953125,
+  "fixture_seed_range": [
+    116000000,
+    116012771
+  ],
+  "bootstrap_seed_range": [
+    117000000,
+    117000127
+  ],
+  "status": "complete_matching_single_report",
+  "physical_acceptance": "incomplete",
+  "report_sha256": "fa664ea470f4643c47376a3d39f24e54a7078c090e51f3a4f399f9ba39a39581",
+  "tool_sha256": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac"
+}
