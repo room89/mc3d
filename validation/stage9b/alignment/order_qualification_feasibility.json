@@ -1,0 +1,19 @@
+{
+  "status": "qualification_design_feasibility_only",
+  "physical_acceptance": "incomplete",
+  "target": 0.95,
+  "family_tests": 576,
+  "repetitions": 128,
+  "best_case_hits": 128,
+  "individual_two_sided_lower": 0.9715919465564562,
+  "simultaneous_two_sided_lower": 0.9245238212701994,
+  "simultaneous_one_sided_lower": 0.9295438941961273,
+  "minimum_all_hit_repetitions_one_sided": 183,
+  "minimum_all_hit_repetitions_two_sided": 196,
+  "limitations": [
+    "These sample sizes assume zero misses; they are not adequate-power designs for a method whose true coverage equals the target.",
+    "128 repeats can diagnose undercoverage, but cannot certify simultaneous 95% coverage across 576 pairs using these bounds even with zero misses.",
+    "Do not interpret non-rejection or average coverage across scenarios as qualification.",
+    "Current fixed diagnostic runs remain unchanged; production acceptance still requires a justified qualification rule."
+  ]
+}
