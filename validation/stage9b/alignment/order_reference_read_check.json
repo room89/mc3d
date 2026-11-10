@@ -1,0 +1,63 @@
+{
+  "status": "historical_order_adapter_read_check",
+  "physical_acceptance": "incomplete",
+  "reference_domain": false,
+  "artifact": "output/order-reference-historical-read-check.json",
+  "artifact_sha256": "e8c40f08320bc90ed41128d5039106aa8c06a3393162dece4982e8471b38a7c6",
+  "sources": {
+    "analyze_alsmeyer_subgroup.py": "06cadcec57578a219349eff25efa0835ffbccbf02004d80f433bcda29e0770da",
+    "analyze_order_subgroup.py": "b61cc89f60ac9e333f7fa739e447bd6110975d072e6f97114016770fc45bc84e",
+    "analyze_shock_validation.py": "b6c44ac60fef7a8d9f4d56791ddaf156d7a3ef91de013e0aef7a22628925fdb0",
+    "extract_alsmeyer_profiles.py": "026607c18eca671e53fd66e82f4c45fc23334b26bb13b262179194019d11bf82",
+    "reanalyze_shock_campaign.py": "ee99445c97ce73f3d012839937a770f09dacc9863bcf311fc89a0ef4e238df5b",
+    "reanalyze_shock_mean.py": "8bb2d20d3bb08d533e3e072ea04427b610feac0844de9a85e562deaf458ef558",
+    "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+    "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+    "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+    "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+    "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+    "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+    "shock_order_sensitivity.py": "6fefe4718882fc1dd49397dd3edaca1124315464be7d4846787e1823a0fc1301",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+    "verify_alsmeyer_matrix.py": "87e387ef06882978895cf1bc00ff712ad1b081918d52b447c4e99f05e0b5ae0f",
+    "verify_alsmeyer_outputs.py": "aa0f47c8251736c790609fb54521f4e6ae1e824d3a5d5416e8be264e31f6aeff"
+  },
+  "seeds": [
+    123,
+    456,
+    789
+  ],
+  "source_windows_per_seed": {
+    "full": 64,
+    "first": 32,
+    "last": 32,
+    "doubled": 64
+  },
+  "effective_windows_per_seed": {
+    "full": 64,
+    "first": 32,
+    "last": 32,
+    "doubled": 32
+  },
+  "phases": {
+    "full": {
+      "windowwise": 441,
+      "meanwise": 441
+    },
+    "first": {
+      "windowwise": 441,
+      "meanwise": 441
+    },
+    "last": {
+      "windowwise": 441,
+      "meanwise": 441
+    },
+    "doubled": {
+      "windowwise": 441,
+      "meanwise": 441
+    }
+  },
+  "limitations": [
+    "Historical engineering MC3D C only; not the new reference-domain matrix or uncertainty qualification."
+  ]
+}

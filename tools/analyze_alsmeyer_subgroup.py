@@ -55,10 +55,9 @@ def subgroup(runs,seeds):
                 collision_mean_free_path_m=scale)
 
 
-def analyze(folder,verified,output):
-    folder,verified,output=map(Path,(folder,verified,output))
-    if output.exists():raise FileExistsError(output)
-    sources={n:digest(Path(__file__).with_name(n)) for n in SOURCES}
+def read_verified_profiles(folder,verified):
+    """Load the complete verified matrix before any estimator-specific work."""
+    folder,verified=map(Path,(folder,verified))
     report_path=folder/'extraction.json'; snapshots={report_path:digest(report_path),verified:digest(verified)}
     report=json.loads(report_path.read_text());proof=json.loads(verified.read_text())
     if (report['status']!='verified_profiles_extracted' or report['case_count']!=30 or report['dataset_count']!=10 or
@@ -82,6 +81,15 @@ def analyze(folder,verified,output):
             if run['source_sha256']!=expected:raise ValueError('Profile source differs from verified case')
         prepare_runs(data['runs'],seeds)
         datasets[key]=data['runs']
+    return datasets,seeds,report,snapshots
+
+
+def analyze(folder,verified,output):
+    folder,verified,output=map(Path,(folder,verified,output))
+    if output.exists():raise FileExistsError(output)
+    sources={n:digest(Path(__file__).with_name(n)) for n in SOURCES}
+    datasets,seeds,report,snapshots=read_verified_profiles(folder,verified)
+    report_path=folder/'extraction.json'
     results={key:subgroup(runs,seeds) for key,runs in datasets.items()}
     if any(digest(p)!=h for p,h in snapshots.items()):raise ValueError('Profile inputs changed during analysis')
     if sources!={n:digest(Path(__file__).with_name(n)) for n in SOURCES}:raise ValueError('Analysis source changed')
