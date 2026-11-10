@@ -138,5 +138,15 @@
       "Corrections for electronics, curvature and downstream density rise are already included in published profiles; do not apply them twice.",
       "Experimental reference mean free path and solver collision mean free path are different conventions; no spatial fitting is authorized."
     ]
+  },
+  "primary_digitization_pilot": {
+    "status": "manual_digitization_pilot_not_acceptance",
+    "artifact": "validation/stage9b/primary_width_digitization.json",
+    "sha256": "13c5d6a62f4cefacca442986ffc89fb90d3883fdcf9e3f3dbd6a28f12e42d2c1",
+    "width_reference_length_envelope": [
+      3.6869565217391305,
+      4.285714285714286
+    ],
+    "conclusion": "Both secondary widths lie inside the broad manual envelope; the source discrepancy is not resolved. Full-profile digitization and validated uncertainty remain incomplete."
   }
 }
