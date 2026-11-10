@@ -427,5 +427,243 @@
         "tool_sha256": "b8df2686c838752694c854f8e7fb3c6a275796271292ca47dbadd7ad71504231"
       }
     ]
+  },
+  "reference_condition_audit": {
+    "status": "configuration_similarity_verified_not_solver_acceptance",
+    "pressure_Pa": 6.666118421052632,
+    "temperature_K": 300.0,
+    "reference_number_density_m3": 1.60941663933716e+21,
+    "density_scaling_factor": 16.0941663933716,
+    "collision_mean_free_path_m": 0.0009302152626245007,
+    "previous_rounded_pressure_Pa": 6.667,
+    "previous_collision_mean_free_path_m": 0.0009300922600458222,
+    "relative_length_change": 0.00013224771773967525,
+    "dimensionless_config_max_scaled_difference": 2.3552470029271613e-16,
+    "reservoir_temperatures_K": [
+      300.0,
+      1612.354570637119
+    ],
+    "vhs_fit_range_K": [
+      300,
+      2000
+    ],
+    "vhs_omega": 0.7115290294715864,
+    "vhs_fit_max_relative_viscosity_error": 0.0309789667159428,
+    "domain_in_experimental_mean_free_paths": 33.88762341072862,
+    "source_hashes": {
+      "input_si.json": "10395d3217a19cc2219c8688a4cb18db7ac42c269eb704ef4a1a10673753f590",
+      "reference.json": "71e7eb85a0340231a7ec506bc068475b6da05593d9fca2e5b5973fbb2938b85e",
+      "units.json": "832984d508ce378912a3475fbae5d02bf831d6428bab55e35b91a4f3f174f26f"
+    },
+    "tool_hashes": {
+      "physical_config.py": "dc6233f2e93d584738980ada40fb0c90bf02996b8ff33878f7dc5d771887b09a",
+      "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689"
+    },
+    "limitations": [
+      "Configuration similarity is not a new solver run or a convergence result.",
+      "Pressure 50 mTorr and temperature 300 K define the primary reference scale, not an independently documented M=3.8 run record.",
+      "Reservoir temperatures lie within the viscosity fit interval; this does not validate non-equilibrium collision physics.",
+      "Engineering domain is 40 collision mean free paths, not 40 experimental mean free paths; boundary/domain convergence remains required."
+    ],
+    "variant_F_domain_in_experimental_mean_free_paths": 67.77524682145724,
+    "variant_F_input_sha256": "8faa563322b36ae4c8d0a8dd04407afc2188d5285e386e62833f6f85b330ccd8",
+    "artifact": "output/alsmeyer-source/reference-condition-similarity.json",
+    "sha256": "077c899cecb7b9b7c596e060710f2ea094f811061b74796b0d779cbb674ad1bd"
+  },
+  "reference_pressure_comparisons": {
+    "status": "diagnostic_only_no_acceptance_verdict",
+    "pressure_Pa": 6.666118421052632,
+    "comparisons": [
+      {
+        "variant": "C",
+        "model_reference_length_m": 0.0009302152626245007,
+        "pointwise_nonoverlap_count": 0,
+        "fixed_nominal_nonoverlap_count": 0,
+        "fixed_nominal_maximum_gap": 0.0,
+        "width_comparison": {
+          "status": "conditional_width_diagnostic_only",
+          "digitization": {
+            "crossings": [
+              {
+                "level": 0.1,
+                "interval": [
+                  -2.2386587771203152,
+                  -1.908023483365949
+                ],
+                "supporting_pixel_rows": [
+                  491,
+                  483
+                ]
+              },
+              {
+                "level": 0.9,
+                "interval": [
+                  1.6927592954990214,
+                  2.1203155818540433
+                ],
+                "supporting_pixel_rows": [
+                  93,
+                  79
+                ]
+              }
+            ],
+            "width_reference_length_interval": [
+              3.6007827788649704,
+              4.358974358974359
+            ],
+            "includes_stated_density_accuracy": false,
+            "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+          },
+          "with_density_accuracy": {
+            "crossings": [
+              {
+                "level": 0.1,
+                "interval": [
+                  -2.3175542406311638,
+                  -1.8297455968688845
+                ],
+                "supporting_pixel_rows": [
+                  495,
+                  479
+                ]
+              },
+              {
+                "level": 0.9,
+                "interval": [
+                  1.6927592954990214,
+                  2.1992110453648914
+                ],
+                "supporting_pixel_rows": [
+                  93,
+                  75
+                ]
+              }
+            ],
+            "width_reference_length_interval": [
+              3.522504892367906,
+              4.516765285996055
+            ],
+            "includes_stated_density_accuracy": true,
+            "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+          },
+          "experimental_width_interval_m": [
+            0.003817430136986301,
+            0.005023880591715975
+          ],
+          "model_width_interval_m": [
+            0.004294375244481373,
+            0.004351538697207821
+          ],
+          "nonoverlap_gap_m": 0.0,
+          "limitations": [
+            "Outer interval is not a confidence interval or a tight joint feasible set.",
+            "Validity remains conditional on trace/axis intervals and monotonicity; scan distortion is unquantified.",
+            "A broad interval overlap does not establish accurate physical agreement or numerical convergence."
+          ]
+        },
+        "artifact": "output/alsmeyer-source/primary-profile-C-reference-pressure.json",
+        "sha256": "9e20abe2b7893a6d45364d1d9c0285c890f763dd18239244f30c4c574cd95892",
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "b8df2686c838752694c854f8e7fb3c6a275796271292ca47dbadd7ad71504231"
+      },
+      {
+        "variant": "sparta-C",
+        "model_reference_length_m": 0.0009302152626245007,
+        "pointwise_nonoverlap_count": 0,
+        "fixed_nominal_nonoverlap_count": 2,
+        "fixed_nominal_maximum_gap": 0.0005030444024421987,
+        "width_comparison": {
+          "status": "conditional_width_diagnostic_only",
+          "digitization": {
+            "crossings": [
+              {
+                "level": 0.1,
+                "interval": [
+                  -2.2386587771203152,
+                  -1.908023483365949
+                ],
+                "supporting_pixel_rows": [
+                  491,
+                  483
+                ]
+              },
+              {
+                "level": 0.9,
+                "interval": [
+                  1.6927592954990214,
+                  2.1203155818540433
+                ],
+                "supporting_pixel_rows": [
+                  93,
+                  79
+                ]
+              }
+            ],
+            "width_reference_length_interval": [
+              3.6007827788649704,
+              4.358974358974359
+            ],
+            "includes_stated_density_accuracy": false,
+            "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+          },
+          "with_density_accuracy": {
+            "crossings": [
+              {
+                "level": 0.1,
+                "interval": [
+                  -2.3175542406311638,
+                  -1.8297455968688845
+                ],
+                "supporting_pixel_rows": [
+                  495,
+                  479
+                ]
+              },
+              {
+                "level": 0.9,
+                "interval": [
+                  1.6927592954990214,
+                  2.1992110453648914
+                ],
+                "supporting_pixel_rows": [
+                  93,
+                  75
+                ]
+              }
+            ],
+            "width_reference_length_interval": [
+              3.522504892367906,
+              4.516765285996055
+            ],
+            "includes_stated_density_accuracy": true,
+            "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+          },
+          "experimental_width_interval_m": [
+            0.003817430136986301,
+            0.005023880591715975
+          ],
+          "model_width_interval_m": [
+            0.004273915868847632,
+            0.00433569184630455
+          ],
+          "nonoverlap_gap_m": 0.0,
+          "limitations": [
+            "Outer interval is not a confidence interval or a tight joint feasible set.",
+            "Validity remains conditional on trace/axis intervals and monotonicity; scan distortion is unquantified.",
+            "A broad interval overlap does not establish accurate physical agreement or numerical convergence."
+          ]
+        },
+        "artifact": "output/alsmeyer-source/primary-profile-sparta-C-reference-pressure.json",
+        "sha256": "228f682d7048c0e739a865c96ba42985cadf0194275cfb01869d941f4d8a58ae",
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "b8df2686c838752694c854f8e7fb3c6a275796271292ca47dbadd7ad71504231"
+      }
+    ]
   }
 }

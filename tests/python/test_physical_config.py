@@ -23,6 +23,38 @@ class UnitsTest(unittest.TestCase):
         self.assertEqual(a['kn'],b['kn']);self.assertEqual(a['s'],b['s'])
         d['numerics']={'particles_per_cell':100};_,w=prepare(d)
         self.assertAlmostEqual(w['scales']['molecules_per_model_particle']*2,u['scales']['molecules_per_model_particle'])
+    def test_shock_density_length_time_similarity(self):
+        from normal_shock import setup
+        original, _ = setup(quick=True)
+        scaled = copy.deepcopy(original)
+        factor = (.05*101325/760)/(KB*300)/original['number_density_m3']
+        scaled['number_density_m3'] *= factor
+        scaled['domain_m'] = [x/factor for x in scaled['domain_m']]
+        for name in ('end_time_s', 'snapshot_interval_s'):
+            scaled[name] /= factor
+        scaled['statistics_windows_s'] = [[x/factor for x in row] for row in scaled['statistics_windows_s']]
+        scaled['initial_step']['x_m'] /= factor
+        seen = set()
+        for state in list(scaled['reservoirs'].values()) + [scaled['initial_step'][k] for k in ('left', 'right')]:
+            # setup shares reservoir objects with initial states; scale each once.
+            if id(state) not in seen:
+                state['number_density_m3'] *= factor
+                seen.add(id(state))
+        a, u = prepare(original); b, v = prepare(scaled)
+        def equivalent(x, y):
+            if isinstance(x, dict):
+                self.assertEqual(x.keys(), y.keys())
+                for key in x: equivalent(x[key], y[key])
+            elif isinstance(x, list):
+                self.assertEqual(len(x), len(y))
+                for left, right in zip(x, y): equivalent(left, right)
+            elif isinstance(x, (int, float)):
+                self.assertTrue(math.isclose(x, y, rel_tol=2e-13, abs_tol=2e-13))
+            else: self.assertEqual(x, y)
+        equivalent(a, b)
+        self.assertAlmostEqual(v['scales']['molecules_per_model_particle'] * factor**2 /
+                               u['scales']['molecules_per_model_particle'], 1.)
+
     def test_statistics_windows_and_scales(self):
         d=self.case();d['statistics_windows_s']=[[0,5e-6],[2e-6,1e-5]]
         d['numerics']={'statistics_enabled':False,'balance_enabled':True}
