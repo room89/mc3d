@@ -3,7 +3,7 @@ import sys
 import unittest
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'tools'))
-from diagnose_shock_ensemble_bias import quintic_derivative,summarize
+from diagnose_shock_ensemble_bias import quintic_derivative,summarize,run
 from shock_alignment import GRID
 
 
@@ -12,6 +12,13 @@ class BiasControlTest(unittest.TestCase):
         y=.001*GRID**5+.03*GRID**3+.2*GRID+.5
         x,d=quintic_derivative(y)
         np.testing.assert_allclose(d,.005*x**4+.09*x**2+.2,atol=1e-10)
+
+    def test_half_window_oracle_diagnostics_across_multiple_groups(self):
+        result=run(('logistic',0.,0.,0.,0,70000000,1,32))
+        errors=result['relative_errors']
+        self.assertIn('oracle_selected_peak',errors)
+        self.assertTrue(all(np.isfinite(v) for v in errors.values()))
+        self.assertLess(abs(errors['oracle_selected_peak']-errors['oracle_cubic']),.001)
 
     def test_paired_error_contrast_removes_common_sampling_noise(self):
         rows=[]
