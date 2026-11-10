@@ -1,0 +1,40 @@
+{
+  "status": "prepared_only",
+  "physical_acceptance": "incomplete",
+  "primary_sha256": "08063484e89e1070da80567fdcb36b6493224f6a06602febc4da47bc7a05262b",
+  "evidence_sha256": "19db647886c6ec7b7f3bc93b35e5b3bc298c6fd9ddb0fc7212edf40e8c5b43ee",
+  "sources": {
+    "prepare_alsmeyer_matrix.py": "cbc457b8e467734116367f4b445d4b264ddbde941454100c3428383929fc6f09",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+    "normal_shock.py": "0dd8bf9ec9975e756c8b673631bbfd33db3604d3be65a0bc0cddf17d7f8cde95",
+    "physical_config.py": "dc6233f2e93d584738980ada40fb0c90bf02996b8ff33878f7dc5d771887b09a",
+    "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689"
+  },
+  "limitations": [
+    "No solver was launched.",
+    "SPARTA export and execution are pending.",
+    "Independent-group replication, convergence and experimental acceptance remain pending.",
+    "These configurations must not be mixed with the engineering C pilot or its pooled campaign."
+  ],
+  "artifact": "output/alsmeyer-reference-matrix/preparation.json",
+  "sha256": "a03cb5bc5bce363d6e03f691a30fcf8c818ff48f6734f66247fa8ecd0254acb1",
+  "case_count": 21,
+  "variants": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G"
+  ],
+  "seeds": [
+    30001,
+    30002,
+    30003
+  ],
+  "base_domain_m": 0.04392,
+  "base_domain_experimental_mean_free_paths": 40,
+  "doubled_domain_experimental_mean_free_paths": 80,
+  "solver_execution_count": 0
+}
