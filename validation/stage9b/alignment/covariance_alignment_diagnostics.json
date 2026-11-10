@@ -1,0 +1,338 @@
+{
+  "status": "diagnostic_evidence_verified",
+  "physical_acceptance": "incomplete",
+  "summary_sha256": "531678d40b8cb4f62db55fe0b1ae8ba37a2ad2b42b9498bbca1e0a562be90f62",
+  "verification_source_sha256": "cf7d175850e1bb74a6ccb656a9ea3475693cf33efb6624fd071491f52de3fd78",
+  "protocol": {
+    "status": "diagnostic_only",
+    "seed_start": 120000000,
+    "shape": "gompertz",
+    "phi": 0.0,
+    "windows": 64,
+    "groups": 12,
+    "subgroups": 6,
+    "methods": [
+      "l2",
+      "gls"
+    ],
+    "ridge_white_variance": 0.01,
+    "scheduled_trials": 36,
+    "sanity_checks": {
+      "status": "passed",
+      "checks": [
+        "interior_convolution_covariance",
+        "regularized_whitening_identity",
+        "known_translation",
+        "white_noise_l2_gls_identity"
+      ]
+    },
+    "sources": {
+      "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+      "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+      "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+    },
+    "source_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+    "input_sha256": {
+      "output/shock-high-order-density-controls/0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+      "output/shock-high-order-density-controls/0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+      "output/shock-high-order-density-controls/0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+      "output/shock-high-order-density-controls/0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+      "output/shock-high-order-density-controls/0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+      "output/shock-high-order-density-controls/0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+      "output/shock-high-order-density-controls/0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+      "output/shock-high-order-density-controls/0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+      "output/shock-high-order-density-controls/0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+      "output/shock-high-order-density-controls/0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+      "output/shock-high-order-density-controls/0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+      "output/shock-high-order-density-controls/0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+      "output/shock-high-order-density-controls/0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+      "output/shock-high-order-density-controls/0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+      "output/shock-high-order-density-controls/0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+      "output/shock-high-order-density-controls/0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+      "output/shock-high-order-density-controls/0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+      "output/shock-high-order-density-controls/0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+    },
+    "limitations": [
+      "Post-calibration exploration on reused paired seeds; no qualification.",
+      "GLS uses known synthetic spatial covariance, regularized by adding 1% independent variance; neither parameter estimated from physical data.",
+      "L2 control separates quadratic loss from covariance weighting; original learned template and its Huber refinement unchanged.",
+      "Residuals on fixed source nodes in initial 10-90% region; no noisy residual interpolation.",
+      "Every rejection retained; conditional summaries do not demonstrate unconditional performance.",
+      "No uncertainty or confidence coverage assessed; no production gate changed."
+    ]
+  },
+  "checkpoint_sha256": {
+    "output/shock-covariance-alignment/0.0-0.0-0-l2.json": "6a4c409bba786b5b73c1a185a90c12dd58aec9b8b36a1557250269f29e4ff0a9",
+    "output/shock-covariance-alignment/0.0-0.0-0-gls.json": "6160087ddebfb83e9e60280712825e2405bc2b70490519acbf873c0e7fdb88e9",
+    "output/shock-covariance-alignment/0.0-0.03-0-l2.json": "40eaea507a2662023a02e06be2bf42412d4a6a2bf76d37980e487140140af388",
+    "output/shock-covariance-alignment/0.0-0.03-0-gls.json": "ba6fd02122b7be3829c7efb53a74652ef612b2044264df7b891cdaf741ce6daf",
+    "output/shock-covariance-alignment/0.0-0.03-1-l2.json": "c03692b8b8e91c74c39d92fb8bbbbde80c12af729acf1fef026d195b0089b036",
+    "output/shock-covariance-alignment/0.0-0.03-1-gls.json": "147bb0e336d42839fc2a03541b4956b21cd16cff0fff029b7c5b7080a5d73d64",
+    "output/shock-covariance-alignment/0.0-0.03-2-l2.json": "1cc1ead124a73bedbdef4f702796de36c09c4e27042ad668c578f52ae39e9e25",
+    "output/shock-covariance-alignment/0.0-0.03-2-gls.json": "30076f42fbae475af1e4a5e9885a6a6b1ceb7ed533f3a1d12c04627f06ff9fb1",
+    "output/shock-covariance-alignment/0.0-0.03-3-l2.json": "80b30c3d3f26e3aa69962b0be5b80b1edb48d64a2b9e6d8d1b717b26ee7f8875",
+    "output/shock-covariance-alignment/0.0-0.03-3-gls.json": "f4098efacfea0c065141a285c9380311d19739292d7a0838224444eec7a524e9",
+    "output/shock-covariance-alignment/0.0-0.03-4-l2.json": "f5ce15ce8e0447db55f2f1b717d2c5083d2c5258061ac9fa149c4835780c4f3f",
+    "output/shock-covariance-alignment/0.0-0.03-4-gls.json": "e536413341043b98f71cec12303c9b09eb12b998bb172b82570ae2308a960ff5",
+    "output/shock-covariance-alignment/0.0-0.03-5-l2.json": "38aa2459935c12aff9daa2147881dfcd56af937dcbe6a3ab7e97479cf745f2f8",
+    "output/shock-covariance-alignment/0.0-0.03-5-gls.json": "72428f6f4443613e8194128f68efdf4d4732581b8e31028c4e5cae97f8940baf",
+    "output/shock-covariance-alignment/0.0-0.03-6-l2.json": "b85782a1b6a987b8195beab65ed81ae88d878da8ce177bcc447cad6c0498e708",
+    "output/shock-covariance-alignment/0.0-0.03-6-gls.json": "d353d249ffa3321fd4b7837c4c777ed557f5f0d2bd100ec79ca2fe6eb2c5acfd",
+    "output/shock-covariance-alignment/0.0-0.03-7-l2.json": "7624f21a1a9bf0cf7b70984eabd5ec58f2eae6d20646491e7fdac0b15f031304",
+    "output/shock-covariance-alignment/0.0-0.03-7-gls.json": "aac24351a6f6a5d227f514060a3d1a71a077e8d6a1cec9e7a9964108bbc16b70",
+    "output/shock-covariance-alignment/0.2-0.0-0-l2.json": "503e17cb7775129d0f391bfb612875594d2a621ecb24759fd4c367f0f164ae59",
+    "output/shock-covariance-alignment/0.2-0.0-0-gls.json": "d90062a888b847746b24a41f43a1af99be96d54bf8c86283525aff46e145d131",
+    "output/shock-covariance-alignment/0.2-0.03-0-l2.json": "87f4c91f8fb53801bc360436fbe1e2b45a5cd0c20f999a3779820b3c73bad2a6",
+    "output/shock-covariance-alignment/0.2-0.03-0-gls.json": "64e257b070cc0697c674cd5a604c8c3a5657c881595c6e0b8e7188ae529c4fec",
+    "output/shock-covariance-alignment/0.2-0.03-1-l2.json": "e59466f5c7915e78b9cc2d8c522a90e3a2ca330d8805082bb259c42550504ca1",
+    "output/shock-covariance-alignment/0.2-0.03-1-gls.json": "881eeefebad90622d4227710ac48c7955eb4fe73c171d07a059ea10f9e35287c",
+    "output/shock-covariance-alignment/0.2-0.03-2-l2.json": "af58bb1f83eca9ff855b845c6a2794e6211b7c7f6a4d34103c2141d735d8cb7d",
+    "output/shock-covariance-alignment/0.2-0.03-2-gls.json": "8219bffa88cba41bd622bdb1f5063e65a5385d810aa635ab93965a20988bca1b",
+    "output/shock-covariance-alignment/0.2-0.03-3-l2.json": "151b4b3b539ca8355c09540d659e1a2f2ee802fa5b61c5327d27de775215c09f",
+    "output/shock-covariance-alignment/0.2-0.03-3-gls.json": "8f17d0145d55e84e791727fbcefaa58718b404a824018d62a6dc1cd4358e7c63",
+    "output/shock-covariance-alignment/0.2-0.03-4-l2.json": "f0a7f54bdd089396746e95a746fd47908b79815a7543b57006a2d16c521dc10d",
+    "output/shock-covariance-alignment/0.2-0.03-4-gls.json": "78b6557af9f5074c897ad3cf9324fe15eace3a38bfef0a7abc8b20a2f6588233",
+    "output/shock-covariance-alignment/0.2-0.03-5-l2.json": "7b528edb863d951c209ea0136b3b01303ca7e1e366dd3fd5a4cc08c34ffdd3bd",
+    "output/shock-covariance-alignment/0.2-0.03-5-gls.json": "3a5c67d423ba03ab2775357ccffaa99c150220081cd8f52493157e2ba0e43c0c",
+    "output/shock-covariance-alignment/0.2-0.03-6-l2.json": "aa3cac92faf8cc4a752e751580a28785cba3c1efac928a3f872e901a6a406a08",
+    "output/shock-covariance-alignment/0.2-0.03-6-gls.json": "a24316cfd28f57b984daa32db0348f5b074519d983e2806ad0ca095cd508af9a",
+    "output/shock-covariance-alignment/0.2-0.03-7-l2.json": "981acd9fc8ac98bc96679a1b696e84dd9fecf04f7f72003dff893e38e294a989",
+    "output/shock-covariance-alignment/0.2-0.03-7-gls.json": "34815f991ef54216bb38eacd602722fb0c3df58d3c0cb50121e93c368b7c06c8"
+  },
+  "cases": [
+    {
+      "spatial": 0.0,
+      "noise": 0.0,
+      "method": "l2",
+      "scheduled": 1,
+      "complete": 1,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 2.175592114836422e-06,
+          "mean_max_error": 2.175592114836422e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.175592114836422e-06,
+          "pointwise_two_mcse_at_worst": null
+        },
+        "original": {
+          "max_abs_mean": 2.1768828268875495e-06,
+          "mean_max_error": 2.1768828268875495e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.1768828268875495e-06,
+          "pointwise_two_mcse_at_worst": null
+        }
+      },
+      "paired_mean_max_error_change": -1.2907120511274073e-09,
+      "paired_change_two_mcse": null
+    },
+    {
+      "spatial": 0.0,
+      "noise": 0.0,
+      "method": "gls",
+      "scheduled": 1,
+      "complete": 1,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 2.175592114836422e-06,
+          "mean_max_error": 2.175592114836422e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.175592114836422e-06,
+          "pointwise_two_mcse_at_worst": null
+        },
+        "original": {
+          "max_abs_mean": 2.1768828268875495e-06,
+          "mean_max_error": 2.1768828268875495e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.1768828268875495e-06,
+          "pointwise_two_mcse_at_worst": null
+        }
+      },
+      "paired_mean_max_error_change": -1.2907120511274073e-09,
+      "paired_change_two_mcse": null
+    },
+    {
+      "spatial": 0.0,
+      "noise": 0.03,
+      "method": "l2",
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 0.0004317352048419931,
+          "mean_max_error": 0.0007400754246438578,
+          "rms_pointwise_sd": 0.00022735659762841587,
+          "worst_mean_x": -1.1500000000000004,
+          "worst_signed_mean": -0.0004317352048419931,
+          "pointwise_two_mcse_at_worst": 0.00015106620503271088
+        },
+        "original": {
+          "max_abs_mean": 0.0005225678830319685,
+          "mean_max_error": 0.0007350724817514054,
+          "rms_pointwise_sd": 0.00023053058324493252,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": -0.0005225678830319685,
+          "pointwise_two_mcse_at_worst": 0.00018171166121358796
+        }
+      },
+      "paired_mean_max_error_change": 5.002942892452461e-06,
+      "paired_change_two_mcse": 6.715388622373943e-05
+    },
+    {
+      "spatial": 0.0,
+      "noise": 0.03,
+      "method": "gls",
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 0.0004317352048419931,
+          "mean_max_error": 0.0007400754246438578,
+          "rms_pointwise_sd": 0.00022735659762841587,
+          "worst_mean_x": -1.1500000000000004,
+          "worst_signed_mean": -0.0004317352048419931,
+          "pointwise_two_mcse_at_worst": 0.00015106620503271088
+        },
+        "original": {
+          "max_abs_mean": 0.0005225678830319685,
+          "mean_max_error": 0.0007350724817514054,
+          "rms_pointwise_sd": 0.00023053058324493252,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": -0.0005225678830319685,
+          "pointwise_two_mcse_at_worst": 0.00018171166121358796
+        }
+      },
+      "paired_mean_max_error_change": 5.002942892452461e-06,
+      "paired_change_two_mcse": 6.715388622373943e-05
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.0,
+      "method": "l2",
+      "scheduled": 1,
+      "complete": 1,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 2.175592114836422e-06,
+          "mean_max_error": 2.175592114836422e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.175592114836422e-06,
+          "pointwise_two_mcse_at_worst": null
+        },
+        "original": {
+          "max_abs_mean": 2.1768828268875495e-06,
+          "mean_max_error": 2.1768828268875495e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.1768828268875495e-06,
+          "pointwise_two_mcse_at_worst": null
+        }
+      },
+      "paired_mean_max_error_change": -1.2907120511274073e-09,
+      "paired_change_two_mcse": null
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.0,
+      "method": "gls",
+      "scheduled": 1,
+      "complete": 1,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 2.1934099345005675e-06,
+          "mean_max_error": 2.1934099345005675e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.1934099345005675e-06,
+          "pointwise_two_mcse_at_worst": null
+        },
+        "original": {
+          "max_abs_mean": 2.1768828268875495e-06,
+          "mean_max_error": 2.1768828268875495e-06,
+          "rms_pointwise_sd": null,
+          "worst_mean_x": -1.299999999999999,
+          "worst_signed_mean": 2.1768828268875495e-06,
+          "pointwise_two_mcse_at_worst": null
+        }
+      },
+      "paired_mean_max_error_change": 1.652710761301801e-08,
+      "paired_change_two_mcse": null
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.03,
+      "method": "l2",
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 0.0009115885795175412,
+          "mean_max_error": 0.0009515525332186234,
+          "rms_pointwise_sd": 0.0002442393549385174,
+          "worst_mean_x": -1.0999999999999996,
+          "worst_signed_mean": -0.0009115885795175412,
+          "pointwise_two_mcse_at_worst": 0.00010608362878293865
+        },
+        "original": {
+          "max_abs_mean": 0.0008626565633981422,
+          "mean_max_error": 0.0009152870743897156,
+          "rms_pointwise_sd": 0.00024349271638247162,
+          "worst_mean_x": -1.0999999999999996,
+          "worst_signed_mean": -0.0008626565633981422,
+          "pointwise_two_mcse_at_worst": 0.00010299004761906596
+        }
+      },
+      "paired_mean_max_error_change": 3.626545882890776e-05,
+      "paired_change_two_mcse": 1.6305525782111243e-05
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.03,
+      "method": "gls",
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "candidate": {
+          "max_abs_mean": 0.0007545763767111916,
+          "mean_max_error": 0.0008138053695802692,
+          "rms_pointwise_sd": 0.00024495923990254287,
+          "worst_mean_x": -1.3499999999999996,
+          "worst_signed_mean": -0.0007545763767111916,
+          "pointwise_two_mcse_at_worst": 0.00013427612843573496
+        },
+        "original": {
+          "max_abs_mean": 0.0008626565633981422,
+          "mean_max_error": 0.0009152870743897156,
+          "rms_pointwise_sd": 0.00024349271638247162,
+          "worst_mean_x": -1.0999999999999996,
+          "worst_signed_mean": -0.0008626565633981422,
+          "pointwise_two_mcse_at_worst": 0.00010299004761906596
+        }
+      },
+      "paired_mean_max_error_change": -0.00010148170480944643,
+      "paired_change_two_mcse": 0.00015846214973072156
+    }
+  ],
+  "white_noise_control_identical": true,
+  "verification_artifact_sha256": "e6f685b78eb037fa50ff28ab61cb95d7aea064ac78c48a5ef2713b753a030592"
+}

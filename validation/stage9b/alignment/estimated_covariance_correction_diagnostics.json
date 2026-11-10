@@ -1,0 +1,398 @@
+{
+  "status": "diagnostic_evidence_verified",
+  "physical_acceptance": "incomplete",
+  "summary_sha256": "e76c14a540178936512e5c83927a573aadb482f8b5ca599fda3542cea3115363",
+  "verification_source_sha256": "02586b91a1190f4008ac86f54094b7bd5e2057aca3b907928947451a231aa716",
+  "protocol": {
+    "status": "diagnostic_only",
+    "source_sha256": "cb3ee5b0326f813a7d040b5212f95a1a244b9325ff1b2c3605942a80941230b6",
+    "helper_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+    "previous_protocol": {
+      "status": "diagnostic_only",
+      "source_sha256": "00bd3cc6062c8a84477a8dc7b91554a0d21f9fe7ab5f1474888345f6154afa44",
+      "helper_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+      "original_protocol": {
+        "status": "diagnostic_only",
+        "seed_start": 120000000,
+        "shape": "gompertz",
+        "phi": 0.0,
+        "windows": 64,
+        "groups": 12,
+        "subgroups": 6,
+        "methods": [
+          "l2",
+          "gls"
+        ],
+        "ridge_white_variance": 0.01,
+        "scheduled_trials": 36,
+        "sanity_checks": {
+          "status": "passed",
+          "checks": [
+            "interior_convolution_covariance",
+            "regularized_whitening_identity",
+            "known_translation",
+            "white_noise_l2_gls_identity"
+          ]
+        },
+        "sources": {
+          "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+          "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+          "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+          "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+          "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+          "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+          "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+          "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+          "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+          "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+          "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+        },
+        "source_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+        "input_sha256": {
+          "output/shock-high-order-density-controls/0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+          "output/shock-high-order-density-controls/0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+          "output/shock-high-order-density-controls/0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+          "output/shock-high-order-density-controls/0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+          "output/shock-high-order-density-controls/0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+          "output/shock-high-order-density-controls/0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+          "output/shock-high-order-density-controls/0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+          "output/shock-high-order-density-controls/0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+          "output/shock-high-order-density-controls/0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+          "output/shock-high-order-density-controls/0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+          "output/shock-high-order-density-controls/0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+          "output/shock-high-order-density-controls/0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+          "output/shock-high-order-density-controls/0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+          "output/shock-high-order-density-controls/0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+          "output/shock-high-order-density-controls/0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+          "output/shock-high-order-density-controls/0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+          "output/shock-high-order-density-controls/0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+          "output/shock-high-order-density-controls/0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+        },
+        "limitations": [
+          "Post-calibration exploration on reused paired seeds; no qualification.",
+          "GLS uses known synthetic spatial covariance, regularized by adding 1% independent variance; neither parameter estimated from physical data.",
+          "L2 control separates quadratic loss from covariance weighting; original learned template and its Huber refinement unchanged.",
+          "Residuals on fixed source nodes in initial 10-90% region; no noisy residual interpolation.",
+          "Every rejection retained; conditional summaries do not demonstrate unconditional performance.",
+          "No uncertainty or confidence coverage assessed; no production gate changed."
+        ]
+      },
+      "input_sha256": {
+        "output/shock-covariance-alignment/0.0-0.03-0-gls.json": "ba6fd02122b7be3829c7efb53a74652ef612b2044264df7b891cdaf741ce6daf",
+        "output/shock-covariance-alignment/0.0-0.03-1-gls.json": "147bb0e336d42839fc2a03541b4956b21cd16cff0fff029b7c5b7080a5d73d64",
+        "output/shock-covariance-alignment/0.0-0.03-2-gls.json": "30076f42fbae475af1e4a5e9885a6a6b1ceb7ed533f3a1d12c04627f06ff9fb1",
+        "output/shock-covariance-alignment/0.0-0.03-3-gls.json": "f4098efacfea0c065141a285c9380311d19739292d7a0838224444eec7a524e9",
+        "output/shock-covariance-alignment/0.0-0.03-4-gls.json": "e536413341043b98f71cec12303c9b09eb12b998bb172b82570ae2308a960ff5",
+        "output/shock-covariance-alignment/0.0-0.03-5-gls.json": "72428f6f4443613e8194128f68efdf4d4732581b8e31028c4e5cae97f8940baf",
+        "output/shock-covariance-alignment/0.0-0.03-6-gls.json": "d353d249ffa3321fd4b7837c4c777ed557f5f0d2bd100ec79ca2fe6eb2c5acfd",
+        "output/shock-covariance-alignment/0.0-0.03-7-gls.json": "aac24351a6f6a5d227f514060a3d1a71a077e8d6a1cec9e7a9964108bbc16b70",
+        "output/shock-covariance-alignment/0.2-0.03-0-gls.json": "64e257b070cc0697c674cd5a604c8c3a5657c881595c6e0b8e7188ae529c4fec",
+        "output/shock-covariance-alignment/0.2-0.03-1-gls.json": "881eeefebad90622d4227710ac48c7955eb4fe73c171d07a059ea10f9e35287c",
+        "output/shock-covariance-alignment/0.2-0.03-2-gls.json": "8219bffa88cba41bd622bdb1f5063e65a5385d810aa635ab93965a20988bca1b",
+        "output/shock-covariance-alignment/0.2-0.03-3-gls.json": "8f17d0145d55e84e791727fbcefaa58718b404a824018d62a6dc1cd4358e7c63",
+        "output/shock-covariance-alignment/0.2-0.03-4-gls.json": "78b6557af9f5074c897ad3cf9324fe15eace3a38bfef0a7abc8b20a2f6588233",
+        "output/shock-covariance-alignment/0.2-0.03-5-gls.json": "3a5c67d423ba03ab2775357ccffaa99c150220081cd8f52493157e2ba0e43c0c",
+        "output/shock-covariance-alignment/0.2-0.03-6-gls.json": "a24316cfd28f57b984daa32db0348f5b074519d983e2806ad0ca095cd508af9a",
+        "output/shock-covariance-alignment/0.2-0.03-7-gls.json": "34815f991ef54216bb38eacd602722fb0c3df58d3c0cb50121e93c368b7c06c8"
+      },
+      "scheduled_trials": 16,
+      "formula": "e=-w^T epsilon; w=P fprime/(fprime^T P fprime); bias(x)=0.5 Var(e) fsecond(x)-d/dx Cov(epsilon(x),w^T epsilon); subtract bias before final centering.",
+      "derivative_method": "Two numpy.gradient passes on learned 0.05 template grid; cross covariance cubic central difference h=0.0025.",
+      "limitations": [
+        "Exploratory second-order approximation, not confidence calibration.",
+        "Known synthetic noise variance 0.03^2 and spatial covariance; clean profile and true front are not used in correction.",
+        "Original learned template and GLS fitting retained; correction does not include template-estimation uncertainty or higher-order terms.",
+        "Mean translation bias proportional to fprime assumed removed by final centering; residual must be measured, not assumed zero.",
+        "Reused eight paired seeds per scenario; no physical acceptance or production change."
+      ]
+    },
+    "input_sha256": {
+      "output/shock-covariance-bias-correction/0.0-0.json": "bbc7374ad415db37fcc2aba1ff2a89067ee4853d5013af74cd5b791f038f0615",
+      "output/shock-covariance-bias-correction/0.0-1.json": "4b08cc3f9e036d60d8d55ae22ba196b7f628d9b89f4201dd7bd2052173c529d0",
+      "output/shock-covariance-bias-correction/0.0-2.json": "166b92cc3ac2b2c9fad933d785e28b86a260364f5db282ec77b1fa2ba038dcbb",
+      "output/shock-covariance-bias-correction/0.0-3.json": "535c1a80e6298e157ebda7524767a2f28e79b978f43cee34498293033468a9ce",
+      "output/shock-covariance-bias-correction/0.0-4.json": "702dbbed5edf2e0f42b342a6c5df03b6a613d50cfa401446d6fdbb3e6ccfaf83",
+      "output/shock-covariance-bias-correction/0.0-5.json": "536beb5f90fef617112632bf63789546f60155b015e28ae00164bd21a4bc7f3b",
+      "output/shock-covariance-bias-correction/0.0-6.json": "1f47ceba786e9adac1d0dc3dfc047d631737c7fa8fcc007b16522c4f3c4922de",
+      "output/shock-covariance-bias-correction/0.0-7.json": "daddf91c1815b239b2b292814772afc1a42640d1279eff44f7b9c8ba6d1b4b93",
+      "output/shock-covariance-bias-correction/0.2-0.json": "1c1b3baced6b1baf6efdc1f3f86e6fe22f4c8cc5b9f5644e0af40d0e8afd1c57",
+      "output/shock-covariance-bias-correction/0.2-1.json": "62f527bca5cd338813b04b3d9da0dcc09b40baddef1116b7a8d74ac65dfedfdc",
+      "output/shock-covariance-bias-correction/0.2-2.json": "4a9413087abe8a46c036d89348ed37f45d8c57779efa685fb40bbe8589ff9c6c",
+      "output/shock-covariance-bias-correction/0.2-3.json": "e11a227160538c99b289c8e64a8a95e05d5ea7f17b34cbe164a4c24ac57c1ec8",
+      "output/shock-covariance-bias-correction/0.2-4.json": "8a90b87da6a532af991d1a4b9b1940e5b50dc887cd7f17c7be8a8c5d4de6ee94",
+      "output/shock-covariance-bias-correction/0.2-5.json": "1345a50c422098fbbf0d6c719f3ee5306be7e70340514f066ca5089b2146229a",
+      "output/shock-covariance-bias-correction/0.2-6.json": "8a0e696cb05e85db3bc6c90053666d1f0a8642cbcbbc094ffc1289ccf4808d18",
+      "output/shock-covariance-bias-correction/0.2-7.json": "441758576b5aa2a6ca35cf2db7290546f8d43f085c0823eb64034a8d80178a76"
+    },
+    "scheduled_trials": 16,
+    "sanity_checks": {
+      "status": "passed",
+      "checks": [
+        "heldout_seed_excluded_from_noise_fit",
+        "positive_variance",
+        "interior_correlation_fit"
+      ]
+    },
+    "noise_fit": {
+      "training": "Other two seeds, 128 windows; physical plateau nodes [-12,-8] and [8,12].",
+      "centering": "Subtract across-window mean at each fixed source node; covariance denominator n-1.",
+      "model": "Stationary Gaussian convolution, 13 taps at spacing 0.1, unit marginal variance.",
+      "width_candidates": [
+        0.0,
+        0.005,
+        0.01,
+        0.015,
+        0.02,
+        0.025,
+        0.03,
+        0.035,
+        0.04,
+        0.045,
+        0.05,
+        0.055,
+        0.06,
+        0.065,
+        0.07,
+        0.075,
+        0.08,
+        0.085,
+        0.09,
+        0.095,
+        0.1,
+        0.105,
+        0.11,
+        0.115,
+        0.12,
+        0.125,
+        0.13,
+        0.135,
+        0.14,
+        0.145,
+        0.15,
+        0.155,
+        0.16,
+        0.165,
+        0.17,
+        0.17500000000000002,
+        0.18,
+        0.185,
+        0.19,
+        0.195,
+        0.2,
+        0.20500000000000002,
+        0.21,
+        0.215,
+        0.22,
+        0.225,
+        0.23,
+        0.23500000000000001,
+        0.24,
+        0.245,
+        0.25,
+        0.255,
+        0.26,
+        0.265,
+        0.27,
+        0.275,
+        0.28,
+        0.28500000000000003,
+        0.29,
+        0.295,
+        0.3,
+        0.305,
+        0.31,
+        0.315,
+        0.32,
+        0.325,
+        0.33,
+        0.335,
+        0.34,
+        0.34500000000000003,
+        0.35000000000000003,
+        0.355,
+        0.36,
+        0.365,
+        0.37,
+        0.375,
+        0.38,
+        0.385,
+        0.39,
+        0.395,
+        0.4,
+        0.405,
+        0.41000000000000003,
+        0.41500000000000004,
+        0.42,
+        0.425,
+        0.43,
+        0.435,
+        0.44,
+        0.445,
+        0.45,
+        0.455,
+        0.46,
+        0.465,
+        0.47000000000000003,
+        0.47500000000000003,
+        0.48,
+        0.485,
+        0.49,
+        0.495,
+        0.5
+      ],
+      "fit": "Unweighted least squares of normalized autocovariance lags 1..12; variance from lag 0."
+    },
+    "limitations": [
+      "Exploratory reused paired seeds, not qualification or confidence calibration.",
+      "Neither known noise parameters, clean profile nor true front enter fitting or correction; synthetic covariance family is assumed.",
+      "Spatially homogeneous noise model and fixed plateau regions are not justified for physical solver data.",
+      "Temporal phi=0 only; estimated-noise and template uncertainty not yet propagated into confidence intervals.",
+      "Same second-order approximation and numerical derivative settings as prior diagnostic; no production change."
+    ]
+  },
+  "checkpoint_sha256": {
+    "output/shock-estimated-covariance-correction/0.0-0.json": "509ddbef604cbe5a6e8b156390a4fb16458fe8c0df1b3acc507149576222eec2",
+    "output/shock-estimated-covariance-correction/0.0-1.json": "211e9d5ee6946d4dce33604cd2a9295dd5eefa25c1c05bf103ae74f32a2cc956",
+    "output/shock-estimated-covariance-correction/0.0-2.json": "96f65cb8ff363b3dc3add29ea20e1a641a7fb3f808dd27cff71f3c98c257843e",
+    "output/shock-estimated-covariance-correction/0.0-3.json": "d2cdb96fadcddb11925e6279bfae6df00fbbf2db7477837da81a79dc5f1ac80c",
+    "output/shock-estimated-covariance-correction/0.0-4.json": "cc202424a54fe250958e9479ea60403657eea81b7b9386ecc861c678dd171c18",
+    "output/shock-estimated-covariance-correction/0.0-5.json": "9ac1fc476840c35a4c52a8969cb44a7f8af88d4593770c0da7b4dbf7e86aa5fc",
+    "output/shock-estimated-covariance-correction/0.0-6.json": "1d5af509a4dbc8f6eca40870d152e8d5990abdaa38dc3049193f38a15da1cd22",
+    "output/shock-estimated-covariance-correction/0.0-7.json": "84beb6b4b4b19c930400ba1c6d11a42891335f36c05a3e40b92a4b6e03cbc43a",
+    "output/shock-estimated-covariance-correction/0.2-0.json": "8f1153ca17d7e1cf4912bee3ba50f5d860678b4bab5f9fb25d8851f5b9996f07",
+    "output/shock-estimated-covariance-correction/0.2-1.json": "1db9cf9f4d0c5b7c7e5f7c01724776f0a552039ece3a3dcb548a919ad5197c66",
+    "output/shock-estimated-covariance-correction/0.2-2.json": "9f7192a69aa2c4fd1ac470cb51cc7ecfd7d75a5e67634e6529ea3b931351029e",
+    "output/shock-estimated-covariance-correction/0.2-3.json": "bb190ce50307e7ed0eb270da118fafc89de97c4153dd9c81b0a53d6854ae3180",
+    "output/shock-estimated-covariance-correction/0.2-4.json": "db7797b39e4f42808ad3bf64727a3b3fc7494833011343316043a7ec68bc434a",
+    "output/shock-estimated-covariance-correction/0.2-5.json": "faba9fcc3ae97968b4cb90dbd0be7a109983f90c05239dbeb07cfa2cff5faccf",
+    "output/shock-estimated-covariance-correction/0.2-6.json": "9d591365a7bf5a21086c06d7f4a5df9dba45e57b2776e8e19e9cd6d5ed28c904",
+    "output/shock-estimated-covariance-correction/0.2-7.json": "a4b94f8151f3c3e7dc1b46c6784b71fc042b9e20a6ab35469603b06260a2f3e4"
+  },
+  "cases": [
+    {
+      "spatial": 0.0,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "uncorrected": {
+          "max_abs_mean": 0.0004314127843265767,
+          "mean_max_error": 0.000740184987708587,
+          "rms_pointwise_sd": 0.00022735607942775185
+        },
+        "corrected": {
+          "max_abs_mean": 0.0002148685750464202,
+          "mean_max_error": 0.0007176337079281925,
+          "rms_pointwise_sd": 0.00022741766303337952
+        },
+        "known_noise_corrected": {
+          "max_abs_mean": 0.00021482938787140138,
+          "mean_max_error": 0.00071758141262674,
+          "rms_pointwise_sd": 0.0002274201261034721
+        },
+        "original": {
+          "max_abs_mean": 0.0005225678830319685,
+          "mean_max_error": 0.0007350724817514054,
+          "rms_pointwise_sd": 0.00023053058324493252
+        }
+      },
+      "paired_comparisons": {
+        "uncorrected": {
+          "mean_max_error_change": -2.2551279780394566e-05,
+          "change_two_mcse": 3.8135223928101336e-05,
+          "improved_trials": 6
+        },
+        "known_noise_corrected": {
+          "mean_max_error_change": 5.22953014523911e-08,
+          "change_two_mcse": 3.9698077456735495e-08,
+          "improved_trials": 1
+        },
+        "original": {
+          "mean_max_error_change": -1.7438773823212977e-05,
+          "change_two_mcse": 5.916182007455038e-05,
+          "improved_trials": 5
+        }
+      },
+      "noise_fit_summary": {
+        "width": {
+          "mean": 0.01546875,
+          "minimum": 0.0,
+          "maximum": 0.035
+        },
+        "variance": {
+          "mean": 0.0008994448295044055,
+          "minimum": 0.0008600975491626479,
+          "maximum": 0.0009403022376426566
+        },
+        "model_acf_rmse": {
+          "mean": 0.010350352062428715,
+          "minimum": 0.004015551078766073,
+          "maximum": 0.017613814615342872
+        }
+      }
+    },
+    {
+      "spatial": 0.2,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "uncorrected": {
+          "max_abs_mean": 0.0007548268772812009,
+          "mean_max_error": 0.00081409358170237,
+          "rms_pointwise_sd": 0.0002449755843013324
+        },
+        "corrected": {
+          "max_abs_mean": 0.0002884336613558553,
+          "mean_max_error": 0.0006482897421542428,
+          "rms_pointwise_sd": 0.0002452773634524561
+        },
+        "known_noise_corrected": {
+          "max_abs_mean": 0.0002885364583955158,
+          "mean_max_error": 0.0006482417610745724,
+          "rms_pointwise_sd": 0.00024529261899004236
+        },
+        "original": {
+          "max_abs_mean": 0.0008626565633981422,
+          "mean_max_error": 0.0009152870743897156,
+          "rms_pointwise_sd": 0.00024349271638247162
+        }
+      },
+      "paired_comparisons": {
+        "uncorrected": {
+          "mean_max_error_change": -0.000165803839548127,
+          "change_two_mcse": 0.00013334420314807681,
+          "improved_trials": 7
+        },
+        "known_noise_corrected": {
+          "mean_max_error_change": 4.7981079670528096e-08,
+          "change_two_mcse": 1.4063251982890294e-07,
+          "improved_trials": 3
+        },
+        "original": {
+          "mean_max_error_change": -0.0002669973322354727,
+          "change_two_mcse": 0.00011237307174530104,
+          "improved_trials": 8
+        }
+      },
+      "noise_fit_summary": {
+        "width": {
+          "mean": 0.20015625,
+          "minimum": 0.18,
+          "maximum": 0.225
+        },
+        "variance": {
+          "mean": 0.0008999565776137331,
+          "minimum": 0.0008016367288299969,
+          "maximum": 0.0010045835427872126
+        },
+        "model_acf_rmse": {
+          "mean": 0.015014936905486057,
+          "minimum": 0.002211408964314095,
+          "maximum": 0.05606260172200757
+        }
+      }
+    }
+  ],
+  "verification_artifact_sha256": "a36f66e60ae5f1e5414ac00ab94478549f0dbaff58d82ace1ef3c92df32573a8"
+}

@@ -1,0 +1,180 @@
+{
+  "status": "diagnostic_evidence_verified",
+  "physical_acceptance": "incomplete",
+  "summary_sha256": "767f177f289439023461e744607a2de49d491145839586cfd3ba3e2f2b78d664",
+  "verification_source_sha256": "84d77f4da0b28b78357c391b543c377cd0d24e916593fd9b9a0d0ce795d188b2",
+  "protocol": {
+    "status": "diagnostic_only",
+    "source_sha256": "00bd3cc6062c8a84477a8dc7b91554a0d21f9fe7ab5f1474888345f6154afa44",
+    "helper_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+    "original_protocol": {
+      "status": "diagnostic_only",
+      "seed_start": 120000000,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "windows": 64,
+      "groups": 12,
+      "subgroups": 6,
+      "methods": [
+        "l2",
+        "gls"
+      ],
+      "ridge_white_variance": 0.01,
+      "scheduled_trials": 36,
+      "sanity_checks": {
+        "status": "passed",
+        "checks": [
+          "interior_convolution_covariance",
+          "regularized_whitening_identity",
+          "known_translation",
+          "white_noise_l2_gls_identity"
+        ]
+      },
+      "sources": {
+        "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+        "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+        "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+        "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+        "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+        "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+        "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+        "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+        "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+        "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+        "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+      },
+      "source_sha256": "d5c14744cba905e7bafd209b8f25a595d443d8d6dd940e9c6918bfcbe04c3c4c",
+      "input_sha256": {
+        "output/shock-high-order-density-controls/0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+        "output/shock-high-order-density-controls/0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+        "output/shock-high-order-density-controls/0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+        "output/shock-high-order-density-controls/0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+        "output/shock-high-order-density-controls/0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+        "output/shock-high-order-density-controls/0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+        "output/shock-high-order-density-controls/0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+        "output/shock-high-order-density-controls/0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+        "output/shock-high-order-density-controls/0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+        "output/shock-high-order-density-controls/0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+        "output/shock-high-order-density-controls/0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+        "output/shock-high-order-density-controls/0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+        "output/shock-high-order-density-controls/0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+        "output/shock-high-order-density-controls/0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+        "output/shock-high-order-density-controls/0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+        "output/shock-high-order-density-controls/0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+        "output/shock-high-order-density-controls/0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+        "output/shock-high-order-density-controls/0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+      },
+      "limitations": [
+        "Post-calibration exploration on reused paired seeds; no qualification.",
+        "GLS uses known synthetic spatial covariance, regularized by adding 1% independent variance; neither parameter estimated from physical data.",
+        "L2 control separates quadratic loss from covariance weighting; original learned template and its Huber refinement unchanged.",
+        "Residuals on fixed source nodes in initial 10-90% region; no noisy residual interpolation.",
+        "Every rejection retained; conditional summaries do not demonstrate unconditional performance.",
+        "No uncertainty or confidence coverage assessed; no production gate changed."
+      ]
+    },
+    "input_sha256": {
+      "output/shock-covariance-alignment/0.0-0.03-0-gls.json": "ba6fd02122b7be3829c7efb53a74652ef612b2044264df7b891cdaf741ce6daf",
+      "output/shock-covariance-alignment/0.0-0.03-1-gls.json": "147bb0e336d42839fc2a03541b4956b21cd16cff0fff029b7c5b7080a5d73d64",
+      "output/shock-covariance-alignment/0.0-0.03-2-gls.json": "30076f42fbae475af1e4a5e9885a6a6b1ceb7ed533f3a1d12c04627f06ff9fb1",
+      "output/shock-covariance-alignment/0.0-0.03-3-gls.json": "f4098efacfea0c065141a285c9380311d19739292d7a0838224444eec7a524e9",
+      "output/shock-covariance-alignment/0.0-0.03-4-gls.json": "e536413341043b98f71cec12303c9b09eb12b998bb172b82570ae2308a960ff5",
+      "output/shock-covariance-alignment/0.0-0.03-5-gls.json": "72428f6f4443613e8194128f68efdf4d4732581b8e31028c4e5cae97f8940baf",
+      "output/shock-covariance-alignment/0.0-0.03-6-gls.json": "d353d249ffa3321fd4b7837c4c777ed557f5f0d2bd100ec79ca2fe6eb2c5acfd",
+      "output/shock-covariance-alignment/0.0-0.03-7-gls.json": "aac24351a6f6a5d227f514060a3d1a71a077e8d6a1cec9e7a9964108bbc16b70",
+      "output/shock-covariance-alignment/0.2-0.03-0-gls.json": "64e257b070cc0697c674cd5a604c8c3a5657c881595c6e0b8e7188ae529c4fec",
+      "output/shock-covariance-alignment/0.2-0.03-1-gls.json": "881eeefebad90622d4227710ac48c7955eb4fe73c171d07a059ea10f9e35287c",
+      "output/shock-covariance-alignment/0.2-0.03-2-gls.json": "8219bffa88cba41bd622bdb1f5063e65a5385d810aa635ab93965a20988bca1b",
+      "output/shock-covariance-alignment/0.2-0.03-3-gls.json": "8f17d0145d55e84e791727fbcefaa58718b404a824018d62a6dc1cd4358e7c63",
+      "output/shock-covariance-alignment/0.2-0.03-4-gls.json": "78b6557af9f5074c897ad3cf9324fe15eace3a38bfef0a7abc8b20a2f6588233",
+      "output/shock-covariance-alignment/0.2-0.03-5-gls.json": "3a5c67d423ba03ab2775357ccffaa99c150220081cd8f52493157e2ba0e43c0c",
+      "output/shock-covariance-alignment/0.2-0.03-6-gls.json": "a24316cfd28f57b984daa32db0348f5b074519d983e2806ad0ca095cd508af9a",
+      "output/shock-covariance-alignment/0.2-0.03-7-gls.json": "34815f991ef54216bb38eacd602722fb0c3df58d3c0cb50121e93c368b7c06c8"
+    },
+    "scheduled_trials": 16,
+    "formula": "e=-w^T epsilon; w=P fprime/(fprime^T P fprime); bias(x)=0.5 Var(e) fsecond(x)-d/dx Cov(epsilon(x),w^T epsilon); subtract bias before final centering.",
+    "derivative_method": "Two numpy.gradient passes on learned 0.05 template grid; cross covariance cubic central difference h=0.0025.",
+    "limitations": [
+      "Exploratory second-order approximation, not confidence calibration.",
+      "Known synthetic noise variance 0.03^2 and spatial covariance; clean profile and true front are not used in correction.",
+      "Original learned template and GLS fitting retained; correction does not include template-estimation uncertainty or higher-order terms.",
+      "Mean translation bias proportional to fprime assumed removed by final centering; residual must be measured, not assumed zero.",
+      "Reused eight paired seeds per scenario; no physical acceptance or production change."
+    ]
+  },
+  "checkpoint_sha256": {
+    "output/shock-covariance-bias-correction/0.0-0.json": "bbc7374ad415db37fcc2aba1ff2a89067ee4853d5013af74cd5b791f038f0615",
+    "output/shock-covariance-bias-correction/0.0-1.json": "4b08cc3f9e036d60d8d55ae22ba196b7f628d9b89f4201dd7bd2052173c529d0",
+    "output/shock-covariance-bias-correction/0.0-2.json": "166b92cc3ac2b2c9fad933d785e28b86a260364f5db282ec77b1fa2ba038dcbb",
+    "output/shock-covariance-bias-correction/0.0-3.json": "535c1a80e6298e157ebda7524767a2f28e79b978f43cee34498293033468a9ce",
+    "output/shock-covariance-bias-correction/0.0-4.json": "702dbbed5edf2e0f42b342a6c5df03b6a613d50cfa401446d6fdbb3e6ccfaf83",
+    "output/shock-covariance-bias-correction/0.0-5.json": "536beb5f90fef617112632bf63789546f60155b015e28ae00164bd21a4bc7f3b",
+    "output/shock-covariance-bias-correction/0.0-6.json": "1f47ceba786e9adac1d0dc3dfc047d631737c7fa8fcc007b16522c4f3c4922de",
+    "output/shock-covariance-bias-correction/0.0-7.json": "daddf91c1815b239b2b292814772afc1a42640d1279eff44f7b9c8ba6d1b4b93",
+    "output/shock-covariance-bias-correction/0.2-0.json": "1c1b3baced6b1baf6efdc1f3f86e6fe22f4c8cc5b9f5644e0af40d0e8afd1c57",
+    "output/shock-covariance-bias-correction/0.2-1.json": "62f527bca5cd338813b04b3d9da0dcc09b40baddef1116b7a8d74ac65dfedfdc",
+    "output/shock-covariance-bias-correction/0.2-2.json": "4a9413087abe8a46c036d89348ed37f45d8c57779efa685fb40bbe8589ff9c6c",
+    "output/shock-covariance-bias-correction/0.2-3.json": "e11a227160538c99b289c8e64a8a95e05d5ea7f17b34cbe164a4c24ac57c1ec8",
+    "output/shock-covariance-bias-correction/0.2-4.json": "8a90b87da6a532af991d1a4b9b1940e5b50dc887cd7f17c7be8a8c5d4de6ee94",
+    "output/shock-covariance-bias-correction/0.2-5.json": "1345a50c422098fbbf0d6c719f3ee5306be7e70340514f066ca5089b2146229a",
+    "output/shock-covariance-bias-correction/0.2-6.json": "8a0e696cb05e85db3bc6c90053666d1f0a8642cbcbbc094ffc1289ccf4808d18",
+    "output/shock-covariance-bias-correction/0.2-7.json": "441758576b5aa2a6ca35cf2db7290546f8d43f085c0823eb64034a8d80178a76"
+  },
+  "cases": [
+    {
+      "spatial": 0.0,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "uncorrected": {
+          "max_abs_mean": 0.0004317352048419931,
+          "mean_max_error": 0.0007400754246438578,
+          "rms_pointwise_sd": 0.00022735659762841587,
+          "worst_mean_x": -1.1500000000000004,
+          "worst_signed_mean": -0.0004317352048419931,
+          "pointwise_two_mcse_at_worst": 0.00015106620503271088
+        },
+        "corrected": {
+          "max_abs_mean": 0.00021482938787140138,
+          "mean_max_error": 0.00071758141262674,
+          "rms_pointwise_sd": 0.0002274201261034721,
+          "worst_mean_x": 8.600000000000001,
+          "worst_signed_mean": -0.00021482938787140138,
+          "pointwise_two_mcse_at_worst": 0.0001230356290133129
+        }
+      },
+      "paired_mean_max_error_change": -2.249401201711783e-05,
+      "paired_change_two_mcse": 3.8244330220701114e-05,
+      "improved_trials": 6
+    },
+    {
+      "spatial": 0.2,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "uncorrected": {
+          "max_abs_mean": 0.0007545763767111916,
+          "mean_max_error": 0.0008138053695802692,
+          "rms_pointwise_sd": 0.00024495923990254287,
+          "worst_mean_x": -1.3499999999999996,
+          "worst_signed_mean": -0.0007545763767111916,
+          "pointwise_two_mcse_at_worst": 0.00013427612843573496
+        },
+        "corrected": {
+          "max_abs_mean": 0.0002885364583955158,
+          "mean_max_error": 0.0006482417610745724,
+          "rms_pointwise_sd": 0.00024529261899004236,
+          "worst_mean_x": -7.3,
+          "worst_signed_mean": 0.0002885364583955158,
+          "pointwise_two_mcse_at_worst": 0.00010036043407875847
+        }
+      },
+      "paired_mean_max_error_change": -0.0001655636085056968,
+      "paired_change_two_mcse": 0.00013301611333164622,
+      "improved_trials": 7
+    }
+  ],
+  "verification_artifact_sha256": "4cb923e11ac582afef6dca1bd0ef8afc99f73631be1dd17cf48049e6a0c369eb"
+}
