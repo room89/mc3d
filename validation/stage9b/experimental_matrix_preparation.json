@@ -88,5 +88,28 @@
     },
     "verification_artifact": "output/alsmeyer-reference-sparta-smoke/C-30001/smoke-verification.json",
     "verification_sha256": "b8b80e5897e70caf4e69a8561e7c4a7402979cfbb926837c84d9ae96d34aeb84"
+  },
+  "input_verification": {
+    "status": "prepared_inputs_verified",
+    "physical_acceptance": "incomplete",
+    "mc3d_cases": 21,
+    "sparta_cases": 9,
+    "seeds": [
+      30001,
+      30002,
+      30003
+    ],
+    "evidence_sha256": "19db647886c6ec7b7f3bc93b35e5b3bc298c6fd9ddb0fc7212edf40e8c5b43ee",
+    "preparation_sha256": "a03cb5bc5bce363d6e03f691a30fcf8c818ff48f6734f66247fa8ecd0254acb1",
+    "export_sha256": "831105965d8d2330481868f7caeb364bd2792c14094bab4b45e6359cd461e142",
+    "tool_sha256": "87e387ef06882978895cf1bc00ff712ad1b081918d52b447c4e99f05e0b5ae0f",
+    "limitations": [
+      "Solver execution and output completeness have not been verified.",
+      "Three seeds do not supply the independent-group replication required by the candidate estimator.",
+      "Method qualification, numerical convergence and experimental acceptance remain separate requirements."
+    ],
+    "artifact": "output/alsmeyer-reference-input-verification.json",
+    "sha256": "bd913e902e5ce66d2efb43c5a557fea4e8e019eb8417968307036c4318add35c",
+    "evidence_snapshot": "output/alsmeyer-reference-evidence.json"
   }
 }
