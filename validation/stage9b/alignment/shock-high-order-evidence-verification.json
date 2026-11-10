@@ -1,0 +1,91 @@
+{
+  "status": "complete_matching_evidence",
+  "method": "cubic_quintic_crossfit_v1",
+  "physical_acceptance": "incomplete",
+  "full": {
+    "windows": 64,
+    "trial_count": 3072,
+    "rejected_trials": 0,
+    "minimum_metric_coverage": [
+      1.0,
+      0.953125
+    ],
+    "minimum_density_coverage": 0.90625,
+    "fixture_seed_range": [
+      114000000,
+      114012771
+    ],
+    "bootstrap_seed_range": [
+      115000000,
+      115000127
+    ]
+  },
+  "half": {
+    "windows": 32,
+    "trial_count": 3072,
+    "rejected_trials": 1,
+    "minimum_metric_coverage": [
+      0.9921875,
+      0.9765625
+    ],
+    "minimum_density_coverage": 0.953125,
+    "fixture_seed_range": [
+      116000000,
+      116012771
+    ],
+    "bootstrap_seed_range": [
+      117000000,
+      117000127
+    ]
+  },
+  "screening": [
+    {
+      "windows": 64,
+      "trial_count": 192,
+      "rejected_trials": 0,
+      "minimum_metric_coverage": [
+        1.0,
+        0.875
+      ],
+      "minimum_density_coverage": 0.875,
+      "fixture_seed_range": [
+        110000000,
+        110000771
+      ],
+      "bootstrap_seed_range": [
+        111000000,
+        111000007
+      ]
+    },
+    {
+      "windows": 32,
+      "trial_count": 192,
+      "rejected_trials": 0,
+      "minimum_metric_coverage": [
+        1.0,
+        1.0
+      ],
+      "minimum_density_coverage": 0.875,
+      "fixture_seed_range": [
+        112000000,
+        112000771
+      ],
+      "bootstrap_seed_range": [
+        113000000,
+        113000007
+      ]
+    }
+  ],
+  "report_sha256": [
+    "138fe916a3c1a61e33bb04e98b19d98325f53052c0f4427aaed303d23c8e5afe",
+    "fa664ea470f4643c47376a3d39f24e54a7078c090e51f3a4f399f9ba39a39581",
+    "e41ce00093850cc24a08653488c09a5d38ccdf6e7ac7314e6d783ce34c392817",
+    "194ea0cb58c177da509b79527ed551ba97f5ca232c0d81a7fc89cbca3099633c"
+  ],
+  "tool_sha256": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac",
+  "limitations": [
+    "Completion, protocol identity and internal consistency are checked; nominal coverage is not certified.",
+    "Seed separation does not replace scientific assessment or exclude undocumented model selection.",
+    "Synthetic coverage does not establish numerical convergence or experimental agreement."
+  ]
+}
