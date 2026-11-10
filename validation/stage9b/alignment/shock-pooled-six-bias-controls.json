@@ -1,0 +1,303 @@
+{
+  "status": "diagnostic_only",
+  "protocol": {
+    "seed_start": 60000000,
+    "group_count": 12,
+    "subgroups": 6,
+    "windows": 64,
+    "sources": {
+      "diagnose_shock_ensemble_bias.py": "12a67e981dd5ccee368ce71b0ce66faf65105bc69cfdc3025a8017210905c462",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006"
+    }
+  },
+  "cases": [
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "valid_count": 32,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 9.433356628184633e-05,
+          "sd": 0.0008189364557784566,
+          "mean_two_se": 0.0002895377606209119
+        },
+        "refined_width": {
+          "mean": -0.002252818360272652,
+          "sd": 0.0008452670573467625,
+          "mean_two_se": 0.000298847034081747
+        },
+        "oracle_cubic": {
+          "mean": 0.001110183777440106,
+          "sd": 0.0018877848778640581,
+          "mean_two_se": 0.0006674327442795469
+        },
+        "oracle_quintic": {
+          "mean": 0.0005997566358996349,
+          "sd": 0.0023748273073517542,
+          "mean_two_se": 0.0008396282465877073
+        },
+        "oracle_selected_peak": {
+          "mean": 0.008667338450482426,
+          "sd": 0.003185721916062972,
+          "mean_two_se": 0.0011263227849113643
+        },
+        "refined_cubic": {
+          "mean": 0.002910035655387933,
+          "sd": 0.002419658883173745,
+          "mean_two_se": 0.0008554786022252116
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.0023652995086103426,
+          "sd": 0.0033106284804216082,
+          "mean_two_se": 0.0011704839242477171
+        },
+        "alignment_width": {
+          "mean": -0.0023471519265544985,
+          "sd": 0.00021475350019400303,
+          "mean_two_se": 7.592682813536304e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 0.0017998518779478272,
+          "sd": 0.0015008643799003826,
+          "mean_two_se": 0.0005306356903344516
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0005447361467775906,
+          "sd": 0.001211083259008804,
+          "mean_two_se": 0.00042818259251331455
+        },
+        "peak_selection_only": {
+          "mean": 0.00755715467304232,
+          "sd": 0.002237697359355522,
+          "mean_two_se": 0.0007911454885217602
+        },
+        "alignment_given_peak_selection": {
+          "mean": -0.005757302795094493,
+          "sd": 0.0014233259389349825,
+          "mean_two_se": 0.000503221711629818
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "valid_count": 32,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.00035092543757124853,
+          "sd": 0.0010063753657448163,
+          "mean_two_se": 0.00035580742276862575
+        },
+        "refined_width": {
+          "mean": -0.0017541714614264722,
+          "sd": 0.001003492221214045,
+          "mean_two_se": 0.00035478807724420114
+        },
+        "oracle_cubic": {
+          "mean": 0.0026424190405826414,
+          "sd": 0.0012802164614766495,
+          "mean_two_se": 0.0004526248706483926
+        },
+        "oracle_quintic": {
+          "mean": 0.0012071585755336553,
+          "sd": 0.0016043476157124171,
+          "mean_two_se": 0.0005672225392253596
+        },
+        "oracle_selected_peak": {
+          "mean": 0.004715677637625933,
+          "sd": 0.0015435987794662404,
+          "mean_two_se": 0.0005457445821959283
+        },
+        "refined_cubic": {
+          "mean": 0.0013707073914899746,
+          "sd": 0.0013734732704695364,
+          "mean_two_se": 0.0004855961316637371
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.00018123010084068747,
+          "sd": 0.0018992892569195587,
+          "mean_two_se": 0.0006715001565012894
+        },
+        "alignment_width": {
+          "mean": -0.0021050968989977208,
+          "sd": 0.00017367705981724226,
+          "mean_two_se": 6.140411336665682e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": -0.0012717116490926668,
+          "sd": 0.0005344189008932739,
+          "mean_two_se": 0.0001889456144079477
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0011894772906492872,
+          "sd": 0.0007752232347413848,
+          "mean_two_se": 0.00027408280310950195
+        },
+        "peak_selection_only": {
+          "mean": 0.0020732585970432912,
+          "sd": 0.0006085858951072083,
+          "mean_two_se": 0.00021516760668239594
+        },
+        "alignment_given_peak_selection": {
+          "mean": -0.003344970246135958,
+          "sd": 0.0004687762205541642,
+          "mean_two_se": 0.00016573742220642504
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "valid_count": 32,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.0002593249067416384,
+          "sd": 0.0003084277081030985,
+          "mean_two_se": 0.00010904566195276301
+        },
+        "refined_width": {
+          "mean": -1.3644732708595342e-05,
+          "sd": 0.00028857542092859434,
+          "mean_two_se": 0.0001020268185111857
+        },
+        "oracle_cubic": {
+          "mean": 0.0011263292844575848,
+          "sd": 0.000515354753865761,
+          "mean_two_se": 0.00018220542058760186
+        },
+        "oracle_quintic": {
+          "mean": 0.00046867424696430543,
+          "sd": 0.0009940250078774725,
+          "mean_two_se": 0.00035144091186958603
+        },
+        "oracle_selected_peak": {
+          "mean": 0.0028973974865113133,
+          "sd": 0.0007520474165127324,
+          "mean_two_se": 0.0002658889139949885
+        },
+        "refined_cubic": {
+          "mean": 0.0014338827643166768,
+          "sd": 0.0005554725934557816,
+          "mean_two_se": 0.0001963892187979307
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.0008625596139944826,
+          "sd": 0.0011492615121864139,
+          "mean_two_se": 0.0004063253043118596
+        },
+        "alignment_width": {
+          "mean": -0.0002729696394502337,
+          "sd": 8.46713487125691e-05,
+          "mean_two_se": 2.993584242343423e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 0.00030755347985909204,
+          "sd": 0.00016004224119810432,
+          "mean_two_se": 5.65834770137363e-05
+        },
+        "derivative_order_gradient": {
+          "mean": -0.0005713231503221942,
+          "sd": 0.0008267617318138554,
+          "mean_two_se": 0.0002923044134955554
+        },
+        "peak_selection_only": {
+          "mean": 0.0017710682020537286,
+          "sd": 0.0004428974536720541,
+          "mean_two_se": 0.0001565878964308821
+        },
+        "alignment_given_peak_selection": {
+          "mean": -0.0014635147221946365,
+          "sd": 0.00035766174103391457,
+          "mean_two_se": 0.00012645252122803392
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "valid_count": 32,
+      "failed_count": 0,
+      "summary": {
+        "oracle_width": {
+          "mean": 0.0005697687732129711,
+          "sd": 0.00038486789421865247,
+          "mean_two_se": 0.00013607134893149799
+        },
+        "refined_width": {
+          "mean": 0.0004537701603849996,
+          "sd": 0.0003774933924374026,
+          "mean_two_se": 0.00013346406882280097
+        },
+        "oracle_cubic": {
+          "mean": 0.002654114685870436,
+          "sd": 0.0003506551511082978,
+          "mean_two_se": 0.00012397531760333544
+        },
+        "oracle_quintic": {
+          "mean": 0.0011230879748149215,
+          "sd": 0.0006605924169909553,
+          "mean_two_se": 0.000233554688827358
+        },
+        "oracle_selected_peak": {
+          "mean": 0.0029250017526224817,
+          "sd": 0.0003823578543553508,
+          "mean_two_se": 0.0001351839158273034
+        },
+        "refined_cubic": {
+          "mean": 0.002680976884945091,
+          "sd": 0.0003694851037299529,
+          "mean_two_se": 0.00013063271119743232
+        },
+        "refined_quintic_same_peak": {
+          "mean": 0.001348603220808639,
+          "sd": 0.0007249041062207158,
+          "mean_two_se": 0.0002562923046093207
+        },
+        "alignment_width": {
+          "mean": -0.0001159986128279715,
+          "sd": 5.720938338922782e-05,
+          "mean_two_se": 2.022657147101201e-05
+        },
+        "alignment_and_peak_gradient": {
+          "mean": 2.686219907465509e-05,
+          "sd": 0.00010725923137775484,
+          "mean_two_se": 3.792186492603368e-05
+        },
+        "derivative_order_gradient": {
+          "mean": -0.001332373664136452,
+          "sd": 0.0005203902570629695,
+          "mean_two_se": 0.00018398573981631816
+        },
+        "peak_selection_only": {
+          "mean": 0.00027088706675204577,
+          "sd": 9.968351089758924e-05,
+          "mean_two_se": 3.5243443264084225e-05
+        },
+        "alignment_given_peak_selection": {
+          "mean": -0.00024402486767739068,
+          "sd": 0.00014080702194095161,
+          "mean_two_se": 4.978280002656493e-05
+        }
+      }
+    }
+  ],
+  "limitation": "Oracle controls use known synthetic front positions; not an estimator for physical data. Bias summaries are conditional on successful evaluation; failures remain explicit.",
+  "full_artifact": "output/shock-pooled-six-bias-controls.json",
+  "full_artifact_sha256": "fc6a7d1c2e8c14396c9cba11119518f404311fa87a0d46498503baf7e161aebd"
+}
