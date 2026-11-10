@@ -53,7 +53,52 @@
       "Original experimental-to-metres conversion by secondary authors remains unverified.",
       "Experimental and prior digitization uncertainty are not established.",
       "Density similarity assumes dilute Boltzmann regime and matched remaining dimensionless parameters.",
-      "No experimental acceptance gate has been evaluated."
+      "No experimental acceptance gate has been evaluated.",
+      "The two secondary reproductions differ in 10\u201390% width by 1.84% when the normalized reproduction uses the independently reported 1.098 mm scale. The earlier 1.65% MC3D difference is source-dependent."
     ]
+  },
+  "normalization_evidence": {
+    "status": "secondary_corroboration_primary_still_unavailable",
+    "source_url": "https://www.colorado.edu/lab/ngpdl/media/29",
+    "title": "A Modular Particle-Continuum Numerical Algorithm for Hypersonic Non-Equilibrium Flows",
+    "author": "Thomas Edward Schwartzentruber",
+    "year": 2007,
+    "section": "4.1",
+    "pdf_page": 70,
+    "printed_page": 51,
+    "reported_experimental_mean_free_path_m": 0.001098,
+    "reported_temperature_K": 300,
+    "reported_number_density_m3": 1.6095e+21,
+    "artifact": "output/alsmeyer-source/schwartzentruber-2007.pdf",
+    "sha256": "92cd70a40bd1de984e8fd8b26f4dcf5e58396e4567b6b5f0887e9ba0d5d5700b",
+    "limitation": "This confirms what the secondary author used, not direct inspection of the Alsmeyer primary source."
+  },
+  "secondary_source_consistency": {
+    "status": "secondary_source_diagnostic_only",
+    "reference_mean_free_path_m": 0.001098,
+    "normalized_source_width_m": 0.0043155812204174835,
+    "dimensional_source_width_m": 0.004394968454212978,
+    "dimensional_to_normalized_width_relative_difference": 0.018395490605044085,
+    "midpoint_translation_m": 5.702084029612394e-06,
+    "implied_length_from_width_ratio_m": 0.0011181982486843385,
+    "centered_crossing_differences_m": [
+      -1.3892947777561452e-05,
+      0.0,
+      6.549428601793344e-05
+    ],
+    "method": "Monotone regression of markers then linear 10%, 50%, 90% crossings; fixed supplied length scale. Translation removed only for centered crossing diagnostic.",
+    "limitations": [
+      "Neither reproduction is primary experimental data.",
+      "Implied length from width ratio is diagnostic only, never an accepted fitted spatial scale.",
+      "Source discrepancy is not an experimental confidence interval or a justified acceptance tolerance.",
+      "Original coordinate convention and digitization uncertainty require verification."
+    ],
+    "source_hashes": {
+      "normalized": "92f6a108db11f09115a14e4804a4fdfcec0afc62ee5d57b321388caa43433fdd",
+      "dimensional": "f5bd32cc0b18068a0bde1d50a4e46c9d3cd04e3c403242dcde60152a9af18365"
+    },
+    "tool_sha256": "5fbabbd500c5b5c16a7cd7a1532f851d6cc906ad3ee9a7981f2ce2901a4b78e9",
+    "full_artifact": "output/alsmeyer-source/m38-secondary-source-comparison.json",
+    "full_artifact_sha256": "40a21dce88e53061308431cb19c2ea57b2758448c19a4732720781bff8024ca5"
   }
 }
