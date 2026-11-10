@@ -1,0 +1,670 @@
+{
+  "status": "post_calibration_diagnostics_only",
+  "physical_acceptance": "incomplete",
+  "studies": [
+    {
+      "name": "shock-high-order-density-controls",
+      "status": "diagnostic_only",
+      "trial_count": 32,
+      "full_artifact": "output/shock-high-order-density-controls/summary.json",
+      "full_artifact_sha256": "7cc3118ea6bb27529729e62270002db0d0d8b9a8516a56d437d8fd82623907b2",
+      "diagnostic_source": "output/diagnose_high_order_density.py",
+      "diagnostic_source_sha256": "5863dabac6bdde73eee1ae74608af6450f64a07cca2fef29043c06ec5a98a991",
+      "protocol": {
+        "status": "diagnostic_only",
+        "shape": "gompertz",
+        "phi": 0.0,
+        "windows": 64,
+        "seed_start": 120000000,
+        "replicates": 8,
+        "groups": 12,
+        "subgroups": 6,
+        "bootstrap_repeats": 1024,
+        "sources": {
+          "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+          "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+          "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+          "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+          "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+          "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+          "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+          "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+          "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+          "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+          "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+        },
+        "diagnostic_sha256": "5863dabac6bdde73eee1ae74608af6450f64a07cca2fef29043c06ec5a98a991",
+        "limitations": [
+          "Post-validation choice of scenarios; not qualification.",
+          "Known-front control uses linear interpolation and no estimated recentering; contrasts include these processing differences.",
+          "Same fixture streams are paired across scenarios; no pooling of independent counts."
+        ]
+      },
+      "cases": [
+        {
+          "spatial": 0.0,
+          "noise": 0.0,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 2.1713852798536243e-06,
+              "signed_mean_at_max": 2.1713852798536243e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 5.6019441082245376e-09
+            },
+            "linear": {
+              "max_abs_mean": 0.0003604896469862201,
+              "signed_mean_at_max": 0.0003604896469862201,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 5.310709835786385e-07
+            },
+            "oracle_linear": {
+              "max_abs_mean": 0.00025716259217779466,
+              "signed_mean_at_max": 0.00025716259217779466,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 9.66299809618081e-07
+            }
+          }
+        },
+        {
+          "spatial": 0.0,
+          "noise": 0.03,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 0.0005225678830319685,
+              "signed_mean_at_max": -0.0005225678830319685,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 0.00018171166121358796
+            },
+            "linear": {
+              "max_abs_mean": 0.0004963375262497733,
+              "signed_mean_at_max": 0.0004963375262497733,
+              "x_at_max": -1.5,
+              "pointwise_two_mcse_at_max": 0.00017491712615912527
+            },
+            "oracle_linear": {
+              "max_abs_mean": 0.00034402310155128013,
+              "signed_mean_at_max": 0.00034402310155128013,
+              "x_at_max": -1.1999999999999993,
+              "pointwise_two_mcse_at_max": 0.00011022074789435716
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.0,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 2.1713852798536243e-06,
+              "signed_mean_at_max": 2.1713852798536243e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 5.6019441082245376e-09
+            },
+            "linear": {
+              "max_abs_mean": 0.0003604896469862201,
+              "signed_mean_at_max": 0.0003604896469862201,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 5.310709835786385e-07
+            },
+            "oracle_linear": {
+              "max_abs_mean": 0.00025716259217779466,
+              "signed_mean_at_max": 0.00025716259217779466,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 9.66299809618081e-07
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.03,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 0.0008626565633981422,
+              "signed_mean_at_max": -0.0008626565633981422,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 0.00010299004761906596
+            },
+            "linear": {
+              "max_abs_mean": 0.0004997966671553659,
+              "signed_mean_at_max": -0.0004997966671553659,
+              "x_at_max": -1.049999999999999,
+              "pointwise_two_mcse_at_max": 0.0001289207745685156
+            },
+            "oracle_linear": {
+              "max_abs_mean": 0.0003151682711219029,
+              "signed_mean_at_max": 0.0003151682711219029,
+              "x_at_max": -1.4000000000000004,
+              "pointwise_two_mcse_at_max": 0.00014160771455689884
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shock-density-oracle-cubic-controls",
+      "status": "diagnostic_only",
+      "trial_count": 32,
+      "full_artifact": "output/shock-density-oracle-cubic-controls/summary.json",
+      "full_artifact_sha256": "238516e51cf208a54fa6ce6a225bbced663300be643004e98a7746fd8e12c1c7",
+      "diagnostic_source": "output/diagnose_density_oracle_cubic.py",
+      "diagnostic_source_sha256": "973810b5dd74c62d769c2be641ddc3043dcceaf5e47a96617432982c1810adbd",
+      "protocol": {
+        "status": "diagnostic_only",
+        "original_protocol": {
+          "status": "diagnostic_only",
+          "shape": "gompertz",
+          "phi": 0.0,
+          "windows": 64,
+          "seed_start": 120000000,
+          "replicates": 8,
+          "groups": 12,
+          "subgroups": 6,
+          "bootstrap_repeats": 1024,
+          "sources": {
+            "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+            "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+            "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+            "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+            "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+            "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+            "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+            "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+            "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+            "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+            "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+          },
+          "diagnostic_sha256": "5863dabac6bdde73eee1ae74608af6450f64a07cca2fef29043c06ec5a98a991",
+          "limitations": [
+            "Post-validation choice of scenarios; not qualification.",
+            "Known-front control uses linear interpolation and no estimated recentering; contrasts include these processing differences.",
+            "Same fixture streams are paired across scenarios; no pooling of independent counts."
+          ]
+        },
+        "original_summary_sha256": "7cc3118ea6bb27529729e62270002db0d0d8b9a8516a56d437d8fd82623907b2",
+        "input_sha256": {
+          "0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+          "0.0-0.0-1.json": "ea89e782aea4126c0b0709812bc7e935510c77044239b4824f009a6ba7aa1f89",
+          "0.0-0.0-2.json": "07c7cabbb67ec41af4b2d83d85af6604c75ffa39ab09e963536e53044f23ba1c",
+          "0.0-0.0-3.json": "67a9f3479fcca0c1b5fa362bdcb418e523f2cfc64cc58f16308f22fe67828f9e",
+          "0.0-0.0-4.json": "93cda722d40a6eaa45df56bea7d1600a2d05f2f8f387f3fd8fa9763579ca5d23",
+          "0.0-0.0-5.json": "8be370ab077c4a5790e8433b93ac9154ce4e146f4c118d825f399a5bb50b8295",
+          "0.0-0.0-6.json": "113ec05c1313d6221f481dcd5e520868a7925ac788458571ebf324dbb36b5f53",
+          "0.0-0.0-7.json": "0df022108c549ebfb8795b3567dc96e48d459d80d2107c9df2c4e9496fb374d5",
+          "0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+          "0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+          "0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+          "0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+          "0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+          "0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+          "0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+          "0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+          "0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+          "0.2-0.0-1.json": "eb4322f94e24f69b0513ed5b727b530f44ffa17c2d115b19778f5868d148ba79",
+          "0.2-0.0-2.json": "ecab7764c29bca5d2ccc0d1bba8d101fc32c7ac432189914ec7c0ab279f9f777",
+          "0.2-0.0-3.json": "e283380ee17531b9d07e50b9f8eb602137ebe600f977fc27a88a5ebe7bc1ebfd",
+          "0.2-0.0-4.json": "3878273bf7334fcaa1393f57c8cb5856243819762f2693808c7029037cdd6cf9",
+          "0.2-0.0-5.json": "ab9e654898e5ac47b9b7b222303b97cbcf276472d09d325241bd4b525254cdbd",
+          "0.2-0.0-6.json": "52935b70f98b7fa9555892683d1fe3bee76fc4f50d075174d1f44df9037c865d",
+          "0.2-0.0-7.json": "6fb8ee9fb7d49350fc6a6d958584413521f9e33223fbea1ebc0d72bef5f3634b",
+          "0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+          "0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+          "0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+          "0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+          "0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+          "0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+          "0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+          "0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+        },
+        "source_sha256": "973810b5dd74c62d769c2be641ddc3043dcceaf5e47a96617432982c1810adbd",
+        "limitations": [
+          "Post-calibration paired diagnosis, not coverage qualification.",
+          "Known synthetic fronts are unavailable in physical data.",
+          "Only Gompertz and phi=0; eight repeats per noise/correlation case.",
+          "Pointwise Monte Carlo errors are not simultaneous confidence bands."
+        ]
+      },
+      "cases": [
+        {
+          "spatial": 0.0,
+          "noise": 0.0,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 2.1713852798536243e-06,
+              "signed_mean_at_max": 2.1713852798536243e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 5.6019441082245376e-09
+            },
+            "oracle_cubic_fixed": {
+              "max_abs_mean": 1.6957388701398929e-06,
+              "signed_mean_at_max": 1.6957388701398929e-06,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 6.661728727722725e-09
+            },
+            "oracle_cubic_recentered": {
+              "max_abs_mean": 2.077508018396082e-06,
+              "signed_mean_at_max": 2.077508018396082e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 7.696098266455573e-09
+            },
+            "alignment": {
+              "max_abs_mean": 9.387726145754227e-08,
+              "signed_mean_at_max": 9.387726145754227e-08,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 2.662283600906833e-09
+            },
+            "recentering": {
+              "max_abs_mean": 7.284360437828652e-07,
+              "signed_mean_at_max": 7.284360437828652e-07,
+              "x_at_max": -0.34999999999999964,
+              "pointwise_two_mcse_at_max": 2.6952269225561853e-09
+            }
+          }
+        },
+        {
+          "spatial": 0.0,
+          "noise": 0.03,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 0.0005225678830319685,
+              "signed_mean_at_max": -0.0005225678830319685,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 0.00018171166121358796
+            },
+            "oracle_cubic_fixed": {
+              "max_abs_mean": 0.0002264583170261958,
+              "signed_mean_at_max": -0.0002264583170261958,
+              "x_at_max": 8.600000000000001,
+              "pointwise_two_mcse_at_max": 0.00013665435577575778
+            },
+            "oracle_cubic_recentered": {
+              "max_abs_mean": 0.00022724135523162492,
+              "signed_mean_at_max": -0.00022724135523162492,
+              "x_at_max": 8.600000000000001,
+              "pointwise_two_mcse_at_max": 0.00013617581467568554
+            },
+            "alignment": {
+              "max_abs_mean": 0.0005206418912396902,
+              "signed_mean_at_max": -0.0005206418912396902,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 6.123393167940846e-05
+            },
+            "recentering": {
+              "max_abs_mean": 4.558755345844545e-05,
+              "signed_mean_at_max": -4.558755345844545e-05,
+              "x_at_max": -0.29999999999999893,
+              "pointwise_two_mcse_at_max": 0.0001271285134396645
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.0,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 2.1713852798536243e-06,
+              "signed_mean_at_max": 2.1713852798536243e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 5.6019441082245376e-09
+            },
+            "oracle_cubic_fixed": {
+              "max_abs_mean": 1.6957388701398929e-06,
+              "signed_mean_at_max": 1.6957388701398929e-06,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 6.661728727722725e-09
+            },
+            "oracle_cubic_recentered": {
+              "max_abs_mean": 2.077508018396082e-06,
+              "signed_mean_at_max": 2.077508018396082e-06,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 7.696098266455573e-09
+            },
+            "alignment": {
+              "max_abs_mean": 9.387726145754227e-08,
+              "signed_mean_at_max": 9.387726145754227e-08,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 2.662283600906833e-09
+            },
+            "recentering": {
+              "max_abs_mean": 7.284360437828652e-07,
+              "signed_mean_at_max": 7.284360437828652e-07,
+              "x_at_max": -0.34999999999999964,
+              "pointwise_two_mcse_at_max": 2.6952269225561853e-09
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.03,
+          "statistics": {
+            "primary": {
+              "max_abs_mean": 0.0008626565633981422,
+              "signed_mean_at_max": -0.0008626565633981422,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 0.00010299004761906596
+            },
+            "oracle_cubic_fixed": {
+              "max_abs_mean": 0.00027501991199616467,
+              "signed_mean_at_max": 0.00027501991199616467,
+              "x_at_max": -7.3,
+              "pointwise_two_mcse_at_max": 9.646106404730314e-05
+            },
+            "oracle_cubic_recentered": {
+              "max_abs_mean": 0.0002751147369105241,
+              "signed_mean_at_max": 0.0002751147369105241,
+              "x_at_max": -7.3,
+              "pointwise_two_mcse_at_max": 9.641383833958005e-05
+            },
+            "alignment": {
+              "max_abs_mean": 0.0008208001992203416,
+              "signed_mean_at_max": -0.0008208001992203416,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 3.5048040702947266e-05
+            },
+            "recentering": {
+              "max_abs_mean": 5.9088904608706194e-05,
+              "signed_mean_at_max": -5.9088904608706194e-05,
+              "x_at_max": -0.34999999999999964,
+              "pointwise_two_mcse_at_max": 0.00010825495855994946
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shock-density-noise-coupling",
+      "status": "diagnostic_only",
+      "trial_count": 16,
+      "full_artifact": "output/shock-density-noise-coupling/summary.json",
+      "full_artifact_sha256": "87f171e8402376f0554aeb22d5e88484737201cf6becb3e3a427547b5f9a09f6",
+      "diagnostic_source": "output/diagnose_density_noise_coupling.py",
+      "diagnostic_source_sha256": "13aa1b658a5fc0f574d26d43000f41b18fc80cd932d0df6bf0d137b86c49bcb5",
+      "protocol": {
+        "status": "diagnostic_only",
+        "replicates": 8,
+        "shape": "gompertz",
+        "phi": 0.0,
+        "noise": 0.03,
+        "windows": 64,
+        "fitting_seed_start": 120000000,
+        "evaluation_seed_start": 124000000,
+        "sources": {
+          "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+          "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+          "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+          "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+          "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+          "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+          "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+          "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+          "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+          "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+          "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+        },
+        "source_sha256": "13aa1b658a5fc0f574d26d43000f41b18fc80cd932d0df6bf0d137b86c49bcb5",
+        "helper_sha256": "973810b5dd74c62d769c2be641ddc3043dcceaf5e47a96617432982c1810adbd",
+        "input_sha256": {
+          "0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+          "0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+          "0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+          "0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+          "0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+          "0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+          "0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+          "0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+          "0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+          "0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+          "0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+          "0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+          "0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+          "0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+          "0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+          "0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+        },
+        "limitations": [
+          "Post-calibration diagnostic, not a candidate estimator or qualification.",
+          "Independent noise and clean evaluation require synthetic truth unavailable in physical outputs.",
+          "All controls use identical estimated shifts; each pooled mean is recentered identically.",
+          "Pointwise Monte Carlo errors are not simultaneous confidence bounds."
+        ]
+      },
+      "cases": [
+        {
+          "spatial": 0.0,
+          "noise": 0.03,
+          "statistics": {
+            "same_noise": {
+              "max_abs_mean": 0.0005225678830320293,
+              "signed_mean_at_max": -0.0005225678830320293,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 0.000181711661213555
+            },
+            "independent_noise": {
+              "max_abs_mean": 0.00023682906807009907,
+              "signed_mean_at_max": -0.00023682906807009907,
+              "x_at_max": 6.600000000000001,
+              "pointwise_two_mcse_at_max": 8.891791667635683e-05
+            },
+            "clean_shifted": {
+              "max_abs_mean": 0.0001029398563154333,
+              "signed_mean_at_max": 0.0001029398563154333,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 9.932085432622952e-07
+            },
+            "oracle": {
+              "max_abs_mean": 0.00022724135522940447,
+              "signed_mean_at_max": -0.00022724135522940447,
+              "x_at_max": 8.600000000000001,
+              "pointwise_two_mcse_at_max": 0.00013617581467457432
+            },
+            "noise_coupling": {
+              "max_abs_mean": 0.00047783141543086306,
+              "signed_mean_at_max": -0.00047783141543086306,
+              "x_at_max": -1.299999999999999,
+              "pointwise_two_mcse_at_max": 0.00019112683019882512
+            },
+            "shift_only": {
+              "max_abs_mean": 0.0001029398563154333,
+              "signed_mean_at_max": 0.0001029398563154333,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 9.932085432622952e-07
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.03,
+          "statistics": {
+            "same_noise": {
+              "max_abs_mean": 0.0008626565633980971,
+              "signed_mean_at_max": -0.0008626565633980971,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 0.00010299004761906039
+            },
+            "independent_noise": {
+              "max_abs_mean": 0.0005751464242445131,
+              "signed_mean_at_max": 0.0005751464242445131,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 0.00010699096404253877
+            },
+            "clean_shifted": {
+              "max_abs_mean": 0.0005227377216415769,
+              "signed_mean_at_max": 0.0005227377216415769,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 3.7784124554300167e-06
+            },
+            "oracle": {
+              "max_abs_mean": 0.00027511473691052394,
+              "signed_mean_at_max": 0.00027511473691052394,
+              "x_at_max": -7.3,
+              "pointwise_two_mcse_at_max": 9.641383833957978e-05
+            },
+            "noise_coupling": {
+              "max_abs_mean": 0.0014378029876426102,
+              "signed_mean_at_max": -0.0014378029876426102,
+              "x_at_max": -1.0999999999999996,
+              "pointwise_two_mcse_at_max": 0.0001577450338373915
+            },
+            "shift_only": {
+              "max_abs_mean": 0.0005227377216415769,
+              "signed_mean_at_max": 0.0005227377216415769,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 3.7784124554300167e-06
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shock-fixed-grid-alignment",
+      "status": "diagnostic_only",
+      "trial_count": 32,
+      "full_artifact": "output/shock-fixed-grid-alignment/summary.json",
+      "full_artifact_sha256": "6550a247d5a8b1f7e3bc538ba86678c5ff858e9eb98339cf55e4fa1565e50f2e",
+      "diagnostic_source": "output/diagnose_fixed_grid_alignment.py",
+      "diagnostic_source_sha256": "ef45916ce7f5de166f1ce77e62b38d6cd1685d9b355fc8133569d59da5887e15",
+      "protocol": {
+        "status": "diagnostic_only",
+        "seed_start": 120000000,
+        "shape": "gompertz",
+        "phi": 0.0,
+        "windows": 64,
+        "replicates": 8,
+        "sources": {
+          "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+          "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+          "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+          "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+          "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+          "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+          "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+          "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+          "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+          "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+          "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+        },
+        "source_sha256": "ef45916ce7f5de166f1ce77e62b38d6cd1685d9b355fc8133569d59da5887e15",
+        "input_sha256": {
+          "0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+          "0.0-0.0-1.json": "ea89e782aea4126c0b0709812bc7e935510c77044239b4824f009a6ba7aa1f89",
+          "0.0-0.0-2.json": "07c7cabbb67ec41af4b2d83d85af6604c75ffa39ab09e963536e53044f23ba1c",
+          "0.0-0.0-3.json": "67a9f3479fcca0c1b5fa362bdcb418e523f2cfc64cc58f16308f22fe67828f9e",
+          "0.0-0.0-4.json": "93cda722d40a6eaa45df56bea7d1600a2d05f2f8f387f3fd8fa9763579ca5d23",
+          "0.0-0.0-5.json": "8be370ab077c4a5790e8433b93ac9154ce4e146f4c118d825f399a5bb50b8295",
+          "0.0-0.0-6.json": "113ec05c1313d6221f481dcd5e520868a7925ac788458571ebf324dbb36b5f53",
+          "0.0-0.0-7.json": "0df022108c549ebfb8795b3567dc96e48d459d80d2107c9df2c4e9496fb374d5",
+          "0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+          "0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+          "0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+          "0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+          "0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+          "0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+          "0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+          "0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+          "0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+          "0.2-0.0-1.json": "eb4322f94e24f69b0513ed5b727b530f44ffa17c2d115b19778f5868d148ba79",
+          "0.2-0.0-2.json": "ecab7764c29bca5d2ccc0d1bba8d101fc32c7ac432189914ec7c0ab279f9f777",
+          "0.2-0.0-3.json": "e283380ee17531b9d07e50b9f8eb602137ebe600f977fc27a88a5ebe7bc1ebfd",
+          "0.2-0.0-4.json": "3878273bf7334fcaa1393f57c8cb5856243819762f2693808c7029037cdd6cf9",
+          "0.2-0.0-5.json": "ab9e654898e5ac47b9b7b222303b97cbcf276472d09d325241bd4b525254cdbd",
+          "0.2-0.0-6.json": "52935b70f98b7fa9555892683d1fe3bee76fc4f50d075174d1f44df9037c865d",
+          "0.2-0.0-7.json": "6fb8ee9fb7d49350fc6a6d958584413521f9e33223fbea1ebc0d72bef5f3634b",
+          "0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+          "0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+          "0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+          "0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+          "0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+          "0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+          "0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+          "0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+        },
+        "limitations": [
+          "Post-validation paired exploration, not qualification.",
+          "Same learned template as earlier method; template refinement still uses original fitting.",
+          "Fixed source nodes approximating the 10-90% template region replace template-grid residual nodes; quadrature changes too.",
+          "Mask depends on initial crossing but remains fixed throughout shift optimization.",
+          "No uncertainty interval or physical acceptance from this diagnostic."
+        ]
+      },
+      "cases": [
+        {
+          "spatial": 0.0,
+          "noise": 0.0,
+          "statistics": {
+            "signed_error": {
+              "max_abs_mean": 2.173414048657618e-06,
+              "signed_mean_at_max": 2.173414048657618e-06,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 3.828920330571387e-09
+            },
+            "paired_difference": {
+              "max_abs_mean": 1.515915966192327e-08,
+              "signed_mean_at_max": 1.515915966192327e-08,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 4.335249492435635e-10
+            }
+          }
+        },
+        {
+          "spatial": 0.0,
+          "noise": 0.03,
+          "statistics": {
+            "signed_error": {
+              "max_abs_mean": 0.0004140643797781191,
+              "signed_mean_at_max": -0.0004140643797781191,
+              "x_at_max": -1.1500000000000004,
+              "pointwise_two_mcse_at_max": 0.0001528538318801488
+            },
+            "paired_difference": {
+              "max_abs_mean": 0.00033403007645428986,
+              "signed_mean_at_max": -0.00033403007645428986,
+              "x_at_max": -1.1500000000000004,
+              "pointwise_two_mcse_at_max": 5.026030872468757e-05
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.0,
+          "statistics": {
+            "signed_error": {
+              "max_abs_mean": 2.173414048657618e-06,
+              "signed_mean_at_max": 2.173414048657618e-06,
+              "x_at_max": -1.25,
+              "pointwise_two_mcse_at_max": 3.828920330571387e-09
+            },
+            "paired_difference": {
+              "max_abs_mean": 1.515915966192327e-08,
+              "signed_mean_at_max": 1.515915966192327e-08,
+              "x_at_max": -1.3499999999999996,
+              "pointwise_two_mcse_at_max": 4.335249492435635e-10
+            }
+          }
+        },
+        {
+          "spatial": 0.2,
+          "noise": 0.03,
+          "statistics": {
+            "signed_error": {
+              "max_abs_mean": 0.0009589915188951068,
+              "signed_mean_at_max": -0.0009589915188951068,
+              "x_at_max": -1.0,
+              "pointwise_two_mcse_at_max": 0.0001550598267547972
+            },
+            "paired_difference": {
+              "max_abs_mean": 0.00012843942018936003,
+              "signed_mean_at_max": -0.00012843942018936003,
+              "x_at_max": -0.9000000000000004,
+              "pointwise_two_mcse_at_max": 6.371521284195055e-06
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Paired exploratory controls chosen after calibration; not independent method qualification.",
+    "Oracle fronts, clean profiles and independent noise require synthetic truth.",
+    "Reported Monte Carlo errors are pointwise, not simultaneous confidence bands.",
+    "Extrema at different coordinates must not be added as a decomposition.",
+    "Full signed profiles and executable diagnostic sources remain in the local output artifacts linked by hash."
+  ]
+}
