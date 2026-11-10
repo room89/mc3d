@@ -142,11 +142,15 @@
   "primary_digitization_pilot": {
     "status": "manual_digitization_pilot_not_acceptance",
     "artifact": "validation/stage9b/primary_width_digitization.json",
-    "sha256": "13c5d6a62f4cefacca442986ffc89fb90d3883fdcf9e3f3dbd6a28f12e42d2c1",
+    "sha256": "e5d0a811df3b42feb32b322d117b5e2cfd6d5a07e6f64ed39db0da5d7c78324d",
     "width_reference_length_envelope": [
       3.6869565217391305,
       4.285714285714286
     ],
-    "conclusion": "Both secondary widths lie inside the broad manual envelope; the source discrepancy is not resolved. Full-profile digitization and validated uncertainty remain incomplete."
+    "conclusion": "Both secondary widths lie inside the broad manual envelope; the source discrepancy is not resolved. Full-profile digitization and validated uncertainty remain incomplete.",
+    "local_line_fit_width_sensitivity_lambda": [
+      3.837383715451475,
+      4.232642480875566
+    ]
   }
 }
