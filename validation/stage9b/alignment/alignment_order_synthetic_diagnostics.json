@@ -1,0 +1,262 @@
+{
+  "status": "alignment_order_diagnostic_verified",
+  "physical_acceptance": "incomplete",
+  "summary_sha256": "44b73302130315989705469527024777d5e87befa2548f94a2c94da1ad3ee901",
+  "verification_source_sha256": "6fde1c7c6739049ab5b849842d0ca04728ee10b1616311202463559c69972932",
+  "protocol": {
+    "status": "diagnostic_only",
+    "source_sha256": "36078920d6c6860adeac3f14c9aad9a8422783746555addc0a61caeed44bdca7",
+    "helper_sha256": "26aaeb6f628df004073ea7fb47b670a7f155e830c9cd4558badb8b19bd131579",
+    "sources": {
+      "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+      "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+      "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+    },
+    "input_sha256": {
+      "output/shock-high-order-density-controls/0.0-0.0-0.json": "50ee3beae6bd0b05d339a4c72240d11815e1f78e5662640bb8bb16f945834d2e",
+      "output/shock-high-order-density-controls/0.0-0.0-1.json": "ea89e782aea4126c0b0709812bc7e935510c77044239b4824f009a6ba7aa1f89",
+      "output/shock-high-order-density-controls/0.0-0.0-2.json": "07c7cabbb67ec41af4b2d83d85af6604c75ffa39ab09e963536e53044f23ba1c",
+      "output/shock-high-order-density-controls/0.0-0.0-3.json": "67a9f3479fcca0c1b5fa362bdcb418e523f2cfc64cc58f16308f22fe67828f9e",
+      "output/shock-high-order-density-controls/0.0-0.0-4.json": "93cda722d40a6eaa45df56bea7d1600a2d05f2f8f387f3fd8fa9763579ca5d23",
+      "output/shock-high-order-density-controls/0.0-0.0-5.json": "8be370ab077c4a5790e8433b93ac9154ce4e146f4c118d825f399a5bb50b8295",
+      "output/shock-high-order-density-controls/0.0-0.0-6.json": "113ec05c1313d6221f481dcd5e520868a7925ac788458571ebf324dbb36b5f53",
+      "output/shock-high-order-density-controls/0.0-0.0-7.json": "0df022108c549ebfb8795b3567dc96e48d459d80d2107c9df2c4e9496fb374d5",
+      "output/shock-high-order-density-controls/0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+      "output/shock-high-order-density-controls/0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+      "output/shock-high-order-density-controls/0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+      "output/shock-high-order-density-controls/0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+      "output/shock-high-order-density-controls/0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+      "output/shock-high-order-density-controls/0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+      "output/shock-high-order-density-controls/0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+      "output/shock-high-order-density-controls/0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+      "output/shock-high-order-density-controls/0.2-0.0-0.json": "ad8304c61d3503f0cc0fc9702348bf63f776868a3b27abdbd6f0077539a8c1df",
+      "output/shock-high-order-density-controls/0.2-0.0-1.json": "eb4322f94e24f69b0513ed5b727b530f44ffa17c2d115b19778f5868d148ba79",
+      "output/shock-high-order-density-controls/0.2-0.0-2.json": "ecab7764c29bca5d2ccc0d1bba8d101fc32c7ac432189914ec7c0ab279f9f777",
+      "output/shock-high-order-density-controls/0.2-0.0-3.json": "e283380ee17531b9d07e50b9f8eb602137ebe600f977fc27a88a5ebe7bc1ebfd",
+      "output/shock-high-order-density-controls/0.2-0.0-4.json": "3878273bf7334fcaa1393f57c8cb5856243819762f2693808c7029037cdd6cf9",
+      "output/shock-high-order-density-controls/0.2-0.0-5.json": "ab9e654898e5ac47b9b7b222303b97cbcf276472d09d325241bd4b525254cdbd",
+      "output/shock-high-order-density-controls/0.2-0.0-6.json": "52935b70f98b7fa9555892683d1fe3bee76fc4f50d075174d1f44df9037c865d",
+      "output/shock-high-order-density-controls/0.2-0.0-7.json": "6fb8ee9fb7d49350fc6a6d958584413521f9e33223fbea1ebc0d72bef5f3634b",
+      "output/shock-high-order-density-controls/0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+      "output/shock-high-order-density-controls/0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+      "output/shock-high-order-density-controls/0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+      "output/shock-high-order-density-controls/0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+      "output/shock-high-order-density-controls/0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+      "output/shock-high-order-density-controls/0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+      "output/shock-high-order-density-controls/0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+      "output/shock-high-order-density-controls/0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+    },
+    "blocks": [
+      2,
+      8,
+      64
+    ],
+    "scheduled_trials": 32,
+    "seed_start": 120000000,
+    "shape": "gompertz",
+    "phi": 0.0,
+    "groups": 12,
+    "subgroups": 6,
+    "windows": 64,
+    "limitations": [
+      "Post-calibration reused paired seeds; no independent qualification.",
+      "Average adjacent fixed physical grid windows before the unchanged cross-fitted alignment; all windows retained.",
+      "Synthetic fronts independently uniform in [-1,1]; physical motion may be smaller or correlated.",
+      "Changing order trades noise-coupled alignment bias against physical broadening.",
+      "Method difference is not asserted to bound truth or cover uncertainty; no production gate changed."
+    ]
+  },
+  "checkpoint_sha256": {
+    "0.0-0.0-0.json": "f0591fac2d5c34a86af38a2aceb3393dc142a530eb025c791492477020da2eaa",
+    "0.0-0.0-1.json": "c9d9d7326d0279d64c7c0988b431cf5a78d0cb87b95c8d715f81104a4d791c96",
+    "0.0-0.0-2.json": "f8c5ff9a316188bb49f2eb63f6181a71caba1240b7b7e237fbd7802bf915b05e",
+    "0.0-0.0-3.json": "3940240a5e40eaa84da890a75d95b6e063addd5b218c519cf95ad2f81a292fec",
+    "0.0-0.0-4.json": "58be90d9b8e4f75256320bf5a89adc6138dcfc0dabf5816836f6ca15223340b4",
+    "0.0-0.0-5.json": "f27fa5ccd8011a9a863019a9912f995b6e932a8e398096253ca20d4b01f3afe1",
+    "0.0-0.0-6.json": "9722d4a04dc8f15f271b46d496dbdf03329888eaf8de916bdb58e22277028b80",
+    "0.0-0.0-7.json": "554e85069258a9920f8fce497d65718fb339f6c7108ff7855762473831299a0d",
+    "0.0-0.03-0.json": "85d8ea3c3e51e7e447044ca446427b0a6e7e67d82aa09eb719da10a1126eedee",
+    "0.0-0.03-1.json": "6bfc19562a0deec89f058f97cee75c1c7ddd778ef38ed3c3bbe61c82cf599668",
+    "0.0-0.03-2.json": "843d86486fd9679bf3613b69c6fe679d01246e189c7f69a6a1cb8490850eb333",
+    "0.0-0.03-3.json": "3a985da3741360e0ef0534fd6339e46ded76932b77843ec55df179cabb6b0f93",
+    "0.0-0.03-4.json": "78de118d22868f7fe049575097b57f52df6f086c26fab54617f6b9b72377c59d",
+    "0.0-0.03-5.json": "63d7f1d5827d94ffb9e56ca113c67c64744e5139d7e607bf8d5cc8ac1e3f209b",
+    "0.0-0.03-6.json": "1fe3cc0cfba23739aa87c7c59ff9ee9dea7022c3a72849f38d98f98f11876760",
+    "0.0-0.03-7.json": "dad97f867882bcaf036e1bc7664989776d095cbc24200f96d26c29fb142a7ed1",
+    "0.2-0.0-0.json": "b0aa117b17ac5167169e61d7955ba7f6d6c7a60625c10fc26eb31c4bdc0f8407",
+    "0.2-0.0-1.json": "ffc8b2f02d04641c6f1467e13378793648e5f653a0b25f02085531eed4ca6906",
+    "0.2-0.0-2.json": "756beccaccb61e783596ba6a7ed7071a23f0c64316612bf8b70eec65a3e788a4",
+    "0.2-0.0-3.json": "29e1f0bbbec797c83a2ca6e5815d915f3145adff2706e5bbf7e2d6e25ec75c77",
+    "0.2-0.0-4.json": "95525186a650bb70268850f4e7b4210c6d43e3d5e1f01f2fbde0dd4e0481b753",
+    "0.2-0.0-5.json": "35d08760056534a6872f2b95e5ab0e9e7a6d94fcfbbb14d5757acad080c5a650",
+    "0.2-0.0-6.json": "aa378fdffd10b12b791338cc1e97c163a13289f78c60e5dee9ece670d2e0d6ab",
+    "0.2-0.0-7.json": "7a7a39cb9d7d54823c4e308323b9067fbcd9fe97e24caea2406aa4198154d048",
+    "0.2-0.03-0.json": "ceff7785eb10708f45fae86872eaf671ffd4e5b1ad9f61d8d19b8a4a86b5bf26",
+    "0.2-0.03-1.json": "3e92048de2f9afdc61be66671dc758193d8e968388ec961d0255793c8be457d7",
+    "0.2-0.03-2.json": "94a125caf1fc37a4d72427eb76d57319fd9830b0e350629208b30ce3d24c7ba5",
+    "0.2-0.03-3.json": "0f47466ffc8245ae5ee269cbbfc3b5bf0166da4bdb91a6047714a285c04d585c",
+    "0.2-0.03-4.json": "0e77a1860d426048f1662ab079d5e0b51cd9b0e3a308674ba2f265bb518a1715",
+    "0.2-0.03-5.json": "2dea93d935cb8fbb0f7098c6c6fa86a71e1398ebb299a66a9e8fd54ebf271a06",
+    "0.2-0.03-6.json": "33941c99be54c0ab79e10a89e1dd909fbea3d6252ab8545daf4328b29bfb8bbe",
+    "0.2-0.03-7.json": "05fb23b7ee148f0652cf52bb8f5c7d293f74e5238c3770db9529dfcac2bc618e"
+  },
+  "cases": [
+    {
+      "spatial": 0.0,
+      "noise": 0.0,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "1": {
+          "max_abs_mean": 2.1713852798536243e-06,
+          "worst_signed_mean": 2.1713852798536243e-06,
+          "worst_mean_x": -1.299999999999999,
+          "mean_max_error": 2.173021205238365e-06,
+          "rms_pointwise_sd": 1.5954635034573754e-09
+        },
+        "2": {
+          "max_abs_mean": 0.027664406340699752,
+          "worst_signed_mean": 0.027664406340699752,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.027664406340699756,
+          "rms_pointwise_sd": 7.920495620572278e-05
+        },
+        "8": {
+          "max_abs_mean": 0.04599868441203897,
+          "worst_signed_mean": 0.04599868441203897,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.04599868441203898,
+          "rms_pointwise_sd": 8.712282909075979e-05
+        },
+        "64": {
+          "max_abs_mean": 0.05182181948085231,
+          "worst_signed_mean": 0.05182181948085231,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.051821819480852294,
+          "rms_pointwise_sd": 9.437568874062464e-05
+        }
+      }
+    },
+    {
+      "spatial": 0.0,
+      "noise": 0.03,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "1": {
+          "max_abs_mean": 0.0005225678830319685,
+          "worst_signed_mean": -0.0005225678830319685,
+          "worst_mean_x": -1.299999999999999,
+          "mean_max_error": 0.0007350724817514054,
+          "rms_pointwise_sd": 0.00023053058324493252
+        },
+        "2": {
+          "max_abs_mean": 0.02765638374336995,
+          "worst_signed_mean": 0.02765638374336995,
+          "worst_mean_x": -1.299999999999999,
+          "mean_max_error": 0.027697921459237475,
+          "rms_pointwise_sd": 0.00023893018942042085
+        },
+        "8": {
+          "max_abs_mean": 0.046033848255623684,
+          "worst_signed_mean": 0.046033848255623684,
+          "worst_mean_x": -1.299999999999999,
+          "mean_max_error": 0.04607540088127243,
+          "rms_pointwise_sd": 0.00024548201421827385
+        },
+        "64": {
+          "max_abs_mean": 0.051960946097284764,
+          "worst_signed_mean": 0.051960946097284764,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.0519751668049932,
+          "rms_pointwise_sd": 0.00024168918507821814
+        }
+      }
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.0,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "1": {
+          "max_abs_mean": 2.1713852798536243e-06,
+          "worst_signed_mean": 2.1713852798536243e-06,
+          "worst_mean_x": -1.299999999999999,
+          "mean_max_error": 2.173021205238365e-06,
+          "rms_pointwise_sd": 1.5954635034573754e-09
+        },
+        "2": {
+          "max_abs_mean": 0.027664406340699756,
+          "worst_signed_mean": 0.027664406340699756,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.027664406340699756,
+          "rms_pointwise_sd": 7.920495620572278e-05
+        },
+        "8": {
+          "max_abs_mean": 0.04599868441203897,
+          "worst_signed_mean": 0.04599868441203897,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.04599868441203898,
+          "rms_pointwise_sd": 8.712282909075979e-05
+        },
+        "64": {
+          "max_abs_mean": 0.05182181948085231,
+          "worst_signed_mean": 0.05182181948085231,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.051821819480852294,
+          "rms_pointwise_sd": 9.437568874062464e-05
+        }
+      }
+    },
+    {
+      "spatial": 0.2,
+      "noise": 0.03,
+      "scheduled": 8,
+      "complete": 8,
+      "failures": [],
+      "statistics_conditional_on_completion": {
+        "1": {
+          "max_abs_mean": 0.0008626565633981422,
+          "worst_signed_mean": -0.0008626565633981422,
+          "worst_mean_x": -1.0999999999999996,
+          "mean_max_error": 0.0009152870743897156,
+          "rms_pointwise_sd": 0.00024349271638247162
+        },
+        "2": {
+          "max_abs_mean": 0.02738217790413565,
+          "worst_signed_mean": 0.02738217790413565,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.027387096650804067,
+          "rms_pointwise_sd": 0.00027233032641328083
+        },
+        "8": {
+          "max_abs_mean": 0.04581616770636293,
+          "worst_signed_mean": 0.04581616770636293,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.04582121188254843,
+          "rms_pointwise_sd": 0.00026346885161708023
+        },
+        "64": {
+          "max_abs_mean": 0.051799418406124675,
+          "worst_signed_mean": 0.051799418406124675,
+          "worst_mean_x": -1.25,
+          "mean_max_error": 0.05180385560796694,
+          "rms_pointwise_sd": 0.0002550821110351108
+        }
+      }
+    }
+  ],
+  "verification_artifact_sha256": "80547528c078b2e1dc506790f0d4afed7965fda219e3d9e79b33944c535f9998"
+}
