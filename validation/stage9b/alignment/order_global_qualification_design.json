@@ -1,0 +1,145 @@
+{
+  "status": "prospective_design_comparison_not_adopted",
+  "physical_acceptance": "incomplete",
+  "target": 0.95,
+  "alpha": 0.05,
+  "family_pairs": 576,
+  "decision": "Require every scenario/metric pair to reject H0: coverage <= 0.95 with its exact upper-tail binomial test.",
+  "risk_argument": "If any pair has coverage <= 0.95, the event that all pairs pass is a subset of that bad pair passing. Thus global false qualification probability is at most 0.05 without independence between pairs or a Bonferroni factor. This is not a simultaneous confidence interval claim.",
+  "assumptions": [
+    "Independent Bernoulli replicates within each fixed scenario; dependence across scenarios allowed.",
+    "All required pairs must pass; no selecting subsets, replacing failures, tuning on qualification results or unaccounted repeated qualification attempts.",
+    "Bank-conditional evidence does not prove physical transportability.",
+    "Design comparison only: no adoption or production authorization from current partial runs."
+  ],
+  "designs": [
+    {
+      "repetitions": 128,
+      "minimum_hits": 126,
+      "maximum_misses": 2,
+      "null_boundary_pass_probability": 0.04259677129647724,
+      "power": {
+        "0.95": {
+          "single_pair_pass_probability": 0.04259677129647724,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.97": {
+          "single_pair_pass_probability": 0.25806431865975793,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.98": {
+          "single_pair_pass_probability": 0.5270850040531512,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.99": {
+          "single_pair_pass_probability": 0.8625219144233799,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.995": {
+          "single_pair_pass_probability": 0.9731173070778176,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.999": {
+          "single_pair_pass_probability": 0.9996890934493247,
+          "all_576_pass_probability_lower_bound": 0.8209178268110051
+        }
+      }
+    },
+    {
+      "repetitions": 256,
+      "minimum_hits": 250,
+      "maximum_misses": 6,
+      "null_boundary_pass_probability": 0.026250794003900155,
+      "power": {
+        "0.95": {
+          "single_pair_pass_probability": 0.026250794003900155,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.97": {
+          "single_pair_pass_probability": 0.35062172630053756,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.98": {
+          "single_pair_pass_probability": 0.7457758064378193,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.99": {
+          "single_pair_pass_probability": 0.9845903631579397,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.995": {
+          "single_pair_pass_probability": 0.9996513915171735,
+          "all_576_pass_probability_lower_bound": 0.7992015138919513
+        },
+        "0.999": {
+          "single_pair_pass_probability": 0.999999989411849,
+          "all_576_pass_probability_lower_bound": 0.999993901225011
+        }
+      }
+    },
+    {
+      "repetitions": 512,
+      "minimum_hits": 495,
+      "maximum_misses": 17,
+      "null_boundary_pass_probability": 0.04407810267762759,
+      "power": {
+        "0.95": {
+          "single_pair_pass_probability": 0.04407810267762759,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.97": {
+          "single_pair_pass_probability": 0.7198927856834657,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.98": {
+          "single_pair_pass_probability": 0.9834023419723652,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.99": {
+          "single_pair_pass_probability": 0.9999936512825831,
+          "all_576_pass_probability_lower_bound": 0.9963431387678696
+        },
+        "0.995": {
+          "single_pair_pass_probability": 0.9999999997512724,
+          "all_576_pass_probability_lower_bound": 0.9999998567329058
+        },
+        "0.999": {
+          "single_pair_pass_probability": 0.9999999999999221,
+          "all_576_pass_probability_lower_bound": 0.9999999999551079
+        }
+      }
+    },
+    {
+      "repetitions": 1024,
+      "minimum_hits": 985,
+      "maximum_misses": 39,
+      "null_boundary_pass_probability": 0.04251210409021059,
+      "power": {
+        "0.95": {
+          "single_pair_pass_probability": 0.04251210409021059,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.97": {
+          "single_pair_pass_probability": 0.9417180848083027,
+          "all_576_pass_probability_lower_bound": 0.0
+        },
+        "0.98": {
+          "single_pair_pass_probability": 0.9999281592984041,
+          "all_576_pass_probability_lower_bound": 0.9586197558807399
+        },
+        "0.99": {
+          "single_pair_pass_probability": 0.9999999999995846,
+          "all_576_pass_probability_lower_bound": 0.9999999997607034
+        },
+        "0.995": {
+          "single_pair_pass_probability": 1.0,
+          "all_576_pass_probability_lower_bound": 1.0
+        },
+        "0.999": {
+          "single_pair_pass_probability": 1.0,
+          "all_576_pass_probability_lower_bound": 1.0
+        }
+      }
+    }
+  ]
+}
