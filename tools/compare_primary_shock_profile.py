@@ -59,6 +59,60 @@ def compare(primary, summary, model_length):
 
 
 
+
+def monotone_width_bounds(primary, density_accuracy=True):
+    """Conservative inverse bounds, conditional on a continuous monotone profile."""
+    error = primary['stated_normalized_density_accuracy'] if density_accuracy else 0.
+    if not math.isfinite(error) or error < 0:
+        raise ValueError('Invalid density accuracy')
+    crossings = []
+    for level in (.1, .9):
+        below, above = [], []
+        for point in primary['points']:
+            x, y = interval(point['x_paper_interval']), interval(point['rho_interval'])
+            if y[1]+error < level:
+                below.append((x[0], point['pixel_row']))
+            if y[0]-error > level:
+                above.append((x[1], point['pixel_row']))
+        if not below or not above:
+            raise ValueError('Missing level support; width extrapolation forbidden')
+        low, high = max(below), min(above)
+        if low[0] > high[0]:
+            raise ValueError('Inconsistent monotone level bounds')
+        crossings.append(dict(level=level, interval=[low[0], high[0]],
+                              supporting_pixel_rows=[low[1], high[1]]))
+    a, b = [c['interval'] for c in crossings]
+    width = [max(0., b[0]-a[1]), b[1]-a[0]]
+    if width[1] < width[0]:
+        raise ValueError('Inconsistent width bounds')
+    return dict(crossings=crossings, width_reference_length_interval=width,
+                includes_stated_density_accuracy=density_accuracy,
+                assumption='Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points.')
+
+
+def compare_width(primary, summary, model_length):
+    digitization = monotone_width_bounds(primary, False)
+    total = monotone_width_bounds(primary, True)
+    length, relative = primary['reference_length_m'], primary['stated_relative_length_accuracy']
+    if not all(math.isfinite(v) for v in (length, relative, model_length)) or min(length, model_length) <= 0 or not 0 <= relative < 1:
+        raise ValueError('Invalid length scale')
+    lo, hi = total['width_reference_length_interval']
+    experiment = [lo*length*(1-relative), hi*length*(1+relative)]
+    w = summary['width_10_90']
+    mean, statistical, processing = [w[k] for k in ('mean', 'statistical_radius', 'processing_sensitivity')]
+    if not all(math.isfinite(v) for v in (mean, statistical, processing)) or mean <= 0 or min(statistical, processing) < 0:
+        raise ValueError('Invalid model width estimate')
+    radius = statistical+processing
+    model = [(mean-radius)*model_length, (mean+radius)*model_length]
+    return dict(status='conditional_width_diagnostic_only', digitization=digitization,
+                with_density_accuracy=total, experimental_width_interval_m=experiment,
+                model_width_interval_m=model,
+                nonoverlap_gap_m=max(experiment[0]-model[1], model[0]-experiment[1], 0.),
+                limitations=['Outer interval is not a confidence interval or a tight joint feasible set.',
+                             'Validity remains conditional on trace/axis intervals and monotonicity; scan distortion is unquantified.',
+                             'A broad interval overlap does not establish accurate physical agreement or numerical convergence.'])
+
+
 def nominal_axes(primary):
     """One graph-derived calibration for every sample; no model-dependent fit."""
     result = copy.deepcopy(primary)
@@ -109,6 +163,7 @@ def main():
     fixed['axis_values'] = nominal['fixed_axis_values']
     fixed['interpretation'] = 'Shared nominal axes from the graph, no axis or spatial-scale search. Failure at nominal axes does not exclude all allowed calibrations; success concerns only sampled points.'
     result['fixed_nominal_calibration'] = fixed
+    result['width_comparison'] = compare_width(primary, source['summaries'][a.variant], a.model_reference_length_m)
     result.update(variant=a.variant, source_hashes={'primary': digest(a.primary), 'analysis': digest(a.analysis)},
                   tool_sha256=digest(Path(__file__)))
     a.output.parent.mkdir(parents=True, exist_ok=True)

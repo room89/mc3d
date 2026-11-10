@@ -244,5 +244,188 @@
       ],
       "interpretation": "One common graph-derived axis calibration and reference length are held fixed for all points. No model-dependent scale or translation search. Nonoverlap at nominal calibration does not exclude the full allowed calibration set."
     }
+  },
+  "primary_width_comparison": {
+    "status": "conditional_width_diagnostic_only",
+    "comparisons": [
+      {
+        "variant": "C",
+        "status": "conditional_width_diagnostic_only",
+        "digitization": {
+          "crossings": [
+            {
+              "level": 0.1,
+              "interval": [
+                -2.2386587771203152,
+                -1.908023483365949
+              ],
+              "supporting_pixel_rows": [
+                491,
+                483
+              ]
+            },
+            {
+              "level": 0.9,
+              "interval": [
+                1.6927592954990214,
+                2.1203155818540433
+              ],
+              "supporting_pixel_rows": [
+                93,
+                79
+              ]
+            }
+          ],
+          "width_reference_length_interval": [
+            3.6007827788649704,
+            4.358974358974359
+          ],
+          "includes_stated_density_accuracy": false,
+          "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+        },
+        "with_density_accuracy": {
+          "crossings": [
+            {
+              "level": 0.1,
+              "interval": [
+                -2.3175542406311638,
+                -1.8297455968688845
+              ],
+              "supporting_pixel_rows": [
+                495,
+                479
+              ]
+            },
+            {
+              "level": 0.9,
+              "interval": [
+                1.6927592954990214,
+                2.1992110453648914
+              ],
+              "supporting_pixel_rows": [
+                93,
+                75
+              ]
+            }
+          ],
+          "width_reference_length_interval": [
+            3.522504892367906,
+            4.516765285996055
+          ],
+          "includes_stated_density_accuracy": true,
+          "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+        },
+        "experimental_width_interval_m": [
+          0.003817430136986301,
+          0.005023880591715975
+        ],
+        "model_width_interval_m": [
+          0.0042938073982525405,
+          0.004350963292242453
+        ],
+        "nonoverlap_gap_m": 0.0,
+        "limitations": [
+          "Outer interval is not a confidence interval or a tight joint feasible set.",
+          "Validity remains conditional on trace/axis intervals and monotonicity; scan distortion is unquantified.",
+          "A broad interval overlap does not establish accurate physical agreement or numerical convergence."
+        ],
+        "artifact": "output/alsmeyer-source/primary-profile-C-with-width.json",
+        "sha256": "d126ad245b9cad29cb6a08ce9d193a4706321c0025c0708ea67b4bef91565a32",
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "b8df2686c838752694c854f8e7fb3c6a275796271292ca47dbadd7ad71504231"
+      },
+      {
+        "variant": "sparta-C",
+        "status": "conditional_width_diagnostic_only",
+        "digitization": {
+          "crossings": [
+            {
+              "level": 0.1,
+              "interval": [
+                -2.2386587771203152,
+                -1.908023483365949
+              ],
+              "supporting_pixel_rows": [
+                491,
+                483
+              ]
+            },
+            {
+              "level": 0.9,
+              "interval": [
+                1.6927592954990214,
+                2.1203155818540433
+              ],
+              "supporting_pixel_rows": [
+                93,
+                79
+              ]
+            }
+          ],
+          "width_reference_length_interval": [
+            3.6007827788649704,
+            4.358974358974359
+          ],
+          "includes_stated_density_accuracy": false,
+          "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+        },
+        "with_density_accuracy": {
+          "crossings": [
+            {
+              "level": 0.1,
+              "interval": [
+                -2.3175542406311638,
+                -1.8297455968688845
+              ],
+              "supporting_pixel_rows": [
+                495,
+                479
+              ]
+            },
+            {
+              "level": 0.9,
+              "interval": [
+                1.6927592954990214,
+                2.1992110453648914
+              ],
+              "supporting_pixel_rows": [
+                93,
+                75
+              ]
+            }
+          ],
+          "width_reference_length_interval": [
+            3.522504892367906,
+            4.516765285996055
+          ],
+          "includes_stated_density_accuracy": true,
+          "assumption": "Continuous nondecreasing density with both levels bracketed; no interpolation between sampled points."
+        },
+        "experimental_width_interval_m": [
+          0.003817430136986301,
+          0.005023880591715975
+        ],
+        "model_width_interval_m": [
+          0.004273350727966758,
+          0.0043351185367719305
+        ],
+        "nonoverlap_gap_m": 0.0,
+        "limitations": [
+          "Outer interval is not a confidence interval or a tight joint feasible set.",
+          "Validity remains conditional on trace/axis intervals and monotonicity; scan distortion is unquantified.",
+          "A broad interval overlap does not establish accurate physical agreement or numerical convergence."
+        ],
+        "artifact": "output/alsmeyer-source/primary-profile-sparta-C-with-width.json",
+        "sha256": "19b4d707572525f72c2292c25a4647f07fd200329e8e3ee925aba6dd2c27dd2c",
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "b8df2686c838752694c854f8e7fb3c6a275796271292ca47dbadd7ad71504231"
+      }
+    ]
   }
 }

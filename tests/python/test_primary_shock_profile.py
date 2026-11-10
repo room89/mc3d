@@ -4,7 +4,7 @@ import sys
 import unittest
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
-from compare_primary_shock_profile import compare, GRID, nominal_axes
+from compare_primary_shock_profile import compare, GRID, nominal_axes, monotone_width_bounds, compare_width
 
 
 class PrimaryProfileTest(unittest.TestCase):
@@ -40,6 +40,22 @@ class PrimaryProfileTest(unittest.TestCase):
         self.assertEqual(fixed['points'][0]['rho_interval'], [.745, .755])
         self.assertEqual(fixed['points'][1]['rho_interval'], [.245, .255])
         self.assertEqual(fixed['stated_relative_length_accuracy'], 0.)
+
+    def test_monotone_width_bounds_and_accuracy_widening(self):
+        p, s = self.inputs()
+        p['points'] = [dict(pixel_row=i, x_paper_interval=[i/2, i/2],
+                            rho_interval=[i/20, i/20]) for i in range(21)]
+        narrow = monotone_width_bounds(p, False)['width_reference_length_interval']
+        self.assertEqual(narrow, [7., 9.])
+        p['stated_normalized_density_accuracy'] = .05
+        broad = monotone_width_bounds(p, True)['width_reference_length_interval']
+        self.assertLess(broad[0], narrow[0]); self.assertGreater(broad[1], narrow[1])
+        s['width_10_90'] = dict(mean=8., statistical_radius=.1, processing_sensitivity=.2)
+        result = compare_width(p, s, 1.)
+        self.assertEqual(result['nonoverlap_gap_m'], 0.)
+        self.assertEqual(result['model_width_interval_m'], [7.7, 8.3])
+        p['points'] = p['points'][1:-1]
+        with self.assertRaisesRegex(ValueError, 'extrapolation'): monotone_width_bounds(p, True)
 
     def test_wrong_grid_and_extrapolation_are_rejected(self):
         p, s = self.inputs(); wrong = copy.deepcopy(s); wrong['density'] = [0.] * 441
