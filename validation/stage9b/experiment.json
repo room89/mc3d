@@ -1,7 +1,7 @@
 {
   "status": "incomplete",
   "source_doi": "10.1017/S0022112076001912",
-  "reason": "Publisher DOI and PDF routes returned the article landing page (HTML), not a PDF; the indexed mirror timed out. Conditions, experimental length convention and digitization uncertainty remain unverified. Engineering data are not experimental data.",
+  "reason": "Primary Alsmeyer PDF obtained and visually verified. Experimental normalization and stated accuracy are established; primary M=3.8 curve digitization, digitization uncertainty, matched-condition comparison and numerical qualification remain incomplete.",
   "retrieval_evidence": {
     "date": "2026-11-09",
     "crossref_url": "https://api.crossref.org/works/10.1017/S0022112076001912",
@@ -22,7 +22,7 @@
       "experimental_marker_count": 40,
       "extracted_artifact": "output/alsmeyer-source/m38-secondary-vector-points.json",
       "extracted_sha256": "92f6a108db11f09115a14e4804a4fdfcec0afc62ee5d57b321388caa43433fdd",
-      "status": "normalization_and_uncertainty_unverified"
+      "status": "reference_length_verified; secondary_digitization_uncertainty_unverified"
     },
     {
       "url": "https://arxiv.org/pdf/2411.13423",
@@ -54,11 +54,11 @@
       "Experimental and prior digitization uncertainty are not established.",
       "Density similarity assumes dilute Boltzmann regime and matched remaining dimensionless parameters.",
       "No experimental acceptance gate has been evaluated.",
-      "The two secondary reproductions differ in 10\u201390% width by 1.84% when the normalized reproduction uses the independently reported 1.098 mm scale. The earlier 1.65% MC3D difference is source-dependent."
+      "The two secondary reproductions differ in 10–90% width by 1.84% when the normalized reproduction uses the independently reported 1.098 mm scale. The earlier 1.65% MC3D difference is source-dependent."
     ]
   },
   "normalization_evidence": {
-    "status": "secondary_corroboration_primary_still_unavailable",
+    "status": "secondary_corroboration_now_verified_against_primary",
     "source_url": "https://www.colorado.edu/lab/ngpdl/media/29",
     "title": "A Modular Particle-Continuum Numerical Algorithm for Hypersonic Non-Equilibrium Flows",
     "author": "Thomas Edward Schwartzentruber",
@@ -71,7 +71,7 @@
     "reported_number_density_m3": 1.6095e+21,
     "artifact": "output/alsmeyer-source/schwartzentruber-2007.pdf",
     "sha256": "92cd70a40bd1de984e8fd8b26f4dcf5e58396e4567b6b5f0887e9ba0d5d5700b",
-    "limitation": "This confirms what the secondary author used, not direct inspection of the Alsmeyer primary source."
+    "limitation": "Secondary reference values agree with primary printed page 499; this does not validate secondary curve digitization."
   },
   "secondary_source_consistency": {
     "status": "secondary_source_diagnostic_only",
@@ -91,7 +91,7 @@
       "Neither reproduction is primary experimental data.",
       "Implied length from width ratio is diagnostic only, never an accepted fitted spatial scale.",
       "Source discrepancy is not an experimental confidence interval or a justified acceptance tolerance.",
-      "Original coordinate convention and digitization uncertainty require verification."
+      "Primary coordinate convention is verified; secondary reproduction and primary digitization uncertainty still require assessment."
     ],
     "source_hashes": {
       "normalized": "92f6a108db11f09115a14e4804a4fdfcec0afc62ee5d57b321388caa43433fdd",
@@ -100,5 +100,43 @@
     "tool_sha256": "5fbabbd500c5b5c16a7cd7a1532f851d6cc906ad3ee9a7981f2ce2901a4b78e9",
     "full_artifact": "output/alsmeyer-source/m38-secondary-source-comparison.json",
     "full_artifact_sha256": "40a21dce88e53061308431cb19c2ea57b2758448c19a4732720781bff8024ca5"
+  },
+  "primary_source": {
+    "status": "verified_source_not_experimental_acceptance",
+    "retrieved_date": "2026-11-10",
+    "archive_snapshot": "20250621102349",
+    "url": "https://web.archive.org/web/20250621102349id_/http://electronicsandbooks.com/edt/manual/Magazine/J/Journal%20of%20Fluid%20Mechanics/1976%20Volume%2074/S0022112076001912.pdf",
+    "artifact": "output/alsmeyer-source/alsmeyer-1976-archive.pdf",
+    "sha256": "08063484e89e1070da80567fdcb36b6493224f6a06602febc4da47bc7a05262b",
+    "pages": 17,
+    "printed_pages": "497-513",
+    "verified_evidence": {
+      "printed_page_499": {
+        "density_normalization": "(rho-rho1)/(rho2-rho1)",
+        "coordinate_normalization": "x/lambda1",
+        "mean_free_path_formula": "lambda1 = (16/5)*sqrt(gamma/(2*pi))*mu1/(rho1*a1)",
+        "reference_mean_free_path_m": 0.001098,
+        "reference_temperature_K": 300,
+        "reference_pressure_mTorr": 50,
+        "experimental_pressure_range_mTorr": [
+          40,
+          80
+        ],
+        "normalized_density_stated_accuracy": 0.01,
+        "length_scale_stated_relative_accuracy": 0.013,
+        "density_derivative_and_reciprocal_thickness_approximate_accuracy": 0.04
+      },
+      "printed_page_500": "Figure 1(b): measured argon profiles, M=3.8 dashed curve among overlapping Mach-number curves.",
+      "printed_page_501": "Figure 2 error bars show experimental scatter of at least three runs.",
+      "printed_page_502": "Figure 3: M=3.8 square markers denote Bird Monte Carlo; present experimental results are lines."
+    },
+    "limitations": [
+      "The stated accuracy bounds do not specify a Gaussian distribution or 95% confidence level.",
+      "300 K and 50 mTorr define the tabulated reference length; they are not a separately documented run record for the M=3.8 curve.",
+      "The density accuracy wording does not establish independent pointwise errors or their covariance.",
+      "Digitization error is additional and has not yet been quantified.",
+      "Corrections for electronics, curvature and downstream density rise are already included in published profiles; do not apply them twice.",
+      "Experimental reference mean free path and solver collision mean free path are different conventions; no spatial fitting is authorized."
+    ]
   }
 }
