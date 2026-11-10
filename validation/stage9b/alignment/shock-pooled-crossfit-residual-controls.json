@@ -1,0 +1,304 @@
+{
+  "status": "diagnostic_only",
+  "protocol": {
+    "seed_start": 100000000,
+    "windows": 64,
+    "groups": 12,
+    "subgroups": 6,
+    "phi": 0.0,
+    "spatial": 0.0,
+    "sources": {
+      "diagnose_pooled_peak_bias.py": "b333312218d9e6f686eefa63369cd19ac8a1822bb5bdb3cacf2f28651f72df52",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_group_pooling.py": "b41f0dca9124a5c67ca9884306cee4a6edda1624e4f777809e91e57b39b10b6e",
+      "diagnose_shock_ensemble_bias.py": "12a67e981dd5ccee368ce71b0ce66faf65105bc69cfdc3025a8017210905c462",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006"
+    }
+  },
+  "cases": [
+    {
+      "shape": "logistic",
+      "noise": 0.0,
+      "valid": 8,
+      "errors": [],
+      "summary": {
+        "oracle_known_cubic": {
+          "mean": 0.0010690960599072652,
+          "sd": 4.333223562831405e-07,
+          "two_mc_se": 3.064051765675418e-07
+        },
+        "oracle_known_quintic": {
+          "mean": 0.0004292159048071287,
+          "sd": 5.690225924661966e-07,
+          "two_mc_se": 4.023597337811969e-07
+        },
+        "oracle_selected_cubic": {
+          "mean": 0.0010690960599072652,
+          "sd": 4.333223562831405e-07,
+          "two_mc_se": 3.064051765675418e-07
+        },
+        "refined_uncentered_cubic": {
+          "mean": 0.0010696383549381183,
+          "sd": 4.2997887638655623e-07,
+          "two_mc_se": 3.0404097925990615e-07
+        },
+        "refined_centered_cubic": {
+          "mean": 0.001069692634090541,
+          "sd": 4.267751849025954e-07,
+          "two_mc_se": 3.017756272867679e-07
+        },
+        "refined_centered_quintic_same_peaks": {
+          "mean": 0.0004298084661822632,
+          "sd": 5.649046943905049e-07,
+          "two_mc_se": 3.9944794012764023e-07
+        },
+        "refined_cubic_interpolation": {
+          "mean": 0.0006555465910034475,
+          "sd": 1.3861142470189651e-09,
+          "two_mc_se": 9.801307835663954e-10
+        },
+        "peak_selection": {
+          "mean": 0.0,
+          "sd": 0.0,
+          "two_mc_se": 0.0
+        },
+        "alignment": {
+          "mean": 5.422950308531238e-07,
+          "sd": 3.6215140244960537e-09,
+          "two_mc_se": 2.560797124883344e-09
+        },
+        "centering": {
+          "mean": 5.4279152422731514e-08,
+          "sd": 6.78973587449318e-09,
+          "two_mc_se": 4.801068279319701e-09
+        },
+        "derivative_order": {
+          "mean": -0.0006398841679082778,
+          "sd": 7.551940770293377e-07,
+          "two_mc_se": 5.340028529793606e-07
+        },
+        "interpolation": {
+          "mean": -0.0004141460430870936,
+          "sd": 4.2539017092433816e-07,
+          "two_mc_se": 3.00796274510704e-07
+        }
+      }
+    },
+    {
+      "shape": "logistic",
+      "noise": 0.015,
+      "valid": 8,
+      "errors": [],
+      "summary": {
+        "oracle_known_cubic": {
+          "mean": 0.0013617570445625116,
+          "sd": 0.0006617471949953135,
+          "two_mc_se": 0.0004679259290123627
+        },
+        "oracle_known_quintic": {
+          "mean": 0.0009682821912278122,
+          "sd": 0.0013748928465014865,
+          "two_mc_se": 0.000972196055166076
+        },
+        "oracle_selected_cubic": {
+          "mean": 0.0016415653036080113,
+          "sd": 0.0007106679468426129,
+          "two_mc_se": 0.0005025181243843325
+        },
+        "refined_uncentered_cubic": {
+          "mean": 0.00167520660633938,
+          "sd": 0.000737574198839963,
+          "two_mc_se": 0.0005215437176279727
+        },
+        "refined_centered_cubic": {
+          "mean": 0.0016916418149416634,
+          "sd": 0.0007296683993986538,
+          "two_mc_se": 0.0005159534732323222
+        },
+        "refined_centered_quintic_same_peaks": {
+          "mean": 0.001283226822085759,
+          "sd": 0.0013009970680343465,
+          "two_mc_se": 0.0009199438491109025
+        },
+        "refined_cubic_interpolation": {
+          "mean": 0.001243164366153321,
+          "sd": 0.0007622949462000922,
+          "two_mc_se": 0.0005390239257223196
+        },
+        "peak_selection": {
+          "mean": 0.0002798082590454998,
+          "sd": 0.00015403924159518387,
+          "two_mc_se": 0.00010892219230078741
+        },
+        "alignment": {
+          "mean": 3.364130273136867e-05,
+          "sd": 7.014778246546021e-05,
+          "two_mc_se": 4.960197266652571e-05
+        },
+        "centering": {
+          "mean": 1.6435208602283424e-05,
+          "sd": 2.711475151748628e-05,
+          "two_mc_se": 1.9173024668202777e-05
+        },
+        "derivative_order": {
+          "mean": -0.00040841499285590444,
+          "sd": 0.0006704783851848095,
+          "two_mc_se": 0.00047409981280318475
+        },
+        "interpolation": {
+          "mean": -0.0004484774487883425,
+          "sd": 6.728132802947604e-05,
+          "two_mc_se": 4.7575083296879036e-05
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.0,
+      "valid": 8,
+      "errors": [],
+      "summary": {
+        "oracle_known_cubic": {
+          "mean": 0.002615770775736853,
+          "sd": 7.746540485035282e-07,
+          "two_mc_se": 5.477631307704574e-07
+        },
+        "oracle_known_quintic": {
+          "mean": 0.001094739242021553,
+          "sd": 8.356901070608149e-07,
+          "two_mc_se": 5.90922141673214e-07
+        },
+        "oracle_selected_cubic": {
+          "mean": 0.0023650645641395407,
+          "sd": 9.291394901624278e-07,
+          "two_mc_se": 6.570008341620642e-07
+        },
+        "refined_uncentered_cubic": {
+          "mean": 0.002453371353591055,
+          "sd": 6.987038005985251e-07,
+          "two_mc_se": 4.940581954440304e-07
+        },
+        "refined_centered_cubic": {
+          "mean": 0.0025070075132432035,
+          "sd": 5.891847742312763e-07,
+          "two_mc_se": 4.1661654923080045e-07
+        },
+        "refined_centered_quintic_same_peaks": {
+          "mean": 0.0010785684389921224,
+          "sd": 8.392236327647926e-07,
+          "two_mc_se": 5.934207216599937e-07
+        },
+        "refined_cubic_interpolation": {
+          "mean": 0.0015433428210665512,
+          "sd": 2.6865550293837594e-09,
+          "two_mc_se": 1.8996812793080805e-09
+        },
+        "peak_selection": {
+          "mean": -0.00025070621159731243,
+          "sd": 3.8790091181727763e-07,
+          "two_mc_se": 2.7428736517444196e-07
+        },
+        "alignment": {
+          "mean": 8.830678945151438e-05,
+          "sd": 6.605766108227692e-07,
+          "two_mc_se": 4.67098201006007e-07
+        },
+        "centering": {
+          "mean": 5.363615965214841e-05,
+          "sd": 1.3920018278352136e-07,
+          "two_mc_se": 9.842939318863486e-08
+        },
+        "derivative_order": {
+          "mean": -0.001428439074251081,
+          "sd": 1.1847150812171221e-06,
+          "two_mc_se": 8.377200677025984e-07
+        },
+        "interpolation": {
+          "mean": -0.0009636646921766523,
+          "sd": 5.865464714248088e-07,
+          "two_mc_se": 4.147509874255238e-07
+        }
+      }
+    },
+    {
+      "shape": "gompertz",
+      "noise": 0.015,
+      "valid": 8,
+      "errors": [],
+      "summary": {
+        "oracle_known_cubic": {
+          "mean": 0.002812521687424019,
+          "sd": 0.000450363218486467,
+          "two_mc_se": 0.0003184548857887795
+        },
+        "oracle_known_quintic": {
+          "mean": 0.0014498739587485154,
+          "sd": 0.0009204460274239568,
+          "two_mc_se": 0.0006508536277076987
+        },
+        "oracle_selected_cubic": {
+          "mean": 0.002601081021415791,
+          "sd": 0.00048429544442183433,
+          "two_mc_se": 0.0003424485928484318
+        },
+        "refined_uncentered_cubic": {
+          "mean": 0.0027170547851669002,
+          "sd": 0.00048253617235975206,
+          "two_mc_se": 0.00034120459964338134
+        },
+        "refined_centered_cubic": {
+          "mean": 0.0027112372673072094,
+          "sd": 0.0004726430174867119,
+          "two_mc_se": 0.0003342090827453259
+        },
+        "refined_centered_quintic_same_peaks": {
+          "mean": 0.0014613857117440066,
+          "sd": 0.0009334028897345609,
+          "two_mc_se": 0.0006600155129104273
+        },
+        "refined_cubic_interpolation": {
+          "mean": 0.001719170680580806,
+          "sd": 0.000502784399538994,
+          "two_mc_se": 0.00035552225838882904
+        },
+        "peak_selection": {
+          "mean": -0.00021144066600822797,
+          "sd": 0.00010874570673473053,
+          "two_mc_se": 7.689482665705157e-05
+        },
+        "alignment": {
+          "mean": 0.00011597376375110935,
+          "sd": 8.565097577476755e-05,
+          "two_mc_se": 6.056438578558284e-05
+        },
+        "centering": {
+          "mean": -5.817517859690868e-06,
+          "sd": 9.392991373039765e-05,
+          "two_mc_se": 6.641847895503157e-05
+        },
+        "derivative_order": {
+          "mean": -0.0012498515555632028,
+          "sd": 0.0005133462213005542,
+          "two_mc_se": 0.0003629905941781119
+        },
+        "interpolation": {
+          "mean": -0.0009920665867264034,
+          "sd": 4.828530857260398e-05,
+          "two_mc_se": 3.414286912337321e-05
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Post-validation paired controls; not a fresh qualification.",
+    "Known front/peak controls are unavailable for physical data.",
+    "Independent group fixtures shared between paired controls; contrasts are conditional diagnostics."
+  ],
+  "full_artifact": "output/shock-pooled-crossfit-residual-controls.json",
+  "full_artifact_sha256": "c30260e08e9c8b7c279a1bab02343a6683e6f086523642884382e038f770d551"
+}
