@@ -19,14 +19,14 @@ from shock_validation import digest, save
 from validate_shock_estimator import shape, truth
 
 
-def slopes(profiles, position=None, quintic=False):
+def slopes(profiles, position=None, quintic=False, width=1.5):
     profiles = np.asarray(profiles)
-    if profiles.shape != (6,len(GRID)): raise ValueError('Six profiles required')
+    if profiles.shape != (6,len(GRID)) or not np.isfinite(profiles).all(): raise ValueError('Six profiles required')
     values = []; peaks = []
     for heldout in range(6):
         training = np.delete(profiles,heldout,axis=0).mean(0)
         peak = peak_position(GRID,training,width=1.5) if position is None else position
-        x, d = quintic_derivative(profiles[heldout]) if quintic else derivative(profiles[heldout],width=1.5)
+        x, d = quintic_derivative(profiles[heldout],width=width) if quintic else derivative(profiles[heldout],width=width)
         values.append(float(np.interp(peak,x,d))); peaks.append(float(peak))
     if min(values)<=0: raise ValueError('Nonpositive diagnostic slope')
     return float(np.mean(values)), peaks
@@ -44,6 +44,7 @@ def trial(spec):
             points.append(group_point(trials,center_profile=True,interpolation_sensitivity=True))
             oracle.append(exact.mean((0,1)))
         centered = centered_density([p['density'] for p in points])
+        centered_cubic = centered_density([p['density_cubic'] for p in points],interpolation='cubic')
         uncentered = np.asarray([p['density'][20:-20] for p in points])
         production = crossfit_pool_points(points)
         measured, peaks = slopes(centered)
@@ -55,7 +56,10 @@ def trial(spec):
                       refined_uncentered_cubic=slopes(uncentered)[0],
                       refined_centered_cubic=measured,
                       refined_centered_quintic_same_peaks=slopes(centered,quintic=True)[0],
-                      refined_cubic_interpolation=production['slope_cubic'])
+                      refined_cubic_interpolation=production['slope_cubic'],
+                      combined_quintic_15=slopes(centered_cubic,quintic=True)[0],
+                      combined_quintic_20=slopes(centered_cubic,quintic=True,width=2.)[0],
+                      combined_quintic_25=slopes(centered_cubic,quintic=True,width=2.5)[0])
         for name,value in values.items(): controls.setdefault(name,[]).append(value)
         peak_errors.extend(p-position for p in peaks)
         raw.extend(p['density'] for p in points); cubic.extend(p['density_cubic'] for p in points); oracles.extend(oracle)
@@ -93,6 +97,8 @@ def summarize(rows):
                      ('centering','refined_centered_cubic','refined_uncentered_cubic'),
                      ('derivative_order','refined_centered_quintic_same_peaks','refined_centered_cubic'),
                      ('interpolation','refined_cubic_interpolation','refined_centered_cubic')]
+        for name in ('combined_quintic_15','combined_quintic_20','combined_quintic_25'):
+            if name in valid[0]['relative_errors']: contrasts.append((name+'_minus_current',name,'refined_centered_cubic'))
         for name,left,right in contrasts:
             measures[name] = stat([r['relative_errors'][left]-r['relative_errors'][right] for r in valid])
     return dict(valid=len(valid),errors=[r for r in rows if 'error' in r],summary=measures,runs=rows)
@@ -102,19 +108,21 @@ def main():
     p = argparse.ArgumentParser(description=__doc__); p.add_argument('--output',type=Path,required=True)
     p.add_argument('--replicates',type=int,default=8); p.add_argument('--jobs',type=int,default=8)
     p.add_argument('--windows',type=int,choices=(32,64),default=64); p.add_argument('--seed-start',type=int,default=100000000)
+    p.add_argument('--noise-levels',type=float,nargs='+',default=[0.,.015])
     p.add_argument('--resume',action='store_true'); a=p.parse_args()
     if a.replicates<2 or a.jobs<1: p.error('At least two repetitions and one worker required')
+    if not a.noise_levels or len(set(a.noise_levels))!=len(a.noise_levels) or any(not math.isfinite(n) or n<0 for n in a.noise_levels): p.error('Distinct finite nonnegative noise levels required')
     if a.output.exists(): raise FileExistsError(a.output)
     names=('diagnose_pooled_peak_bias.py','experiment_crossfit_gradient.py','shock_alignment.py',
            'shock_crossfit_gradient.py','shock_ensemble_estimator.py','shock_group_pooling.py',
            'diagnose_shock_ensemble_bias.py','shock_analysis.py','shock_mean_profile.py','validate_shock_estimator.py')
-    protocol=dict(seed_start=a.seed_start,windows=a.windows,groups=12,subgroups=6,phi=0.,spatial=0.,
+    protocol=dict(seed_start=a.seed_start,windows=a.windows,groups=12,subgroups=6,phi=0.,spatial=0.,noise_levels=a.noise_levels,
                   sources={n:digest(Path(__file__).with_name(n)) for n in names})
     parts=a.output.with_suffix('.parts'); parts.mkdir(parents=True,exist_ok=a.resume)
     cases=[]
     with ProcessPoolExecutor(max_workers=a.jobs) as pool:
         for kind in ('logistic','gompertz'):
-            for noise in (0.,.015):
+            for noise in a.noise_levels:
                 specs=[(kind,noise,i,a.windows,a.seed_start) for i in range(a.replicates)]
                 rows=list(pool.map(cached,[(s,str(parts),protocol) for s in specs]))
                 cases.append(dict(shape=kind,noise=noise,**summarize(rows)))

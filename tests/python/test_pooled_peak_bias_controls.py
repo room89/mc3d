@@ -28,6 +28,12 @@ class PooledPeakControlsTest(unittest.TestCase):
         actual,_=slopes(centered_density([p['density'] for p in points]))
         self.assertAlmostEqual(actual,expected,places=14)
 
+    def test_quintic_derivative_preserves_known_polynomial_for_each_width(self):
+        y=np.tile(.5+.1*GRID+1e-6*GRID**5,(6,1))
+        for width in (1.5,2.,2.5):
+            value,_=slopes(y,position=0.,quintic=True,width=width)
+            self.assertAlmostEqual(value,.1,places=12)
+
     def test_paired_contrasts_and_errors_remain_visible(self):
         keys=('oracle_known_cubic','oracle_known_quintic','oracle_selected_cubic',
               'refined_uncentered_cubic','refined_centered_cubic',
