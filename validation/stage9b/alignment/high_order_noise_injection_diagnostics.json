@@ -1,0 +1,268 @@
+{
+  "status": "diagnostic_evidence_verified",
+  "physical_acceptance": "incomplete",
+  "summary_sha256": "4bed532d643bbcd5cec029565f032678fd15c33dd0e1a6ea3820eefc50c70bed",
+  "verification_source_sha256": "06ad9a689e0e185e0f8762f1d5b61abad6c6c7b681b73fae9e2c1a1bde601a73",
+  "checkpoint_sha256": {
+    "output/shock-density-averaged-injections/0.0-0-132000000.json": "b5dd8d53f6400f03ff1a026f5a4074972782833743a36152055ab8c764226a9c",
+    "output/shock-density-averaged-injections/0.0-0-136000000.json": "1bfa004d9a16df7cf1f1283b217f165809817b09e5ab10b40997dfe55f213ae1",
+    "output/shock-density-averaged-injections/0.0-0-140000000.json": "d14dfcef7484df75b3a3c98ad2b10abdb9046d4ce191b5825e9a6f6d4270d555",
+    "output/shock-density-averaged-injections/0.0-1-132000000.json": "81eeecc36e163944b4201f853df5e8104980507666dabfff9057d5c6c7af20b5",
+    "output/shock-density-averaged-injections/0.0-1-136000000.json": "107aa850755509f060ecee755b3e573bc327411e117b5bb17bf2e70c9da2c22c",
+    "output/shock-density-averaged-injections/0.0-1-140000000.json": "d1f58ab03197df90319aff637751f41ada6ba50414e30ef191bbb7c1493355f2",
+    "output/shock-density-averaged-injections/0.0-2-132000000.json": "cf9b0717268a3b8f5690c4b9a7609373bfd73c0ef3ec254d2d6ee9d1878a708e",
+    "output/shock-density-averaged-injections/0.0-2-136000000.json": "77088a20c2086cb8ea61b5e6a0e1a3576a4921a7089ba5c9ac0c042613aebe69",
+    "output/shock-density-averaged-injections/0.0-2-140000000.json": "8e4a3bcc2fad3578622e4d7d1559cb57decdbdcb5322d73b2ad7856d04a116d6",
+    "output/shock-density-averaged-injections/0.0-3-132000000.json": "3e0eaa0a669ad656f69c5b78d2808fce5c816fa75303df4b4eda06f365b26b41",
+    "output/shock-density-averaged-injections/0.0-3-136000000.json": "57950c9dfb260374f90e8985e1472c7792d27c4da8feec599d8296c3b3d8109c",
+    "output/shock-density-averaged-injections/0.0-3-140000000.json": "d510e61f49c8c2684a7f9de02c9dfbcd1e0ce1646951e8992331b28d469b61c9",
+    "output/shock-density-averaged-injections/0.0-4-132000000.json": "3f7c89f2b934c750614a765d5d70015e749afbbe397d05d87e5ae04241e25757",
+    "output/shock-density-averaged-injections/0.0-4-136000000.json": "fa1258beb1caa61ba23ceeabfdd2d1364efaec50c1efddad4bd32cc9a39dd09e",
+    "output/shock-density-averaged-injections/0.0-4-140000000.json": "53847fc06de734824a9875baee66d0836901f865fd8d6f1f264f365fc0893d32",
+    "output/shock-density-averaged-injections/0.0-5-132000000.json": "f70f787f912aef231c724e7505e2176e956e53ab5d7278f6d66d43791d41cf59",
+    "output/shock-density-averaged-injections/0.0-5-136000000.json": "c82b2143e00cb022190e1686d236038aa4139678d7ff7d3c8f1a22d177ad8821",
+    "output/shock-density-averaged-injections/0.0-5-140000000.json": "7bcf6af9099adedcffe7a806f8ba3c806c88a16aee55ca79bfff842cd174334c",
+    "output/shock-density-averaged-injections/0.0-6-132000000.json": "183312438e86a0e9bf5e61c6174248d059e4e457789350458b1ee76e6ac50bde",
+    "output/shock-density-averaged-injections/0.0-6-136000000.json": "776c863aafa0c8dfc637ad4d8524020c110c00f4178b9e6ad798cb51398134fd",
+    "output/shock-density-averaged-injections/0.0-6-140000000.json": "1ca1c4b0cc756ca90dabed6f6049cfb14015364da233d3a3bde5244a0ec3947b",
+    "output/shock-density-averaged-injections/0.0-7-132000000.json": "5fed3e74136986521a5c6a23ac6436cb5b5c00e1d6b4232e00721d0db24ad5c0",
+    "output/shock-density-averaged-injections/0.0-7-136000000.json": "2d3041a0eb7395b311784440cffd32c19497ebd88f026d5b428408a0b8a0b50d",
+    "output/shock-density-averaged-injections/0.0-7-140000000.json": "326dbcb8a44f7d1090c6c5d4ea0d7030090d1d82bf919d7d119a3763501597a5",
+    "output/shock-density-averaged-injections/0.2-0-132000000.json": "f295e008bc2b0e608d93e245a5576d722b20fb924975467bfacfad268a864324",
+    "output/shock-density-averaged-injections/0.2-0-136000000.json": "fa5bb941af37c03ccd0c211393e8853ef7eb3a3bd0f094afa9ed212b4811c657",
+    "output/shock-density-averaged-injections/0.2-0-140000000.json": "0a50bedda5ef74c3d293691f81cb3636e33a48786dc0100070e0e7f08b8e6b3d",
+    "output/shock-density-averaged-injections/0.2-1-132000000.json": "0cebd43b2d08124aecd2be0c3ac4e03479c5667a220c6f88e6b32132bc30ec9a",
+    "output/shock-density-averaged-injections/0.2-1-136000000.json": "6fa227e86591e615b5742a3f0a2b689fbcbb609c6a5dd2be46f2e9afdc5c2b1a",
+    "output/shock-density-averaged-injections/0.2-1-140000000.json": "32d8e2e4145f0f7b94e486128012ff406351e9c1896ebd3c7a1c080248f88dbf",
+    "output/shock-density-averaged-injections/0.2-2-132000000.json": "35629981b094bdb8b01d1c6037549d0332f0ff7669f9e4b526352f55290c34fa",
+    "output/shock-density-averaged-injections/0.2-2-136000000.json": "ba78b60a3a0e154960adb35233fde73c97709d8fea3e36d1fa024db90b4c8901",
+    "output/shock-density-averaged-injections/0.2-2-140000000.json": "5ce089803cf9270f29a0ff7619227bebd9d851e4f3c8ecc7c76c2fef4cc9380b",
+    "output/shock-density-averaged-injections/0.2-3-132000000.json": "ab4f7c105d6fc701a8c9ec5a525e07c253f8960617d825db13e4c518eaf7c405",
+    "output/shock-density-averaged-injections/0.2-3-136000000.json": "1673bf823ecd233cfb0365153be6a8c755a7e56e3dbaa4aa4279ffb5571a7305",
+    "output/shock-density-averaged-injections/0.2-3-140000000.json": "2e7f37c52f8dd7ad8add449e7a0de11c5ded0b09eaa38f1cdbf9f975d2761f38",
+    "output/shock-density-averaged-injections/0.2-4-132000000.json": "2ac82d90aed4aee4dd10dd77a94f2ff36fd2bc5d716a701f4c0c2764e1f64e11",
+    "output/shock-density-averaged-injections/0.2-4-136000000.json": "680447777172d70f80f83caba75b988fd063e677e767e216719280d275700e8b",
+    "output/shock-density-averaged-injections/0.2-4-140000000.json": "a91d474c65694e3718bcc108b83ee30954118f55449a266a13040b33aa7516e2",
+    "output/shock-density-averaged-injections/0.2-5-132000000.json": "b1f2c9d178b46045f447e049d850baa7df45c1d973d79958299e74dcab19aba4",
+    "output/shock-density-averaged-injections/0.2-5-136000000.json": "5a30b70de3fc54bacaea7028be47626206daf3cf2d02ca1fb07cdbf5c35180bf",
+    "output/shock-density-averaged-injections/0.2-5-140000000.json": "f5907764962961ec99b8dc7f5a79d1b94470615eae0fa2eaea84ddc149e49f6d",
+    "output/shock-density-averaged-injections/0.2-6-132000000.json": "09a6fcc0a789a7a5e02490b580c833293bfbb9d11c7ca27ba77ea002a80b4639",
+    "output/shock-density-averaged-injections/0.2-6-136000000.json": "b8c139971fa507381b481fff6f6631983422be02dbebf551b6dc3d6ec3520fa5",
+    "output/shock-density-averaged-injections/0.2-6-140000000.json": "c0f1153f4752c706a561f601699dd08761f3ba838fff15a01d821f45eae2c1c4",
+    "output/shock-density-averaged-injections/0.2-7-132000000.json": "d31dd92bb75b0e5ba9b2f5f3f43d2c0e33cd61391ac1f3e33471e79882a82292",
+    "output/shock-density-averaged-injections/0.2-7-136000000.json": "b7f8e9d879406ce96ca7b7b9f47a61354628185c7b5e0870e61f5525bfc461ad",
+    "output/shock-density-averaged-injections/0.2-7-140000000.json": "15026ae53810cc27f269bc7dbe4fbab2f00544308c89663e460250c9fcd5e87f"
+  },
+  "protocol": {
+    "status": "diagnostic_only",
+    "original_protocol": {
+      "status": "diagnostic_only",
+      "seed_start": 120000000,
+      "injection_seed_start": 128000000,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "noise": 0.03,
+      "windows": 64,
+      "replicates": 8,
+      "added_variance_factors": [
+        0.5,
+        1.0
+      ],
+      "antithetic_signs": [
+        -1,
+        1
+      ],
+      "sources": {
+        "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+        "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+        "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+        "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+        "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+        "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+        "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+        "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+        "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+        "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+        "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+      },
+      "source_sha256": "26aaeb6f628df004073ea7fb47b670a7f155e830c9cd4558badb8b19bd131579",
+      "input_sha256": {
+        "0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+        "0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+        "0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+        "0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+        "0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+        "0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+        "0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+        "0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+        "0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+        "0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+        "0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+        "0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+        "0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+        "0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+        "0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+        "0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5"
+      },
+      "limitations": [
+        "Exploratory diagnostic chosen after calibration; no qualification.",
+        "Added noise extracted using synthetic clean profiles; not available in physical outputs.",
+        "Linear extrapolation in added variance is an assumption tested at two levels, not a proven bias bound.",
+        "Antithetic injections reduce extra Monte Carlo noise but do not yield independent trials.",
+        "No confidence interval or physical acceptance claim; correction uncertainty remains unassessed."
+      ]
+    },
+    "added_variance": 0.5,
+    "original_injection_seed_start": 128000000,
+    "new_injection_seed_starts": [
+      132000000,
+      136000000,
+      140000000
+    ],
+    "input_sha256": {
+      "output/shock-density-noise-extrapolation/half-variance-summary.json": "a447822995a66c9281665f94997f4ee830b4ebfa59f63c5ceaed6960496b0927",
+      "output/shock-high-order-density-controls/0.0-0.03-0.json": "178a5fcdf588749293f0bffb262076476b5b19640a2e0188f609c2473c9a94ae",
+      "output/shock-density-noise-extrapolation/0.0-0.json": "fe76256c6cd60b857f86f857a31d93942dd8e44a63f95cd27638ef405935241c",
+      "output/shock-high-order-density-controls/0.0-0.03-1.json": "346a0f27d86f42975d813c0629a58effebe4409584ab92d1c9a5368605e8e9ab",
+      "output/shock-density-noise-extrapolation/0.0-1.json": "c57fa1bdf578496f5815eb8af707d6f2107df59de0b31e5a1f1f94b7a77bc640",
+      "output/shock-high-order-density-controls/0.0-0.03-2.json": "a4482ebd12e64776f2f96053912d4d8cf1886376f11b72c29202f90518a94bbe",
+      "output/shock-density-noise-extrapolation/0.0-2.json": "8a9203b4bf705efd98797b03c55bd7f37907eae45ef673412af85b7f216cf80c",
+      "output/shock-high-order-density-controls/0.0-0.03-3.json": "11d9686f587c30100a4091bf48c9c572d68a2d6aa41dc5609589b828bd2bebe6",
+      "output/shock-density-noise-extrapolation/0.0-3.json": "9490c7402aace0e6d10396307cac0877dd328aa8d0baf5d4d64198961f497002",
+      "output/shock-high-order-density-controls/0.0-0.03-4.json": "4cca68470eab6de09e5794b8c6111e3b2289a0bef5d908500e9d232532f02927",
+      "output/shock-density-noise-extrapolation/0.0-4.json": "76598bc527cfdb2359cee3c1a1d01051829eba2ea44bb83781f82a33c83835c5",
+      "output/shock-high-order-density-controls/0.0-0.03-5.json": "88e27b3c189b47c3395213912a446bbadb0c3348bad6ee942f1b1522e07e8f56",
+      "output/shock-density-noise-extrapolation/0.0-5.json": "af418dc5d5db2042bf7329317183e8879d7118e10bcd93fcd9f784fa5caa0e48",
+      "output/shock-high-order-density-controls/0.0-0.03-6.json": "e5d9bab973b833751ca71833fcace7f77959454b1d41bf0e617fd884eb1a29ff",
+      "output/shock-density-noise-extrapolation/0.0-6.json": "4a9ec719137a9f1fdd4988892f7324b50af811f8fbdcf6554cd3296fe1aa7859",
+      "output/shock-high-order-density-controls/0.0-0.03-7.json": "1cc97eccca338ce46cd13c355f0aaf7167bfa9206532c0df4abea06de95baa2b",
+      "output/shock-density-noise-extrapolation/0.0-7.json": "16a88758510b1a4be71c4c5fa1b882bca45c148af616e8bc965a598d3a7df912",
+      "output/shock-high-order-density-controls/0.2-0.03-0.json": "0b8ee11ae6bff91c29c9c997b6c6fbbb215a61a851f5b885066f0c8b10e4ff24",
+      "output/shock-density-noise-extrapolation/0.2-0.json": "fd926744d9e4f27264739f73be595f84996f7f4829650525f99db03fd4add3f5",
+      "output/shock-high-order-density-controls/0.2-0.03-1.json": "ba5c4c3015be21795b6107d7c5fa5f8073e55b8564bedcddfad9b45664972fc7",
+      "output/shock-density-noise-extrapolation/0.2-1.json": "254c9b708adb41b9f5f57d657d3a1ec3a28bb73034f0b0fb23e5ea8362cf3f64",
+      "output/shock-high-order-density-controls/0.2-0.03-2.json": "326ec7c2b92acff9a7b8391eebc0ee79f99ff1620fa9b3c5d9c60e19d8df4f15",
+      "output/shock-density-noise-extrapolation/0.2-2.json": "77006ce02bbff98c56aec6b013e3c18b6b2b17fcef8db9c326ff52eba563ad15",
+      "output/shock-high-order-density-controls/0.2-0.03-3.json": "c0bdb42dd156a8d2fd4c197508b8a1a7388a746f3ac7e764721138af16a6e23c",
+      "output/shock-density-noise-extrapolation/0.2-3.json": "22f478afc1f82c047dabf362c590434e1c643d643ef22699f18454b707ef836d",
+      "output/shock-high-order-density-controls/0.2-0.03-4.json": "649b03353128b915295cd1c1a3ebf7754213510afa5f6cbd1ec3d4dae8e89b2d",
+      "output/shock-density-noise-extrapolation-half-recovery/0.2-4.json": "6122afa64630ae577c9dfbb9a73c1192c48ea81162b5e55b1531c7e017f96d5b",
+      "output/shock-high-order-density-controls/0.2-0.03-5.json": "da065d8b9f056f6c810177e5933e4c8c1c335e62e31c5c543044d2344f6d10e3",
+      "output/shock-density-noise-extrapolation/0.2-5.json": "1816adc053996651c22c4972087574f47917374b638f13945ebc6402f19b2b54",
+      "output/shock-high-order-density-controls/0.2-0.03-6.json": "5da556bb4933b401bde08b47b765a97d2df31744849c5420247e4e76e1f2781d",
+      "output/shock-density-noise-extrapolation/0.2-6.json": "8925ef726d015893d3b87f9c2b942a5db8cb3e70776c6adecc64fd5cec21c86b",
+      "output/shock-high-order-density-controls/0.2-0.03-7.json": "84f0cfe12b5b7986aad4f4728cd70b907f3b613a57f8759824279033f17240b5",
+      "output/shock-density-noise-extrapolation/0.2-7.json": "aafcb33bf22bec9dac93fbe60bbb29932974fc0f9d3c54746ca14c1021828e64"
+    },
+    "source_sha256": "a1ab364c4d334cbc0b809cbcebbcb5a433625954d8bc098f13fa0fd6197a9931",
+    "helper_sha256": "26aaeb6f628df004073ea7fb47b670a7f155e830c9cd4558badb8b19bd131579",
+    "limitations": [
+      "Post-calibration exploration with known synthetic noise, not physical implementation.",
+      "One original pair plus three new independent pairs; same original profile, not four independent physical samples.",
+      "Any failed pair invalidates its complete four-pair result; no averaging over surviving pairs.",
+      "No confidence coverage assessment; pointwise Monte Carlo errors only."
+    ]
+  },
+  "cases": [
+    {
+      "spatial": 0.0,
+      "scheduled": 8,
+      "complete": 8,
+      "failed": [],
+      "statistics_conditional_on_completion": {
+        "original": {
+          "max_abs_mean": 0.0005225678830319685,
+          "mean_max_error": 0.0007350724817514054,
+          "rms_pointwise_sd": 0.00023053058324493252
+        },
+        "one_pair": {
+          "max_abs_mean": 0.0003131627162561018,
+          "mean_max_error": 0.0010567724218463613,
+          "rms_pointwise_sd": 0.0003095185361641615
+        },
+        "four_pairs": {
+          "max_abs_mean": 0.00028513589819265106,
+          "mean_max_error": 0.0009093879037388364,
+          "rms_pointwise_sd": 0.0002809844944048727
+        }
+      }
+    },
+    {
+      "spatial": 0.2,
+      "scheduled": 8,
+      "complete": 7,
+      "failed": [
+        {
+          "repetition": 4,
+          "errors": [
+            {
+              "spatial": 0.2,
+              "repetition": 4,
+              "injection_seed_start": 132000000,
+              "error": "Ambiguous minimum",
+              "failure_context": {
+                "group": 11,
+                "subgroup": 2,
+                "sign": -1,
+                "seed": 120000468,
+                "injection_seed": 132000468
+              }
+            }
+          ]
+        }
+      ],
+      "statistics_conditional_on_completion": {
+        "original": {
+          "max_abs_mean": 0.0008704714448759433,
+          "mean_max_error": 0.0009288833245035087,
+          "rms_pointwise_sd": 0.00024866922302383467
+        },
+        "one_pair": {
+          "max_abs_mean": 0.0003469716222895872,
+          "mean_max_error": 0.0006893507167602291,
+          "rms_pointwise_sd": 0.00025445421105432266
+        },
+        "four_pairs": {
+          "max_abs_mean": 0.00030534230582436903,
+          "mean_max_error": 0.0006684121837802404,
+          "rms_pointwise_sd": 0.00025320849487137244
+        }
+      }
+    }
+  ],
+  "failure_reproduction": {
+    "status": "recorded_failure_reproduced",
+    "physical_acceptance": "incomplete",
+    "error": "Ambiguous minimum",
+    "failure_context": {
+      "group": 11,
+      "subgroup": 2,
+      "sign": -1,
+      "seed": 120000468,
+      "injection_seed": 132000468
+    },
+    "input_sha256": "2ac82d90aed4aee4dd10dd77a94f2ff36fd2bc5d716a701f4c0c2764e1f64e11",
+    "script_sha256": "3e967011562677ef931b3d6301491a775d95236e98264c4cd01df394b300485e",
+    "sources": {
+      "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+      "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+      "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+    },
+    "original_failure_retained": true
+  },
+  "limitations": [
+    "Post-calibration exploration with known synthetic noise, not physical implementation.",
+    "One original pair plus three new independent pairs; same original profile, not four independent physical samples.",
+    "Any failed pair invalidates its complete four-pair result; no averaging over surviving pairs.",
+    "No confidence coverage assessment; pointwise Monte Carlo errors only."
+  ],
+  "verification_artifact_sha256": "537f033fba147f691f71bd3f6feb2a93179f3eb64169e1563e6ada6f19a5aa36"
+}
