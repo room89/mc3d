@@ -152,5 +152,46 @@
       3.837383715451475,
       4.232642480875566
     ]
+  },
+  "primary_profile_comparison": {
+    "status": "pointwise_diagnostic_only",
+    "digitized_artifact": "validation/stage9b/primary_profile_digitization.json",
+    "digitized_sha256": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+    "comparisons": [
+      {
+        "variant": "C",
+        "status": "pointwise_diagnostic_only",
+        "point_count": 45,
+        "nonoverlap_count": 0,
+        "maximum_nonoverlap_gap": 0.0,
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "cf5c931f47e16579c0781892e775d178d694ff582ec1571c1a7aafa31f00e7f9",
+        "artifact": "output/alsmeyer-source/primary-profile-C-comparison.json",
+        "sha256": "881c0ce7f6d6893d500bfd71fd2026a0aad5a109a9b23f873c9110dd365d7022"
+      },
+      {
+        "variant": "sparta-C",
+        "status": "pointwise_diagnostic_only",
+        "point_count": 45,
+        "nonoverlap_count": 0,
+        "maximum_nonoverlap_gap": 0.0,
+        "source_hashes": {
+          "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+          "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+        },
+        "tool_sha256": "cf5c931f47e16579c0781892e775d178d694ff582ec1571c1a7aafa31f00e7f9",
+        "artifact": "output/alsmeyer-source/primary-profile-sparta-C-comparison.json",
+        "sha256": "bc86f8c13561547bf22106b5115f575d74c973961e0978560d338cfd933d83d5"
+      }
+    ],
+    "limitations": [
+      "Pointwise interval overlap is not a simultaneous global calibration fit or an acceptance verdict.",
+      "The primary profile has unsampled gaps, center and extreme tails.",
+      "Manual trace reproducibility and scan deformation remain unquantified.",
+      "C-pilot numerical precision and full convergence remain incomplete."
+    ]
   }
 }
