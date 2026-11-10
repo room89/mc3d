@@ -1,0 +1,355 @@
+{
+  "status": "conditional_empirical_banks_verified",
+  "physical_acceptance": "incomplete",
+  "manifest_sha256": "1fe365e92c2cecbc2bdb7bc5eb3a0ec6fee470369f80b0de88b773bff98e68bf",
+  "verifier_sha256": "1f486f0a7174665dd252f3f5a4d038e8501918b82ea0cf9d0b65c2d52250ec04",
+  "loader_sha256": "3e081856af3a6d2d262481820a4fb20b48e46d3bbb83b4dabe2f8740213ea734",
+  "region_phase_checks": 648,
+  "banks": {
+    "mc3d-training": {
+      "sha256": "10c45c0f9c7d9a420d72d7f71434eb2dbfb11dfc56aaaaf39b601b5f8900b8b6",
+      "shape": [
+        24,
+        64,
+        560
+      ],
+      "sources": [
+        {
+          "group": "g00",
+          "seed": 123
+        },
+        {
+          "group": "g00",
+          "seed": 456
+        },
+        {
+          "group": "g00",
+          "seed": 789
+        },
+        {
+          "group": "g01",
+          "seed": 10003
+        },
+        {
+          "group": "g01",
+          "seed": 10004
+        },
+        {
+          "group": "g01",
+          "seed": 10005
+        },
+        {
+          "group": "g02",
+          "seed": 10006
+        },
+        {
+          "group": "g02",
+          "seed": 10007
+        },
+        {
+          "group": "g02",
+          "seed": 10008
+        },
+        {
+          "group": "g03",
+          "seed": 10009
+        },
+        {
+          "group": "g03",
+          "seed": 10010
+        },
+        {
+          "group": "g03",
+          "seed": 10011
+        },
+        {
+          "group": "g04",
+          "seed": 10012
+        },
+        {
+          "group": "g04",
+          "seed": 10013
+        },
+        {
+          "group": "g04",
+          "seed": 10014
+        },
+        {
+          "group": "g05",
+          "seed": 10015
+        },
+        {
+          "group": "g05",
+          "seed": 10016
+        },
+        {
+          "group": "g05",
+          "seed": 10017
+        },
+        {
+          "group": "g06",
+          "seed": 10018
+        },
+        {
+          "group": "g06",
+          "seed": 10019
+        },
+        {
+          "group": "g06",
+          "seed": 10020
+        },
+        {
+          "group": "g07",
+          "seed": 10021
+        },
+        {
+          "group": "g07",
+          "seed": 10022
+        },
+        {
+          "group": "g07",
+          "seed": 10023
+        }
+      ],
+      "max_abs_ensemble_mean": 3.524958103184872e-15,
+      "mean_per_run_mean_square": 2.9610889060241252e-05,
+      "mean_window_variance": 0.00012995181498089194
+    },
+    "mc3d-heldout": {
+      "sha256": "031e771bc01467b28963fe607b829c01a09841f8873bfb3290059f97a27872f3",
+      "shape": [
+        12,
+        64,
+        560
+      ],
+      "sources": [
+        {
+          "group": "g08",
+          "seed": 10024
+        },
+        {
+          "group": "g08",
+          "seed": 10025
+        },
+        {
+          "group": "g08",
+          "seed": 10026
+        },
+        {
+          "group": "g09",
+          "seed": 10027
+        },
+        {
+          "group": "g09",
+          "seed": 10028
+        },
+        {
+          "group": "g09",
+          "seed": 10029
+        },
+        {
+          "group": "g10",
+          "seed": 10030
+        },
+        {
+          "group": "g10",
+          "seed": 10031
+        },
+        {
+          "group": "g10",
+          "seed": 10032
+        },
+        {
+          "group": "g11",
+          "seed": 10033
+        },
+        {
+          "group": "g11",
+          "seed": 10034
+        },
+        {
+          "group": "g11",
+          "seed": 10035
+        }
+      ],
+      "max_abs_ensemble_mean": 2.2162538008500357e-15,
+      "mean_per_run_mean_square": 4.971913289414605e-05,
+      "mean_window_variance": 0.00013324149548901468
+    },
+    "sparta-training": {
+      "sha256": "d3171e405050fbca0efd3e1fedbaedfde6891cf6cdcc205c2650c5c090cf2718",
+      "shape": [
+        24,
+        64,
+        560
+      ],
+      "sources": [
+        {
+          "group": "g00",
+          "seed": 123
+        },
+        {
+          "group": "g00",
+          "seed": 456
+        },
+        {
+          "group": "g00",
+          "seed": 789
+        },
+        {
+          "group": "g01",
+          "seed": 10003
+        },
+        {
+          "group": "g01",
+          "seed": 10004
+        },
+        {
+          "group": "g01",
+          "seed": 10005
+        },
+        {
+          "group": "g02",
+          "seed": 10006
+        },
+        {
+          "group": "g02",
+          "seed": 10007
+        },
+        {
+          "group": "g02",
+          "seed": 10008
+        },
+        {
+          "group": "g03",
+          "seed": 10009
+        },
+        {
+          "group": "g03",
+          "seed": 10010
+        },
+        {
+          "group": "g03",
+          "seed": 10011
+        },
+        {
+          "group": "g04",
+          "seed": 10012
+        },
+        {
+          "group": "g04",
+          "seed": 10013
+        },
+        {
+          "group": "g04",
+          "seed": 10014
+        },
+        {
+          "group": "g05",
+          "seed": 10015
+        },
+        {
+          "group": "g05",
+          "seed": 10016
+        },
+        {
+          "group": "g05",
+          "seed": 10017
+        },
+        {
+          "group": "g06",
+          "seed": 10018
+        },
+        {
+          "group": "g06",
+          "seed": 10019
+        },
+        {
+          "group": "g06",
+          "seed": 10020
+        },
+        {
+          "group": "g07",
+          "seed": 10021
+        },
+        {
+          "group": "g07",
+          "seed": 10022
+        },
+        {
+          "group": "g07",
+          "seed": 10023
+        }
+      ],
+      "max_abs_ensemble_mean": 3.3836504200375947e-15,
+      "mean_per_run_mean_square": 2.4184219680475028e-05,
+      "mean_window_variance": 0.00013193836840805795
+    },
+    "sparta-heldout": {
+      "sha256": "3074d7c4a2f12970b8f4c1448a7b338567f9e3bb55d140c07a1d9f42e3f86fb1",
+      "shape": [
+        12,
+        64,
+        560
+      ],
+      "sources": [
+        {
+          "group": "g08",
+          "seed": 10024
+        },
+        {
+          "group": "g08",
+          "seed": 10025
+        },
+        {
+          "group": "g08",
+          "seed": 10026
+        },
+        {
+          "group": "g09",
+          "seed": 10027
+        },
+        {
+          "group": "g09",
+          "seed": 10028
+        },
+        {
+          "group": "g09",
+          "seed": 10029
+        },
+        {
+          "group": "g10",
+          "seed": 10030
+        },
+        {
+          "group": "g10",
+          "seed": 10031
+        },
+        {
+          "group": "g10",
+          "seed": 10032
+        },
+        {
+          "group": "g11",
+          "seed": 10033
+        },
+        {
+          "group": "g11",
+          "seed": 10034
+        },
+        {
+          "group": "g11",
+          "seed": 10035
+        }
+      ],
+      "max_abs_ensemble_mean": 2.290413229448044e-15,
+      "mean_per_run_mean_square": 2.9375339103964343e-05,
+      "mean_window_variance": 0.00013745063944213887
+    }
+  },
+  "limitations": [
+    "Hashes, dimensions, identities, centering and all historical region/phase covariance statistics verified; raw solver trajectories were not re-extracted by this verifier.",
+    "Fluctuations include front motion and run offsets. Conditional stress data do not establish the true physical noise law or create additional physical realizations."
+  ],
+  "verification_artifact_sha256": "3debfc2f65367955e1b75ac6c573e625dadec5f0efb270603cb5ff58e66d45f7"
+}
