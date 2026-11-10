@@ -1,5 +1,6 @@
 """Pointwise interval diagnostic against digitized primary data; never acceptance."""
 import argparse
+import copy
 import hashlib
 import itertools
 import json
@@ -57,6 +58,30 @@ def compare(primary, summary, model_length):
                              'Experimental and digitization intervals are propagated without fitting spatial scale.'])
 
 
+
+def nominal_axes(primary):
+    """One graph-derived calibration for every sample; no model-dependent fit."""
+    result = copy.deepcopy(primary)
+    keys = ('axis_origin_x_interval', 'axis_pixels_per_lambda_interval',
+            'axis_y0_interval', 'axis_y1_interval')
+    x0, pixels, y0, y1 = [sum(interval(primary[k])) / 2 for k in keys]
+    padding = primary['pixel_extent_padding']
+    if pixels <= 0 or y0 <= y1 or not math.isfinite(padding) or padding < 0:
+        raise ValueError('Invalid raster calibration')
+    for point in result['points']:
+        lo, hi = interval(point['pixel_black_run'])
+        row = point['pixel_row']
+        if not math.isfinite(row):
+            raise ValueError('Invalid pixel row')
+        point['x_paper_interval'] = [(lo-padding-x0)/pixels, (hi+padding-x0)/pixels]
+        point['rho_interval'] = [(y0-row-padding)/(y0-y1), (y0-row+padding)/(y0-y1)]
+    result['stated_relative_length_accuracy'] = 0.
+    result['fixed_axis_values'] = dict(origin_x=x0, pixels_per_lambda=pixels,
+                                     density_zero_y=y0, density_one_y=y1,
+                                     reference_length_m=primary['reference_length_m'])
+    return result
+
+
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -77,7 +102,13 @@ def main():
     for name in names:
         if source['protocol']['sources'].get(name) != digest(Path(__file__).with_name(name)):
             raise ValueError('Estimator source mismatch: '+name)
-    result = compare(json.loads(a.primary.read_text()), source['summaries'][a.variant], a.model_reference_length_m)
+    primary = json.loads(a.primary.read_text())
+    result = compare(primary, source['summaries'][a.variant], a.model_reference_length_m)
+    nominal = nominal_axes(primary)
+    fixed = compare(nominal, source['summaries'][a.variant], a.model_reference_length_m)
+    fixed['axis_values'] = nominal['fixed_axis_values']
+    fixed['interpretation'] = 'Shared nominal axes from the graph, no axis or spatial-scale search. Failure at nominal axes does not exclude all allowed calibrations; success concerns only sampled points.'
+    result['fixed_nominal_calibration'] = fixed
     result.update(variant=a.variant, source_hashes={'primary': digest(a.primary), 'analysis': digest(a.analysis)},
                   tool_sha256=digest(Path(__file__)))
     a.output.parent.mkdir(parents=True, exist_ok=True)

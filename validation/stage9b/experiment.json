@@ -192,6 +192,57 @@
       "The primary profile has unsampled gaps, center and extreme tails.",
       "Manual trace reproducibility and scan deformation remain unquantified.",
       "C-pilot numerical precision and full convergence remain incomplete."
-    ]
+    ],
+    "fixed_nominal_calibration": {
+      "status": "diagnostic_only_no_acceptance_verdict",
+      "comparisons": [
+        {
+          "variant": "C",
+          "axis_values": {
+            "origin_x": 553.0,
+            "pixels_per_lambda": 50.900000000000006,
+            "density_zero_y": 537.0,
+            "density_one_y": 32.0,
+            "reference_length_m": 0.001098
+          },
+          "point_count": 45,
+          "nonoverlap_count": 0,
+          "maximum_nonoverlap_gap": 0.0,
+          "nonoverlap_pixel_rows": [],
+          "artifact": "output/alsmeyer-source/primary-profile-C-fixed-axes.json",
+          "sha256": "3456efb4b2910dc9136ff597fbbb40cdb11aa5668d48d8419cd3a421cadd2bda",
+          "source_hashes": {
+            "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+            "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+          },
+          "tool_sha256": "d51a5d8c63d6b047ee60ef065b02c08dbc362049619e1edf98556e3b57f1f187"
+        },
+        {
+          "variant": "sparta-C",
+          "axis_values": {
+            "origin_x": 553.0,
+            "pixels_per_lambda": 50.900000000000006,
+            "density_zero_y": 537.0,
+            "density_one_y": 32.0,
+            "reference_length_m": 0.001098
+          },
+          "point_count": 45,
+          "nonoverlap_count": 2,
+          "maximum_nonoverlap_gap": 0.0005309601033270939,
+          "nonoverlap_pixel_rows": [
+            105,
+            101
+          ],
+          "artifact": "output/alsmeyer-source/primary-profile-sparta-C-fixed-axes.json",
+          "sha256": "f03521f4b67599838f8e66e68370ba86ed9afc5942a2abfa90993f26b34717a5",
+          "source_hashes": {
+            "primary": "7274a2a2d07ad3250d5eab0ce4b7cbd7c6f315e4d9231305b7ba358b4b68148f",
+            "analysis": "83f8788063bb4d773edc7111b62ba740c1b84ade691f3e53a24c24d2f19cdd01"
+          },
+          "tool_sha256": "d51a5d8c63d6b047ee60ef065b02c08dbc362049619e1edf98556e3b57f1f187"
+        }
+      ],
+      "interpretation": "One common graph-derived axis calibration and reference length are held fixed for all points. No model-dependent scale or translation search. Nonoverlap at nominal calibration does not exclude the full allowed calibration set."
+    }
   }
 }
