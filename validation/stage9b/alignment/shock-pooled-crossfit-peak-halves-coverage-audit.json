@@ -1,0 +1,1243 @@
+{
+  "status": "diagnostic_only_no_acceptance_verdict",
+  "nominal_coverage": 0.95,
+  "family_tests": 72,
+  "cases": [
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 126,
+          "trials": 128,
+          "coverage": 0.984375,
+          "exact_95_interval": [
+            0.9446974099775511,
+            0.9981021068782607
+          ],
+          "familywise_95_interval": [
+            0.9063961082115082,
+            0.9997914975325481
+          ],
+          "one_sided_undercoverage_p": 0.989106054186351
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 121,
+          "trials": 128,
+          "coverage": 0.9453125,
+          "exact_95_interval": [
+            0.890567948431743,
+            0.9777328541900765
+          ],
+          "familywise_95_interval": [
+            0.8434415200296541,
+            0.9899115469646347
+          ],
+          "one_sided_undercoverage_p": 0.4592855281610505
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 126,
+          "trials": 128,
+          "coverage": 0.984375,
+          "exact_95_interval": [
+            0.9446974099775511,
+            0.9981021068782607
+          ],
+          "familywise_95_interval": [
+            0.9063961082115082,
+            0.9997914975325481
+          ],
+          "one_sided_undercoverage_p": 0.989106054186351
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 125,
+          "trials": 128,
+          "coverage": 0.9765625,
+          "exact_95_interval": [
+            0.9330336979545444,
+            0.9951402964642762
+          ],
+          "familywise_95_interval": [
+            0.8924781568732643,
+            0.998961239002949
+          ],
+          "one_sided_undercoverage_p": 0.9574032287035411
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 125,
+          "trials": 128,
+          "coverage": 0.9765625,
+          "exact_95_interval": [
+            0.9330336979545444,
+            0.9951402964642762
+          ],
+          "familywise_95_interval": [
+            0.8924781568732643,
+            0.998961239002949
+          ],
+          "one_sided_undercoverage_p": 0.9574032287035411
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 124,
+          "trials": 128,
+          "coverage": 0.96875,
+          "exact_95_interval": [
+            0.9219204745615295,
+            0.9914210644627388
+          ],
+          "familywise_95_interval": [
+            0.879425521328193,
+            0.9974566494403683
+          ],
+          "one_sided_undercoverage_p": 0.88732329868891
+        },
+        "density": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 126,
+          "trials": 128,
+          "coverage": 0.984375,
+          "exact_95_interval": [
+            0.9446974099775511,
+            0.9981021068782607
+          ],
+          "familywise_95_interval": [
+            0.9063961082115082,
+            0.9997914975325481
+          ],
+          "one_sided_undercoverage_p": 0.989106054186351
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 126,
+          "trials": 128,
+          "coverage": 0.984375,
+          "exact_95_interval": [
+            0.9446974099775511,
+            0.9981021068782607
+          ],
+          "familywise_95_interval": [
+            0.9063961082115082,
+            0.9997914975325481
+          ],
+          "one_sided_undercoverage_p": 0.989106054186351
+        },
+        "density": {
+          "hits": 126,
+          "trials": 128,
+          "coverage": 0.984375,
+          "exact_95_interval": [
+            0.9446974099775511,
+            0.9981021068782607
+          ],
+          "familywise_95_interval": [
+            0.9063961082115082,
+            0.9997914975325481
+          ],
+          "one_sided_undercoverage_p": 0.989106054186351
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "logistic",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 125,
+          "trials": 128,
+          "coverage": 0.9765625,
+          "exact_95_interval": [
+            0.9330336979545444,
+            0.9951402964642762
+          ],
+          "familywise_95_interval": [
+            0.8924781568732643,
+            0.998961239002949
+          ],
+          "one_sided_undercoverage_p": 0.9574032287035411
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.0,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 125,
+          "trials": 128,
+          "coverage": 0.9765625,
+          "exact_95_interval": [
+            0.9330336979545444,
+            0.9951402964642762
+          ],
+          "familywise_95_interval": [
+            0.8924781568732643,
+            0.998961239002949
+          ],
+          "one_sided_undercoverage_p": 0.9574032287035411
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.0,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.0,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 122,
+          "trials": 128,
+          "coverage": 0.953125,
+          "exact_95_interval": [
+            0.9007648763061082,
+            0.9826059438597277
+          ],
+          "familywise_95_interval": [
+            0.8550272855736736,
+            0.9928389150543306
+          ],
+          "one_sided_undercoverage_p": 0.6216116526846729
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.005,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.015,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "density": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        }
+      }
+    },
+    {
+      "report_index": 0,
+      "shape": "gompertz",
+      "phi": 0.8,
+      "spatial": 0.2,
+      "noise": 0.03,
+      "metrics": {
+        "width_10_90": {
+          "hits": 128,
+          "trials": 128,
+          "coverage": 1.0,
+          "exact_95_interval": [
+            0.9715919465564562,
+            1.0
+          ],
+          "familywise_95_interval": [
+            0.9396659635576405,
+            1.0
+          ],
+          "one_sided_undercoverage_p": 1.0
+        },
+        "gradient_thickness": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        },
+        "density": {
+          "hits": 127,
+          "trials": 128,
+          "coverage": 0.9921875,
+          "exact_95_interval": [
+            0.9572409680857794,
+            0.9998022241853382
+          ],
+          "familywise_95_interval": [
+            0.9216735387494597,
+            0.9999972868590101
+          ],
+          "one_sided_undercoverage_p": 0.9985919389764831
+        }
+      }
+    }
+  ],
+  "method": "Clopper-Pearson exact two-sided intervals; Bonferroni family intervals across all supplied scenario/metric pairs; exact one-sided binomial test against p=0.95.",
+  "limitations": [
+    "Independent Bernoulli trial assumption within each scenario; no independence assumed between scenarios.",
+    "No counts pooled across scenarios, because scenario random streams may be shared.",
+    "Non-rejection is not proof of nominal coverage; confidence intervals may be too wide to qualify a method.",
+    "Choice of report family and inspection after model selection must be disclosed; this is not a retrospective acceptance rule.",
+    "Physical precision and coverage tolerances are unchanged."
+  ],
+  "report_hashes": [
+    "559b54e129777ccbdb1c534b592716f99d8fcc7d8ade5f5004d4d46da4d70706"
+  ],
+  "tool_sha256": "380687009de897a04958e5a97fef38c04c3aba3a3aece13da4e9c74e742c5dfa"
+}
