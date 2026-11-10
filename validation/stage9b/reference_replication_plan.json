@@ -1,0 +1,945 @@
+{
+  "status": "plan_only",
+  "physical_acceptance": "incomplete",
+  "method": "cubic_quintic_crossfit_v1",
+  "reference_evidence": "../alsmeyer-reference-evidence.json",
+  "reference_evidence_sha256": "19db647886c6ec7b7f3bc93b35e5b3bc298c6fd9ddb0fc7212edf40e8c5b43ee",
+  "existing_input_verification": {
+    "status": "prepared_inputs_verified",
+    "physical_acceptance": "incomplete",
+    "mc3d_cases": 21,
+    "sparta_cases": 9,
+    "seeds": [
+      30001,
+      30002,
+      30003
+    ],
+    "evidence_sha256": "19db647886c6ec7b7f3bc93b35e5b3bc298c6fd9ddb0fc7212edf40e8c5b43ee",
+    "preparation_sha256": "a03cb5bc5bce363d6e03f691a30fcf8c818ff48f6734f66247fa8ecd0254acb1",
+    "export_sha256": "831105965d8d2330481868f7caeb364bd2792c14094bab4b45e6359cd461e142",
+    "tool_sha256": "87e387ef06882978895cf1bc00ff712ad1b081918d52b447c4e99f05e0b5ae0f",
+    "limitations": [
+      "Solver execution and output completeness have not been verified.",
+      "Three seeds do not supply the independent-group replication required by the candidate estimator.",
+      "Method qualification, numerical convergence and experimental acceptance remain separate requirements."
+    ]
+  },
+  "binaries": {
+    "mc3d": {
+      "path": "../shock-validation-restart/runtime/bin/MC3dSolver",
+      "sha256": "330d9ed03dea9c36e39c281edbd4150aeb1c4b8e186003316ffa72f432f489b1"
+    },
+    "sparta": {
+      "path": "../shock-validation-restart/runtime/sparta-build/src/spa_",
+      "sha256": "0d6dedda6d90b1f703d5cd0f745dbeb976cac7f74bf57e9a13016b26e8b10afb"
+    }
+  },
+  "sources": {
+    "plan_alsmeyer_replication.py": "b4e2ba9787fa6fac46c9147f07d9f09967978d6560c9df553146074b5e14b1c6",
+    "verify_alsmeyer_matrix.py": "87e387ef06882978895cf1bc00ff712ad1b081918d52b447c4e99f05e0b5ae0f",
+    "prepare_alsmeyer_matrix.py": "cbc457b8e467734116367f4b445d4b264ddbde941454100c3428383929fc6f09",
+    "export_alsmeyer_sparta.py": "40cd9484a19d4c7d3ca9dbde33864d3680f7c6fb2af11622d1524ae0b8f1c668",
+    "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+    "physical_config.py": "dc6233f2e93d584738980ada40fb0c90bf02996b8ff33878f7dc5d771887b09a",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+    "normal_shock.py": "0dd8bf9ec9975e756c8b673631bbfd33db3604d3be65a0bc0cddf17d7f8cde95",
+    "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689",
+    "sparta_preflight.py": "a2acc8c624c600fc47f738310bae62d6af8e114d55576f4b5afe15735caa5bec"
+  },
+  "total_groups": 12,
+  "subgroups_per_group": 6,
+  "seeds_per_subgroup": 3,
+  "unique_seed_count": 216,
+  "mc3d_variants": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G"
+  ],
+  "sparta_variants": [
+    "C",
+    "D",
+    "E"
+  ],
+  "planned_solver_runs": {
+    "mc3d": 1512,
+    "sparta": 648,
+    "total": 2160
+  },
+  "additional_input_matrices": 71,
+  "groups": [
+    {
+      "name": "g00",
+      "subgroups": [
+        {
+          "name": "g00-s0",
+          "seeds": [
+            30001,
+            30002,
+            30003
+          ],
+          "mc3d": "../alsmeyer-reference-matrix",
+          "sparta": "../alsmeyer-reference-sparta",
+          "status": "existing_inputs_verified"
+        },
+        {
+          "name": "g00-s1",
+          "seeds": [
+            40000,
+            40001,
+            40002
+          ],
+          "mc3d": "g00-s1/mc3d",
+          "sparta": "g00-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g00-s2",
+          "seeds": [
+            40003,
+            40004,
+            40005
+          ],
+          "mc3d": "g00-s2/mc3d",
+          "sparta": "g00-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g00-s3",
+          "seeds": [
+            40006,
+            40007,
+            40008
+          ],
+          "mc3d": "g00-s3/mc3d",
+          "sparta": "g00-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g00-s4",
+          "seeds": [
+            40009,
+            40010,
+            40011
+          ],
+          "mc3d": "g00-s4/mc3d",
+          "sparta": "g00-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g00-s5",
+          "seeds": [
+            40012,
+            40013,
+            40014
+          ],
+          "mc3d": "g00-s5/mc3d",
+          "sparta": "g00-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g01",
+      "subgroups": [
+        {
+          "name": "g01-s0",
+          "seeds": [
+            40015,
+            40016,
+            40017
+          ],
+          "mc3d": "g01-s0/mc3d",
+          "sparta": "g01-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g01-s1",
+          "seeds": [
+            40018,
+            40019,
+            40020
+          ],
+          "mc3d": "g01-s1/mc3d",
+          "sparta": "g01-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g01-s2",
+          "seeds": [
+            40021,
+            40022,
+            40023
+          ],
+          "mc3d": "g01-s2/mc3d",
+          "sparta": "g01-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g01-s3",
+          "seeds": [
+            40024,
+            40025,
+            40026
+          ],
+          "mc3d": "g01-s3/mc3d",
+          "sparta": "g01-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g01-s4",
+          "seeds": [
+            40027,
+            40028,
+            40029
+          ],
+          "mc3d": "g01-s4/mc3d",
+          "sparta": "g01-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g01-s5",
+          "seeds": [
+            40030,
+            40031,
+            40032
+          ],
+          "mc3d": "g01-s5/mc3d",
+          "sparta": "g01-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g02",
+      "subgroups": [
+        {
+          "name": "g02-s0",
+          "seeds": [
+            40033,
+            40034,
+            40035
+          ],
+          "mc3d": "g02-s0/mc3d",
+          "sparta": "g02-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g02-s1",
+          "seeds": [
+            40036,
+            40037,
+            40038
+          ],
+          "mc3d": "g02-s1/mc3d",
+          "sparta": "g02-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g02-s2",
+          "seeds": [
+            40039,
+            40040,
+            40041
+          ],
+          "mc3d": "g02-s2/mc3d",
+          "sparta": "g02-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g02-s3",
+          "seeds": [
+            40042,
+            40043,
+            40044
+          ],
+          "mc3d": "g02-s3/mc3d",
+          "sparta": "g02-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g02-s4",
+          "seeds": [
+            40045,
+            40046,
+            40047
+          ],
+          "mc3d": "g02-s4/mc3d",
+          "sparta": "g02-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g02-s5",
+          "seeds": [
+            40048,
+            40049,
+            40050
+          ],
+          "mc3d": "g02-s5/mc3d",
+          "sparta": "g02-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g03",
+      "subgroups": [
+        {
+          "name": "g03-s0",
+          "seeds": [
+            40051,
+            40052,
+            40053
+          ],
+          "mc3d": "g03-s0/mc3d",
+          "sparta": "g03-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g03-s1",
+          "seeds": [
+            40054,
+            40055,
+            40056
+          ],
+          "mc3d": "g03-s1/mc3d",
+          "sparta": "g03-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g03-s2",
+          "seeds": [
+            40057,
+            40058,
+            40059
+          ],
+          "mc3d": "g03-s2/mc3d",
+          "sparta": "g03-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g03-s3",
+          "seeds": [
+            40060,
+            40061,
+            40062
+          ],
+          "mc3d": "g03-s3/mc3d",
+          "sparta": "g03-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g03-s4",
+          "seeds": [
+            40063,
+            40064,
+            40065
+          ],
+          "mc3d": "g03-s4/mc3d",
+          "sparta": "g03-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g03-s5",
+          "seeds": [
+            40066,
+            40067,
+            40068
+          ],
+          "mc3d": "g03-s5/mc3d",
+          "sparta": "g03-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g04",
+      "subgroups": [
+        {
+          "name": "g04-s0",
+          "seeds": [
+            40069,
+            40070,
+            40071
+          ],
+          "mc3d": "g04-s0/mc3d",
+          "sparta": "g04-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g04-s1",
+          "seeds": [
+            40072,
+            40073,
+            40074
+          ],
+          "mc3d": "g04-s1/mc3d",
+          "sparta": "g04-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g04-s2",
+          "seeds": [
+            40075,
+            40076,
+            40077
+          ],
+          "mc3d": "g04-s2/mc3d",
+          "sparta": "g04-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g04-s3",
+          "seeds": [
+            40078,
+            40079,
+            40080
+          ],
+          "mc3d": "g04-s3/mc3d",
+          "sparta": "g04-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g04-s4",
+          "seeds": [
+            40081,
+            40082,
+            40083
+          ],
+          "mc3d": "g04-s4/mc3d",
+          "sparta": "g04-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g04-s5",
+          "seeds": [
+            40084,
+            40085,
+            40086
+          ],
+          "mc3d": "g04-s5/mc3d",
+          "sparta": "g04-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g05",
+      "subgroups": [
+        {
+          "name": "g05-s0",
+          "seeds": [
+            40087,
+            40088,
+            40089
+          ],
+          "mc3d": "g05-s0/mc3d",
+          "sparta": "g05-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g05-s1",
+          "seeds": [
+            40090,
+            40091,
+            40092
+          ],
+          "mc3d": "g05-s1/mc3d",
+          "sparta": "g05-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g05-s2",
+          "seeds": [
+            40093,
+            40094,
+            40095
+          ],
+          "mc3d": "g05-s2/mc3d",
+          "sparta": "g05-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g05-s3",
+          "seeds": [
+            40096,
+            40097,
+            40098
+          ],
+          "mc3d": "g05-s3/mc3d",
+          "sparta": "g05-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g05-s4",
+          "seeds": [
+            40099,
+            40100,
+            40101
+          ],
+          "mc3d": "g05-s4/mc3d",
+          "sparta": "g05-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g05-s5",
+          "seeds": [
+            40102,
+            40103,
+            40104
+          ],
+          "mc3d": "g05-s5/mc3d",
+          "sparta": "g05-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g06",
+      "subgroups": [
+        {
+          "name": "g06-s0",
+          "seeds": [
+            40105,
+            40106,
+            40107
+          ],
+          "mc3d": "g06-s0/mc3d",
+          "sparta": "g06-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g06-s1",
+          "seeds": [
+            40108,
+            40109,
+            40110
+          ],
+          "mc3d": "g06-s1/mc3d",
+          "sparta": "g06-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g06-s2",
+          "seeds": [
+            40111,
+            40112,
+            40113
+          ],
+          "mc3d": "g06-s2/mc3d",
+          "sparta": "g06-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g06-s3",
+          "seeds": [
+            40114,
+            40115,
+            40116
+          ],
+          "mc3d": "g06-s3/mc3d",
+          "sparta": "g06-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g06-s4",
+          "seeds": [
+            40117,
+            40118,
+            40119
+          ],
+          "mc3d": "g06-s4/mc3d",
+          "sparta": "g06-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g06-s5",
+          "seeds": [
+            40120,
+            40121,
+            40122
+          ],
+          "mc3d": "g06-s5/mc3d",
+          "sparta": "g06-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g07",
+      "subgroups": [
+        {
+          "name": "g07-s0",
+          "seeds": [
+            40123,
+            40124,
+            40125
+          ],
+          "mc3d": "g07-s0/mc3d",
+          "sparta": "g07-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g07-s1",
+          "seeds": [
+            40126,
+            40127,
+            40128
+          ],
+          "mc3d": "g07-s1/mc3d",
+          "sparta": "g07-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g07-s2",
+          "seeds": [
+            40129,
+            40130,
+            40131
+          ],
+          "mc3d": "g07-s2/mc3d",
+          "sparta": "g07-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g07-s3",
+          "seeds": [
+            40132,
+            40133,
+            40134
+          ],
+          "mc3d": "g07-s3/mc3d",
+          "sparta": "g07-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g07-s4",
+          "seeds": [
+            40135,
+            40136,
+            40137
+          ],
+          "mc3d": "g07-s4/mc3d",
+          "sparta": "g07-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g07-s5",
+          "seeds": [
+            40138,
+            40139,
+            40140
+          ],
+          "mc3d": "g07-s5/mc3d",
+          "sparta": "g07-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g08",
+      "subgroups": [
+        {
+          "name": "g08-s0",
+          "seeds": [
+            40141,
+            40142,
+            40143
+          ],
+          "mc3d": "g08-s0/mc3d",
+          "sparta": "g08-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g08-s1",
+          "seeds": [
+            40144,
+            40145,
+            40146
+          ],
+          "mc3d": "g08-s1/mc3d",
+          "sparta": "g08-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g08-s2",
+          "seeds": [
+            40147,
+            40148,
+            40149
+          ],
+          "mc3d": "g08-s2/mc3d",
+          "sparta": "g08-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g08-s3",
+          "seeds": [
+            40150,
+            40151,
+            40152
+          ],
+          "mc3d": "g08-s3/mc3d",
+          "sparta": "g08-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g08-s4",
+          "seeds": [
+            40153,
+            40154,
+            40155
+          ],
+          "mc3d": "g08-s4/mc3d",
+          "sparta": "g08-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g08-s5",
+          "seeds": [
+            40156,
+            40157,
+            40158
+          ],
+          "mc3d": "g08-s5/mc3d",
+          "sparta": "g08-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g09",
+      "subgroups": [
+        {
+          "name": "g09-s0",
+          "seeds": [
+            40159,
+            40160,
+            40161
+          ],
+          "mc3d": "g09-s0/mc3d",
+          "sparta": "g09-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g09-s1",
+          "seeds": [
+            40162,
+            40163,
+            40164
+          ],
+          "mc3d": "g09-s1/mc3d",
+          "sparta": "g09-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g09-s2",
+          "seeds": [
+            40165,
+            40166,
+            40167
+          ],
+          "mc3d": "g09-s2/mc3d",
+          "sparta": "g09-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g09-s3",
+          "seeds": [
+            40168,
+            40169,
+            40170
+          ],
+          "mc3d": "g09-s3/mc3d",
+          "sparta": "g09-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g09-s4",
+          "seeds": [
+            40171,
+            40172,
+            40173
+          ],
+          "mc3d": "g09-s4/mc3d",
+          "sparta": "g09-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g09-s5",
+          "seeds": [
+            40174,
+            40175,
+            40176
+          ],
+          "mc3d": "g09-s5/mc3d",
+          "sparta": "g09-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g10",
+      "subgroups": [
+        {
+          "name": "g10-s0",
+          "seeds": [
+            40177,
+            40178,
+            40179
+          ],
+          "mc3d": "g10-s0/mc3d",
+          "sparta": "g10-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g10-s1",
+          "seeds": [
+            40180,
+            40181,
+            40182
+          ],
+          "mc3d": "g10-s1/mc3d",
+          "sparta": "g10-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g10-s2",
+          "seeds": [
+            40183,
+            40184,
+            40185
+          ],
+          "mc3d": "g10-s2/mc3d",
+          "sparta": "g10-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g10-s3",
+          "seeds": [
+            40186,
+            40187,
+            40188
+          ],
+          "mc3d": "g10-s3/mc3d",
+          "sparta": "g10-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g10-s4",
+          "seeds": [
+            40189,
+            40190,
+            40191
+          ],
+          "mc3d": "g10-s4/mc3d",
+          "sparta": "g10-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g10-s5",
+          "seeds": [
+            40192,
+            40193,
+            40194
+          ],
+          "mc3d": "g10-s5/mc3d",
+          "sparta": "g10-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    },
+    {
+      "name": "g11",
+      "subgroups": [
+        {
+          "name": "g11-s0",
+          "seeds": [
+            40195,
+            40196,
+            40197
+          ],
+          "mc3d": "g11-s0/mc3d",
+          "sparta": "g11-s0/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g11-s1",
+          "seeds": [
+            40198,
+            40199,
+            40200
+          ],
+          "mc3d": "g11-s1/mc3d",
+          "sparta": "g11-s1/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g11-s2",
+          "seeds": [
+            40201,
+            40202,
+            40203
+          ],
+          "mc3d": "g11-s2/mc3d",
+          "sparta": "g11-s2/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g11-s3",
+          "seeds": [
+            40204,
+            40205,
+            40206
+          ],
+          "mc3d": "g11-s3/mc3d",
+          "sparta": "g11-s3/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g11-s4",
+          "seeds": [
+            40207,
+            40208,
+            40209
+          ],
+          "mc3d": "g11-s4/mc3d",
+          "sparta": "g11-s4/sparta",
+          "status": "inputs_not_prepared"
+        },
+        {
+          "name": "g11-s5",
+          "seeds": [
+            40210,
+            40211,
+            40212
+          ],
+          "mc3d": "g11-s5/mc3d",
+          "sparta": "g11-s5/sparta",
+          "status": "inputs_not_prepared"
+        }
+      ]
+    }
+  ],
+  "required_before_execution": [
+    "Complete independent calibration and scientific assessment of the selected estimator.",
+    "Verify pinned binaries and every prepared reference-domain input matrix."
+  ],
+  "execution_order": [
+    "Run the existing prepared 30-case reference matrix as a pilot.",
+    "Inspect outputs, runtime, memory, stationarity and observed noise before expanding to the remaining groups."
+  ],
+  "limitations": [
+    "This plan creates no solver inputs or output data beyond the plan itself.",
+    "Existing inputs are reused once; existing solver completion is not inferred.",
+    "Engineering-domain data cannot be substituted for reference-domain groups.",
+    "Seed identity is shared between variants for paired comparisons, but never repeated between independent subgroups.",
+    "The planned replication does not guarantee that precision or convergence criteria will pass."
+  ],
+  "full_artifact": "output/alsmeyer-independent-matrix/plan.json",
+  "full_artifact_sha256": "b15a6bbd8ea35bf3ea81b5ecd2f059401b528fa70c5f1640f675455e38cb798a",
+  "paths_relative_to": "output/alsmeyer-independent-matrix"
+}
