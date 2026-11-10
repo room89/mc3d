@@ -11,8 +11,8 @@
     "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689"
   },
   "limitations": [
-    "No solver was launched.",
-    "SPARTA export and execution are pending.",
+    "No MC3D or production SPARTA solver run was launched; only the separately recorded SPARTA smoke ran.",
+    "SPARTA production execution is pending; the short syntax/output smoke is not physical acceptance.",
     "Independent-group replication, convergence and experimental acceptance remain pending.",
     "These configurations must not be mixed with the engineering C pilot or its pooled campaign."
   ],
@@ -36,5 +36,57 @@
   "base_domain_m": 0.04392,
   "base_domain_experimental_mean_free_paths": 40,
   "doubled_domain_experimental_mean_free_paths": 80,
-  "solver_execution_count": 0
+  "solver_execution_count": 0,
+  "sparta_export": {
+    "status": "exported_only",
+    "artifact": "output/alsmeyer-reference-sparta/export.json",
+    "sha256": "831105965d8d2330481868f7caeb364bd2792c14094bab4b45e6359cd461e142",
+    "case_count": 9,
+    "sources": {
+      "export_alsmeyer_sparta.py": "40cd9484a19d4c7d3ca9dbde33864d3680f7c6fb2af11622d1524ae0b8f1c668",
+      "sparta_preflight.py": "a2acc8c624c600fc47f738310bae62d6af8e114d55576f4b5afe15735caa5bec",
+      "argon_vhs.py": "ae532c26afb0484cde89f8a18e4b5a0203025a4f6b36b3043df3ff677782a689",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+    },
+    "production_execution_count": 0
+  },
+  "sparta_smoke": {
+    "status": "smoke_execution_complete",
+    "physical_acceptance": "incomplete",
+    "returncode": 0,
+    "binary_sha256": "0d6dedda6d90b1f703d5cd0f745dbeb976cac7f74bf57e9a13016b26e8b10afb",
+    "seconds": 0.41608025000005,
+    "input_sha256": "1713ada2e7df480ab0be672c2c8b86cd56861b9a6e2f1c266cd8ec6fd52756e1",
+    "log_sha256": "f2df38658f5208454669d32f50c366b8c75da6945c29c75c3c46c65d0f787443",
+    "profiles": [
+      "profile.20",
+      "profile.10",
+      "profile.30"
+    ],
+    "artifact": "output/alsmeyer-reference-sparta-smoke/C-30001/smoke.json",
+    "sha256": "683fed64eaa0e66223f6e875ee6738599f0563de3a76e77cc6301de26b8eec29",
+    "verification": {
+      "status": "smoke_output_verified",
+      "physical_acceptance": "incomplete",
+      "execution_sha256": "683fed64eaa0e66223f6e875ee6738599f0563de3a76e77cc6301de26b8eec29",
+      "measurement_profiles": [
+        {
+          "file": "profile.20",
+          "sha256": "1fd391c4d7fc38e538bc0e8bc907b0d7704527b0fb5e90b6a7fc1695ae27c5e8",
+          "cells": 800,
+          "columns": 15
+        },
+        {
+          "file": "profile.30",
+          "sha256": "910ef81a5cfe0f859bd8d8827f8b547cdd92760f2f2c2b4b6952a41b7e99daae",
+          "cells": 800,
+          "columns": 15
+        }
+      ],
+      "excluded_initial_dump": "profile.10",
+      "reason": "The dump at fix creation precedes the first completed averaging window."
+    },
+    "verification_artifact": "output/alsmeyer-reference-sparta-smoke/C-30001/smoke-verification.json",
+    "verification_sha256": "b8b80e5897e70caf4e69a8561e7c4a7402979cfbb926837c84d9ae96d34aeb84"
+  }
 }
