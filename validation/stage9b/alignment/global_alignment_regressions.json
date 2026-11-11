@@ -1,0 +1,103 @@
+{
+  "status": "selected_global_alignment_regressions_verified",
+  "physical_acceptance": "incomplete",
+  "module_sha256": "f4d74d7606175ae9960ea49cf5d0fffc280b3a8662ccc92de4f7c15a93ab27fa",
+  "replay_sha256": "3d6b4cc7c1e9c960223c997cbc8a4de4f62e6bf3ac7c5ca49f2ad7135b2f1165",
+  "results": [
+    {
+      "checkpoint": "3-8.json",
+      "source": 1,
+      "window": 13,
+      "previous_error": "Ambiguous minimum",
+      "status": "ambiguity_retained"
+    },
+    {
+      "checkpoint": "3-9.json",
+      "source": 2,
+      "window": 13,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.09701681503031523,
+      "loss": 0.0012748233529576705,
+      "true_front": 0.022404432497780402
+    },
+    {
+      "checkpoint": "5-1.json",
+      "source": 0,
+      "window": 12,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.10957124415192537,
+      "loss": 0.00095677103707151,
+      "true_front": 0.0
+    },
+    {
+      "checkpoint": "5-1.json",
+      "source": 0,
+      "window": 13,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.1431464149451812,
+      "loss": 0.0010522015763995316,
+      "true_front": 0.0
+    },
+    {
+      "checkpoint": "5-5.json",
+      "source": 0,
+      "window": 9,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.04194639725540129,
+      "loss": 0.0010157846857522114,
+      "true_front": 0.0
+    },
+    {
+      "checkpoint": "5-9.json",
+      "source": 1,
+      "window": 26,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.030452756911176944,
+      "loss": 0.0009618937985265519,
+      "true_front": 0.0
+    },
+    {
+      "checkpoint": "7-9.json",
+      "source": 1,
+      "window": 19,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": 0.04097256747120356,
+      "loss": 0.0011958580841051117,
+      "true_front": -0.03965344387587262
+    },
+    {
+      "checkpoint": "7-15.json",
+      "source": 2,
+      "window": 30,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.06418850534180362,
+      "loss": 0.0010787762539077126,
+      "true_front": -0.042596354450068555
+    },
+    {
+      "checkpoint": "7-15.json",
+      "source": 2,
+      "window": 31,
+      "previous_error": "Boundary minimum",
+      "status": "unique_interior_minimum",
+      "front": -0.008160209678158026,
+      "loss": 0.0009788927736889457,
+      "true_front": -0.007281433536305193
+    }
+  ],
+  "limitations": [
+    "Selected previously failed windows, not independent validation.",
+    "Eight interior minima recovered; this does not prove true shifts or complete trials pass.",
+    "One ambiguous case remains rejected.",
+    "Frozen running estimator unchanged; profile bias and full coverage remain unresolved."
+  ],
+  "evidence_path": "output/shock-global-alignment-regressions.json",
+  "evidence_sha256": "36b3928f548131a2c579ff4662267b929f04c9406aeb52d34a9d0caf181c14ce"
+}

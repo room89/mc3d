@@ -1,0 +1,79 @@
+{
+  "status": "fresh_paired_global_alignment_screen",
+  "physical_acceptance": "incomplete",
+  "scenarios": [
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01
+    }
+  ],
+  "replicates_per_scenario": 16,
+  "scheduled_trials": 128,
+  "group_count": 12,
+  "sources_per_group": 3,
+  "windows": 32,
+  "seed_start": 194000000,
+  "sources": {
+    "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+    "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+    "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+    "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+    "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+    "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+    "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+    "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+    "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+    "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+    "shock_order_sensitivity.py": "6fefe4718882fc1dd49397dd3edaca1124315464be7d4846787e1823a0fc1301",
+    "calibrate_order_sensitivity.py": "fb65eb2e1d18eefdf2438518a412c4e94b2db9eb5c5b3b679c2947c98327fbd4",
+    "verify_high_order_coverage.py": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac",
+    "shock_empirical_fluctuations.py": "3e081856af3a6d2d262481820a4fb20b48e46d3bbb83b4dabe2f8740213ea734",
+    "calibrate_empirical_order.py": "f131e971b6d0312602555f157cc674ef526989c5529e58d74d09a01a1152f8a6",
+    "shock_global_alignment.py": "f4d74d7606175ae9960ea49cf5d0fffc280b3a8662ccc92de4f7c15a93ab27fa",
+    "shock_hierarchical_fixture.py": "d61897f49fd52e3c737742853df3be82d060b5bf80f44a65dde23188b43f84cf"
+  },
+  "script_sha256": "cda23d7f08d125b86f5dbef1503db6154358064269f2c17ae5203536a5c4ad96",
+  "limitations": [
+    "Fresh synthetic exact-template comparison; not production template or coverage validation.",
+    "Both algorithms receive identical windows and truth; no failed-window removal.",
+    "A trial profile is reported only if every window in all 12 groups succeeds.",
+    "Fixed 16 trials per scenario; no optional stopping or threshold tuning."
+  ]
+}
