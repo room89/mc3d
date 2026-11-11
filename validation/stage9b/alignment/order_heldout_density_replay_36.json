@@ -1,0 +1,411 @@
+{
+  "status": "selected_case_diagnostic_not_qualification",
+  "physical_acceptance": "incomplete",
+  "checkpoint_sha256": "ad89269f1a46313e6124d7a6a6200061cf258f097a524abf357c7cd43c66dd00",
+  "script_sha256": "b0db09565bd1ba88ed0a8f58569017103898641d578cb3453d74dae9b8baaa72",
+  "spec": [
+    "mc3d-heldout",
+    "logistic",
+    0.0,
+    36
+  ],
+  "protocol": {
+    "method": "alignment_order_envelope_v1",
+    "status": "conditional_empirical_stress",
+    "group_count": 12,
+    "subgroups": 6,
+    "bootstrap_repeats": 1024,
+    "windows": 32,
+    "seed_start": 186000000,
+    "replicates": 128,
+    "motion_amplitudes": [
+      0.0,
+      0.05,
+      1.0
+    ],
+    "bank_evidence": {
+      "manifest_sha256": "1fe365e92c2cecbc2bdb7bc5eb3a0ec6fee470369f80b0de88b773bff98e68bf",
+      "verification_sha256": "3debfc2f65367955e1b75ac6c573e625dadec5f0efb270603cb5ff58e66d45f7",
+      "banks": {
+        "mc3d-training": {
+          "sha256": "10c45c0f9c7d9a420d72d7f71434eb2dbfb11dfc56aaaaf39b601b5f8900b8b6",
+          "shape": [
+            24,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g00",
+              "seed": 123
+            },
+            {
+              "group": "g00",
+              "seed": 456
+            },
+            {
+              "group": "g00",
+              "seed": 789
+            },
+            {
+              "group": "g01",
+              "seed": 10003
+            },
+            {
+              "group": "g01",
+              "seed": 10004
+            },
+            {
+              "group": "g01",
+              "seed": 10005
+            },
+            {
+              "group": "g02",
+              "seed": 10006
+            },
+            {
+              "group": "g02",
+              "seed": 10007
+            },
+            {
+              "group": "g02",
+              "seed": 10008
+            },
+            {
+              "group": "g03",
+              "seed": 10009
+            },
+            {
+              "group": "g03",
+              "seed": 10010
+            },
+            {
+              "group": "g03",
+              "seed": 10011
+            },
+            {
+              "group": "g04",
+              "seed": 10012
+            },
+            {
+              "group": "g04",
+              "seed": 10013
+            },
+            {
+              "group": "g04",
+              "seed": 10014
+            },
+            {
+              "group": "g05",
+              "seed": 10015
+            },
+            {
+              "group": "g05",
+              "seed": 10016
+            },
+            {
+              "group": "g05",
+              "seed": 10017
+            },
+            {
+              "group": "g06",
+              "seed": 10018
+            },
+            {
+              "group": "g06",
+              "seed": 10019
+            },
+            {
+              "group": "g06",
+              "seed": 10020
+            },
+            {
+              "group": "g07",
+              "seed": 10021
+            },
+            {
+              "group": "g07",
+              "seed": 10022
+            },
+            {
+              "group": "g07",
+              "seed": 10023
+            }
+          ]
+        },
+        "mc3d-heldout": {
+          "sha256": "031e771bc01467b28963fe607b829c01a09841f8873bfb3290059f97a27872f3",
+          "shape": [
+            12,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g08",
+              "seed": 10024
+            },
+            {
+              "group": "g08",
+              "seed": 10025
+            },
+            {
+              "group": "g08",
+              "seed": 10026
+            },
+            {
+              "group": "g09",
+              "seed": 10027
+            },
+            {
+              "group": "g09",
+              "seed": 10028
+            },
+            {
+              "group": "g09",
+              "seed": 10029
+            },
+            {
+              "group": "g10",
+              "seed": 10030
+            },
+            {
+              "group": "g10",
+              "seed": 10031
+            },
+            {
+              "group": "g10",
+              "seed": 10032
+            },
+            {
+              "group": "g11",
+              "seed": 10033
+            },
+            {
+              "group": "g11",
+              "seed": 10034
+            },
+            {
+              "group": "g11",
+              "seed": 10035
+            }
+          ]
+        },
+        "sparta-training": {
+          "sha256": "d3171e405050fbca0efd3e1fedbaedfde6891cf6cdcc205c2650c5c090cf2718",
+          "shape": [
+            24,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g00",
+              "seed": 123
+            },
+            {
+              "group": "g00",
+              "seed": 456
+            },
+            {
+              "group": "g00",
+              "seed": 789
+            },
+            {
+              "group": "g01",
+              "seed": 10003
+            },
+            {
+              "group": "g01",
+              "seed": 10004
+            },
+            {
+              "group": "g01",
+              "seed": 10005
+            },
+            {
+              "group": "g02",
+              "seed": 10006
+            },
+            {
+              "group": "g02",
+              "seed": 10007
+            },
+            {
+              "group": "g02",
+              "seed": 10008
+            },
+            {
+              "group": "g03",
+              "seed": 10009
+            },
+            {
+              "group": "g03",
+              "seed": 10010
+            },
+            {
+              "group": "g03",
+              "seed": 10011
+            },
+            {
+              "group": "g04",
+              "seed": 10012
+            },
+            {
+              "group": "g04",
+              "seed": 10013
+            },
+            {
+              "group": "g04",
+              "seed": 10014
+            },
+            {
+              "group": "g05",
+              "seed": 10015
+            },
+            {
+              "group": "g05",
+              "seed": 10016
+            },
+            {
+              "group": "g05",
+              "seed": 10017
+            },
+            {
+              "group": "g06",
+              "seed": 10018
+            },
+            {
+              "group": "g06",
+              "seed": 10019
+            },
+            {
+              "group": "g06",
+              "seed": 10020
+            },
+            {
+              "group": "g07",
+              "seed": 10021
+            },
+            {
+              "group": "g07",
+              "seed": 10022
+            },
+            {
+              "group": "g07",
+              "seed": 10023
+            }
+          ]
+        },
+        "sparta-heldout": {
+          "sha256": "3074d7c4a2f12970b8f4c1448a7b338567f9e3bb55d140c07a1d9f42e3f86fb1",
+          "shape": [
+            12,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g08",
+              "seed": 10024
+            },
+            {
+              "group": "g08",
+              "seed": 10025
+            },
+            {
+              "group": "g08",
+              "seed": 10026
+            },
+            {
+              "group": "g09",
+              "seed": 10027
+            },
+            {
+              "group": "g09",
+              "seed": 10028
+            },
+            {
+              "group": "g09",
+              "seed": 10029
+            },
+            {
+              "group": "g10",
+              "seed": 10030
+            },
+            {
+              "group": "g10",
+              "seed": 10031
+            },
+            {
+              "group": "g10",
+              "seed": 10032
+            },
+            {
+              "group": "g11",
+              "seed": 10033
+            },
+            {
+              "group": "g11",
+              "seed": 10034
+            },
+            {
+              "group": "g11",
+              "seed": 10035
+            }
+          ]
+        }
+      }
+    },
+    "sources": {
+      "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+      "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+      "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+      "shock_order_sensitivity.py": "6fefe4718882fc1dd49397dd3edaca1124315464be7d4846787e1823a0fc1301",
+      "calibrate_order_sensitivity.py": "fb65eb2e1d18eefdf2438518a412c4e94b2db9eb5c5b3b679c2947c98327fbd4",
+      "verify_high_order_coverage.py": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac",
+      "shock_empirical_fluctuations.py": "3e081856af3a6d2d262481820a4fb20b48e46d3bbb83b4dabe2f8740213ea734",
+      "calibrate_empirical_order.py": "f131e971b6d0312602555f157cc674ef526989c5529e58d74d09a01a1152f8a6"
+    },
+    "limitations": [
+      "Conditional screen on finite historical banks, not new independent physical realizations.",
+      "Historical fluctuations include front motion and run offsets; separate bank centering does not test physical mean agreement.",
+      "Cyclic windows preserve native order with one wrap boundary; no per-run mean subtraction.",
+      "Complete independent parametric calibration and actual physical precision/convergence remain required."
+    ]
+  },
+  "exact_scalar_replay": true,
+  "full_replay_sha256": "d88622b605d807b37b0350aabc9d2cce397256eef80402f0fbfc241e4d1c849d",
+  "diagnostics": {
+    "primary_estimate": {
+      "maximum_absolute_error": 0.00168087394615557,
+      "signed_error_at_maximum": 0.00168087394615557,
+      "x_at_maximum": 2.1000000000000014,
+      "own_radius": 0.0008142835404975231,
+      "own_band_covers": false
+    },
+    "alternative_estimate": {
+      "maximum_absolute_error": 0.0016560273678174475,
+      "signed_error_at_maximum": 0.0016560273678174475,
+      "x_at_maximum": 2.1000000000000014,
+      "own_radius": 0.0007681750478657433,
+      "own_band_covers": false
+    }
+  },
+  "envelope_radius": 0.001493951120223652,
+  "order_density_difference": 0.0007257760723579088,
+  "limitations": [
+    "Selected worst error/radius case, not an independent coverage trial.",
+    "Common positive error in two branches does not identify its mechanism.",
+    "Full profiles and group estimates retained in local output/shock-order-heldout-density-replay-36.json.",
+    "Frozen estimator and ongoing series unchanged."
+  ]
+}
