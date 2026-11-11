@@ -1,0 +1,244 @@
+{
+  "status": "complete_paired_screen_verified",
+  "physical_acceptance": "incomplete",
+  "total_trials": 128,
+  "scheduled_trials": 128,
+  "cases": [
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 16,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {},
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 16,
+        "original_mean_max_error": 0.011232304288038761,
+        "global_mean_max_error": 0.011236835268875593,
+        "mean_paired_max_error_change": 4.530980836831011e-06,
+        "paired_change_mcse": 5.571772252590946e-06,
+        "global_improved_count": 9,
+        "largest_profile_difference": 7.469339491561477e-05
+      }
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 15,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 1
+      },
+      "failed_trial_reasons": {
+        "original": {
+          "Ambiguous minimum": 1
+        },
+        "global": {
+          "Ambiguous minimum": 1
+        }
+      },
+      "joint_success_only": {
+        "count": 15,
+        "original_mean_max_error": 0.016397792191035817,
+        "global_mean_max_error": 0.016387769972723967,
+        "mean_paired_max_error_change": -1.00222183118485e-05,
+        "paired_change_mcse": 6.069974965138989e-06,
+        "global_improved_count": 10,
+        "largest_profile_difference": 8.709552592012226e-05
+      }
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 15,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 1
+      },
+      "failed_trial_reasons": {
+        "original": {
+          "Ambiguous minimum": 1
+        },
+        "global": {
+          "Ambiguous minimum": 1
+        }
+      },
+      "joint_success_only": {
+        "count": 15,
+        "original_mean_max_error": 0.011722877073173611,
+        "global_mean_max_error": 0.01172435439295929,
+        "mean_paired_max_error_change": 1.4773197856772966e-06,
+        "paired_change_mcse": 6.022301427038885e-06,
+        "global_improved_count": 7,
+        "largest_profile_difference": 7.435714207848498e-05
+      }
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 16,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {},
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 16,
+        "original_mean_max_error": 0.017044480432357387,
+        "global_mean_max_error": 0.01704962463408073,
+        "mean_paired_max_error_change": 5.144201723344954e-06,
+        "paired_change_mcse": 7.308445446726889e-06,
+        "global_improved_count": 4,
+        "largest_profile_difference": 8.933007131450843e-05
+      }
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 16,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {},
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 16,
+        "original_mean_max_error": 0.01114005360661495,
+        "global_mean_max_error": 0.011140813144076403,
+        "mean_paired_max_error_change": 7.595374614532968e-07,
+        "paired_change_mcse": 1.867432828247562e-06,
+        "global_improved_count": 8,
+        "largest_profile_difference": 4.689018460346528e-05
+      }
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 16,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {},
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 16,
+        "original_mean_max_error": 0.014482258102738154,
+        "global_mean_max_error": 0.01447600697684231,
+        "mean_paired_max_error_change": -6.251125895844617e-06,
+        "paired_change_mcse": 3.0278110358472315e-06,
+        "global_improved_count": 10,
+        "largest_profile_difference": 6.290222371818643e-05
+      }
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 16,
+        "only_original_ok": 0,
+        "only_global_ok": 0,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {},
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 16,
+        "original_mean_max_error": 0.011117146971640512,
+        "global_mean_max_error": 0.011114254857079335,
+        "mean_paired_max_error_change": -2.8921145611773835e-06,
+        "paired_change_mcse": 2.514539169654791e-06,
+        "global_improved_count": 10,
+        "largest_profile_difference": 3.38631133136591e-05
+      }
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01,
+      "completed_trials": 16,
+      "scheduled_trials": 16,
+      "transitions": {
+        "both_ok": 15,
+        "only_original_ok": 0,
+        "only_global_ok": 1,
+        "both_failed": 0
+      },
+      "failed_trial_reasons": {
+        "original": {
+          "Boundary minimum": 1
+        },
+        "global": {}
+      },
+      "joint_success_only": {
+        "count": 15,
+        "original_mean_max_error": 0.015115561902174926,
+        "global_mean_max_error": 0.015117478183696086,
+        "mean_paired_max_error_change": 1.916281521160042e-06,
+        "paired_change_mcse": 3.928210463023205e-06,
+        "global_improved_count": 7,
+        "largest_profile_difference": 4.2648112114518355e-05
+      }
+    }
+  ],
+  "plan_sha256": "d9ea7777e81fdb3684a25f12a24b00a966eed3625ba33391d2c7796b50fbcb62",
+  "complete_sha256": "ff46aa6937950caa4dd5f3b601f02c23722e88d84b52d48d182ce1c07903357b",
+  "limitations": [
+    "Fresh synthetic exact-template comparison; not production template or coverage validation.",
+    "Both algorithms receive identical windows and truth; no failed-window removal.",
+    "A trial profile is reported only if every window in all 12 groups succeeds.",
+    "Fixed 16 trials per scenario; no optional stopping or threshold tuning.",
+    "Profile comparisons conditional on both methods succeeding; do not mask failures.",
+    "Paired MCSE describes a mean difference, not coverage qualification."
+  ],
+  "transitions_total": {
+    "both_ok": 125,
+    "only_original_ok": 0,
+    "only_global_ok": 1,
+    "both_failed": 2
+  },
+  "evidence_path": "output/shock-global-alignment-pairs-audit-complete.json",
+  "evidence_sha256": "533a965b8ec2625d91658ab874019afded8d749d27f277dc0efe858c265e53ed"
+}
