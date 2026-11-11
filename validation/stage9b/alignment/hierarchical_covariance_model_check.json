@@ -1,0 +1,50 @@
+{
+  "status": "known_parameter_hierarchical_covariance_check",
+  "physical_acceptance": "incomplete",
+  "cases": {
+    "logistic": {
+      "independent_sources": 384,
+      "group_seeds": 128,
+      "first_seed": 195000000,
+      "observations_per_source": 32,
+      "mahalanobis_mean": 32.28005833705905,
+      "expected_mean": 32,
+      "known_model_mean_mcse": 0.408248290463863,
+      "mean_difference_in_known_model_mcse": 0.6860000240070644,
+      "mahalanobis_variance": 66.72161401624356,
+      "expected_variance": 64,
+      "whitened_coordinate_mean_max": 0.11411951492315099,
+      "whitened_coordinate_variance_min": 0.7853309090523674,
+      "whitened_coordinate_variance_max": 1.1815426313816835
+    },
+    "gompertz": {
+      "independent_sources": 384,
+      "group_seeds": 128,
+      "first_seed": 195010000,
+      "observations_per_source": 32,
+      "mahalanobis_mean": 31.731403447077724,
+      "expected_mean": 32,
+      "known_model_mean_mcse": 0.408248290463863,
+      "mean_difference_in_known_model_mcse": -0.6579245013300331,
+      "mahalanobis_variance": 62.25045463935387,
+      "expected_variance": 64,
+      "whitened_coordinate_mean_max": 0.11564873953587428,
+      "whitened_coordinate_variance_min": 0.7981887358537688,
+      "whitened_coordinate_variance_max": 1.1176373635678294
+    }
+  },
+  "sources": {
+    "shock_hierarchical_fixture.py": "d61897f49fd52e3c737742853df3be82d060b5bf80f44a65dde23188b43f84cf",
+    "shock_hierarchical_likelihood.py": "3d59e8e6eb0e98a388488e12943752f469966be7a3a070d6a8f284f93f308cf5",
+    "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006"
+  },
+  "script_sha256": "ff82cc3bb3abe0ae27f683251c18af66bdc84e9a4cd6941f5ff6bd73faca3da8",
+  "limitations": [
+    "Specified synthetic Gaussian generator and true shifts; not learned physical noise.",
+    "Four windows and eight spatial nodes per source; joint covariance check only.",
+    "No profile estimation, confidence-band coverage or physical acceptance inferred.",
+    "Reported deviations are descriptive under the known synthetic model; no fitted thresholds."
+  ],
+  "evidence_path": "output/shock-hierarchical-covariance-model-check.json",
+  "evidence_sha256": "9136230771301c608b0e0591377c585cba634ceb1df99cf7e24a33c3095fbde5"
+}
