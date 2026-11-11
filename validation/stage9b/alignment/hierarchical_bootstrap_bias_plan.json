@@ -1,0 +1,74 @@
+{
+  "status": "fresh_synthetic_bootstrap_bias_screen",
+  "physical_acceptance": "incomplete",
+  "scenarios": [
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "logistic",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.0,
+      "run_sigma": 0.01
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.0
+    },
+    {
+      "kind": "gompertz",
+      "motion_amplitude": 0.05,
+      "run_sigma": 0.01
+    }
+  ],
+  "replicates_per_scenario": 16,
+  "scheduled_trials": 128,
+  "group_count": 12,
+  "sources_per_group": 3,
+  "windows": 32,
+  "window_sigma": 0.02,
+  "temporal_phi": 0.8,
+  "correlation_length": 0.2,
+  "downstream_ratio": 3.0,
+  "bootstrap_repeats": 256,
+  "seed_start": 192000000,
+  "sources": {
+    "shock_hierarchical_fixture.py": "d61897f49fd52e3c737742853df3be82d060b5bf80f44a65dde23188b43f84cf",
+    "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+    "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+    "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+    "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9"
+  },
+  "script_sha256": "ea03cceede45c10520590073a81b5def85f08a5e6f453907e1d8063ace913568",
+  "limitations": [
+    "Exact known template isolates alignment bias; not the production cross-fitted estimator.",
+    "Whole-group bootstrap retains all source windows; with fixed template each refit equals resampling precomputed group profiles, final centering is recomputed.",
+    "Ordinary bootstrap point correction is 2*point-bootstrap_mean; not a full model-based or nested correction.",
+    "Only original point-centered bootstrap radius is inspected; corrected estimator coverage is not inferred.",
+    "Fresh synthetic runs do not establish physical noise calibration or experimental acceptance.",
+    "Fixed 16-trial scenarios are diagnostic only, no optional stopping or qualification."
+  ]
+}
