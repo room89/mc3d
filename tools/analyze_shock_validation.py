@@ -110,9 +110,11 @@ def sparta_profile(folder):
 
 def analyze(root):
     report=json.loads((root/'validation.json').read_text());summaries={};errors={}
+    seeds=tuple(report.get('seeds',SEEDS))
+    if len(seeds)!=3 or len(set(seeds))!=3:raise ValueError('Invalid seed identities')
     for v in 'ABCDEFG':
         try:
-            trials=[profile(root/f'{v}-{s}') for s in SEEDS];summaries[v]=summarize(trials)
+            trials=[profile(root/f'{v}-{s}') for s in seeds];summaries[v]=summarize(trials)
             save(root/f'profiles-{v}.json',trials)
         except (OSError,ValueError,KeyError) as e:errors[v]=str(e)
     report['analysis_errors']=errors;report['summaries']=summaries
@@ -122,14 +124,14 @@ def analyze(root):
     report['stationarity']={'status':'passed' if len(summaries)==7 and all(s['stationarity']=='passed' for s in summaries.values()) else 'incomplete'}
     window_checks={}
     for v in summaries:
-        try:window_checks[v]=compare(summaries[v],summarize([profile(root/f'{v}-{seed}',2) for seed in SEEDS]))
+        try:window_checks[v]=compare(summaries[v],summarize([profile(root/f'{v}-{seed}',2) for seed in seeds]))
         except (OSError,ValueError,KeyError) as e:window_checks[v]=dict(status='incomplete',reason=str(e))
     report['window_sensitivity']={'status':'passed' if len(window_checks)==7 and all(c['status']=='passed' for c in window_checks.values()) else 'incomplete','comparisons':window_checks}
     passed=len(comparisons)==6 and all(c['status']=='passed' for c in comparisons.values()) and report['stationarity']['status']=='passed' and report['window_sensitivity']['status']=='passed'
     report['convergence']={'status':'passed' if passed else 'incomplete','comparisons':comparisons}
     sparta={}
     for v in ('C','D','E'):
-        try:sparta[v]=summarize([sparta_profile(root/f'sparta-{v}-{seed}') for seed in SEEDS])
+        try:sparta[v]=summarize([sparta_profile(root/f'sparta-{v}-{seed}') for seed in seeds])
         except (OSError,ValueError,KeyError) as e:errors['sparta-'+v]=str(e)
     cross={}
     if len(sparta)==3 and 'C' in summaries:
