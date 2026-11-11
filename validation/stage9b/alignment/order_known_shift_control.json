@@ -1,0 +1,65 @@
+{
+  "status": "all_trial_known_zero_shift_diagnostic",
+  "physical_acceptance": "incomplete",
+  "trials": 128,
+  "complete_sha256": "df33d59ce4988f4637e983091f2498cfc56fcd97e008895ad6ba3435b910109c",
+  "script_sha256": "a0a3d54e3fefc22936ae1e20137c56c4cdb849adb6df7d1253df6e99f71cf111",
+  "bank_sha256": "031e771bc01467b28963fe607b829c01a09841f8873bfb3290059f97a27872f3",
+  "limitations": [
+    "Oracle uses known synthetic zero shift; unavailable for physical production.",
+    "Before-final-centering profiles can have a different coordinate origin.",
+    "Pointwise MCSE is not a simultaneous confidence band.",
+    "No estimator correction fitted and no new coverage trials."
+  ],
+  "full_diagnostic_sha256": "01aca93d71f5f8160aa76fcd6d86c1788778b2c55df47c89e8499ab537bc5a23",
+  "stages": {
+    "oracle_fixed": {
+      "maximum_absolute_mean_error": 5.60304777101504e-05,
+      "x_at_maximum": 5.0,
+      "mean_error_at_maximum": -5.60304777101504e-05,
+      "mcse_at_maximum": 1.87355551673262e-05,
+      "mean_error_at_x_1_15": -3.431822546891717e-05,
+      "mcse_at_x_1_15": 0.00010620364568031886
+    },
+    "oracle_centered": {
+      "maximum_absolute_mean_error": 5.589307071969963e-05,
+      "x_at_maximum": 5.0,
+      "mean_error_at_maximum": -5.589307071969963e-05,
+      "mcse_at_maximum": 1.8356394441065793e-05,
+      "mean_error_at_x_1_15": -1.3759973763799102e-06,
+      "mcse_at_x_1_15": 2.29925826797796e-05
+    },
+    "windowwise_before_final_center": {
+      "maximum_absolute_mean_error": 0.0013950561474028482,
+      "x_at_maximum": 1.1500000000000004,
+      "mean_error_at_maximum": 0.0013950561474028482,
+      "mcse_at_maximum": 2.0174542917495415e-05,
+      "mean_error_at_x_1_15": 0.0013950561474028482,
+      "mcse_at_x_1_15": 2.0174542917495415e-05
+    },
+    "windowwise_final": {
+      "maximum_absolute_mean_error": 0.0012355593214021686,
+      "x_at_maximum": 1.1500000000000004,
+      "mean_error_at_maximum": 0.0012355593214021686,
+      "mcse_at_maximum": 2.047222099421579e-05,
+      "mean_error_at_x_1_15": 0.0012355593214021686,
+      "mcse_at_x_1_15": 2.047222099421579e-05
+    },
+    "meanwise_before_final_center": {
+      "maximum_absolute_mean_error": 0.0013475779384436335,
+      "x_at_maximum": 1.1500000000000004,
+      "mean_error_at_maximum": 0.0013475779384436335,
+      "mcse_at_maximum": 1.992490908811376e-05,
+      "mean_error_at_x_1_15": 0.0013475779384436335,
+      "mcse_at_x_1_15": 1.992490908811376e-05
+    },
+    "meanwise_final": {
+      "maximum_absolute_mean_error": 0.001290912832947833,
+      "x_at_maximum": 1.1500000000000004,
+      "mean_error_at_maximum": 0.001290912832947833,
+      "mcse_at_maximum": 2.0580676339676684e-05,
+      "mean_error_at_x_1_15": 0.001290912832947833,
+      "mcse_at_x_1_15": 2.0580676339676684e-05
+    }
+  }
+}
