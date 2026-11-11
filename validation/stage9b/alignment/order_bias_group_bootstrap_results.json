@@ -1,0 +1,67 @@
+{
+  "status": "complete_exploratory_bootstrap_summary",
+  "physical_acceptance": "incomplete",
+  "completed_replicates": 256,
+  "failed_replicates": 0,
+  "cases": {
+    "mc3d-training-windowwise": {
+      "maximum_absolute_bootstrap_mean_shift": 0.00010994227251122368,
+      "maximum_pointwise_standard_deviation": 0.000358277485933513,
+      "empirical_95_percent_supnorm": 0.000838159546271422,
+      "maximum_supnorm": 0.0017443444314546586
+    },
+    "mc3d-training-mean32": {
+      "maximum_absolute_bootstrap_mean_shift": 8.208040236287392e-05,
+      "maximum_pointwise_standard_deviation": 0.00032032461772621434,
+      "empirical_95_percent_supnorm": 0.0008149901557461536,
+      "maximum_supnorm": 0.0009550813383666368
+    },
+    "mc3d-heldout-windowwise": {
+      "maximum_absolute_bootstrap_mean_shift": 0.0003059156747266447,
+      "maximum_pointwise_standard_deviation": 0.000658180144059879,
+      "empirical_95_percent_supnorm": 0.0014881508840737245,
+      "maximum_supnorm": 0.0015088504797243774
+    },
+    "mc3d-heldout-mean32": {
+      "maximum_absolute_bootstrap_mean_shift": 0.00027541989885934356,
+      "maximum_pointwise_standard_deviation": 0.0005170160012222567,
+      "empirical_95_percent_supnorm": 0.0011584380818724371,
+      "maximum_supnorm": 0.0018732774497731697
+    }
+  },
+  "comparisons": {
+    "windowwise": {
+      "maximum_absolute_bootstrap_mean_shift": 0.0003080075362277921,
+      "maximum_pointwise_standard_deviation": 0.0006667616654970453,
+      "empirical_95_percent_supnorm": 0.0016144617394521221,
+      "maximum_supnorm": 0.0019195470826488537,
+      "observed_training_heldout_supnorm": 0.001316755073235254,
+      "observed_over_empirical_95_percent_supnorm": 0.8156000486466178
+    },
+    "mean32": {
+      "maximum_absolute_bootstrap_mean_shift": 0.0002845270243191922,
+      "maximum_pointwise_standard_deviation": 0.0006169720986994638,
+      "empirical_95_percent_supnorm": 0.0014236373883530495,
+      "maximum_supnorm": 0.0019233869575451257,
+      "observed_training_heldout_supnorm": 0.0014536881097941823,
+      "observed_over_empirical_95_percent_supnorm": 1.0211084098289223
+    }
+  },
+  "plan_sha256": "298cda84a7c8d223a32e7f7c1823b1d0eda43e15db0b0be47347ea6ddc6aaf88",
+  "complete_sha256": "b5d165f4e5a8613948ed3918e53a12d710d02a6fb8462aecb0bcb155d2b53a64",
+  "prior_sha256": "870fb2acc4a57644d699bd378bce422acba654506f2d665860200740b8c62c87",
+  "limitations": [
+    "Empirical 95th percentiles use the higher order statistic of 64 resamples; not validated confidence bands.",
+    "Training and heldout resamples use independent seeds; differences are paired by replicate index.",
+    "Observed discrepancy is descriptive; no p-value, coverage claim, or tuned acceptance threshold.",
+    "Only 8 training and 4 heldout original groups; finite-bank and exact-template limitations remain.",
+    "No qualification on new physical ensembles or change to the production estimator."
+  ],
+  "evidence_path": "output/shock-order-bias-group-bootstrap-summary.json",
+  "evidence_sha256": "983c27fc148a917e94f7c24e18a43b519649165c70dfc05053ebf9f2e92f76fa",
+  "audit_sha256": "35b8e020c22aa968ffaf1bee019cbf7df294d2521b8fb76eab0de0706f700182",
+  "checks": {
+    "all_256_checkpoint_identities_and_group_draws_verified": true,
+    "comparison_order_statistics_independently_recomputed": true
+  }
+}
