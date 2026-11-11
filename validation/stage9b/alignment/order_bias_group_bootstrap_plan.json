@@ -1,0 +1,49 @@
+{
+  "status": "exploratory_source_group_bootstrap",
+  "physical_acceptance": "incomplete",
+  "replicates_per_case": 64,
+  "seed_start": 190000000,
+  "scheduled_replicates": 256,
+  "banks": [
+    "mc3d-training",
+    "mc3d-heldout"
+  ],
+  "modes": [
+    "windowwise",
+    "mean32"
+  ],
+  "shape": "logistic",
+  "added_motion": 0.0,
+  "sources": {
+    "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+    "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+    "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+    "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+    "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+    "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+    "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+    "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+    "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+    "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+    "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+    "shock_order_sensitivity.py": "6fefe4718882fc1dd49397dd3edaca1124315464be7d4846787e1823a0fc1301",
+    "calibrate_order_sensitivity.py": "fb65eb2e1d18eefdf2438518a412c4e94b2db9eb5c5b3b679c2947c98327fbd4",
+    "verify_high_order_coverage.py": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac",
+    "shock_empirical_fluctuations.py": "3e081856af3a6d2d262481820a4fb20b48e46d3bbb83b4dabe2f8740213ea734",
+    "calibrate_empirical_order.py": "f131e971b6d0312602555f157cc674ef526989c5529e58d74d09a01a1152f8a6"
+  },
+  "bank_hashes": {
+    "mc3d-training": "10c45c0f9c7d9a420d72d7f71434eb2dbfb11dfc56aaaaf39b601b5f8900b8b6",
+    "mc3d-heldout": "031e771bc01467b28963fe607b829c01a09841f8873bfb3290059f97a27872f3"
+  },
+  "manifest_sha256": "1fe365e92c2cecbc2bdb7bc5eb3a0ec6fee470369f80b0de88b773bff98e68bf",
+  "script_sha256": "f94742b87370875bf5c513da1c9efd17feaa3a13c79310472370dc800a789d16",
+  "prior_evidence_sha256": "870fb2acc4a57644d699bd378bce422acba654506f2d665860200740b8c62c87",
+  "resampling": "Sample original group count with replacement; retain all 3 runs and all 64 windows of each selected group; recenter sampled ensemble before every fit.",
+  "limitations": [
+    "Known exact template and zero added motion; not a deployable correction.",
+    "Finite historical banks already inspected; not independent coverage qualification.",
+    "Only 8 training and 4 heldout source groups; 64 replicates is a diagnostic screen.",
+    "No optional stopping, failed replicates retained, no acceptance thresholds changed."
+  ]
+}
