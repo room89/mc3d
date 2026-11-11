@@ -1,0 +1,2457 @@
+{
+  "status": "diagnostic_not_qualification",
+  "physical_acceptance": "incomplete",
+  "scenario": [
+    "mc3d-heldout",
+    "logistic",
+    0.0
+  ],
+  "windows": 32,
+  "audit_sha256": "4b6823ca7f39098555522b3b05f513761675aa87b1b754749e9512fbf195db02",
+  "script_sha256": "18d068f2a9fe4b29f42eedf5e4e861fddeb7584c8210f80b195261b389628245",
+  "protocol": {
+    "method": "alignment_order_envelope_v1",
+    "status": "conditional_empirical_stress",
+    "group_count": 12,
+    "subgroups": 6,
+    "bootstrap_repeats": 1024,
+    "windows": 32,
+    "seed_start": 186000000,
+    "replicates": 128,
+    "motion_amplitudes": [
+      0.0,
+      0.05,
+      1.0
+    ],
+    "bank_evidence": {
+      "manifest_sha256": "1fe365e92c2cecbc2bdb7bc5eb3a0ec6fee470369f80b0de88b773bff98e68bf",
+      "verification_sha256": "3debfc2f65367955e1b75ac6c573e625dadec5f0efb270603cb5ff58e66d45f7",
+      "banks": {
+        "mc3d-training": {
+          "sha256": "10c45c0f9c7d9a420d72d7f71434eb2dbfb11dfc56aaaaf39b601b5f8900b8b6",
+          "shape": [
+            24,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g00",
+              "seed": 123
+            },
+            {
+              "group": "g00",
+              "seed": 456
+            },
+            {
+              "group": "g00",
+              "seed": 789
+            },
+            {
+              "group": "g01",
+              "seed": 10003
+            },
+            {
+              "group": "g01",
+              "seed": 10004
+            },
+            {
+              "group": "g01",
+              "seed": 10005
+            },
+            {
+              "group": "g02",
+              "seed": 10006
+            },
+            {
+              "group": "g02",
+              "seed": 10007
+            },
+            {
+              "group": "g02",
+              "seed": 10008
+            },
+            {
+              "group": "g03",
+              "seed": 10009
+            },
+            {
+              "group": "g03",
+              "seed": 10010
+            },
+            {
+              "group": "g03",
+              "seed": 10011
+            },
+            {
+              "group": "g04",
+              "seed": 10012
+            },
+            {
+              "group": "g04",
+              "seed": 10013
+            },
+            {
+              "group": "g04",
+              "seed": 10014
+            },
+            {
+              "group": "g05",
+              "seed": 10015
+            },
+            {
+              "group": "g05",
+              "seed": 10016
+            },
+            {
+              "group": "g05",
+              "seed": 10017
+            },
+            {
+              "group": "g06",
+              "seed": 10018
+            },
+            {
+              "group": "g06",
+              "seed": 10019
+            },
+            {
+              "group": "g06",
+              "seed": 10020
+            },
+            {
+              "group": "g07",
+              "seed": 10021
+            },
+            {
+              "group": "g07",
+              "seed": 10022
+            },
+            {
+              "group": "g07",
+              "seed": 10023
+            }
+          ]
+        },
+        "mc3d-heldout": {
+          "sha256": "031e771bc01467b28963fe607b829c01a09841f8873bfb3290059f97a27872f3",
+          "shape": [
+            12,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g08",
+              "seed": 10024
+            },
+            {
+              "group": "g08",
+              "seed": 10025
+            },
+            {
+              "group": "g08",
+              "seed": 10026
+            },
+            {
+              "group": "g09",
+              "seed": 10027
+            },
+            {
+              "group": "g09",
+              "seed": 10028
+            },
+            {
+              "group": "g09",
+              "seed": 10029
+            },
+            {
+              "group": "g10",
+              "seed": 10030
+            },
+            {
+              "group": "g10",
+              "seed": 10031
+            },
+            {
+              "group": "g10",
+              "seed": 10032
+            },
+            {
+              "group": "g11",
+              "seed": 10033
+            },
+            {
+              "group": "g11",
+              "seed": 10034
+            },
+            {
+              "group": "g11",
+              "seed": 10035
+            }
+          ]
+        },
+        "sparta-training": {
+          "sha256": "d3171e405050fbca0efd3e1fedbaedfde6891cf6cdcc205c2650c5c090cf2718",
+          "shape": [
+            24,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g00",
+              "seed": 123
+            },
+            {
+              "group": "g00",
+              "seed": 456
+            },
+            {
+              "group": "g00",
+              "seed": 789
+            },
+            {
+              "group": "g01",
+              "seed": 10003
+            },
+            {
+              "group": "g01",
+              "seed": 10004
+            },
+            {
+              "group": "g01",
+              "seed": 10005
+            },
+            {
+              "group": "g02",
+              "seed": 10006
+            },
+            {
+              "group": "g02",
+              "seed": 10007
+            },
+            {
+              "group": "g02",
+              "seed": 10008
+            },
+            {
+              "group": "g03",
+              "seed": 10009
+            },
+            {
+              "group": "g03",
+              "seed": 10010
+            },
+            {
+              "group": "g03",
+              "seed": 10011
+            },
+            {
+              "group": "g04",
+              "seed": 10012
+            },
+            {
+              "group": "g04",
+              "seed": 10013
+            },
+            {
+              "group": "g04",
+              "seed": 10014
+            },
+            {
+              "group": "g05",
+              "seed": 10015
+            },
+            {
+              "group": "g05",
+              "seed": 10016
+            },
+            {
+              "group": "g05",
+              "seed": 10017
+            },
+            {
+              "group": "g06",
+              "seed": 10018
+            },
+            {
+              "group": "g06",
+              "seed": 10019
+            },
+            {
+              "group": "g06",
+              "seed": 10020
+            },
+            {
+              "group": "g07",
+              "seed": 10021
+            },
+            {
+              "group": "g07",
+              "seed": 10022
+            },
+            {
+              "group": "g07",
+              "seed": 10023
+            }
+          ]
+        },
+        "sparta-heldout": {
+          "sha256": "3074d7c4a2f12970b8f4c1448a7b338567f9e3bb55d140c07a1d9f42e3f86fb1",
+          "shape": [
+            12,
+            64,
+            560
+          ],
+          "sources": [
+            {
+              "group": "g08",
+              "seed": 10024
+            },
+            {
+              "group": "g08",
+              "seed": 10025
+            },
+            {
+              "group": "g08",
+              "seed": 10026
+            },
+            {
+              "group": "g09",
+              "seed": 10027
+            },
+            {
+              "group": "g09",
+              "seed": 10028
+            },
+            {
+              "group": "g09",
+              "seed": 10029
+            },
+            {
+              "group": "g10",
+              "seed": 10030
+            },
+            {
+              "group": "g10",
+              "seed": 10031
+            },
+            {
+              "group": "g10",
+              "seed": 10032
+            },
+            {
+              "group": "g11",
+              "seed": 10033
+            },
+            {
+              "group": "g11",
+              "seed": 10034
+            },
+            {
+              "group": "g11",
+              "seed": 10035
+            }
+          ]
+        }
+      }
+    },
+    "sources": {
+      "calibrate_high_order_shock.py": "ba3765d8caf2fb12c3d2e0584da3a4bf81672ae5e8acacf74c0191a818a488e0",
+      "shock_high_order_estimator.py": "6bb06c57772a3c2c76e7775e4c84b0da3fde8425a0d4465a899061ee485afce8",
+      "calibrate_shock_ensemble.py": "45500e0a08d53dc40be9a004b23d1d1904693174eccd765fcfe42b614fb3ac26",
+      "shock_ensemble_estimator.py": "7ae066aa14c2d3535e0b27635f706cfa491459aec37a62550b4b00de4676132f",
+      "shock_alignment.py": "a44eaf9d5a59f1a1b901c52e6b5b54cd4dfee4455dfd31cbbf8a051bd063270f",
+      "shock_crossfit_gradient.py": "d19ea6e7d78af2c6c4935ad829ed9f369ea59350547eaca4733758e17a67b292",
+      "shock_mean_profile.py": "204b619eb3f1bd87c90caec608cd08ed82b53e171a45f25dfa91b3c590bec058",
+      "shock_analysis.py": "0e134f63923aa9593ddf3e50b726145ec4cf4e38ece60f5a3439345ef09709eb",
+      "experiment_crossfit_gradient.py": "9885317fb2bfe7944b5e41387d84bc91032ce7849aa3e5ef3c701bdf7bdfbfe2",
+      "validate_shock_estimator.py": "fb99ea9c57c6ad2fad2b908026019b8f12d8cefa7979fd6095d83510a5411006",
+      "shock_validation.py": "5a1e3ca55c67030067e23da955674ed863745ced153726a36cfaa6b60a2d00e9",
+      "shock_order_sensitivity.py": "6fefe4718882fc1dd49397dd3edaca1124315464be7d4846787e1823a0fc1301",
+      "calibrate_order_sensitivity.py": "fb65eb2e1d18eefdf2438518a412c4e94b2db9eb5c5b3b679c2947c98327fbd4",
+      "verify_high_order_coverage.py": "800d2f9d1faa4f6680559b136bceb336939f0208a199cee35c8eb275916685ac",
+      "shock_empirical_fluctuations.py": "3e081856af3a6d2d262481820a4fb20b48e46d3bbb83b4dabe2f8740213ea734",
+      "calibrate_empirical_order.py": "f131e971b6d0312602555f157cc674ef526989c5529e58d74d09a01a1152f8a6"
+    },
+    "limitations": [
+      "Conditional screen on finite historical banks, not new independent physical realizations.",
+      "Historical fluctuations include front motion and run offsets; separate bank centering does not test physical mean agreement.",
+      "Cyclic windows preserve native order with one wrap boundary; no per-run mean subtraction.",
+      "Complete independent parametric calibration and actual physical precision/convergence remain required."
+    ]
+  },
+  "summary": {
+    "all": {
+      "count": 128,
+      "fields": {
+        "error": {
+          "min": 0.0010696980328951389,
+          "median": 0.0014266593935902128,
+          "mean": 0.0014394190248391602,
+          "max": 0.0017816960721159791
+        },
+        "radius": {
+          "min": 0.0014045115566331976,
+          "median": 0.00160399252018942,
+          "mean": 0.0016162061143437847,
+          "max": 0.001938819239773222
+        },
+        "statistical": {
+          "min": 0.0006399235044297399,
+          "median": 0.0007423608900048311,
+          "mean": 0.0007459254687197755,
+          "max": 0.0009430636544931695
+        },
+        "processing": {
+          "min": 0.0006944355517289891,
+          "median": 0.0008599471881901022,
+          "mean": 0.0008702806456240093,
+          "max": 0.001176734094442855
+        },
+        "order_difference": {
+          "min": 0.0006031452407655458,
+          "median": 0.0007680417466729428,
+          "mean": 0.0007790347009155379,
+          "max": 0.0010804075058160612
+        },
+        "error_radius_ratio": {
+          "min": 0.6564872129429624,
+          "median": 0.8848361223199996,
+          "mean": 0.8938389826490124,
+          "max": 1.1251197736000456
+        },
+        "uncovered_excess": {
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 1.2602967132185249e-05,
+          "max": 0.00018692282593191787
+        }
+      }
+    },
+    "covered": {
+      "count": 111,
+      "fields": {
+        "error": {
+          "min": 0.0010696980328951389,
+          "median": 0.001414826157563498,
+          "mean": 0.0014078854775323166,
+          "max": 0.00173839397358444
+        },
+        "radius": {
+          "min": 0.0014045115566331976,
+          "median": 0.0016179633900484545,
+          "mean": 0.001626281218518908,
+          "max": 0.001938819239773222
+        },
+        "statistical": {
+          "min": 0.0006399235044297399,
+          "median": 0.0007456277414755352,
+          "mean": 0.0007519379030108534,
+          "max": 0.0009430636544931695
+        },
+        "processing": {
+          "min": 0.0006944355517289891,
+          "median": 0.0008631595938787262,
+          "mean": 0.0008743433155080548,
+          "max": 0.001176734094442855
+        },
+        "order_difference": {
+          "min": 0.0006031452407655458,
+          "median": 0.0007763364905415404,
+          "mean": 0.0007830335153866893,
+          "max": 0.0010804075058160612
+        },
+        "error_radius_ratio": {
+          "min": 0.6564872129429624,
+          "median": 0.8713177187499747,
+          "mean": 0.8681501174344518,
+          "max": 0.9999172264250495
+        },
+        "uncovered_excess": {
+          "min": 0.0,
+          "median": 0.0,
+          "mean": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    "missed": {
+      "count": 17,
+      "fields": {
+        "error": {
+          "min": 0.0015203337710756326,
+          "median": 0.001625249646666549,
+          "mean": 0.0016453145396073741,
+          "max": 0.0017816960721159791
+        },
+        "radius": {
+          "min": 0.0014664362498949977,
+          "median": 0.0015164265242993578,
+          "mean": 0.001550421610612097,
+          "max": 0.0016698550818808832
+        },
+        "statistical": {
+          "min": 0.0006517482178572564,
+          "median": 0.0006985281611894212,
+          "mean": 0.0007066678095250904,
+          "max": 0.0008109076259936674
+        },
+        "processing": {
+          "min": 0.0007471268570078404,
+          "median": 0.0008227687552030405,
+          "mean": 0.0008437538010870066,
+          "max": 0.0009713269206914621
+        },
+        "order_difference": {
+          "min": 0.0006540225980280479,
+          "median": 0.0007431935288108038,
+          "mean": 0.0007529247946627257,
+          "max": 0.000867570070794077
+        },
+        "error_radius_ratio": {
+          "min": 1.0044790913940462,
+          "median": 1.0513995322821712,
+          "mean": 1.0615721614029083,
+          "max": 1.1251197736000456
+        },
+        "uncovered_excess": {
+          "min": 6.84365283987751e-06,
+          "median": 8.580613031983772e-05,
+          "mean": 9.489292899527716e-05,
+          "max": 0.00018692282593191787
+        }
+      }
+    }
+  },
+  "trials": [
+    {
+      "repetition": 0,
+      "checkpoint": "mc3d-heldout-logistic-0.0-0.json",
+      "sha256": "c733affa515ed3bd3e7489b6638b43b6c27d1293c1b29c730eefb5ffd43fbb08",
+      "error": 0.001182884382560756,
+      "radius": 0.0017803143537877889,
+      "statistical": 0.0008305198976712515,
+      "processing": 0.0009497944561165372,
+      "order_difference": 0.0008468550433060607,
+      "error_radius_ratio": 0.6644244484374664,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00033602933925469536,
+      "alternative_error_upper_bound": 0.0020297394258668167
+    },
+    {
+      "repetition": 1,
+      "checkpoint": "mc3d-heldout-logistic-0.0-1.json",
+      "sha256": "8ec7f178000273bd84cb1dbdcfd6cab1e248f99476249083a26739cccdabbbd7",
+      "error": 0.001583993035439879,
+      "radius": 0.0015164265242993578,
+      "statistical": 0.0006517482178572564,
+      "processing": 0.0008646783064421015,
+      "order_difference": 0.0007694228168928507,
+      "error_radius_ratio": 1.0445564028707157,
+      "uncovered_excess": 6.756651114052121e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008145702185470283,
+      "alternative_error_upper_bound": 0.0023534158523327298
+    },
+    {
+      "repetition": 2,
+      "checkpoint": "mc3d-heldout-logistic-0.0-2.json",
+      "sha256": "fd55b1b88055a6bb588fc64b4d49f461a547b0751d4a02f48fbf77933d8bbac7",
+      "error": 0.0016223096082322863,
+      "radius": 0.0015047290790653864,
+      "statistical": 0.0007576022220575461,
+      "processing": 0.0007471268570078404,
+      "order_difference": 0.0006640522991512299,
+      "error_radius_ratio": 1.0781406638595243,
+      "uncovered_excess": 0.00011758052916689991,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009582573090810564,
+      "alternative_error_upper_bound": 0.002286361907383516
+    },
+    {
+      "repetition": 3,
+      "checkpoint": "mc3d-heldout-logistic-0.0-3.json",
+      "sha256": "b10631204cc7a3ca62c00af71c2fddab417624d389662b2c2bae7277ce17cc46",
+      "error": 0.0014238505227555098,
+      "radius": 0.0014810199786541465,
+      "statistical": 0.0007222839047662687,
+      "processing": 0.0007587360738878779,
+      "order_difference": 0.0006765098568588535,
+      "error_radius_ratio": 0.9613985923737581,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007473406658966564,
+      "alternative_error_upper_bound": 0.0021003603796143633
+    },
+    {
+      "repetition": 4,
+      "checkpoint": "mc3d-heldout-logistic-0.0-4.json",
+      "sha256": "acaac27631d4f49ab9d1a985e9119837750d0c0be259523bc4cd24daea835727",
+      "error": 0.0013385793899752807,
+      "radius": 0.0015789122977746704,
+      "statistical": 0.0007538155165350168,
+      "processing": 0.0008250967812396537,
+      "order_difference": 0.000722696891534258,
+      "error_radius_ratio": 0.8477857775013112,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006158824984410227,
+      "alternative_error_upper_bound": 0.0020612762815095387
+    },
+    {
+      "repetition": 5,
+      "checkpoint": "mc3d-heldout-logistic-0.0-5.json",
+      "sha256": "0372d26f4e8c8f78e2dd79399d3082e5fa9acf453e841c1de795abe27cca9eb3",
+      "error": 0.00173839397358444,
+      "radius": 0.001769291078601337,
+      "statistical": 0.0007599716467816374,
+      "processing": 0.0010093194318196996,
+      "order_difference": 0.0009038607595577286,
+      "error_radius_ratio": 0.9825370141800965,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0008345332140267114,
+      "alternative_error_upper_bound": 0.0026422547331421686
+    },
+    {
+      "repetition": 6,
+      "checkpoint": "mc3d-heldout-logistic-0.0-6.json",
+      "sha256": "50151417d518dfdf916c1a4ec0efbee3a3f746adf95983740fc4eed8c666754d",
+      "error": 0.0013199223877634614,
+      "radius": 0.0014808390535732447,
+      "statistical": 0.0007834733712413262,
+      "processing": 0.0006973656823319185,
+      "order_difference": 0.0006031452407655458,
+      "error_radius_ratio": 0.891334128836288,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007167771469979156,
+      "alternative_error_upper_bound": 0.0019230676285290071
+    },
+    {
+      "repetition": 7,
+      "checkpoint": "mc3d-heldout-logistic-0.0-7.json",
+      "sha256": "0b95db46ace29beaca393ea95aeeabdbb7b2306f000807b38373a3c5a68cd7f3",
+      "error": 0.001414826157563498,
+      "radius": 0.0015542025012146078,
+      "statistical": 0.0006801983012435286,
+      "processing": 0.000874004199971079,
+      "order_difference": 0.000781882343986573,
+      "error_radius_ratio": 0.9103229189618551,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000632943813576925,
+      "alternative_error_upper_bound": 0.002196708501550071
+    },
+    {
+      "repetition": 8,
+      "checkpoint": "mc3d-heldout-logistic-0.0-8.json",
+      "sha256": "11aac3483fcfab55fd0f35cffa6508fa276bc4585e81c05cbac53ddcd1c5a178",
+      "error": 0.0015649375446102898,
+      "radius": 0.0015667111403505126,
+      "statistical": 0.0007618951465708287,
+      "processing": 0.0008048159937796839,
+      "order_difference": 0.0007155257109205948,
+      "error_radius_ratio": 0.9988679497486525,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000849411833689695,
+      "alternative_error_upper_bound": 0.0022804632555308846
+    },
+    {
+      "repetition": 9,
+      "checkpoint": "mc3d-heldout-logistic-0.0-9.json",
+      "sha256": "ef7bdd202e9422de3bff8090bdb384fbc2660b42732e82af637fdd1291aba70a",
+      "error": 0.001472852655096668,
+      "radius": 0.0015107344116394694,
+      "statistical": 0.0007214855820880217,
+      "processing": 0.0007892488295514477,
+      "order_difference": 0.0006976144445118848,
+      "error_radius_ratio": 0.9749249396512445,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007752382105847833,
+      "alternative_error_upper_bound": 0.002170467099608553
+    },
+    {
+      "repetition": 10,
+      "checkpoint": "mc3d-heldout-logistic-0.0-10.json",
+      "sha256": "490266d4c1ebd922d31f8225990fbb64cad8c7c3e947035b7f597f4f92826be8",
+      "error": 0.0012902436219948132,
+      "radius": 0.0014437390819719439,
+      "statistical": 0.0007493035302429549,
+      "processing": 0.0006944355517289891,
+      "order_difference": 0.0006165350836065953,
+      "error_radius_ratio": 0.8936819942787186,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000673708538388218,
+      "alternative_error_upper_bound": 0.0019067787056014085
+    },
+    {
+      "repetition": 11,
+      "checkpoint": "mc3d-heldout-logistic-0.0-11.json",
+      "sha256": "927c79b1e4ac61609d03722bad5d6ed72e28f7c417c416eca99f2d75601832c1",
+      "error": 0.001595994469888229,
+      "radius": 0.0014952621637713296,
+      "statistical": 0.0006564304693562088,
+      "processing": 0.0008388316944151208,
+      "order_difference": 0.0007462415438436176,
+      "error_radius_ratio": 1.067367655356726,
+      "uncovered_excess": 0.00010073230611689927,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008497529260446113,
+      "alternative_error_upper_bound": 0.0023422360137318465
+    },
+    {
+      "repetition": 12,
+      "checkpoint": "mc3d-heldout-logistic-0.0-12.json",
+      "sha256": "c131df079c5fc521cc252006fd67c2ac3bb1e732058dd875752c36d14a3759e6",
+      "error": 0.0015218467364038757,
+      "radius": 0.0017370417255031132,
+      "statistical": 0.0007431229451479058,
+      "processing": 0.0009939187803552074,
+      "order_difference": 0.0009085359576505025,
+      "error_radius_ratio": 0.8761140933232856,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006133107787533731,
+      "alternative_error_upper_bound": 0.0024303826940543782
+    },
+    {
+      "repetition": 13,
+      "checkpoint": "mc3d-heldout-logistic-0.0-13.json",
+      "sha256": "8f94079d421d7c02e606aa88bbe45177c91032236de2776b3e96e47b6509c7d4",
+      "error": 0.0014773022744120068,
+      "radius": 0.0016291458067544395,
+      "statistical": 0.0007041002629573079,
+      "processing": 0.0009250455437971317,
+      "order_difference": 0.0008324209331843635,
+      "error_radius_ratio": 0.9067956153998682,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006448813412276433,
+      "alternative_error_upper_bound": 0.0023097232075963703
+    },
+    {
+      "repetition": 14,
+      "checkpoint": "mc3d-heldout-logistic-0.0-14.json",
+      "sha256": "ea5005254d605b1e1018ed376fea3a69c8ad780855e3e2a257650d6cf6a22061",
+      "error": 0.0012610880104189093,
+      "radius": 0.0016453839264680675,
+      "statistical": 0.0007525465818518633,
+      "processing": 0.0008928373446162041,
+      "order_difference": 0.0007886207303891002,
+      "error_radius_ratio": 0.7664399719316108,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004724672800298091,
+      "alternative_error_upper_bound": 0.0020497087408080095
+    },
+    {
+      "repetition": 15,
+      "checkpoint": "mc3d-heldout-logistic-0.0-15.json",
+      "sha256": "9f1e69c8ba029effab600fca496f65c9ecc1140c9692d87e5284d380a5ee771f",
+      "error": 0.001755661212200721,
+      "radius": 0.0016698550818808832,
+      "statistical": 0.0006985281611894212,
+      "processing": 0.0009713269206914621,
+      "order_difference": 0.000867570070794077,
+      "error_radius_ratio": 1.05138537544419,
+      "uncovered_excess": 8.580613031983772e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008880911414066439,
+      "alternative_error_upper_bound": 0.002623231282994798
+    },
+    {
+      "repetition": 16,
+      "checkpoint": "mc3d-heldout-logistic-0.0-16.json",
+      "sha256": "a4653609c9c8ba510ca64265aa5c59cf1d33556ddb12f48026f01871965d829e",
+      "error": 0.0013968363791981853,
+      "radius": 0.0016949035342824624,
+      "statistical": 0.000896080665476292,
+      "processing": 0.0007988228688061705,
+      "order_difference": 0.0006987214906784001,
+      "error_radius_ratio": 0.8241391624624442,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006981148885197852,
+      "alternative_error_upper_bound": 0.0020955578698765853
+    },
+    {
+      "repetition": 17,
+      "checkpoint": "mc3d-heldout-logistic-0.0-17.json",
+      "sha256": "e3103502f3a31954362cc0bb1f5212af5c538fa113ec1cd7719a828001165602",
+      "error": 0.0013611029616342751,
+      "radius": 0.001582524265199647,
+      "statistical": 0.0007169144558526239,
+      "processing": 0.0008656098093470233,
+      "order_difference": 0.0007805412438095516,
+      "error_radius_ratio": 0.8600834701656609,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005805617178247235,
+      "alternative_error_upper_bound": 0.0021416442054438267
+    },
+    {
+      "repetition": 18,
+      "checkpoint": "mc3d-heldout-logistic-0.0-18.json",
+      "sha256": "f86b875f3ad294b39078705c0cc682e9b8a8931ff21f2311699cc592dc6fe681",
+      "error": 0.0012488299789213952,
+      "radius": 0.001754110294087412,
+      "statistical": 0.0007662214748574581,
+      "processing": 0.000987888819229954,
+      "order_difference": 0.0008911302701889445,
+      "error_radius_ratio": 0.7119449575838146,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0003576997087324507,
+      "alternative_error_upper_bound": 0.0021399602491103398
+    },
+    {
+      "repetition": 19,
+      "checkpoint": "mc3d-heldout-logistic-0.0-19.json",
+      "sha256": "137038a7cbf0d3015c7d10fa7a699a792d57f4e010ccb17f1c2958b6b6e99094",
+      "error": 0.001328599065020697,
+      "radius": 0.001676044298098,
+      "statistical": 0.0007283955114081524,
+      "processing": 0.0009476487866898475,
+      "order_difference": 0.0008496171668009866,
+      "error_radius_ratio": 0.7926992541476444,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00047898189821971027,
+      "alternative_error_upper_bound": 0.0021782162318216836
+    },
+    {
+      "repetition": 20,
+      "checkpoint": "mc3d-heldout-logistic-0.0-20.json",
+      "sha256": "881109fe674784acd4cbf75f8b55249a550a7c2b63b767a3c83ebb2afba332ef",
+      "error": 0.0014871353517578179,
+      "radius": 0.0017731861442529858,
+      "statistical": 0.0007217733705762783,
+      "processing": 0.0010514127736767076,
+      "order_difference": 0.0009667442894079059,
+      "error_radius_ratio": 0.8386797723283156,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000520391062349912,
+      "alternative_error_upper_bound": 0.0024538796411657238
+    },
+    {
+      "repetition": 21,
+      "checkpoint": "mc3d-heldout-logistic-0.0-21.json",
+      "sha256": "423a3d8f29c8a163a3ea64f27f591ba8cb6897619ded193d822e08b219ef1833",
+      "error": 0.0016505039866471227,
+      "radius": 0.0014877670824995858,
+      "statistical": 0.0007364394622087434,
+      "processing": 0.0007513276202908425,
+      "order_difference": 0.0006540225980280479,
+      "error_radius_ratio": 1.1093833208583457,
+      "uncovered_excess": 0.00016273690414753692,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009964813886190749,
+      "alternative_error_upper_bound": 0.0023045265846751706
+    },
+    {
+      "repetition": 22,
+      "checkpoint": "mc3d-heldout-logistic-0.0-22.json",
+      "sha256": "b3918bb34d625021e0c52dda9c2bcab155aae02de87bd5fc4ff6c1aa626501cc",
+      "error": 0.0013613920747032049,
+      "radius": 0.0016914010014865083,
+      "statistical": 0.0007433394464316173,
+      "processing": 0.000948061555054891,
+      "order_difference": 0.0008551896186276275,
+      "error_radius_ratio": 0.804890190739351,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005062024560755773,
+      "alternative_error_upper_bound": 0.0022165816933308324
+    },
+    {
+      "repetition": 23,
+      "checkpoint": "mc3d-heldout-logistic-0.0-23.json",
+      "sha256": "77e9d684ff3234211e7743bb750662a5402f791c26180a645834be3333fd34c8",
+      "error": 0.001192051900900104,
+      "radius": 0.0015291662919324045,
+      "statistical": 0.0007415988348617563,
+      "processing": 0.0007875674570706481,
+      "order_difference": 0.0007042221144845096,
+      "error_radius_ratio": 0.7795436684611393,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004878297864155945,
+      "alternative_error_upper_bound": 0.0018962740153846136
+    },
+    {
+      "repetition": 24,
+      "checkpoint": "mc3d-heldout-logistic-0.0-24.json",
+      "sha256": "648c1965e9f5a2272a6df34f14246f3c8e3fb28c60bfcb11ec63fb12b87c8fa7",
+      "error": 0.0013930881448310783,
+      "radius": 0.0014864718182147367,
+      "statistical": 0.0007605963437633827,
+      "processing": 0.000725875474451354,
+      "order_difference": 0.0006316984561105521,
+      "error_radius_ratio": 0.9371776361721995,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007613896887205263,
+      "alternative_error_upper_bound": 0.0020247866009416304
+    },
+    {
+      "repetition": 25,
+      "checkpoint": "mc3d-heldout-logistic-0.0-25.json",
+      "sha256": "cca1b992a178cabb83401eb8b20c8e2b8c44ed2604b6c24c840d1e56cadf34d3",
+      "error": 0.001733096092163322,
+      "radius": 0.0016483706135967723,
+      "statistical": 0.000692230083212486,
+      "processing": 0.0009561405303842863,
+      "order_difference": 0.0008633320907110997,
+      "error_radius_ratio": 1.0513995322821712,
+      "uncovered_excess": 8.472547856654979e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008697640014522223,
+      "alternative_error_upper_bound": 0.002596428182874422
+    },
+    {
+      "repetition": 26,
+      "checkpoint": "mc3d-heldout-logistic-0.0-26.json",
+      "sha256": "509d4349a5d1277532a218d57f834f30bcb0bfc3b9021a96c20192891a8f9230",
+      "error": 0.001447079885609437,
+      "radius": 0.0015686886799749333,
+      "statistical": 0.0007102457262558703,
+      "processing": 0.000858442953719063,
+      "order_difference": 0.0007582623151227708,
+      "error_radius_ratio": 0.9224774195684006,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006888175704866661,
+      "alternative_error_upper_bound": 0.0022053422007322077
+    },
+    {
+      "repetition": 27,
+      "checkpoint": "mc3d-heldout-logistic-0.0-27.json",
+      "sha256": "603b48ec92c488c716cc66c3ad7541e109e164445c79a2d671a7b8410277bfd7",
+      "error": 0.0017740508935372157,
+      "radius": 0.0016037684970885695,
+      "statistical": 0.0007185834731584788,
+      "processing": 0.0008851850239300907,
+      "order_difference": 0.0007959822940154515,
+      "error_radius_ratio": 1.1061764193259636,
+      "uncovered_excess": 0.00017028239644864616,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009780685995217642,
+      "alternative_error_upper_bound": 0.002570033187552667
+    },
+    {
+      "repetition": 28,
+      "checkpoint": "mc3d-heldout-logistic-0.0-28.json",
+      "sha256": "8fb975d07ddc34447949542a228bec86921021a2f8df59c22a35818e072fa57e",
+      "error": 0.0013826830146045355,
+      "radius": 0.0015644947256445271,
+      "statistical": 0.0007013351317658009,
+      "processing": 0.0008631595938787262,
+      "order_difference": 0.0007807653106854939,
+      "error_radius_ratio": 0.8837888629090197,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006019177039190415,
+      "alternative_error_upper_bound": 0.0021634483252900294
+    },
+    {
+      "repetition": 29,
+      "checkpoint": "mc3d-heldout-logistic-0.0-29.json",
+      "sha256": "86e14aa0f7ba1be3a48e7dad8556fa9ef333575452dedd81ab1a85d787dd829b",
+      "error": 0.0014250244654226973,
+      "radius": 0.001764382898317284,
+      "statistical": 0.0009430636544931695,
+      "processing": 0.0008213192438241146,
+      "order_difference": 0.0007303434191899827,
+      "error_radius_ratio": 0.807661685443541,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006946810462327146,
+      "alternative_error_upper_bound": 0.00215536788461268
+    },
+    {
+      "repetition": 30,
+      "checkpoint": "mc3d-heldout-logistic-0.0-30.json",
+      "sha256": "abb2d626b9d8a9687c62a18aab4a7f132117a1dc23380e72252fbe1724c0320a",
+      "error": 0.0012860086099092394,
+      "radius": 0.0015411266626583872,
+      "statistical": 0.0007005028264310929,
+      "processing": 0.0008406238362272944,
+      "order_difference": 0.0007486407036849663,
+      "error_radius_ratio": 0.8344600356799495,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005373679062242731,
+      "alternative_error_upper_bound": 0.0020346493135942056
+    },
+    {
+      "repetition": 31,
+      "checkpoint": "mc3d-heldout-logistic-0.0-31.json",
+      "sha256": "acb9fb4745efa67b252245a923688e9db392cf2377ba562573f9895391ad205f",
+      "error": 0.0013663482615463574,
+      "radius": 0.001581345116199445,
+      "statistical": 0.0007433688868411169,
+      "processing": 0.0008379762293583282,
+      "order_difference": 0.00074826590718724,
+      "error_radius_ratio": 0.8640417879369657,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006180823543591174,
+      "alternative_error_upper_bound": 0.0021146141687335973
+    },
+    {
+      "repetition": 32,
+      "checkpoint": "mc3d-heldout-logistic-0.0-32.json",
+      "sha256": "14ef289eb5266d3d31a9f02f358519b97c5d7432556621c94be4d1e2f17b6530",
+      "error": 0.001267760017675812,
+      "radius": 0.0016808748560157903,
+      "statistical": 0.000734972012888002,
+      "processing": 0.0009459028431277883,
+      "order_difference": 0.0008541463950099137,
+      "error_radius_ratio": 0.7542262965851054,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004136136226658982,
+      "alternative_error_upper_bound": 0.0021219064126857257
+    },
+    {
+      "repetition": 33,
+      "checkpoint": "mc3d-heldout-logistic-0.0-33.json",
+      "sha256": "44726cea38cbc6de963b50c6acc1232198fe7008a3c1c56b9f002334fd7d7316",
+      "error": 0.0015311568666627196,
+      "radius": 0.0016859702842877606,
+      "statistical": 0.000811992129865455,
+      "processing": 0.0008739781544223058,
+      "order_difference": 0.0007660981840329484,
+      "error_radius_ratio": 0.9081754767163989,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007650586826297712,
+      "alternative_error_upper_bound": 0.002297255050695668
+    },
+    {
+      "repetition": 34,
+      "checkpoint": "mc3d-heldout-logistic-0.0-34.json",
+      "sha256": "f69b8227a04e77412de1bc9e97d0c01a1b86f0f31066b3878d251e15e407ccfa",
+      "error": 0.001464128788766561,
+      "radius": 0.0016910575658833356,
+      "statistical": 0.0007585083881908591,
+      "processing": 0.0009325491776924766,
+      "order_difference": 0.0008401784871281404,
+      "error_radius_ratio": 0.8658065924572848,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006239503016384207,
+      "alternative_error_upper_bound": 0.0023043072758947014
+    },
+    {
+      "repetition": 35,
+      "checkpoint": "mc3d-heldout-logistic-0.0-35.json",
+      "sha256": "21d6331e735b20fc0badaca0cecda3b490deb14c383d2ac4fdf81e8138f7acab",
+      "error": 0.001357384643571713,
+      "radius": 0.0015888460269832148,
+      "statistical": 0.0006604167807244153,
+      "processing": 0.0009284292462587995,
+      "order_difference": 0.0008419830042099008,
+      "error_radius_ratio": 0.8543210736090118,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005154016393618122,
+      "alternative_error_upper_bound": 0.0021993676477816138
+    },
+    {
+      "repetition": 36,
+      "checkpoint": "mc3d-heldout-logistic-0.0-36.json",
+      "sha256": "ad89269f1a46313e6124d7a6a6200061cf258f097a524abf357c7cd43c66dd00",
+      "error": 0.00168087394615557,
+      "radius": 0.001493951120223652,
+      "statistical": 0.0006732058493997771,
+      "processing": 0.0008207452708238749,
+      "order_difference": 0.0007257760723579088,
+      "error_radius_ratio": 1.1251197736000456,
+      "uncovered_excess": 0.00018692282593191787,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009550978737976612,
+      "alternative_error_upper_bound": 0.0024066500185134787
+    },
+    {
+      "repetition": 37,
+      "checkpoint": "mc3d-heldout-logistic-0.0-37.json",
+      "sha256": "8e955aaa89091bfb8471ef7aea390a73c42b5035093855d6fae2df0f0e843d38",
+      "error": 0.0014195308407470852,
+      "radius": 0.0016461775214575529,
+      "statistical": 0.0007847260987964116,
+      "processing": 0.0008614514226611414,
+      "order_difference": 0.0007666606764530348,
+      "error_radius_ratio": 0.8623194171004164,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006528701642940504,
+      "alternative_error_upper_bound": 0.00218619151720012
+    },
+    {
+      "repetition": 38,
+      "checkpoint": "mc3d-heldout-logistic-0.0-38.json",
+      "sha256": "983ef4a00a3835a362f47c174896cc0b5707bde0bdb38477951845c7dbdce275",
+      "error": 0.0012966843434428776,
+      "radius": 0.0016526265533383041,
+      "statistical": 0.0007998975126121074,
+      "processing": 0.0008527290407261967,
+      "order_difference": 0.0007763364905415404,
+      "error_radius_ratio": 0.7846203008317738,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005203478529013372,
+      "alternative_error_upper_bound": 0.002073020833984418
+    },
+    {
+      "repetition": 39,
+      "checkpoint": "mc3d-heldout-logistic-0.0-39.json",
+      "sha256": "4f204d9099297f4e7a6e07db292edac970a29cfbf2388f1a295a08e35c1548c8",
+      "error": 0.001329326654518348,
+      "radius": 0.0017820697863208303,
+      "statistical": 0.0008967184224221628,
+      "processing": 0.0008853513638986676,
+      "order_difference": 0.000799591649951692,
+      "error_radius_ratio": 0.7459453410423434,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000529735004566656,
+      "alternative_error_upper_bound": 0.00212891830447004
+    },
+    {
+      "repetition": 40,
+      "checkpoint": "mc3d-heldout-logistic-0.0-40.json",
+      "sha256": "4a69014bd5408d97cafabe08616ac34b0dbb746e1a9daa108060ac309cb5b45a",
+      "error": 0.0013629191753175007,
+      "radius": 0.0014957276058921941,
+      "statistical": 0.0006858246453138261,
+      "processing": 0.0008099029605783681,
+      "order_difference": 0.0007260008998908329,
+      "error_radius_ratio": 0.9112081437478893,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006369182754266678,
+      "alternative_error_upper_bound": 0.0020889200752083337
+    },
+    {
+      "repetition": 41,
+      "checkpoint": "mc3d-heldout-logistic-0.0-41.json",
+      "sha256": "3682573e56153b7811b6a23ace70c0d7a287e0fd0c0dc1e4dddae8b3d3b74925",
+      "error": 0.0014694461341986376,
+      "radius": 0.0015255582102214837,
+      "statistical": 0.0007722901428859285,
+      "processing": 0.0007532680673355552,
+      "order_difference": 0.0006597868583194666,
+      "error_radius_ratio": 0.963218659473702,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000809659275879171,
+      "alternative_error_upper_bound": 0.002129232992518104
+    },
+    {
+      "repetition": 42,
+      "checkpoint": "mc3d-heldout-logistic-0.0-42.json",
+      "sha256": "dfe8122782d5a42fb7b3b07157899e1758b987cbadff24dc45d08bd92f99be5e",
+      "error": 0.0013354508094312045,
+      "radius": 0.0015439108414557368,
+      "statistical": 0.0007175552034300481,
+      "processing": 0.0008263556380256887,
+      "order_difference": 0.0007457795182932436,
+      "error_radius_ratio": 0.8649792290933215,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005896712911379609,
+      "alternative_error_upper_bound": 0.002081230327724448
+    },
+    {
+      "repetition": 43,
+      "checkpoint": "mc3d-heldout-logistic-0.0-43.json",
+      "sha256": "8ed9b068ee5531990af091c3b3b8a3ac9a04ca27911ed665ef6d4803bd4d975e",
+      "error": 0.0012043061132429589,
+      "radius": 0.0015355951904087778,
+      "statistical": 0.0007469948218825401,
+      "processing": 0.0007886003685262377,
+      "order_difference": 0.0007021833729747851,
+      "error_radius_ratio": 0.7842601492665334,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005021227402681738,
+      "alternative_error_upper_bound": 0.001906489486217744
+    },
+    {
+      "repetition": 44,
+      "checkpoint": "mc3d-heldout-logistic-0.0-44.json",
+      "sha256": "58ba5c05482d8d225be6b6dd83599eb801fcd4ec2cef89ca75ec897276db9350",
+      "error": 0.001379362940036044,
+      "radius": 0.0015141084579835039,
+      "statistical": 0.0006777912261560824,
+      "processing": 0.0008363172318274215,
+      "order_difference": 0.0007509491435336857,
+      "error_radius_ratio": 0.9110066935846098,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006284137965023584,
+      "alternative_error_upper_bound": 0.00213031208356973
+    },
+    {
+      "repetition": 45,
+      "checkpoint": "mc3d-heldout-logistic-0.0-45.json",
+      "sha256": "16d0fef7d25d69f622ab79ec4ba2e465a735231bb4e069467114c440b441422a",
+      "error": 0.0014283970429553872,
+      "radius": 0.0016333967044527718,
+      "statistical": 0.0007396902209810149,
+      "processing": 0.0008937064834717567,
+      "order_difference": 0.0008077502623029531,
+      "error_radius_ratio": 0.8744948725936945,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006206467806524341,
+      "alternative_error_upper_bound": 0.0022361473052583403
+    },
+    {
+      "repetition": 46,
+      "checkpoint": "mc3d-heldout-logistic-0.0-46.json",
+      "sha256": "68f553cbfa703a833767f96a87331e727ed53ba3269fc7a2b3076af4802fd108",
+      "error": 0.00163838380462622,
+      "radius": 0.0018182359434951998,
+      "statistical": 0.0007265149329218898,
+      "processing": 0.00109172101057331,
+      "order_difference": 0.0009963075527531506,
+      "error_radius_ratio": 0.9010842682368001,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006420762518730694,
+      "alternative_error_upper_bound": 0.0026346913573793707
+    },
+    {
+      "repetition": 47,
+      "checkpoint": "mc3d-heldout-logistic-0.0-47.json",
+      "sha256": "c516730f6cc3288228cc1d45ab5cd9eba001e3571d1927f4eb34aa2048db7aa3",
+      "error": 0.0015763695550389256,
+      "radius": 0.0017114703218210616,
+      "statistical": 0.0007440916063765616,
+      "processing": 0.0009673787154445002,
+      "order_difference": 0.0008671066821943629,
+      "error_radius_ratio": 0.921061577837713,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007092628728445627,
+      "alternative_error_upper_bound": 0.0024434762372332886
+    },
+    {
+      "repetition": 48,
+      "checkpoint": "mc3d-heldout-logistic-0.0-48.json",
+      "sha256": "899958b77adea9efee8a3e71fcfd9725ff7d538407dc081cea827c502a9956f4",
+      "error": 0.0015008367773874376,
+      "radius": 0.001570722656070661,
+      "statistical": 0.0007243220963364882,
+      "processing": 0.0008464005597341728,
+      "order_difference": 0.0007594795381380415,
+      "error_radius_ratio": 0.9555071810971068,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007413572392493961,
+      "alternative_error_upper_bound": 0.002260316315525479
+    },
+    {
+      "repetition": 49,
+      "checkpoint": "mc3d-heldout-logistic-0.0-49.json",
+      "sha256": "81395a078ce1ee9caf47b0802ef1579decdad8123f228f0bd1f4de342b5ecb3e",
+      "error": 0.0015536166385381467,
+      "radius": 0.00167953328140167,
+      "statistical": 0.0007863098582504351,
+      "processing": 0.0008932234231512348,
+      "order_difference": 0.0007888550624710611,
+      "error_radius_ratio": 0.9250287896894557,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007647615760670856,
+      "alternative_error_upper_bound": 0.0023424717010092078
+    },
+    {
+      "repetition": 50,
+      "checkpoint": "mc3d-heldout-logistic-0.0-50.json",
+      "sha256": "fa79ea14f12ee6a4af37a3caa96a048e7bd8337318c708999665b72bcbde6ee6",
+      "error": 0.0014282943217577282,
+      "radius": 0.0015877817312082041,
+      "statistical": 0.0007411720109408047,
+      "processing": 0.0008466097202673994,
+      "order_difference": 0.0007544515752143655,
+      "error_radius_ratio": 0.8995533162299859,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006738427465433627,
+      "alternative_error_upper_bound": 0.0021827458969720936
+    },
+    {
+      "repetition": 51,
+      "checkpoint": "mc3d-heldout-logistic-0.0-51.json",
+      "sha256": "362f88db85d34607a7105afc50d951d0476c46177f9e1210c0e9afb06530a01a",
+      "error": 0.0016005962746410418,
+      "radius": 0.0016624915125852562,
+      "statistical": 0.0007091484010939447,
+      "processing": 0.0009533431114913116,
+      "order_difference": 0.0008558424567773892,
+      "error_radius_ratio": 0.9627695916185676,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007447538178636526,
+      "alternative_error_upper_bound": 0.002456438731418431
+    },
+    {
+      "repetition": 52,
+      "checkpoint": "mc3d-heldout-logistic-0.0-52.json",
+      "sha256": "ca986c9dfd51aeda7f59da95db44587ffb111955e247bd994cc116e716e0a60a",
+      "error": 0.001360344002907854,
+      "radius": 0.0016381347863373681,
+      "statistical": 0.0007813856653338376,
+      "processing": 0.0008567491210035305,
+      "order_difference": 0.0007318872044400626,
+      "error_radius_ratio": 0.8304225111716148,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006284567984677913,
+      "alternative_error_upper_bound": 0.0020922312073479166
+    },
+    {
+      "repetition": 53,
+      "checkpoint": "mc3d-heldout-logistic-0.0-53.json",
+      "sha256": "b19eca70d037f6b4399466bfc16a150b9b84f37dd70baa3fb8af37cf07d4ab83",
+      "error": 0.0013824768770086537,
+      "radius": 0.0014874830143227712,
+      "statistical": 0.0006707023558759573,
+      "processing": 0.000816780658446814,
+      "order_difference": 0.000729844445187755,
+      "error_radius_ratio": 0.9294068326810944,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006526324318208987,
+      "alternative_error_upper_bound": 0.0021123213221964088
+    },
+    {
+      "repetition": 54,
+      "checkpoint": "mc3d-heldout-logistic-0.0-54.json",
+      "sha256": "a517ee409ae7beef7528e2f6efb952719b1710d261efe8b95854a3c85f5e47aa",
+      "error": 0.0013682285893206192,
+      "radius": 0.0017349637576604409,
+      "statistical": 0.0007586227391190584,
+      "processing": 0.0009763410185413823,
+      "order_difference": 0.0008871632661068274,
+      "error_radius_ratio": 0.7886208477147928,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004810653232137918,
+      "alternative_error_upper_bound": 0.0022553918554274466
+    },
+    {
+      "repetition": 55,
+      "checkpoint": "mc3d-heldout-logistic-0.0-55.json",
+      "sha256": "84b160d577baa89430b9f5d5cac9640c696756c232d44d2b13d448fe48c66455",
+      "error": 0.001423880788420262,
+      "radius": 0.0015084874735272619,
+      "statistical": 0.00070659866507293,
+      "processing": 0.0008018888084543319,
+      "order_difference": 0.0007011734432829098,
+      "error_radius_ratio": 0.9439129017696342,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007227073451373522,
+      "alternative_error_upper_bound": 0.0021250542317031718
+    },
+    {
+      "repetition": 56,
+      "checkpoint": "mc3d-heldout-logistic-0.0-56.json",
+      "sha256": "ee318ee269e5388786608de378868315d5244f5eda695dc0735494c95a9c877b",
+      "error": 0.0013484301772703766,
+      "radius": 0.0016221831505515314,
+      "statistical": 0.0007856170199226519,
+      "processing": 0.0008365661306288796,
+      "order_difference": 0.0007443022232209717,
+      "error_radius_ratio": 0.8312441026230111,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006041279540494049,
+      "alternative_error_upper_bound": 0.0020927324004913483
+    },
+    {
+      "repetition": 57,
+      "checkpoint": "mc3d-heldout-logistic-0.0-57.json",
+      "sha256": "8de9a846b273b51bde8c4977334e01d6a8c3986cb83e7787312d3799d16c73d1",
+      "error": 0.001417718036975435,
+      "radius": 0.0015283295427324594,
+      "statistical": 0.0007406009085147379,
+      "processing": 0.0007877286342177214,
+      "order_difference": 0.0007045296403178636,
+      "error_radius_ratio": 0.927625879979219,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007131883966575714,
+      "alternative_error_upper_bound": 0.0021222476772932986
+    },
+    {
+      "repetition": 58,
+      "checkpoint": "mc3d-heldout-logistic-0.0-58.json",
+      "sha256": "8440f6272536056b543dcade8772b0c9059f5f46ae1cc318beba0efe8281a48d",
+      "error": 0.0013504129640893314,
+      "radius": 0.0016639702775130048,
+      "statistical": 0.0007358387726344227,
+      "processing": 0.0009281315048785821,
+      "order_difference": 0.0008382409221738829,
+      "error_radius_ratio": 0.8115607486136586,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005121720419154485,
+      "alternative_error_upper_bound": 0.0021886538862632143
+    },
+    {
+      "repetition": 59,
+      "checkpoint": "mc3d-heldout-logistic-0.0-59.json",
+      "sha256": "94998c4e60f70f2b88b64bc6e07b99b33a4d232f9ca45e02aa0887d254cd3663",
+      "error": 0.0014185721371854365,
+      "radius": 0.0014732644997193418,
+      "statistical": 0.0007298852706331589,
+      "processing": 0.0007433792290861829,
+      "order_difference": 0.000652774105991405,
+      "error_radius_ratio": 0.962876752582904,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007657980311940316,
+      "alternative_error_upper_bound": 0.0020713462431768415
+    },
+    {
+      "repetition": 60,
+      "checkpoint": "mc3d-heldout-logistic-0.0-60.json",
+      "sha256": "f33a4d6db0543a5a8293dd89ee628460815e1ab77bc12723eeb5ea5c64aa172a",
+      "error": 0.0010696980328951389,
+      "radius": 0.0016294270654561515,
+      "statistical": 0.0007124062499808626,
+      "processing": 0.000917020815475289,
+      "order_difference": 0.0008314470775998561,
+      "error_radius_ratio": 0.6564872129429624,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00023825095529528273,
+      "alternative_error_upper_bound": 0.001901145110494995
+    },
+    {
+      "repetition": 61,
+      "checkpoint": "mc3d-heldout-logistic-0.0-61.json",
+      "sha256": "a2e7f3577cf819ee680e0582140827c02c58b9eb6a957c20a2a396208f78028d",
+      "error": 0.0014308861125889027,
+      "radius": 0.0015707131618356628,
+      "statistical": 0.0007699022360251383,
+      "processing": 0.0008008109258105245,
+      "order_difference": 0.0007114914065340372,
+      "error_radius_ratio": 0.9109786225491695,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007193947060548656,
+      "alternative_error_upper_bound": 0.00214237751912294
+    },
+    {
+      "repetition": 62,
+      "checkpoint": "mc3d-heldout-logistic-0.0-62.json",
+      "sha256": "28846cd3ea25f78c4a30bb7bd8221d6cfd373b88d87aa4942f04f50906c2d471",
+      "error": 0.0014973722594673333,
+      "radius": 0.0016677790120437626,
+      "statistical": 0.0007740591519560799,
+      "processing": 0.0008937198600876828,
+      "order_difference": 0.0008069783455665336,
+      "error_radius_ratio": 0.8978241413605474,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006903939139007997,
+      "alternative_error_upper_bound": 0.002304350605033867
+    },
+    {
+      "repetition": 63,
+      "checkpoint": "mc3d-heldout-logistic-0.0-63.json",
+      "sha256": "af0f98a6c72c649d3117f9cbe143f038ebbd407738ec85c7705c80c767f55c79",
+      "error": 0.001547476959203875,
+      "radius": 0.0017969606258423807,
+      "statistical": 0.0007678595306052526,
+      "processing": 0.0010291010952371282,
+      "order_difference": 0.0009444019066123799,
+      "error_radius_ratio": 0.8611635318823124,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006030750525914952,
+      "alternative_error_upper_bound": 0.002491878865816255
+    },
+    {
+      "repetition": 64,
+      "checkpoint": "mc3d-heldout-logistic-0.0-64.json",
+      "sha256": "c8f82cc06106bd224bc833cc8ed1ea16f585471ca4adadc789cb38f91070a43f",
+      "error": 0.0015297231062125771,
+      "radius": 0.0015832952946673862,
+      "statistical": 0.0007037597347511192,
+      "processing": 0.0008795355599162669,
+      "order_difference": 0.0007898635556229383,
+      "error_radius_ratio": 0.9661641207200939,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007398595505896388,
+      "alternative_error_upper_bound": 0.0023195866618355154
+    },
+    {
+      "repetition": 65,
+      "checkpoint": "mc3d-heldout-logistic-0.0-65.json",
+      "sha256": "fa2863efd4d4185da8998c4038fee09245d9f033399376bdd9a75f5f3bcdc8b9",
+      "error": 0.0013715042332379523,
+      "radius": 0.0018972805118580662,
+      "statistical": 0.0008089389912519597,
+      "processing": 0.0010883415206061064,
+      "order_difference": 0.0010024221747112483,
+      "error_radius_ratio": 0.7228789968937146,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00036908205852670406,
+      "alternative_error_upper_bound": 0.0023739264079492006
+    },
+    {
+      "repetition": 66,
+      "checkpoint": "mc3d-heldout-logistic-0.0-66.json",
+      "sha256": "4876ffe669d3f7d3e6a650768da0a3af3543b22ba6ce74b21a086b6ab7b98688",
+      "error": 0.0015290085696155753,
+      "radius": 0.001938819239773222,
+      "statistical": 0.0007620851453303669,
+      "processing": 0.001176734094442855,
+      "order_difference": 0.0010804075058160612,
+      "error_radius_ratio": 0.7886287376611855,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00044860106379951414,
+      "alternative_error_upper_bound": 0.0026094160754316365
+    },
+    {
+      "repetition": 67,
+      "checkpoint": "mc3d-heldout-logistic-0.0-67.json",
+      "sha256": "291d7afb37c84e9cedad6799c28779c364ee6cddee0e6ae5bce81f72309a1aa5",
+      "error": 0.0013213893813678323,
+      "radius": 0.001509523192849149,
+      "statistical": 0.0006887216224585989,
+      "processing": 0.0008208015703905502,
+      "order_difference": 0.0007213630415001671,
+      "error_radius_ratio": 0.8753687175046158,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006000263398676653,
+      "alternative_error_upper_bound": 0.0020427524228679994
+    },
+    {
+      "repetition": 68,
+      "checkpoint": "mc3d-heldout-logistic-0.0-68.json",
+      "sha256": "5ae7ded1b380d26b8d26b3d8613211946ddea87e0faeec95d04780bf2e52b05a",
+      "error": 0.001337787379036559,
+      "radius": 0.001535361155005317,
+      "statistical": 0.0007707386924371741,
+      "processing": 0.000764622462568143,
+      "order_difference": 0.0006569185129352562,
+      "error_radius_ratio": 0.8713177187499747,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006808688661013029,
+      "alternative_error_upper_bound": 0.0019947058919718152
+    },
+    {
+      "repetition": 69,
+      "checkpoint": "mc3d-heldout-logistic-0.0-69.json",
+      "sha256": "1bd749760e5e83cc2b653375e28d5d87c7597ba514bb9549544562b6f02eae23",
+      "error": 0.0015153037709435546,
+      "radius": 0.0015374998422492182,
+      "statistical": 0.0007052587835421675,
+      "processing": 0.0008322410587070506,
+      "order_difference": 0.000744549929531213,
+      "error_radius_ratio": 0.9855635293768923,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007707538414123416,
+      "alternative_error_upper_bound": 0.0022598537004747676
+    },
+    {
+      "repetition": 70,
+      "checkpoint": "mc3d-heldout-logistic-0.0-70.json",
+      "sha256": "976381308ce68e192119a47bb6e0ed12da0df34b850cc0064cd19bdb67b8aad6",
+      "error": 0.0014610150036837855,
+      "radius": 0.001686806140683228,
+      "statistical": 0.0007686621642906677,
+      "processing": 0.0009181439763925603,
+      "order_difference": 0.0008188670493232131,
+      "error_radius_ratio": 0.8661428058899598,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006421479543605724,
+      "alternative_error_upper_bound": 0.0022798820530069985
+    },
+    {
+      "repetition": 71,
+      "checkpoint": "mc3d-heldout-logistic-0.0-71.json",
+      "sha256": "66ac4a0998fc38aa8222160eb872050c69d94e00d06f0f78d3c4d8e2921bc03d",
+      "error": 0.0013896851234601604,
+      "radius": 0.001663920609164365,
+      "statistical": 0.0007510092457188529,
+      "processing": 0.0009129113634455122,
+      "order_difference": 0.0008162940950589004,
+      "error_radius_ratio": 0.8351871572514942,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00057339102840126,
+      "alternative_error_upper_bound": 0.0022059792185190608
+    },
+    {
+      "repetition": 72,
+      "checkpoint": "mc3d-heldout-logistic-0.0-72.json",
+      "sha256": "f916e6beaa7ba1f7ee12c452868a849a9a81ddf6d5598a679187e6d8f359a6f4",
+      "error": 0.001519107400464903,
+      "radius": 0.0015536874551651536,
+      "statistical": 0.0007013996765473651,
+      "processing": 0.0008522877786177885,
+      "order_difference": 0.0007567907077414837,
+      "error_radius_ratio": 0.9777432362053957,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007623166927234193,
+      "alternative_error_upper_bound": 0.0022758981082063867
+    },
+    {
+      "repetition": 73,
+      "checkpoint": "mc3d-heldout-logistic-0.0-73.json",
+      "sha256": "405ecbd69352a86e94a98aa12b9fc70a2d2196d5496403ac5e8035f1f3a94bd4",
+      "error": 0.001362163720702747,
+      "radius": 0.0018061409412189493,
+      "statistical": 0.0008765344277475455,
+      "processing": 0.0009296065134714038,
+      "order_difference": 0.0008250319191134281,
+      "error_radius_ratio": 0.7541846207104049,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000537131801589319,
+      "alternative_error_upper_bound": 0.002187195639816175
+    },
+    {
+      "repetition": 74,
+      "checkpoint": "mc3d-heldout-logistic-0.0-74.json",
+      "sha256": "efcc310071d727b515f250ac1f2785a94c931aadff4e8cfc9670cd2765f38438",
+      "error": 0.001372580896081832,
+      "radius": 0.0014819420220441072,
+      "statistical": 0.0006763344993994159,
+      "processing": 0.0008056075226446913,
+      "order_difference": 0.0007028976851733981,
+      "error_radius_ratio": 0.9262041805040195,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006696832109084339,
+      "alternative_error_upper_bound": 0.00207547858125523
+    },
+    {
+      "repetition": 75,
+      "checkpoint": "mc3d-heldout-logistic-0.0-75.json",
+      "sha256": "a83f6a887eb36c0e3118e899a3c1e7c151b332bb7ac6ffe85445035a39a8e077",
+      "error": 0.001495496419916864,
+      "radius": 0.0016464433605743898,
+      "statistical": 0.0007140608659110701,
+      "processing": 0.0009323824946633197,
+      "order_difference": 0.0008390893820716672,
+      "error_radius_ratio": 0.908319384515684,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006564070378451969,
+      "alternative_error_upper_bound": 0.0023345858019885313
+    },
+    {
+      "repetition": 76,
+      "checkpoint": "mc3d-heldout-logistic-0.0-76.json",
+      "sha256": "aec6eb35a1c31a1fb3b667d9476cf75a473331078ef6dc36064bbd2455f1629b",
+      "error": 0.001534754614642142,
+      "radius": 0.0015279109618022645,
+      "statistical": 0.0007162728417526797,
+      "processing": 0.0008116381200495848,
+      "order_difference": 0.0007295133396074682,
+      "error_radius_ratio": 1.0044790913940462,
+      "uncovered_excess": 6.84365283987751e-06,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008052412750346738,
+      "alternative_error_upper_bound": 0.0022642679542496102
+    },
+    {
+      "repetition": 77,
+      "checkpoint": "mc3d-heldout-logistic-0.0-77.json",
+      "sha256": "eae71bdf94d9cad3329e42c60bf96569b2b1bacba03c2468dc65b677f3c41e7b",
+      "error": 0.001539910911578346,
+      "radius": 0.0018270525325195129,
+      "statistical": 0.0008102973736187511,
+      "processing": 0.0010167551589007617,
+      "order_difference": 0.000924656271224289,
+      "error_radius_ratio": 0.8428388807489857,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006152546403540571,
+      "alternative_error_upper_bound": 0.002464567182802635
+    },
+    {
+      "repetition": 78,
+      "checkpoint": "mc3d-heldout-logistic-0.0-78.json",
+      "sha256": "7ecaf334373b516d99fc491841d80def4c8a60d0ddda267f4301f111b26837e7",
+      "error": 0.001679237554479296,
+      "radius": 0.0016173381788100404,
+      "statistical": 0.0008109076259936674,
+      "processing": 0.0008064305528163729,
+      "order_difference": 0.0007092854390450265,
+      "error_radius_ratio": 1.038272376476513,
+      "uncovered_excess": 6.18993756692555e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009699521154342694,
+      "alternative_error_upper_bound": 0.0023885229935243224
+    },
+    {
+      "repetition": 79,
+      "checkpoint": "mc3d-heldout-logistic-0.0-79.json",
+      "sha256": "5074eb36b8750a747d6cb49f7e57676d95bc6d3df3812b7d01b120712ecd5369",
+      "error": 0.001431231465538585,
+      "radius": 0.0016478733563008551,
+      "statistical": 0.0007266068118275237,
+      "processing": 0.0009212665444733315,
+      "order_difference": 0.0008266519364167335,
+      "error_radius_ratio": 0.868532439138049,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006045795291218514,
+      "alternative_error_upper_bound": 0.0022578834019553184
+    },
+    {
+      "repetition": 80,
+      "checkpoint": "mc3d-heldout-logistic-0.0-80.json",
+      "sha256": "d2d66790724308b75213f5c059891027d95a6b4ae4e929bfd7693fb8aa07e252",
+      "error": 0.0014660088901393697,
+      "radius": 0.0016777120521571818,
+      "statistical": 0.0006934551648304532,
+      "processing": 0.0009842568873267288,
+      "order_difference": 0.000893285402135624,
+      "error_radius_ratio": 0.8738143641838856,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005727234880037457,
+      "alternative_error_upper_bound": 0.0023592942922749938
+    },
+    {
+      "repetition": 81,
+      "checkpoint": "mc3d-heldout-logistic-0.0-81.json",
+      "sha256": "6fbdc702c6d84622e17465043ec60ae77bf16f007fd1eb2d9957035ee826ec5a",
+      "error": 0.001625249646666549,
+      "radius": 0.0016032848762615238,
+      "statistical": 0.0007238195524367552,
+      "processing": 0.0008794653238247685,
+      "order_difference": 0.0007881457141352133,
+      "error_radius_ratio": 1.0136998550477452,
+      "uncovered_excess": 2.1964770405025116e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008371039325313356,
+      "alternative_error_upper_bound": 0.002413395360801762
+    },
+    {
+      "repetition": 82,
+      "checkpoint": "mc3d-heldout-logistic-0.0-82.json",
+      "sha256": "e2143999eda91a1f8160bfe667c2c59dacceb372fb3c9a6086db57049fd6ddc3",
+      "error": 0.0014041305618893718,
+      "radius": 0.0014904354673059223,
+      "statistical": 0.000690502443556112,
+      "processing": 0.0007999330237498103,
+      "order_difference": 0.0007199638403627695,
+      "error_radius_ratio": 0.9420941682416124,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006841667215266023,
+      "alternative_error_upper_bound": 0.0021240944022521413
+    },
+    {
+      "repetition": 83,
+      "checkpoint": "mc3d-heldout-logistic-0.0-83.json",
+      "sha256": "50141e99ed4bb3c44ad5d27c6027b6b1454f97d8576bcd95af3a5d94b9e4a01e",
+      "error": 0.0015323096052648477,
+      "radius": 0.0014981215439885064,
+      "statistical": 0.0006894042624040142,
+      "processing": 0.0008087172815844923,
+      "order_difference": 0.0007233715271364183,
+      "error_radius_ratio": 1.0228206192037805,
+      "uncovered_excess": 3.4188061276341306e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008089380781284294,
+      "alternative_error_upper_bound": 0.002255681132401266
+    },
+    {
+      "repetition": 84,
+      "checkpoint": "mc3d-heldout-logistic-0.0-84.json",
+      "sha256": "b79f9cf42382a10204516b402d215dd3dd69317f958339c2b18005ecc3b9d077",
+      "error": 0.001212517011479175,
+      "radius": 0.0016294487716868363,
+      "statistical": 0.0008064645124760458,
+      "processing": 0.0008229842592107905,
+      "order_difference": 0.0007347040497388546,
+      "error_radius_ratio": 0.7441271137502251,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004778129617403204,
+      "alternative_error_upper_bound": 0.0019472210612180296
+    },
+    {
+      "repetition": 85,
+      "checkpoint": "mc3d-heldout-logistic-0.0-85.json",
+      "sha256": "ac671dfe3be4b72ee0543b6f70c72fab0cd200e5a9e916d0d84927f16949a4cc",
+      "error": 0.0012851925390544583,
+      "radius": 0.0015882643299792109,
+      "statistical": 0.000743680679131825,
+      "processing": 0.0008445836508473858,
+      "order_difference": 0.0007490176430385853,
+      "error_radius_ratio": 0.8091805090600256,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000536174896015873,
+      "alternative_error_upper_bound": 0.0020342101820930436
+    },
+    {
+      "repetition": 86,
+      "checkpoint": "mc3d-heldout-logistic-0.0-86.json",
+      "sha256": "50d701816dd41e883536281fbbc62fc1fc6cbd36c591c0240b8e3c809e077474",
+      "error": 0.0013407755549059708,
+      "radius": 0.0016388480212580821,
+      "statistical": 0.0008014667297119912,
+      "processing": 0.000837381291546091,
+      "order_difference": 0.0007563956247000903,
+      "error_radius_ratio": 0.818120739393948,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005843799302058805,
+      "alternative_error_upper_bound": 0.002097171179606061
+    },
+    {
+      "repetition": 87,
+      "checkpoint": "mc3d-heldout-logistic-0.0-87.json",
+      "sha256": "7c434d8178f1c41ca3d3e6efe8a519f99c45db82446705ebaf882d607380c216",
+      "error": 0.001706537511333317,
+      "radius": 0.001655871532845204,
+      "statistical": 0.0006911824675787266,
+      "processing": 0.0009646890652664775,
+      "order_difference": 0.0008587910274475696,
+      "error_radius_ratio": 1.0305977713144545,
+      "uncovered_excess": 5.0665978488112886e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0008477464838857474,
+      "alternative_error_upper_bound": 0.0025653285387808866
+    },
+    {
+      "repetition": 88,
+      "checkpoint": "mc3d-heldout-logistic-0.0-88.json",
+      "sha256": "7affc037fa6dee6a878d566c9fdfc396cb17188a91da5cc4d9bae578cfae5e1b",
+      "error": 0.001529871838937158,
+      "radius": 0.0016014340642999166,
+      "statistical": 0.0007449957126556325,
+      "processing": 0.0008564383516442842,
+      "order_difference": 0.0007760346313887556,
+      "error_radius_ratio": 0.955313661075367,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007538372075484023,
+      "alternative_error_upper_bound": 0.0023059064703259136
+    },
+    {
+      "repetition": 89,
+      "checkpoint": "mc3d-heldout-logistic-0.0-89.json",
+      "sha256": "956a52b40da119d55fce814b96e6bd974d04a05acab143c5853f05efc977e180",
+      "error": 0.0012508023420726433,
+      "radius": 0.001682069930869562,
+      "statistical": 0.0007561450103475475,
+      "processing": 0.0009259249205220144,
+      "order_difference": 0.0008391312986486543,
+      "error_radius_ratio": 0.7436090016935438,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.00041167104342398897,
+      "alternative_error_upper_bound": 0.0020899336407212976
+    },
+    {
+      "repetition": 90,
+      "checkpoint": "mc3d-heldout-logistic-0.0-90.json",
+      "sha256": "ef58a5bb8803b2cafcfc140eb7ded196c2d53c335731923e846b03851b302de2",
+      "error": 0.0014952367117870846,
+      "radius": 0.0015032877841763656,
+      "statistical": 0.0007473720153170047,
+      "processing": 0.000755915768859361,
+      "order_difference": 0.0006573127324600581,
+      "error_radius_ratio": 0.9946443572055685,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0008379239793270266,
+      "alternative_error_upper_bound": 0.0021525494442471427
+    },
+    {
+      "repetition": 91,
+      "checkpoint": "mc3d-heldout-logistic-0.0-91.json",
+      "sha256": "130c7cc21720b5be6663fa85dc820a07001908af12c919350924521105a5b5c4",
+      "error": 0.0014239669722306836,
+      "radius": 0.0017084537471455884,
+      "statistical": 0.0007916157274448165,
+      "processing": 0.0009168380197007719,
+      "order_difference": 0.0008222722063184751,
+      "error_radius_ratio": 0.8334828932944698,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006016947659122085,
+      "alternative_error_upper_bound": 0.0022462391785491587
+    },
+    {
+      "repetition": 92,
+      "checkpoint": "mc3d-heldout-logistic-0.0-92.json",
+      "sha256": "792abf55d43dc9221cac99265d43ff976b30d695690eba0da67eec054ef3e57f",
+      "error": 0.00148246439666333,
+      "radius": 0.0016531627451088636,
+      "statistical": 0.0008200775643976287,
+      "processing": 0.0008330851807112349,
+      "order_difference": 0.0007402289849446353,
+      "error_radius_ratio": 0.8967443774361774,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007422354117186947,
+      "alternative_error_upper_bound": 0.0022226933816079653
+    },
+    {
+      "repetition": 93,
+      "checkpoint": "mc3d-heldout-logistic-0.0-93.json",
+      "sha256": "997674dbfe4a75ced2d3915db2f9b6f6bee7d7ece57e13cc213ed9249fd20335",
+      "error": 0.0012757691003019156,
+      "radius": 0.0015995878128284102,
+      "statistical": 0.0007887519353225547,
+      "processing": 0.0008108358775058555,
+      "order_difference": 0.0007263380693940391,
+      "error_radius_ratio": 0.7975611529860842,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005494310309078765,
+      "alternative_error_upper_bound": 0.0020021071696959547
+    },
+    {
+      "repetition": 94,
+      "checkpoint": "mc3d-heldout-logistic-0.0-94.json",
+      "sha256": "712e609ef611c0ba047a4f66219c09e51f9e4b4682e2639d4f67aa1f65ec435e",
+      "error": 0.0014783789678608494,
+      "radius": 0.0015195876459335178,
+      "statistical": 0.0007068606590671099,
+      "processing": 0.0008127269868664078,
+      "order_difference": 0.0007255402581517467,
+      "error_radius_ratio": 0.9728816707723674,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007528387097091027,
+      "alternative_error_upper_bound": 0.002203919226012596
+    },
+    {
+      "repetition": 95,
+      "checkpoint": "mc3d-heldout-logistic-0.0-95.json",
+      "sha256": "e2788634ef2b2f03b4060e4354653c51e7e6a3a522901d893fc407226d416db4",
+      "error": 0.0013464294916548658,
+      "radius": 0.001557134353867656,
+      "statistical": 0.0007744178528904909,
+      "processing": 0.0007827165009771653,
+      "order_difference": 0.0007003152785780564,
+      "error_radius_ratio": 0.8646842119375022,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006461142130768094,
+      "alternative_error_upper_bound": 0.0020467447702329222
+    },
+    {
+      "repetition": 96,
+      "checkpoint": "mc3d-heldout-logistic-0.0-96.json",
+      "sha256": "74e8178d5a0097b9443fab7c8091ce3aa1b9294104a724d805523efb84d91f4b",
+      "error": 0.0013477074500073405,
+      "radius": 0.0017171006066676428,
+      "statistical": 0.0007044003719344325,
+      "processing": 0.0010127002347332104,
+      "order_difference": 0.0009185121599099011,
+      "error_radius_ratio": 0.7848739000930299,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004291952900974394,
+      "alternative_error_upper_bound": 0.0022662196099172416
+    },
+    {
+      "repetition": 97,
+      "checkpoint": "mc3d-heldout-logistic-0.0-97.json",
+      "sha256": "1d00354f89b0a25d466ee91dab824c96f4df996b8c707726e0a5f5f72ca73df0",
+      "error": 0.001430742242960692,
+      "radius": 0.0015614655757521852,
+      "statistical": 0.0006399235044297399,
+      "processing": 0.0009215420713224454,
+      "order_difference": 0.0008437068138247295,
+      "error_radius_ratio": 0.9162816428223072,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005870354291359625,
+      "alternative_error_upper_bound": 0.0022744490567854214
+    },
+    {
+      "repetition": 98,
+      "checkpoint": "mc3d-heldout-logistic-0.0-98.json",
+      "sha256": "26d8efa498c9ab2fc73cb66f5ec4378f688fcaac1a2abb752f9112caac1fbe16",
+      "error": 0.0016029854949906053,
+      "radius": 0.0014664362498949977,
+      "statistical": 0.0006936057121488703,
+      "processing": 0.0007728305377461275,
+      "order_difference": 0.0006808703250259507,
+      "error_radius_ratio": 1.0931163868223968,
+      "uncovered_excess": 0.00013654924509560757,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009221151699646546,
+      "alternative_error_upper_bound": 0.002283855820016556
+    },
+    {
+      "repetition": 99,
+      "checkpoint": "mc3d-heldout-logistic-0.0-99.json",
+      "sha256": "de8c71fdad9863457b45f27d15b560a7a16a743abf1c7090aa2776c2b498777a",
+      "error": 0.0014060855147715046,
+      "radius": 0.0015872128812531416,
+      "statistical": 0.0007297814464636953,
+      "processing": 0.0008574314347894463,
+      "order_difference": 0.000758781975695233,
+      "error_radius_ratio": 0.8858833817309795,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006473035390762716,
+      "alternative_error_upper_bound": 0.0021648674904667375
+    },
+    {
+      "repetition": 100,
+      "checkpoint": "mc3d-heldout-logistic-0.0-100.json",
+      "sha256": "f1e21163f257dfc8a20f503a1d6c12d50f2abe49341f2c7980659ffb6ae82962",
+      "error": 0.0016116076109923272,
+      "radius": 0.0016117410205584931,
+      "statistical": 0.0006976693642488592,
+      "processing": 0.000914071656309634,
+      "order_difference": 0.0008222290751884742,
+      "error_radius_ratio": 0.9999172264250495,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000789378535803853,
+      "alternative_error_upper_bound": 0.0024338366861808014
+    },
+    {
+      "repetition": 101,
+      "checkpoint": "mc3d-heldout-logistic-0.0-101.json",
+      "sha256": "43b514667e20e27b8f0bcac93b0c540b7d3351f4d93a33d088b504ec53767be4",
+      "error": 0.001461745288378835,
+      "radius": 0.0016743883030529705,
+      "statistical": 0.0007965353397027807,
+      "processing": 0.0008778529633501897,
+      "order_difference": 0.0007886832487427053,
+      "error_radius_ratio": 0.8730025679907009,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006730620396361298,
+      "alternative_error_upper_bound": 0.0022504285371215405
+    },
+    {
+      "repetition": 102,
+      "checkpoint": "mc3d-heldout-logistic-0.0-102.json",
+      "sha256": "9f30e14f09ed5047b6684696a806d827751d9d91526ba45f22088b8f3dae5c8a",
+      "error": 0.001470806979821715,
+      "radius": 0.0017442469641778312,
+      "statistical": 0.0008462726465181313,
+      "processing": 0.0008979743176596999,
+      "order_difference": 0.0008176391911999259,
+      "error_radius_ratio": 0.8432332175593007,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.000653167788621789,
+      "alternative_error_upper_bound": 0.002288446171021641
+    },
+    {
+      "repetition": 103,
+      "checkpoint": "mc3d-heldout-logistic-0.0-103.json",
+      "sha256": "c465414661cf4f6564e5ae0ec661bee019166936583e3114ecd91faa98efd841",
+      "error": 0.001583373640980601,
+      "radius": 0.0016179633900484545,
+      "statistical": 0.0007456277414755352,
+      "processing": 0.0008723356485729195,
+      "order_difference": 0.0007774341662645234,
+      "error_radius_ratio": 0.9786214266153342,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0008059394747160775,
+      "alternative_error_upper_bound": 0.0023608078072451244
+    },
+    {
+      "repetition": 104,
+      "checkpoint": "mc3d-heldout-logistic-0.0-104.json",
+      "sha256": "59c8e4415664b838a35d91bd83f2ac4fc2f4d824001e8e9e032def28ab70478a",
+      "error": 0.0012892501268664258,
+      "radius": 0.0015711201952298848,
+      "statistical": 0.000746092086594057,
+      "processing": 0.000825028108635828,
+      "order_difference": 0.0007298622110120112,
+      "error_radius_ratio": 0.8205929315788497,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005593879158544146,
+      "alternative_error_upper_bound": 0.002019112337878437
+    },
+    {
+      "repetition": 105,
+      "checkpoint": "mc3d-heldout-logistic-0.0-105.json",
+      "sha256": "4ed7d12561a4816e491b1fee24736780939a7ade21d8ccc1af151763bd03ab70",
+      "error": 0.0015907596584926464,
+      "radius": 0.0014759943119399099,
+      "statistical": 0.0007266171156216194,
+      "processing": 0.0007493771963182905,
+      "order_difference": 0.0006715450726009209,
+      "error_radius_ratio": 1.0777545994753188,
+      "uncovered_excess": 0.00011476534655273656,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009192145858917256,
+      "alternative_error_upper_bound": 0.0022623047310935673
+    },
+    {
+      "repetition": 106,
+      "checkpoint": "mc3d-heldout-logistic-0.0-106.json",
+      "sha256": "556f845bfbd2d5dff53c67cd0264d9dbcdbe6f29983f0d60db52f1beaf84f4d9",
+      "error": 0.0014477775802900217,
+      "radius": 0.0017175553066602713,
+      "statistical": 0.0007960974939854405,
+      "processing": 0.0009214578126748307,
+      "order_difference": 0.0008375301701597504,
+      "error_radius_ratio": 0.8429292347535385,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006102474101302713,
+      "alternative_error_upper_bound": 0.002285307750449772
+    },
+    {
+      "repetition": 107,
+      "checkpoint": "mc3d-heldout-logistic-0.0-107.json",
+      "sha256": "59a7788ced88522ae3a4673dc32d5ef29f31c3e1453ab41b0be6f8c2ac2e0117",
+      "error": 0.0013800915128945324,
+      "radius": 0.0015758686281233335,
+      "statistical": 0.0007180199453272971,
+      "processing": 0.0008578486827960363,
+      "order_difference": 0.0007577960508156067,
+      "error_radius_ratio": 0.8757655862075586,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006222954620789256,
+      "alternative_error_upper_bound": 0.002137887563710139
+    },
+    {
+      "repetition": 108,
+      "checkpoint": "mc3d-heldout-logistic-0.0-108.json",
+      "sha256": "176382e6af8bc76d1633f69e19bd5dc864e3edd17756247968cbb2c6e08708ac",
+      "error": 0.0015203337710756326,
+      "radius": 0.001487863019147395,
+      "statistical": 0.0006650942639443545,
+      "processing": 0.0008227687552030405,
+      "order_difference": 0.0007431935288108038,
+      "error_radius_ratio": 1.0218237509168315,
+      "uncovered_excess": 3.247075192823771e-05,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0007771402422648288,
+      "alternative_error_upper_bound": 0.0022635272998864364
+    },
+    {
+      "repetition": 109,
+      "checkpoint": "mc3d-heldout-logistic-0.0-109.json",
+      "sha256": "0672e426669732308036a035d5de15dbec1fa121a899c65cf4fdcca445e3d6f1",
+      "error": 0.0014690397896650609,
+      "radius": 0.0016635361653148883,
+      "statistical": 0.0007937522325970279,
+      "processing": 0.0008697839327178603,
+      "order_difference": 0.0007892781010551131,
+      "error_radius_ratio": 0.8830825685036962,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006797616886099478,
+      "alternative_error_upper_bound": 0.002258317890720174
+    },
+    {
+      "repetition": 110,
+      "checkpoint": "mc3d-heldout-logistic-0.0-110.json",
+      "sha256": "435cc7a6f56f5e3079beaf28c0678ae9986939e4d71c2da1a7bf387cb2f5014c",
+      "error": 0.00141965438020486,
+      "radius": 0.0017147634798497006,
+      "statistical": 0.0007784955942477294,
+      "processing": 0.0009362678856019713,
+      "order_difference": 0.0008472647282464774,
+      "error_radius_ratio": 0.8279009886128978,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005723896519583827,
+      "alternative_error_upper_bound": 0.0022669191084513374
+    },
+    {
+      "repetition": 111,
+      "checkpoint": "mc3d-heldout-logistic-0.0-111.json",
+      "sha256": "4833348578c3c206f7c8145100332cd21c06864aaf01c7e141f2469592cb2c23",
+      "error": 0.0016600754544111584,
+      "radius": 0.0018172197701106613,
+      "statistical": 0.0007918808060775435,
+      "processing": 0.0010253389640331179,
+      "order_difference": 0.0009434400297504419,
+      "error_radius_ratio": 0.9135248700877091,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007166354246607165,
+      "alternative_error_upper_bound": 0.0026035154841616004
+    },
+    {
+      "repetition": 112,
+      "checkpoint": "mc3d-heldout-logistic-0.0-112.json",
+      "sha256": "027f01a29194702180a66ab26da632bebc51623ea532c38db687a3a4b81dfbb7",
+      "error": 0.0015111528604204727,
+      "radius": 0.0015259257042358862,
+      "statistical": 0.0007409065794143464,
+      "processing": 0.0007850191248215399,
+      "order_difference": 0.0007005969540252455,
+      "error_radius_ratio": 0.9903187659960082,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0008105559063952272,
+      "alternative_error_upper_bound": 0.002211749814445718
+    },
+    {
+      "repetition": 113,
+      "checkpoint": "mc3d-heldout-logistic-0.0-113.json",
+      "sha256": "6b4b3ae0d50ca932df4cc67714a6e90290e2ca1cb8e677f2f3515f502bd42733",
+      "error": 0.001264869476686692,
+      "radius": 0.0016689723478241446,
+      "statistical": 0.0007879196666663545,
+      "processing": 0.0008810526811577901,
+      "order_difference": 0.000792972345642462,
+      "error_radius_ratio": 0.7578732375858201,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004718971310442299,
+      "alternative_error_upper_bound": 0.002057841822329154
+    },
+    {
+      "repetition": 114,
+      "checkpoint": "mc3d-heldout-logistic-0.0-114.json",
+      "sha256": "b5bf9f3fc4a928d80b30fbe571320e8f5bf1cf4dd2ef971e6a00636e60e59c5c",
+      "error": 0.0014483584565965213,
+      "radius": 0.001603679676335129,
+      "statistical": 0.0007862886918653721,
+      "processing": 0.0008173909844697569,
+      "order_difference": 0.0007324592818414022,
+      "error_radius_ratio": 0.9031469800168812,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007158991747551191,
+      "alternative_error_upper_bound": 0.0021808177384379235
+    },
+    {
+      "repetition": 115,
+      "checkpoint": "mc3d-heldout-logistic-0.0-115.json",
+      "sha256": "2d717e01a2166dc65eec634b9e2ab664833b852f11f7d55cfe15700a089eef1c",
+      "error": 0.001159662105911452,
+      "radius": 0.0014795812127189668,
+      "statistical": 0.000716469856160479,
+      "processing": 0.0007631113565584879,
+      "order_difference": 0.0006837955405107898,
+      "error_radius_ratio": 0.7837772580123451,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004758665654006622,
+      "alternative_error_upper_bound": 0.0018434576464222419
+    },
+    {
+      "repetition": 116,
+      "checkpoint": "mc3d-heldout-logistic-0.0-116.json",
+      "sha256": "5469421453dd775e0368e0b353f118b89a1d02d06ee5c8284bfb919a3d531c7b",
+      "error": 0.0013290814826443231,
+      "radius": 0.0016031502703055256,
+      "statistical": 0.000731688203803843,
+      "processing": 0.0008714620665016826,
+      "order_difference": 0.000779864469276359,
+      "error_radius_ratio": 0.829043606992019,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005492170133679641,
+      "alternative_error_upper_bound": 0.002108945951920682
+    },
+    {
+      "repetition": 117,
+      "checkpoint": "mc3d-heldout-logistic-0.0-117.json",
+      "sha256": "2bc47520c729cf8f86b65762d8fcce9ec53306a4c7364bae233e56936bd75ccc",
+      "error": 0.0014931088588122643,
+      "radius": 0.0015423281611318062,
+      "statistical": 0.0007493673448573599,
+      "processing": 0.0007929608162744461,
+      "order_difference": 0.000698922015179626,
+      "error_radius_ratio": 0.9680876589302349,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007941868436326383,
+      "alternative_error_upper_bound": 0.0021920308739918903
+    },
+    {
+      "repetition": 118,
+      "checkpoint": "mc3d-heldout-logistic-0.0-118.json",
+      "sha256": "af178b04dc40bf57d405ee903797b36788574df77c08f777c56660633d333916",
+      "error": 0.0013428798275859632,
+      "radius": 0.0016682140222782406,
+      "statistical": 0.0007799930732073125,
+      "processing": 0.0008882209490709281,
+      "order_difference": 0.0008043174295401245,
+      "error_radius_ratio": 0.8049805418563883,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005385623980458387,
+      "alternative_error_upper_bound": 0.0021471972571260878
+    },
+    {
+      "repetition": 119,
+      "checkpoint": "mc3d-heldout-logistic-0.0-119.json",
+      "sha256": "a86e87db3aac26afbeadbc872a55134b658f42d42b6d895ae3433885e16b9198",
+      "error": 0.0013231465773000384,
+      "radius": 0.001431949426600315,
+      "statistical": 0.0007212056450372095,
+      "processing": 0.0007107437815631057,
+      "order_difference": 0.0006267003778516189,
+      "error_radius_ratio": 0.9240176731949308,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006964461994484195,
+      "alternative_error_upper_bound": 0.0019498469551516573
+    },
+    {
+      "repetition": 120,
+      "checkpoint": "mc3d-heldout-logistic-0.0-120.json",
+      "sha256": "5bc1a9db3fd2f918569394894228593a69cbb11b9108d35d4e476021bec132b5",
+      "error": 0.0013874790323902264,
+      "radius": 0.0014045115566331976,
+      "statistical": 0.0006425434264145266,
+      "processing": 0.0007619681302186709,
+      "order_difference": 0.000680381046466283,
+      "error_radius_ratio": 0.9878729910319852,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0007070979859239435,
+      "alternative_error_upper_bound": 0.0020678600788565094
+    },
+    {
+      "repetition": 121,
+      "checkpoint": "mc3d-heldout-logistic-0.0-121.json",
+      "sha256": "7add6f8bc9ce6120527f27de7dc4786594eafe705796114d209307f2428e4fbf",
+      "error": 0.001512959506261513,
+      "radius": 0.0017956203277949962,
+      "statistical": 0.0008277625093247992,
+      "processing": 0.0009678578184701969,
+      "order_difference": 0.0008781397014726577,
+      "error_radius_ratio": 0.8425831913583938,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006348198047888554,
+      "alternative_error_upper_bound": 0.002391099207734171
+    },
+    {
+      "repetition": 122,
+      "checkpoint": "mc3d-heldout-logistic-0.0-122.json",
+      "sha256": "64f4ba1d7799001c4dca0ff68b5ea208cb90c6cee3558a162c285ee15633218e",
+      "error": 0.0013364440774015218,
+      "radius": 0.0016176461481702763,
+      "statistical": 0.000739161219869827,
+      "processing": 0.0008784849283004492,
+      "order_difference": 0.0007830407533108152,
+      "error_radius_ratio": 0.826165894755894,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0005534033240907066,
+      "alternative_error_upper_bound": 0.002119484830712337
+    },
+    {
+      "repetition": 123,
+      "checkpoint": "mc3d-heldout-logistic-0.0-123.json",
+      "sha256": "768d21adcc60b6148b887e8126ac0204e77f5ff00699bcaaeaf69dc214999c2a",
+      "error": 0.0014493438361878885,
+      "radius": 0.0015853263106741676,
+      "statistical": 0.00073149097621768,
+      "processing": 0.0008538353344564875,
+      "order_difference": 0.0007640732823895879,
+      "error_radius_ratio": 0.9142242997099747,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006852705537983006,
+      "alternative_error_upper_bound": 0.0022134171185774765
+    },
+    {
+      "repetition": 124,
+      "checkpoint": "mc3d-heldout-logistic-0.0-124.json",
+      "sha256": "ed2198a92a134c78313873dc1fcd43f6daa1063c54d6d99588330e9fe252935e",
+      "error": 0.0017816960721159791,
+      "radius": 0.0016042165432902703,
+      "statistical": 0.0007116809816059324,
+      "processing": 0.0008925355616843378,
+      "order_difference": 0.0008086057496626831,
+      "error_radius_ratio": 1.110633149600674,
+      "uncovered_excess": 0.00017747952882570884,
+      "covers": false,
+      "alternative_error_lower_bound": 0.0009730903224532961,
+      "alternative_error_upper_bound": 0.002590301821778662
+    },
+    {
+      "repetition": 125,
+      "checkpoint": "mc3d-heldout-logistic-0.0-125.json",
+      "sha256": "62e07988a1a34b202adbb7386ab93ace3dc9c6435f327d040b0d1ad6eeb35f57",
+      "error": 0.0014543676128198069,
+      "radius": 0.0018386408219683067,
+      "statistical": 0.0008959267986603843,
+      "processing": 0.0009427140233079223,
+      "order_difference": 0.0008379679762761105,
+      "error_radius_ratio": 0.7910014807910516,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006163996365436963,
+      "alternative_error_upper_bound": 0.0022923355890959174
+    },
+    {
+      "repetition": 126,
+      "checkpoint": "mc3d-heldout-logistic-0.0-126.json",
+      "sha256": "1012a6861d67b8f25970d7f9192525f0352b78d88db2ced9f053be506359f45e",
+      "error": 0.001366608879769804,
+      "radius": 0.0016162547168849738,
+      "statistical": 0.000763088975697318,
+      "processing": 0.0008531657411876559,
+      "order_difference": 0.0007636525835661434,
+      "error_radius_ratio": 0.845540536088077,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0006029562962036605,
+      "alternative_error_upper_bound": 0.0021302614633359473
+    },
+    {
+      "repetition": 127,
+      "checkpoint": "mc3d-heldout-logistic-0.0-127.json",
+      "sha256": "99c8cc069542ce14cc583cd75f40555410cd3282a256ce9c81e192d373257b26",
+      "error": 0.0013080596511473308,
+      "radius": 0.0016831273790858582,
+      "statistical": 0.0007479635575682654,
+      "processing": 0.0009351638215175928,
+      "order_difference": 0.00082926764313207,
+      "error_radius_ratio": 0.7771602241167068,
+      "uncovered_excess": 0.0,
+      "covers": true,
+      "alternative_error_lower_bound": 0.0004787920080152608,
+      "alternative_error_upper_bound": 0.002137327294279401
+    }
+  ],
+  "limitations": [
+    "Conditional on a finite empirical bank; all 128 trials retained.",
+    "Covered/missed summaries are descriptive partitions, not independent tests.",
+    "Checkpoints retain supremum errors, not signed profiles or error locations.",
+    "Alternative error bounds follow the triangle inequality and are not confidence bounds.",
+    "No correction, radius inflation, tolerance change, or qualification fitted here."
+  ]
+}
