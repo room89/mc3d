@@ -1,0 +1,191 @@
+{
+  "status": "partial_campaign_completed_scenario_diagnostics",
+  "physical_acceptance": "incomplete",
+  "artifacts": [
+    {
+      "artifact": "output/shock-order-extended-bias-29.json",
+      "sha256": "f5cecca5c8ea8bcde5a4896be5acc3b71346ad5d382d2118caef4b2dee6a214b",
+      "result": {
+        "status": "completed_scenario_bias_diagnostics_only",
+        "physical_acceptance": "incomplete",
+        "audit_sha256": "d06c72a11f1743cd4986ea78cf8c8f1ff7d0ae587bd11efd994a59e9478ea0a5",
+        "script_sha256": "d33c13b87caa2a165544c8502b231e074e0c45c55af7c9f321db2b0e34481117",
+        "cases": [
+          {
+            "series": "shock-order-extended-parametric-half",
+            "scenario": [
+              "logistic",
+              0.0,
+              0.0,
+              0.005,
+              0.0
+            ],
+            "trials": 128,
+            "metrics": {
+              "width_10_90": {
+                "mean_signed_error": -0.00032861759059458345,
+                "monte_carlo_standard_error": 7.672967607546284e-05,
+                "relative_mean_error": -7.478015537969708e-05,
+                "negative_count": 83,
+                "coverage_hits": 128
+              },
+              "gradient_thickness": {
+                "mean_signed_error": 0.00041051641417286927,
+                "monte_carlo_standard_error": 0.0001403383513599803,
+                "relative_mean_error": 0.00010262910354321732,
+                "negative_count": 55,
+                "coverage_hits": 128
+              }
+            }
+          },
+          {
+            "series": "shock-order-extended-empirical-full",
+            "scenario": [
+              "mc3d-training",
+              "logistic",
+              0.0
+            ],
+            "trials": 128,
+            "metrics": {
+              "width_10_90": {
+                "mean_signed_error": -0.0022049691367037397,
+                "monte_carlo_standard_error": 0.00012256339504795636,
+                "relative_mean_error": -0.0005017623504323142,
+                "negative_count": 121,
+                "coverage_hits": 128
+              },
+              "gradient_thickness": {
+                "mean_signed_error": -0.009028149567556102,
+                "monte_carlo_standard_error": 0.0003725513046053366,
+                "relative_mean_error": -0.0022570373918890255,
+                "negative_count": 128,
+                "coverage_hits": 125
+              }
+            }
+          },
+          {
+            "series": "shock-order-extended-empirical-half",
+            "scenario": [
+              "mc3d-training",
+              "logistic",
+              0.0
+            ],
+            "trials": 128,
+            "metrics": {
+              "width_10_90": {
+                "mean_signed_error": -0.002247006189224056,
+                "monte_carlo_standard_error": 0.00017846410519073617,
+                "relative_mean_error": -0.0005113282939762554,
+                "negative_count": 110,
+                "coverage_hits": 128
+              },
+              "gradient_thickness": {
+                "mean_signed_error": -0.0072055358774404665,
+                "monte_carlo_standard_error": 0.0004239852229006621,
+                "relative_mean_error": -0.0018013839693601166,
+                "negative_count": 119,
+                "coverage_hits": 126
+              }
+            }
+          }
+        ],
+        "limitations": [
+          "No incomplete scenarios or selected subsets summarized.",
+          "Bias conditional on the specified fixture/bank; not physical solver bias.",
+          "No fitted corrections or qualification decision."
+        ]
+      }
+    },
+    {
+      "artifact": "output/shock-order-alternative-bias-bounds.json",
+      "sha256": "52e82d74816eb9628023df6a7f6a6f6bbeb595c3646f6a30ef48ca0b5dee8ecb",
+      "result": {
+        "status": "algebraic_diagnostic_bounds_only",
+        "physical_acceptance": "incomplete",
+        "audit_sha256": "d06c72a11f1743cd4986ea78cf8c8f1ff7d0ae587bd11efd994a59e9478ea0a5",
+        "results": [
+          {
+            "series": "shock-order-extended-empirical-full",
+            "trials": 128,
+            "alternative_mean_error_bounds": [
+              -0.013149214407855835,
+              -0.004907084727256369
+            ],
+            "alternative_definitely_negative_count": 111,
+            "mean_absolute_order_difference": 0.004121064840299733
+          },
+          {
+            "series": "shock-order-extended-empirical-half",
+            "trials": 128,
+            "alternative_mean_error_bounds": [
+              -0.011033140554348241,
+              -0.003377931200532692
+            ],
+            "alternative_definitely_negative_count": 103,
+            "mean_absolute_order_difference": 0.0038276046769077747
+          }
+        ],
+        "limitations": [
+          "Only absolute branch differences were stored; these are algebraic bounds, not reconstructed signed alternative estimates.",
+          "No confidence claim or bias correction; conditions restricted to completed training-bank logistic no-motion cases."
+        ]
+      }
+    },
+    {
+      "artifact": "output/shock-order-first-empirical-gradient-misses.json",
+      "sha256": "ec16e36ed4bb8e84e8a8a0e11e4692d8970f2b30c5f729af7abc93f73e542cb1",
+      "result": {
+        "status": "completed_scenario_diagnostic_only",
+        "physical_acceptance": "incomplete",
+        "scenario": {
+          "bank": "mc3d-training",
+          "shape": "logistic",
+          "motion_amplitude": 0,
+          "windows": 64
+        },
+        "trials": 128,
+        "gradient_hits": 125,
+        "audit_sha256": "5563bb79974f4228ec15471c421de373236dceb88166d5d6e2539c3c4db670be",
+        "misses": [
+          {
+            "checkpoint": "mc3d-training-logistic-0.0-112.json",
+            "sha256": "84ad4941102ac01a8d79d63d16dcd16227bb2b1e4c86744f3ddf82f7ffede432",
+            "gradient_estimate": 3.984094295252809,
+            "truth": 4,
+            "signed_error": -0.015905704747190885,
+            "statistical_radius": 0.009853389552090253,
+            "processing_sensitivity": 0.005615314618660605,
+            "total_radius": 0.015468704170750858,
+            "error_radius_ratio": 1.0282506260134145
+          },
+          {
+            "checkpoint": "mc3d-training-logistic-0.0-121.json",
+            "sha256": "03c67e0d758fcf5b18dd1dcce445106aa7be696e093fef1791c19337b518eda1",
+            "gradient_estimate": 3.97975993664308,
+            "truth": 4,
+            "signed_error": -0.02024006335691997,
+            "statistical_radius": 0.007291897706855899,
+            "processing_sensitivity": 0.005864635799044393,
+            "total_radius": 0.013156533505900292,
+            "error_radius_ratio": 1.5384039684802182
+          },
+          {
+            "checkpoint": "mc3d-training-logistic-0.0-24.json",
+            "sha256": "7267f7ccd5d65f07c5ec636810bf050be504a00506734981651a9657d83d5056",
+            "gradient_estimate": 3.9820338377017213,
+            "truth": 4,
+            "signed_error": -0.017966162298278743,
+            "statistical_radius": 0.0065330175207227725,
+            "processing_sensitivity": 0.006490508590734301,
+            "total_radius": 0.013023526111457073,
+            "error_radius_ratio": 1.3795159732104754
+          }
+        ],
+        "limitations": [
+          "Selected noncovering trials cannot establish systematic bias; assess all 128 trials before interpreting direction.",
+          "No changes to estimator, tolerance or running protocols."
+        ]
+      }
+    }
+  ]
+}
