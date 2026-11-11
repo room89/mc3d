@@ -1,0 +1,270 @@
+{
+  "status": "selected_failed_window_replay",
+  "physical_acceptance": "incomplete",
+  "records": [
+    {
+      "checkpoint": "3-8.json",
+      "checkpoint_sha256": "04317bf61a74429beddbbdbb34ee1456fb4fd2b0556f195ac20cf5fbcac50319",
+      "original_error": "ValueError: Ambiguous minimum",
+      "first_failing_group": 0,
+      "windows": [
+        {
+          "source": 1,
+          "window": 13,
+          "original_error": "Ambiguous minimum",
+          "initial_front": -0.21030759540228178,
+          "true_front": -0.029008567715345893,
+          "full_support_front": 0.41462970961063084,
+          "full_support_loss": 0.0012475243301675598,
+          "original_search_bounds": [
+            -1.2103075954022817,
+            0.7896924045977183
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": 0.4149999999999996,
+          "dense_minimum_loss": 0.0012475249869462709,
+          "competing_separated_minimum_loss": 0.0012504276989410636,
+          "competing_within_original_loss_tolerance": true
+        }
+      ]
+    },
+    {
+      "checkpoint": "3-9.json",
+      "checkpoint_sha256": "3cd980a9eb3081895ad2d439e19e5b600e79ce2621128cf06246e878035ef3b0",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 8,
+      "windows": [
+        {
+          "source": 2,
+          "window": 13,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.9020728789223771,
+          "true_front": 0.022404432497780402,
+          "full_support_front": -0.09701681503031523,
+          "full_support_loss": 0.0012748233529576705,
+          "original_search_bounds": [
+            -0.09792712107762291,
+            1.902072878922377
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.09700000000000042,
+          "dense_minimum_loss": 0.0012748233567591082,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    },
+    {
+      "checkpoint": "5-1.json",
+      "checkpoint_sha256": "30fc6db409bb29568853c940ee510c8add2a9747aede0c06aaecc793c463333a",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 1,
+      "windows": [
+        {
+          "source": 0,
+          "window": 12,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.8683411822019271,
+          "true_front": 0.0,
+          "full_support_front": -0.10957124415192537,
+          "full_support_loss": 0.00095677103707151,
+          "original_search_bounds": [
+            -0.13165881779807287,
+            1.8683411822019271
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.11000000000000032,
+          "dense_minimum_loss": 0.0009567743082694138,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        },
+        {
+          "source": 0,
+          "window": 13,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.8931229045242852,
+          "true_front": 0.0,
+          "full_support_front": -0.1431464149451812,
+          "full_support_loss": 0.0010522015763995312,
+          "original_search_bounds": [
+            -0.10687709547571478,
+            1.8931229045242852
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.14300000000000024,
+          "dense_minimum_loss": 0.0010522020604345718,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    },
+    {
+      "checkpoint": "5-5.json",
+      "checkpoint_sha256": "e7724480a6c8e456bd1cdd093375437677492ee79a755ba04441112c2d3c8610",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 9,
+      "windows": [
+        {
+          "source": 0,
+          "window": 9,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.9586584168727986,
+          "true_front": 0.0,
+          "full_support_front": -0.04194639725540129,
+          "full_support_loss": 0.0010157846857522111,
+          "original_search_bounds": [
+            -0.041341583127201376,
+            1.9586584168727987
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.04200000000000026,
+          "dense_minimum_loss": 0.00101578472011091,
+          "competing_separated_minimum_loss": 0.006448649754883679,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    },
+    {
+      "checkpoint": "5-9.json",
+      "checkpoint_sha256": "2a73570229cd7e9a202678a83a818677f9115dcbd4f1a92768e70f997c4395b3",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 8,
+      "windows": [
+        {
+          "source": 1,
+          "window": 26,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.961747381962503,
+          "true_front": 0.0,
+          "full_support_front": -0.030452756911176944,
+          "full_support_loss": 0.0009618937985265521,
+          "original_search_bounds": [
+            -0.03825261803749702,
+            1.9617473819625029
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.03000000000000025,
+          "dense_minimum_loss": 0.0009618967961156205,
+          "competing_separated_minimum_loss": 0.0064533915702595255,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    },
+    {
+      "checkpoint": "7-9.json",
+      "checkpoint_sha256": "abe6a0e90161c75faf1018a5f5758583bacd92912f3af50ff7621c0705a544ff",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 8,
+      "windows": [
+        {
+          "source": 1,
+          "window": 19,
+          "original_error": "Boundary minimum",
+          "initial_front": 1.0244529487614944,
+          "true_front": -0.03965344387587262,
+          "full_support_front": 0.04097256747120356,
+          "full_support_loss": 0.0011958580841051117,
+          "original_search_bounds": [
+            0.024452948761494397,
+            2.0244529487614944
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": 0.040999999999999925,
+          "dense_minimum_loss": 0.0011958580910248085,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    },
+    {
+      "checkpoint": "7-15.json",
+      "checkpoint_sha256": "1ac6686e12538c585499b3773cbe479ea7d23ac9cee3f8bd49689516e7e10059",
+      "original_error": "ValueError: Boundary minimum",
+      "first_failing_group": 3,
+      "windows": [
+        {
+          "source": 2,
+          "window": 30,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.9906276783788553,
+          "true_front": -0.042596354450068555,
+          "full_support_front": -0.06418850534180362,
+          "full_support_loss": 0.001078776253907713,
+          "original_search_bounds": [
+            -0.009372321621144653,
+            1.9906276783788552
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.06400000000000006,
+          "dense_minimum_loss": 0.0010787769423320978,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        },
+        {
+          "source": 2,
+          "window": 31,
+          "original_error": "Boundary minimum",
+          "initial_front": 0.9976117502835053,
+          "true_front": -0.007281433536305193,
+          "full_support_front": -0.008160209678158026,
+          "full_support_loss": 0.0009788927736889455,
+          "original_search_bounds": [
+            -0.0023882497164946503,
+            1.9976117502835053
+          ],
+          "full_support_bounds": [
+            -2.9749999999999996,
+            2.9749999999999996
+          ],
+          "dense_minimum_front": -0.008000000000000007,
+          "dense_minimum_loss": 0.0009788933045823097,
+          "competing_separated_minimum_loss": null,
+          "competing_within_original_loss_tolerance": false
+        }
+      ]
+    }
+  ],
+  "plan_sha256": "4d4c2fe7d7adbdb2e03f0fa4ede6cc13ddc48900e005be239bfb2aeaad99fdf2",
+  "complete_sha256": "2f6e88b03f4ee68d79e9c348fad0e15314dd99e4b0932645c0d42a0a595eb70b",
+  "script_sha256": "0bd4c24bab62e8836eab2db275a94a596742d1e42f48b0ec6b655e0317ae8802",
+  "limitations": [
+    "Only previously failed trials and first failing subgroup replayed; selected diagnostic, no acceptance or repaired coverage.",
+    "Full-support minimizer is exploratory and does not override original failure gates.",
+    "Dense-grid comparison checks objective; competing minima use finite resolution .001.",
+    "Exact template and synthetic truth; no claim for physical profiles."
+  ],
+  "summary": {
+    "replayed_failed_trials": 7,
+    "inspected_failed_windows": 9,
+    "boundary_windows": 8,
+    "boundary_windows_global_minimum_inside_original_bounds": 4,
+    "boundary_windows_global_minimum_outside_original_bounds": 4,
+    "ambiguity_retained_windows": 1
+  },
+  "evidence_path": "output/shock-hierarchical-shift-failure-replay.json",
+  "evidence_sha256": "3d6b4cc7c1e9c960223c997cbc8a4de4f62e6bf3ac7c5ca49f2ad7135b2f1165"
+}
