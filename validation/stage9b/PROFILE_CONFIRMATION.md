@@ -74,3 +74,34 @@ The runner uses one process at nice 19. `--max-new-trials` permits an operationa
 pause without changing the design; incomplete output cannot pass the decision.
 The older physical-calibration series are not resumed by this tool. Detailed
 JSON results stay in local output; this document carries the compact outcome.
+
+Frozen local plan SHA-256 (recorded before the outcome):
+`0224ecffdee4db93f29efada3e04c1df83d366bc188e1a02ba215d94bda32afb`.
+
+## Completed independent result
+
+All 1024 confirmation trials completed. Marginal, hard-assignment and known-shift
+fits converged in every trial. Read-back audit verified the plan/source identity,
+all 1024 checkpoint hashes, stored error metrics and the complete decision.
+
+| Family | Marginal mean ISE | Hard mean ISE | Oracle mean ISE | Adjusted interval for marginal minus hard |
+| --- | ---: | ---: | ---: | --- |
+| Logistic | 0.00117824 | 0.00129283 | 0.00108208 | [-0.00013846, -0.00009072] |
+| Gompertz | 0.00102483 | 0.00109342 | 0.00098652 | [-0.00008705, -0.00005013] |
+
+Mean ISE decreases by 8.86% for logistic and 6.27% for Gompertz relative to hard
+assignment. These are family averages across the four prespecified strata, not
+claims of improvement on every trial. Observed adjusted halfwidths are 0.00002387
+and 0.00001846, below the frozen targets 0.00003358 and 0.00002985 respectively.
+
+The fixed decision is **advance_to_noise_model_research_only**. Unlike the small
+pilot, the independent sample supports a benefit for both families under the
+specified synthetic model. The pilot remains a separate inconclusive result;
+no pilot observations were added to these estimates and no thresholds changed.
+The oracle still has smaller mean error. Unknown physical covariance, motion
+law, profile confidence bands and physical acceptance remain unqualified.
+
+Complete report SHA-256:
+`f1bf2c7c9f1db47f8f404a5124af1637afe51ebec2fd795f67e20aeb7ea533dd`.
+The report inventories every checkpoint hash. Detailed evidence is local in
+`output/profile-likelihood-confirmation-v1`; the frozen runner reproduces it.
