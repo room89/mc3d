@@ -110,3 +110,59 @@ Complete report SHA-256:
 The report contains individual hashes for all 208 trial files. The preliminary
 one-trial `v1` run only checked execution and zero-motion agreement; it is not
 additional independent evidence. The v2 protocol adds checkpoint validation.
+
+## Post-hoc diagnosis: Gompertz
+
+The read-only diagnostic verifies every source checkpoint hash and recomputes the
+screen summary before comparing scenarios. It introduces no new evidence and
+leaves the original decision unchanged. All intervals below are descriptive,
+unadjusted for multiple scenario comparisons, and based on 16 paired trials.
+
+| Motion | Noise | Marginal minus hard mean ISE | Difference ± 1.96 MCSE |
+| --- | --- | ---: | ---: |
+| .05 | low | +0.00001574 | ±0.00002367 |
+| .05 | high | -0.00005396 | ±0.00008816 |
+| .5 | low | -0.00000432 | ±0.00000579 |
+| .5 | high | +0.00011432 | ±0.00020718 |
+
+Every Gompertz scenario interval spans zero. The positive aggregate difference
+is concentrated in the high-motion, high-noise case, where 9/16 paired differences
+are positive and 7/16 negative. Trial 188 contributes +0.00141130 to the sum of
+paired differences; it remains included, along with every other trial. Selecting
+or deleting trials after observing their error is not a correction.
+
+In that case the known-shift oracle has mean ISE 0.00136903, versus 0.00173362
+for marginal fitting and 0.00161929 for hard assignment. Marginal-minus-oracle is
++0.00036459 ± 0.00022777. The oracle uses the same profile representation and
+observations: the gap is consistent with loss from unknown shifts in this
+specified model, not evidence of an error in the physical solver.
+
+The three marginal starts differ by at most 0.00001527 across all matched
+Gompertz cases; maximum spread is under 0.00000027 at motion .05. This gives no
+visible evidence of distinct-start minima explaining the Gompertz outcome;
+three starts cannot certify global optimality. The hard-assignment control is
+more initialization-sensitive, reaching a spread of 0.03873822. Separately,
+logistic at high motion/noise does show distinct marginal solutions in trials
+82, 90 and 95 (maximum spread 0.01494741), so global optimization is not established
+for the overall method.
+
+For high-motion/high-noise Gompertz, the empirical error decomposition gives a
+marginal-minus-hard change of -0.00003037 in squared mean-error energy and
++0.00014469 in scatter energy. This is an exact decomposition of the observed
+sample ISE, not an unbiased squared-bias estimate. It does not support describing
+the positive ISE difference as demonstrated extra systematic bias.
+
+Conclusion: retain draft status and the failed advancement decision. There is
+no identified Gompertz implementation defect to repair from these observations.
+A future confirmation would require a separately frozen independent comparison,
+with sample size based on Monte Carlo precision and all four nonzero-motion
+Gompertz scenarios retained. Do not tune this estimator on the current held-out
+trials or infer qualification of density coverage from mean ISE.
+
+Reproduce without rerunning the screen:
+
+```sh
+python tools/diagnose_profile_likelihood_screen.py \
+  --directory output/profile-likelihood-screen-v2 \
+  --output output/profile-likelihood-diagnosis.json
+```
