@@ -1,0 +1,375 @@
+{
+  "status": "manual_digitization_pilot_not_acceptance",
+  "source_doi": "10.1017/S0022112076001912",
+  "source_sha256": "08063484e89e1070da80567fdcb36b6493224f6a06602febc4da47bc7a05262b",
+  "target": "argon M=3.8 experimental line, 10-90% width",
+  "rendering": "PyMuPDF page.get_pixmap(matrix=Matrix(3,3), clip=Rect(*clip_pdf_points)); pixel origin top left of crop",
+  "reference_length_m": 0.001098,
+  "measurements": [
+    {
+      "figure": "1(b)",
+      "pdf_page": 4,
+      "printed_page": 500,
+      "clip_pdf_points": [
+        95,
+        320,
+        320,
+        520
+      ],
+      "axis_anchors": [
+        {
+          "x_paper": -2,
+          "x_pixel_interval": [
+            370,
+            373
+          ]
+        },
+        {
+          "x_paper": 2,
+          "x_pixel_interval": [
+            597,
+            600
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "rho_normalized": 0.1,
+          "y_pixel_band": [
+            525,
+            531
+          ],
+          "x_pixel_interval": [
+            365,
+            379
+          ]
+        },
+        {
+          "rho_normalized": 0.9,
+          "y_pixel_band": [
+            75,
+            81
+          ],
+          "x_pixel_interval": [
+            591,
+            605
+          ]
+        }
+      ],
+      "observation": "Near-coincident M=3.38 and M=3.8 lines are bracketed together where unresolved; the outer M=6.5/9 curves are not traced as M=3.8.",
+      "pixels_per_reference_length_interval": [
+        56.0,
+        57.5
+      ],
+      "width_reference_length_interval": [
+        3.6869565217391305,
+        4.285714285714286
+      ],
+      "width_m_interval": [
+        0.004048278260869565,
+        0.004705714285714285
+      ]
+    },
+    {
+      "figure": "3",
+      "pdf_page": 6,
+      "printed_page": 502,
+      "clip_pdf_points": [
+        80,
+        95,
+        445,
+        280
+      ],
+      "axis_anchors": [
+        {
+          "x_paper": -10,
+          "x_pixel_interval": [
+            40,
+            44
+          ]
+        },
+        {
+          "x_paper": 10,
+          "x_pixel_interval": [
+            1058,
+            1062
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "rho_normalized": 0.1,
+          "y_pixel_band": [
+            484,
+            490
+          ],
+          "x_pixel_interval": [
+            443,
+            454
+          ]
+        },
+        {
+          "rho_normalized": 0.9,
+          "y_pixel_band": [
+            80,
+            86
+          ],
+          "x_pixel_interval": [
+            643,
+            658
+          ]
+        }
+      ],
+      "observation": "Long-dashed M=3.8 experimental line; square markers are not treated as experimental points. Upper crossing overlaps a square, so the bracket includes the entire local ambiguity.",
+      "pixels_per_reference_length_interval": [
+        50.7,
+        51.1
+      ],
+      "width_reference_length_interval": [
+        3.698630136986301,
+        4.240631163708087
+      ],
+      "width_m_interval": [
+        0.004061095890410958,
+        0.004656213017751479
+      ]
+    }
+  ],
+  "limitations": [
+    "Manual visual brackets are a pilot, not independently validated error bounds or confidence intervals.",
+    "Bands include observed line thickness, small level-axis uncertainty and local overlap; paper distortion and reader-to-reader reproducibility are not quantified.",
+    "No fitted spatial rescaling, theoretical curve replacement or acceptance threshold changes.",
+    "Reported ranges include digitization only; primary density and length-scale accuracy must still be propagated.",
+    "Agreement of a secondary width with this broad range does not validate its detailed profile or small relative differences."
+  ],
+  "combined_width_reference_length_envelope": [
+    3.6869565217391305,
+    4.285714285714286
+  ],
+  "combined_method": "Union envelope, not intersection: figures are not independent experiments.",
+  "local_line_fit": {
+    "status": "local_line_fit_sensitivity_not_acceptance",
+    "figure": "3",
+    "pixel_intensity_threshold": 120,
+    "axis_y0_interval": [
+      536,
+      538
+    ],
+    "axis_y1_interval": [
+      31,
+      33
+    ],
+    "axis_pixels_per_lambda_nominal": 50.9,
+    "axis_pixels_per_lambda_interval": [
+      50.7,
+      51.1
+    ],
+    "interpretation": "Pixel rows are correlated samples of one scanned line, not independent experimental observations. Local fits bridge the marker at the 90% crossing. No standard error or confidence level is assigned.",
+    "segments": {
+      "upper": {
+        "rho_normalized": 0.9,
+        "black_runs_y_xlo_xhi": [
+          [
+            71,
+            663,
+            666
+          ],
+          [
+            73,
+            661,
+            664
+          ],
+          [
+            75,
+            659,
+            662
+          ],
+          [
+            77,
+            657,
+            660
+          ],
+          [
+            79,
+            655,
+            658
+          ],
+          [
+            81,
+            654,
+            656
+          ],
+          [
+            93,
+            642,
+            644
+          ],
+          [
+            95,
+            641,
+            644
+          ],
+          [
+            97,
+            639,
+            642
+          ],
+          [
+            99,
+            638,
+            641
+          ],
+          [
+            101,
+            637,
+            639
+          ],
+          [
+            103,
+            635,
+            638
+          ],
+          [
+            105,
+            634,
+            636
+          ],
+          [
+            107,
+            632,
+            635
+          ]
+        ],
+        "nominal_target_y": 82.49999999999999,
+        "fits": [
+          {
+            "degree": 1,
+            "nominal_x": 653.8137185280827,
+            "max_fit_residual_px": 1.7284054228534842,
+            "crossing_sensitivity_interval_px": [
+              649.3332149774049,
+              658.3037766300841
+            ]
+          },
+          {
+            "degree": 2,
+            "nominal_x": 653.0955596077688,
+            "max_fit_residual_px": 0.8908034365076674,
+            "crossing_sensitivity_interval_px": [
+              648.4996019553053,
+              657.556579079716
+            ]
+          }
+        ],
+        "crossing_sensitivity_envelope_px": [
+          648.4996019553053,
+          658.3037766300841
+        ]
+      },
+      "lower": {
+        "rho_normalized": 0.1,
+        "black_runs_y_xlo_xhi": [
+          [
+            477,
+            456,
+            459
+          ],
+          [
+            479,
+            454,
+            457
+          ],
+          [
+            481,
+            452,
+            455
+          ],
+          [
+            483,
+            450,
+            453
+          ],
+          [
+            485,
+            448,
+            451
+          ],
+          [
+            487,
+            446,
+            450
+          ],
+          [
+            491,
+            442,
+            444
+          ],
+          [
+            493,
+            440,
+            443
+          ],
+          [
+            495,
+            438,
+            441
+          ],
+          [
+            497,
+            434,
+            438
+          ],
+          [
+            499,
+            432,
+            435
+          ],
+          [
+            501,
+            431,
+            433
+          ]
+        ],
+        "nominal_target_y": 486.5,
+        "fits": [
+          {
+            "degree": 1,
+            "nominal_x": 447.76190476190493,
+            "max_fit_residual_px": 0.8690476190478194,
+            "crossing_sensitivity_interval_px": [
+              443.81318681318675,
+              451.7216117216121
+            ]
+          },
+          {
+            "degree": 2,
+            "nominal_x": 448.15845013037824,
+            "max_fit_residual_px": 0.6654870553174987,
+            "crossing_sensitivity_interval_px": [
+              443.7088028496929,
+              452.4092940957349
+            ]
+          }
+        ],
+        "crossing_sensitivity_envelope_px": [
+          443.7088028496929,
+          452.4092940957349
+        ]
+      }
+    },
+    "method": "Fit x(y) by unweighted least squares, degrees 1 and 2, using the midpoints of observed black runs. For each target y in a 101-point grid spanning axis uncertainty, sum abs(OLS weight)*(half run width+0.5 pixel), then add the maximum fit residual. Take the envelope over target y and both degrees. This is sensitivity analysis, not a proven bound on curve interpolation or scan distortion.",
+    "nominal_width_by_degree_lambda": {
+      "1": 4.048169229197993,
+      "2": 4.026269341402565
+    },
+    "width_sensitivity_interval_lambda": [
+      3.837383715451475,
+      4.232642480875566
+    ],
+    "limitations": [
+      "Primary experimental density and length-scale accuracy are not included.",
+      "Selecting a polynomial is a local interpolation assumption, not experimental information.",
+      "These samples do not cover the full profile or qualify an experimental acceptance criterion."
+    ]
+  }
+}
