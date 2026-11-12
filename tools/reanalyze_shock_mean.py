@@ -25,7 +25,7 @@ def sparta_density(folder,hashes):
             density=sum(v*r['f_avg[1]'] for v,r in zip(volumes,rows))/sum(volumes)
             x.append((lo+rows[0]['xhi'])/(2*lam));y.append((density-n1)/(n2-n1))
         front=crossing(x,monotone(y),.5)
-        windows.append(dict(x_aligned=[v-front for v in x],density_normalized=y))
+        windows.append(dict(front=front,x_aligned=[v-front for v in x],density_normalized=y))
     return windows
 
 
@@ -49,20 +49,55 @@ def lag1(values):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('series',type=Path);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('series',type=Path);p.add_argument('--output',type=Path,required=True);p.add_argument('--alignment',choices=['crossing50','template','template_refined'],default='crossing50');p.add_argument('--jobs',type=int,default=3);p.add_argument('--bootstrap-repeats',type=int);p.add_argument('--resume',action='store_true');a=p.parse_args()
+    repeats=a.bootstrap_repeats if a.bootstrap_repeats is not None else (128 if a.alignment=='template_refined' else 512)
     if a.output.exists():raise FileExistsError(a.output)
     raw=(a.series/'validation.json').read_bytes();report=json.loads(raw)
+    seeds=tuple(report.get('seeds',(123,456,789)))
+    if len(seeds)!=3 or len(set(seeds))!=3:raise ValueError('Invalid seed identities')
     if any(r['status']!='passed' for k in ('runs','sparta_runs') for r in report[k].values()):raise ValueError('Completed matrix required')
-    result=dict(numpy_version=np.__version__,status='incomplete_experimental_estimator',source_report_sha256=hashlib.sha256(raw).hexdigest(),input_hashes={},method=dict(grid_step=.05,fit_width=1.,sensitivity_width=.5,blocks=[8,16],bootstrap_repeats=512,rng_seed=20261107,confidence='Nominal 95% resampling envelopes; coverage not established for this physical series'),summaries={},half_comparisons={},lag1={},comparisons={})
+    result=dict(numpy_version=np.__version__,status='incomplete_experimental_estimator',source_report_sha256=hashlib.sha256(raw).hexdigest(),input_hashes={},method=dict(alignment=a.alignment,grid_step=.05,fit_width=1.,sensitivity_width=.5,blocks=[8,16],bootstrap_repeats=repeats,rng_seed=20261109 if a.alignment=='template_refined' else 20261107,confidence='Nominal 95% resampling envelopes; coverage not established for this physical series'),summaries={},half_comparisons={},lag1={},comparisons={})
+    checkpoint=a.output.with_suffix('.partial.json')
+    sources={name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest() for name in
+             ('shock_alignment.py','shock_crossfit_gradient.py','shock_refined_estimator.py','shock_mean_profile.py')}
+    result['algorithm_sources']=sources
+    if checkpoint.exists():
+        if not a.resume:raise FileExistsError(checkpoint)
+        saved=json.loads(checkpoint.read_text())
+        if saved['source_report_sha256']!=result['source_report_sha256'] or saved['algorithm_sources']!=sources or saved['method']['alignment']!=a.alignment or saved['method']['bootstrap_repeats']!=repeats:
+            raise ValueError('Checkpoint protocol or source mismatch')
+        for name,digest in saved['input_hashes'].items():
+            if hashlib.sha256((a.series/name).read_bytes()).hexdigest()!=digest:raise ValueError('Checkpoint input changed')
+        result=saved
     for name in list('ABCDEFG')+['sparta-C','sparta-D','sparta-E']:
+        if name in result['summaries']:continue
         if name.startswith('sparta'):
-            trials=[sparta_density(a.series/f'{name}-{seed}',result['input_hashes']) for seed in (123,456,789)]
+            trials=[sparta_density(a.series/f'{name}-{seed}',result['input_hashes']) for seed in seeds]
         else:
             path=a.series/f'profiles-{name}.json';data=path.read_bytes();result['input_hashes'][path.name]=hashlib.sha256(data).hexdigest();trials=json.loads(data)
-        data=aligned(trials);summary=estimate(data);result['summaries'][name]=summary
-        first=estimate(data[:,:32],repeats=256);last=estimate(data[:,32:],repeats=256)
+        if a.alignment in ('template','template_refined'):
+            from shock_alignment import align
+            data,diagnostics=align(trials,refine_passes=int(a.alignment=='template_refined'))
+            result.setdefault('alignment_diagnostics',{})[name]=diagnostics
+        else:data=aligned(trials)
+        if a.alignment=='template_refined':
+            from shock_refined_estimator import estimate as refined_estimate
+            summary=refined_estimate(trials,repeats=repeats,jobs=a.jobs)
+            first=refined_estimate([run[:32] for run in trials],repeats=repeats,jobs=a.jobs)
+            last=refined_estimate([run[32:] for run in trials],repeats=repeats,jobs=a.jobs)
+            result['method'].update(fit_width=1.5,sensitivity_widths=[1.,2.],refine_passes=1,
+                resampling='Full raw-window estimator rebuilt; fixed original seed identities',
+                confidence='Nominal 95% block envelope with seed-t heuristic; coverage unverified')
+            result['method'].pop('sensitivity_width',None)
+        else:
+            summary=estimate(data,repeats=repeats)
+            first=estimate(data[:,:32],repeats=min(256,repeats));last=estimate(data[:,32:],repeats=min(256,repeats))
+        result['summaries'][name]=summary
         result['half_comparisons'][name]=compare(first,last)
         result['lag1'][name]=[dict(zip(('width_10_90','gradient_thickness'),[lag1(v) for v in measure(run).T])) for run in data]
+        a.output.parent.mkdir(parents=True,exist_ok=True)
+        temporary=checkpoint.with_suffix('.tmp')
+        temporary.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');temporary.replace(checkpoint)
         print(name,{k:summary[k] for k in ('width_10_90','gradient_thickness')},flush=True)
     for left,right in [('A','B'),('B','C'),('D','C'),('E','C'),('F','C'),('G','C'),('sparta-D','sparta-C'),('sparta-E','sparta-C'),('C','sparta-C')]:
         result['comparisons'][left+' vs '+right]=compare(result['summaries'][left],result['summaries'][right])
