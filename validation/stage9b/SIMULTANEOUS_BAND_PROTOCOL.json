@@ -1,0 +1,17 @@
+{
+  "seed": 2026111402,
+  "trials": 2048,
+  "family_alpha": 0.05,
+  "nodes": 113,
+  "groups": 8,
+  "method": "Bonferroni pointwise Student t with seven degrees of freedom",
+  "target": "simultaneous coverage at the 113 fixed grid nodes, not the continuous profile",
+  "base_protocol": "FIXED_PROFILE_PROTOCOL.json",
+  "evaluation": "new independent seed, same frozen synthetic laws; no tuning",
+  "screen_criterion": {
+    "minimum_wilson_lower_bound": 0.93,
+    "maximum_coverage_mcse": 0.005,
+    "all_three_cases_required": true
+  },
+  "limitations": "Screen criterion is not physical qualification; t calibration assumes approximately Gaussian independent group means. Bonferroni does not require independent spatial nodes."
+}
