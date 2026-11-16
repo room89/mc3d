@@ -65,3 +65,37 @@ Report SHA-256: `b03fccff63cdcae789f73426d007a5cac5c31a3c10b9759ab2cebe87f23c65a
 With both isolated flux checks passing, do not change reservoir parameters to
 remove the historical front offset. Next compare historical C and reduced-time-step
 E profiles in fixed coordinates to quantify sensitivity before a longer run.
+
+## Historical C/E time-step sensitivity
+
+Re-extracted all 64 windows for seeds 123, 456 and 789 in C and E for both
+codes (12 runs). E halves MC3D's transport/collision limits and SPARTA's fixed
+time step. Recover the original source coordinates by adding each window's
+stored scalar front offset back to `x_aligned`; the density arrays themselves
+are not shifted or interpolated. Compare the 560 original nodes in [-14,14] λ₁.
+All 834 inspected file hashes were unchanged after reading; MC3D window files
+also match their saved output manifests, and the existing parser verifies the
+per-step conservation balances.
+
+| Comparison | Maximum absolute mean density difference | Mean-front difference, λ₁ |
+| --- | ---: | ---: |
+| MC3D C − SPARTA C | 0.004931 | -0.016654 |
+| MC3D E − SPARTA E | 0.010100 | -0.039574 |
+| MC3D C − MC3D E | 0.015969 | +0.057075 |
+| SPARTA C − SPARTA E | 0.010172 | +0.034155 |
+
+Reducing the step does not monotonically improve the observed cross-code mean
+agreement in this three-seed subset. The C result here differs from the 24-run
+training audit because it uses only the original three seeds; it cannot replace
+that larger-sample result. There is no simultaneous uncertainty estimate here,
+so these differences neither establish time-discretization bias nor prove
+convergence. Same seed numbers across cases do not provide common random paths.
+No zero-step extrapolation or acceptance pass is inferred.
+
+Local read-only script: `output/audit_fixed_timestep.py`; report:
+`output/fixed-timestep-audit-v1.json`, SHA-256 `4909cd75e488bfc8a9834cbf6bece1d612c8ddf604afc7661dcf4c5ee65e6ef1`.
+Run from the primary checkout using its Python environment; output must not exist.
+The report retains all mean profiles, per-seed front locations, half-profile
+changes, input hashes and script hash. The next design must estimate independent
+run uncertainty for C/E comparisons and temporal changes; three-seed point
+estimates do not select a production time step reliably.
