@@ -107,3 +107,41 @@ The output must not exist. Local evidence:
 bank and audit source hashes; inputs are checked again after analysis. It retains
 all group means, means, widths and differences for inspection. No physical solver
 run or model change is part of this audit.
+
+## Pinned boundary implementation findings
+
+Source inspection used MC3D revision
+`398078186333600d9a704ce0c4da447468eac8a6` recorded by the historical run
+manifest, and the local SPARTA source checkout at
+`95b9abaa8bd548991cc3c3f1c58b34722f7ade74`.
+
+MC3D `HyperFreeBoundary::GenerateInflow` calls `AccumulateInflow` with minimum
+batch one. The fractional expected count is carried between steps. SPARTA
+`FixEmitFace::perform_task`, with the deck's default count mode, adds a uniform
+random number and truncates each step's expected count. For a prescribed sequence
+of expected counts, MC3D's cumulative rounding discrepancy stays below one
+particle per face cell; SPARTA's increments have rounding variance f(1-f),
+where f is the fractional expected count. Neither statement establishes equal
+finite-particle fluctuations, even with equal mean prescribed reservoir flux.
+Adaptive steps and the evolving system prevent using this observation alone as
+a quantitative explanation of front variance or mean bias.
+
+Both implementations sample an entry time uniformly within the step and advance
+only the remaining fraction. MC3D's hyperfree velocity sampler uses an unbounded
+flux-weighted normal distribution plus Gaussian tangential velocities. The
+pinned SPARTA rejection sampler restricts the normalized normal thermal deviate
+beta to [-3,3]. Its tangential draw is not subject to this cutoff. For inward
+drift s in units sqrt(2 kT/m), the ideal incoming density is proportional to
+(beta+s) exp(-beta²), beta >= -s. Integrating this law gives excluded normal
+flux probability 0.0000221085 upstream and 0.000266525 downstream for these
+reservoirs. These are tail probabilities, not observed density or shock errors;
+SPARTA still samples its prescribed number of incoming particles from the
+truncated velocity law. Energy and momentum effects require separate evaluation.
+
+No solver change is justified solely by this inspection. Next use an isolated
+reservoir test to measure count, momentum and energy injection against analytic
+flux moments under the actual boundary implementations, then assess time-step
+sensitivity. Do not replace MC3D's rounding or alter SPARTA merely to make their
+fluctuations agree. The initial-step MC3D sampler uses independent Gaussian
+velocities without batch temperature normalization; SPARTA initialization still
+needs a corresponding distribution and population audit.
