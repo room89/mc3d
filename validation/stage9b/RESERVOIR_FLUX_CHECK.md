@@ -99,3 +99,25 @@ The report retains all mean profiles, per-seed front locations, half-profile
 changes, input hashes and script hash. The next design must estimate independent
 run uncertainty for C/E comparisons and temporal changes; three-seed point
 estimates do not select a production time step reliably.
+
+## SPARTA initial-state check
+
+A separate run-zero measurement executes the exact initialization prefix of the
+saved `sparta-C-123/in.shock` deck with the pinned binary, before any boundary
+injection, transport or collision. The particle dump contains 64,000 upstream
+particles (64,000 expected) and 211,963 downstream particles (211,963.303
+expected). Regional mean velocity components differ from their prescribed
+values by at most 2.801 analytical standard errors; thermal energy deviations
+are -0.351 and +0.146 standard errors. Both satisfy the preselected six-SE check.
+
+This checks the realized regional population and first/second velocity moments
+for one seed. It does not establish equivalent cell-population covariance or
+prove that initial transients have decayed. MC3D's initial-step implementation
+uses cell-wise stochastic count rounding and unnormalized Gaussian velocities;
+SPARTA distributes a regional particle total across cells. These need not yield
+identical finite-particle fluctuations.
+
+Local script `output/check_sparta_initial_state.py` creates
+`output/sparta-initial-state-v1` from the primary checkout and refuses overwrite.
+The report records source/reference/deck/binary/dump hashes and observed values.
+Report SHA-256: `4cd9aa658e9ee1f022a9415f358ee0c81e48c4fedf4b417433337c096f948a7f`. No production configuration was modified.
