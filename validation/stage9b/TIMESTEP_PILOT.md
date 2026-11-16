@@ -174,3 +174,37 @@ The evidence does not justify changing inlet normalization, VHS parameters or
 count rounding to remove the front offset. Next characterize front motion and
 profile shape jointly in time: distinguish a drifting laboratory-frame profile
 from a stable translated shock before selecting a stationarity/shape estimator.
+
+## Translation versus temporal shape diagnostic
+
+Reconstruct each half-run mean as run_mean ± half_change/2 from the saved
+analysis. Estimate the 50% isotonic crossing of each mean. Compare the original
+profiles and a diagnostic translation on the fixed interior [-12,12] λ₁,
+using linear interpolation without extrapolation. This is not applied to the
+acceptance report; same-field shift estimation can bias the residual downwards.
+
+| Case | MC3D mean front | SPARTA mean front | Original max difference | After diagnostic translation |
+| --- | ---: | ---: | ---: | ---: |
+| C | 0.156915 | 0.279458 | 0.0331965 | 0.0058820 |
+| E | 0.180929 | 0.295940 | 0.0285119 | 0.0041466 |
+
+Thus location accounts for much of the observed mean discrepancy in this pilot,
+without establishing agreement of intrinsic shapes or valid uncertainty. The
+10–90% widths of the aggregate means are 4.6740/4.6125 λ₁ for C and
+4.6279/4.6455 λ₁ for E (MC3D/SPARTA); these are descriptive widths of averages,
+not qualified gradient thicknesses or instantaneous shock widths.
+
+Half-run front changes have ranges -0.04065 to -0.01087 for MC3D C,
++0.01366 to +0.05092 for MC3D E, +0.06430 to +0.07567 for SPARTA C and
++0.07185 to +0.10527 for SPARTA E. In each case all three signs agree, but
+three realizations and shared initialization do not establish a deterministic
+transient. Translated half-profile residual maxima still reach 0.01442, so a
+pure translation does not explain all temporal change. Width changes also
+remain; sampling fluctuations have not been separated from systematic evolution.
+
+Local script `output/diagnose_pilot_translation.py`; report
+`output/pilot-translation-diagnostic-v1.json`, SHA-256 `71c457e5f5e8b287152cf62c642adf09d8c46bb6e7b4647f9d0be611d6fab157`.
+No original results or gates were changed. The next qualification must jointly
+address temporal evolution and the intended translation-invariant shape target;
+a favorable translated point estimate cannot replace the failed fixed-frame
+comparison or justify fitting away physical discrepancies.
