@@ -65,3 +65,48 @@ profiles, then checks them again after analysis. Output must be outside the
 campaign and must not already exist. It retains each run's mean and half change,
 between-run SD and the four fixed-coordinate comparisons. It does not produce
 an acceptance verdict or infer a confidence band from three seeds.
+
+## Completed pilot: results
+
+All 12 planned calculations completed successfully. Both variant runners exit
+with code 2 because physical acceptance remains incomplete, not because a solver
+failed. The independent analyzer completed and verified 2,187 file hashes before
+and after reading. No runs or windows were excluded.
+
+| Comparison | Maximum absolute normalized-density difference |
+| --- | ---: |
+| MC3D C − SPARTA C | 0.0331965 |
+| MC3D E − SPARTA E | 0.0285119 |
+| MC3D C − MC3D E | 0.0084791 |
+| SPARTA C − SPARTA E | 0.0061330 |
+
+| Case | Maximum between-run density SD | Range of per-run mean-front positions, λ₁ |
+| --- | ---: | ---: |
+| MC3D C | 0.0379359 | 0.020961–0.309820 |
+| SPARTA C | 0.0053066 | 0.263956–0.291803 |
+| MC3D E | 0.0124070 | 0.121194–0.211112 |
+| SPARTA E | 0.0050926 | 0.289242–0.306958 |
+
+The inter-code mean discrepancies exceed 0.01 in both cases. This does not
+establish a statistically significant solver bias from three seeds; it does
+show that the earlier three-seed apparent agreement is not reproducible at the
+required precision. Do not select favorable seeds or align away this difference.
+Between-run SD is not a simultaneous uncertainty bound. Half-profile changes
+remain appreciable and are retained per run in the report.
+
+Next diagnose the relation between initial conserved quantities, front movement
+and run offsets, and determine whether the laboratory-frame transient target
+can support the intended physical comparison. A larger production sample or a
+change of estimand needs its own justification; reducing the step alone did not
+remove the observed mismatch. Thickness and experimental acceptance remain open.
+
+C's runner elapsed 23.44 wall minutes; E's elapsed 84.28 wall minutes. Recorded
+run/preflight durations were 1,352.41 and 2,284.67 seconds respectively. These
+clocks disagree materially for E; do not treat wall time as CPU cost or infer
+a cause such as machine sleep without further evidence.
+
+Local report: `output/shock-timestep-pilot-analysis-v1.json`, SHA-256
+`71f1182b45968c0839e8955230937cbdf1816623603b6a10d81e0c2c81dc2371`. Large per-run arrays and raw outputs remain local.
+
+A second complete extraction from the original campaign using the worktree
+analyzer matched the full report JSON exactly (`output/shock-timestep-pilot-analysis-replay-v1.json`).
