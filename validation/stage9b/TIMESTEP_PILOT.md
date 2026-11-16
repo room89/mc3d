@@ -110,3 +110,35 @@ Local report: `output/shock-timestep-pilot-analysis-v1.json`, SHA-256
 
 A second complete extraction from the original campaign using the worktree
 analyzer matched the full report JSON exactly (`output/shock-timestep-pilot-analysis-replay-v1.json`).
+
+## Initial inventory diagnostic
+
+Read the six MC3D conservation summaries and full per-step histories against
+the completed analysis hashes. Initial count deviations are +0.697, +8.697 and
++3.697 particles for seeds 210001–210003, repeated exactly in C and E. Under an
+unchanged step shape and plateau states, these count errors correspond to front
+translations of -0.000094, -0.001176 and -0.000500 λ₁. This scale is far smaller
+than the observed tenths-of-a-mean-free-path front variation; initial count
+rounding alone is not a direct translation explanation.
+
+Initial longitudinal momentum errors relative to the prescribed ensemble mean
+are -0.1277%, +0.4290% and +0.1784%; initial energy errors are +0.0074%,
++0.0446% and +0.0956%. These also agree exactly between C/E at the same seed.
+This establishes shared realized initial inventories, not identical subsequent
+random paths. Do not treat the six cases as six independent initial conditions.
+The different subsequent front positions therefore require evolution after
+initialization; this does not distinguish time-step bias from collision/boundary
+fluctuations or exclude an influence of initial momentum and energy fluctuations.
+
+Duration-weighted pre-step populations during sampling correspond to step-shape
+translations of (-0.0893, +0.2084, +0.0560) λ₁ for C and
+(+0.0404, +0.1044, +0.0976) λ₁ for E. These are mass-equivalent diagnostics,
+not corrected fronts: profile shape and nonuniform plateaus also contribute to
+total particle number. No regression is fitted to three seeds. Next audit the
+cumulative incoming/outgoing momentum and energy and their time evolution before
+choosing a longer or larger campaign.
+
+Local read-only script: `output/audit_pilot_initial_inventory.py`; report:
+`output/pilot-initial-inventory-v1.json`, SHA-256 `15f43871848066b2cb1dd2eb7655704fa23a1accffd9c969b98e667690a2e090`.
+The report retains input hashes, analytical expected inventories and each case's
+observed quantities; physical acceptance remains incomplete.
