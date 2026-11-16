@@ -50,6 +50,34 @@ new campaign, audit identical physical initial/boundary states and the time
 normalization in both solvers. Any shape-only translation diagnostic must stay
 separate from the laboratory-frame acceptance result.
 
+## Historical input equivalence
+
+A separate read-only audit checked all 24 training run pairs, verifying 129
+historical files against recorded hashes before and after reading. It compared
+MC3D normalized inputs converted to SI and its effective run manifest against
+SPARTA's saved reference and actual input deck. Matching quantities were:
+
+- Reservoir density, temperature and all velocity components; initial left/right
+  states and discontinuity position.
+- Domain dimensions, cell counts and model-particle weight.
+- Periodic transverse boundaries and declared two-sided reservoir injection.
+- All 64 physical sampling-window endpoints, warm-up and production step counts.
+
+Sampling spans 0.0019540413973 to 0.0058621241919 seconds in both codes.
+No mismatch in these declared inputs explains the observed mean-front offset.
+This is not proof of equivalent boundary algorithms or realized initial samples.
+MC3D adaptive integration and SPARTA fixed-step averaging also have different
+quadrature; equal endpoints alone do not establish equal temporal sampling.
+Collision kernels and experimental conditions are outside this input audit.
+
+Local reproduction (from primary checkout, output must not exist):
+`python3 output/audit_historical_setup.py`. The one-off script and report remain
+local, like the earlier storage audit; the report includes all inspected hashes.
+Report: `output/historical-setup-audit-v1.json`, SHA-256
+`5a73621562b6255fa507a79ca501dca5336735a469699cc0984023052153a073`.
+Next inspect boundary sampling and initialization in the pinned implementations,
+and quantify temporal-discretization sensitivity before choosing production.
+
 ## Remaining acceptance requirements
 
 The full scope remains PHYSICS_PLAN.md stages 9–11. The synthetic band is only
