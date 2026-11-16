@@ -25,7 +25,7 @@ No automatic solver restart or expansion beyond these 12 runs is authorized by
 this protocol. The user's standing authorization permits starting this prepared
 pilot without another confirmation.
 
-Evidence directory: `output/shock-timestep-pilot-v1`, with a copied protocol,
+Evidence directory: `output/shock-timestep-pilot-v2`, with a copied protocol,
 frozen tools, binary hashes, logs and independent C/E subdirectories. Existing
 `shock_validation.py` records execution separately from physical gates. Its legacy
 analysis is retained for traceability and cannot promote this pilot to acceptance.
@@ -42,3 +42,10 @@ Replace C with E for the second runner. Paths are supplied from the campaign
 manifest; the binary hashes must match the frozen protocol. The next stage
 requires stationarity, all numerical refinements, shock thickness and primary
 experimental comparison; none is waived by completing this pilot.
+
+The first attempt in `output/shock-timestep-pilot-v1` terminated with return
+code 3 in both runners because the sandbox denied `ps` for RSS monitoring.
+After inspecting the terminal exit records, a new directory was launched with
+process-monitoring access. The original evidence is retained; protocol, seeds,
+binaries and physical parameters are unchanged. This is an explicit infrastructure
+retry, not an automatic solver restart or selection based on physical results.
