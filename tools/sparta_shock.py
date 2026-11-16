@@ -4,8 +4,8 @@ from pathlib import Path
 from shock_validation import configuration,save
 from argon_vhs import fit,MASS,KB
 
-def export(folder,variant,seed,quick=False,warmup_transits=4):
-    data,ref=configuration(variant,seed,warmup_transits);gas,_=fit();num=data['numerics'];L=data['domain_m'];n=data['number_density_m3']
+def export(folder,variant,seed,quick=False,warmup_transits=4,domain_multiplier=1):
+    data,ref=configuration(variant,seed,warmup_transits,domain_multiplier);gas,_=fit();num=data['numerics'];L=data['domain_m'];n=data['number_density_m3']
     folder.mkdir(parents=True,exist_ok=False)
     weight=n*math.prod(L)/(num['cells_x']*num['cells_y']*num['cells_z']*num['particles_per_cell'])
     states=[data['reservoirs'][f] for f in ('x_neg','x_pos')]
