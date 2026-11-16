@@ -25,11 +25,43 @@ open-boundary and statistical-moment tests (22 tests total).
 
 This establishes a local sampling regression check for MC3D only. It does not
 validate the SPARTA boundary, full shock transport, stationarity, physical
-confidence bands, or experimental agreement. The next investigation remains a
-corresponding isolated SPARTA flux measurement and time-discretization check.
+confidence bands, or experimental agreement. The corresponding SPARTA measurement is recorded below; time-discretization
+and full-shock sensitivity remain open.
 
 Reproduction after building `mc3d_tests`:
 
 ```sh
 build/mc3d_tests --gtest_filter=HyperFreeSamplingTest.ShockReservoirMomentumAndEnergyFluxes
 ```
+
+## Pinned SPARTA measurement
+
+Executed the historical SPARTA binary (SHA-256
+`0d6dedda6d90b1f703d5cd0f745dbeb976cac7f74bf57e9a13016b26e8b10afb`)
+for one step per reservoir, starting empty with no collisions or walls.
+The box is 2×1×1 m, with periodic transverse faces and injection only from
+the selected x face. Reservoir states and time step come from the historical
+C reference. Particle weight is chosen for 200,000.25 expected arrivals; this
+is an isolated measurement configuration, not the historical shock population.
+All particles survive this short step, so the particle dump measures arrivals.
+
+| Reservoir | Actual count | Momentum deviation / analytic SE | Energy deviation / analytic SE |
+| --- | ---: | ---: | ---: |
+| Upstream | 200000 | -0.831 | -0.714 |
+| Downstream | 200000 | -0.234 | -0.347 |
+
+Both cases meet the preselected one-particle count and six-standard-error
+moment checks. No gross boundary sign, normalization or moment discrepancy
+appears at this precision. The known small normal-tail truncation is not
+excluded by these finite samples; passing is not a claim of exact equality
+to the untruncated Maxwellian law or equivalent count fluctuations.
+
+Local script: `output/check_sparta_reservoir_flux.py`; run from the primary
+checkout using its Python environment. It refuses to overwrite the output
+folder. Decks, particle dumps and logs are in `output/sparta-reservoir-flux-v1`.
+The report records binary, reference, species, script, input, dump and log hashes.
+Report SHA-256: `b03fccff63cdcae789f73426d007a5cac5c31a3c10b9759ab2cebe87f23c65a8`.
+
+With both isolated flux checks passing, do not change reservoir parameters to
+remove the historical front offset. Next compare historical C and reduced-time-step
+E profiles in fixed coordinates to quantify sensitivity before a longer run.
