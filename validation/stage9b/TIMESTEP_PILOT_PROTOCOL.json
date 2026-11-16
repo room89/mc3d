@@ -1,0 +1,21 @@
+{
+  "status": "frozen_precision_pilot_not_acceptance",
+  "physical_acceptance": "incomplete",
+  "variants": ["C", "E"],
+  "seeds": [210001, 210002, 210003],
+  "solvers": ["mc3d", "sparta"],
+  "runs": 12,
+  "estimand": "fixed-coordinate time-averaged normalized density on the original 560 nodes within [-14,14] lambda1",
+  "windows": 64,
+  "alignment": "none",
+  "density_tolerance": 0.01,
+  "precision_target": 0.005,
+  "selection": "all runs and all windows retained; no favorable-seed selection or early stopping on results",
+  "analysis": "report per-run means, cross-code and C/E mean differences, front locations, paired half-profile changes within runs, and between-run spread; no qualified confidence band from three seeds",
+  "decision": "estimate cost and spread for a prospective independent larger campaign; this pilot cannot pass stationarity, convergence or physical acceptance",
+  "reuse": "historical outputs remain separate; pilot data used for design will not be relabeled as fresh confirmation",
+  "binary_sha256": "330d9ed03dea9c36e39c281edbd4150aeb1c4b8e186003316ffa72f432f489b1",
+  "sparta_sha256": "0d6dedda6d90b1f703d5cd0f745dbeb976cac7f74bf57e9a13016b26e8b10afb",
+  "execution": "two concurrent variant runners, full load, each with three seeds and both solvers; 8192 MB per-process limit; no time budget per user authorization",
+  "failure_policy": "retain unfinished output; no automatic rerun of failed solver cases"
+}
