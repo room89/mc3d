@@ -142,3 +142,35 @@ Local read-only script: `output/audit_pilot_initial_inventory.py`; report:
 `output/pilot-initial-inventory-v1.json`, SHA-256 `15f43871848066b2cb1dd2eb7655704fa23a1accffd9c969b98e667690a2e090`.
 The report retains input hashes, analytical expected inventories and each case's
 observed quantities; physical acceptance remains incomplete.
+
+## Cumulative boundary exchange
+
+The six MC3D conservation histories were checked against the frozen analysis
+hashes. Compute expected reservoir number, signed longitudinal momentum and
+energy inflows from half-line Gaussian moments and the actual physical duration.
+Check the whole run and eight fixed-time sections, assigning complete steps and
+recording their actual endpoints instead of inventing fractional flux events.
+
+Every run's integrated expected incoming count exceeds its actual count by only
+0.0381745 particles. Across whole runs, momentum deviations span -1.625 to
++1.494 analytical standard errors; energy spans -1.699 to +0.749. The largest
+absolute section deviations are 2.326 for momentum and 2.307 for energy. These
+are descriptive standardized differences, not calibrated simultaneous tests:
+adaptive time stepping can couple stopping/counts to prior sampled velocities.
+
+Count balances close exactly; longitudinal momentum and energy balances close
+within 1e-10 times the absolute incoming/outgoing scale for every checked section
+and complete run. This rules out a gross accumulated bookkeeping discrepancy
+at that threshold, not a physical outflow or stationarity problem. Outflow is
+measured from the evolving system and is not forced to equal an equilibrium
+reservoir formula. No equivalent SPARTA per-step exchange series is available.
+
+Local script: `output/audit_pilot_boundary_exchange.py`; report:
+`output/pilot-boundary-exchange-v1.json`, SHA-256 `b0aa9a58cf619d22dc38b0c2471f14cd346974601a2c9250d756da942796a754`.
+The report retains actual time bounds, summed exchanges, analytical expectations,
+standardized deviations, residuals and input hashes. No source data were changed.
+
+The evidence does not justify changing inlet normalization, VHS parameters or
+count rounding to remove the front offset. Next characterize front motion and
+profile shape jointly in time: distinguish a drifting laboratory-frame profile
+from a stable translated shock before selecting a stationarity/shape estimator.
