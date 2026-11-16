@@ -28,6 +28,28 @@ location, time evolution and boundary setup without fitting away the mismatch.
 These observations do not establish a solver defect: a fixed-coordinate mean
 and a centered intrinsic shock shape are different estimands.
 
+## Location and time diagnostic
+
+The isotonic 50% crossing of the full mean profile is 0.130238 λ₁ for
+MC3D and 0.204730 λ₁ for SPARTA, a separation of 0.074492 λ₁. Crossings
+are descriptive: no translation is applied to the reported differences or bands.
+The eight group-mean crossings range from 0.09722 to 0.18003 for MC3D and
+0.13684 to 0.28349 for SPARTA.
+
+Between the first and second 32-window halves, the ensemble crossing moves
+from 0.121069 to 0.139093 for MC3D and from 0.184394 to 0.225237 for SPARTA.
+Maximum absolute half-profile changes are 0.005298 and 0.010342 respectively.
+These are observed changes, not significance tests or proof of systematic drift.
+The report retains all eight paired group half-profile changes; windows are
+not independent replicates. A stationary noise realization can also show a
+half difference. No stationarity pass/fail is inferred from these numbers.
+
+The mean front separation makes a location contribution plausible, but does
+not quantify its causal share or establish equal intrinsic shapes. Before a
+new campaign, audit identical physical initial/boundary states and the time
+normalization in both solvers. Any shape-only translation diagnostic must stay
+separate from the laboratory-frame acceptance result.
+
 ## Remaining acceptance requirements
 
 The full scope remains PHYSICS_PLAN.md stages 9–11. The synthetic band is only
@@ -53,7 +75,7 @@ python3 -m unittest discover -s tests/python
 ```
 
 The output must not exist. Local evidence:
-`output/fixed-profile-physical-precision-v1.json`. The report records manifest,
+`output/fixed-profile-physical-precision-v2.json`. The report records manifest,
 bank and audit source hashes; inputs are checked again after analysis. It retains
 all group means, means, widths and differences for inspection. No physical solver
 run or model change is part of this audit.

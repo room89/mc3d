@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'tools'))
-from audit_fixed_profile_precision import grouped, band
+from audit_fixed_profile_precision import grouped, band, temporal_diagnostic
 from screen_simultaneous_band import critical_value
 
 
@@ -33,3 +33,14 @@ class FixedProfilePrecisionTests(unittest.TestCase):
 
     def test_joint_family_widens_band(self):
         self.assertGreater(critical_value(560,.025),critical_value(113,.05))
+
+    def test_half_change_retains_translation(self):
+        x=np.linspace(-4,4,81)
+        first=(1+np.tanh(x))/2
+        second=(1+np.tanh(x-.2))/2
+        raw=np.tile(np.concatenate([np.tile(first,(32,1)),np.tile(second,(32,1))]),(24,1,1))
+        r=temporal_diagnostic(raw,self.sources,x)
+        self.assertAlmostEqual(r['first_half_front'],0,places=12)
+        self.assertAlmostEqual(r['second_half_front'],.2,places=12)
+        np.testing.assert_allclose(r['half_profile_change'],second-first,atol=1e-14)
+        with self.assertRaises(ValueError):temporal_diagnostic(raw[:,:32],self.sources,x)

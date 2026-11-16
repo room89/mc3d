@@ -6,6 +6,7 @@ import numpy as np
 from shock_empirical_fluctuations import load_bank
 from screen_simultaneous_band import critical_value
 from shock_validation import digest
+from shock_analysis import crossing, monotone
 
 
 def grouped(raw, sources):
@@ -20,6 +21,24 @@ def grouped(raw, sources):
 
 def band(group_profiles, critical):
     return group_profiles.mean(axis=0), critical * group_profiles.std(axis=0, ddof=1) / np.sqrt(8)
+
+
+
+def temporal_diagnostic(raw, sources, x):
+    """Descriptive half-profile changes; no stationarity test or fitted correction."""
+    if raw.shape[1] != 64:
+        raise ValueError('Historical 64-window series required')
+    first = grouped(raw[:, :32], sources)
+    second = grouped(raw[:, 32:], sources)
+    front = lambda y: float(crossing(x, monotone(y), .5))
+    mean = grouped(raw, sources)
+    return dict(mean_front=front(mean.mean(axis=0)),
+        group_fronts=[front(y) for y in mean],
+        first_half_front=front(first.mean(axis=0)),
+        second_half_front=front(second.mean(axis=0)),
+        half_profile_change=(second.mean(axis=0)-first.mean(axis=0)).tolist(),
+        group_half_profile_changes=(second-first).tolist(),
+        max_abs_half_profile_change=float(abs(second.mean(axis=0)-first.mean(axis=0)).max()))
 
 
 def audit(root):
@@ -37,7 +56,8 @@ def audit(root):
         raw = b['fluctuations'] + b['mean_profile']
         mean, half = band(grouped(raw, b['sources']), critical)
         results[code] = dict(mean=mean.tolist(), half_width=half.tolist(),
-            group_profiles=grouped(raw,b['sources']).tolist(), sources=b['sources'])
+            group_profiles=grouped(raw,b['sources']).tolist(), sources=b['sources'],
+            temporal=temporal_diagnostic(raw,b['sources'],x))
     difference = np.array(results['mc3d']['mean'])-results['sparta']['mean']
     uncertainty = np.array(results['mc3d']['half_width'])+results['sparta']['half_width']
     if digest(manifest) != before:
