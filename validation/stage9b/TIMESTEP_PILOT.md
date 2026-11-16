@@ -49,3 +49,19 @@ After inspecting the terminal exit records, a new directory was launched with
 process-monitoring access. The original evidence is retained; protocol, seeds,
 binaries and physical parameters are unchanged. This is an explicit infrastructure
 retry, not an automatic solver restart or selection based on physical results.
+
+## Analysis after both runners terminate
+
+```sh
+OPENBLAS_NUM_THREADS=1 python3 tools/analyze_timestep_pilot.py \
+  ../../output/shock-timestep-pilot-v2 \
+  --output ../../output/shock-timestep-pilot-analysis-v1.json
+```
+
+The analyzer rejects an active runner, an execution error, incomplete cases,
+changed binary identities or changed saved SPARTA/MC3D outputs. It verifies
+runtime source hashes and snapshots campaign file hashes before reading physical
+profiles, then checks them again after analysis. Output must be outside the
+campaign and must not already exist. It retains each run's mean and half change,
+between-run SD and the four fixed-coordinate comparisons. It does not produce
+an acceptance verdict or infer a confidence band from three seeds.
