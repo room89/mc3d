@@ -89,7 +89,7 @@ def sparta_profile(folder):
     if ref['quick']:raise ValueError('Smoke run is not production data')
     n1=ref['reference']['left']['number_density_m3'];n2=ref['reference']['right']['number_density_m3'];lam=ref['reference']['mean_free_path_m'];step=ref['steps_per_window'];windows=[]
     for wi in range(64):
-        lines=(folder/f'profile.{(33+wi)*step}').read_text().splitlines()
+        lines=(folder/f'profile.{(ref.get('warmup_windows',32)+1+wi)*step}').read_text().splitlines()
         header=next(i for i,line in enumerate(lines) if line.startswith('ITEM: CELLS '));fields=lines[header].split()[2:]
         rows=[dict(zip(fields,map(float,line.split()))) for line in lines[header+1:] if line.strip()]
         nx=ref['source']['numerics']['cells_x'];groups={}
