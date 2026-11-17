@@ -72,3 +72,38 @@ Supporting local artifacts are `output/population4-translation-diagnostic-v1.jso
 Physical acceptance remains incomplete. The remaining fixed-coordinate
 cross-code discrepancy requires a prospective uncertainty and convergence
 check; fitting shifts or selecting favorable windows must not turn it into a pass.
+
+## Next isolated control: inflow count rounding
+
+Pinned MC3D source `398078186333600d9a704ce0c4da447468eac8a6` carries the
+fractional expected inflow across steps. Pinned SPARTA source
+`95b9abaa8bd548991cc3c3f1c58b34722f7ade74` instead uses `floor(expected + U)`
+with a new uniform variate per step. Their collision/motion order also differs.
+Neither difference alone identifies a defect. The next control will change only
+MC3D hyperfree inflow count rounding; collision/motion order stays fixed.
+
+Implement an explicit experimental configuration mode with accumulated rounding
+as the unchanged default. Stochastic rounding must preserve the analytic expected
+incoming count and use the seeded cell random stream. Record the mode in effective
+configuration and prevent resume from silently mixing modes. Do not apply this
+mode to the legacy free-boundary batch temperature normalization.
+
+Before production, check counts below one and above one per step, varying time
+steps, reproducibility, invalid modes, serialization, conservation, and default
+behavior. Verify the new binary against the pinned control with identical
+physical inputs. Freeze both the new source and binary hashes.
+
+Run the E, domain-2, population-4, warmup-20 control for three seeds 210001–210003
+in a new directory, retaining the complete [20,28] interval and 64 windows.
+Use the completed accumulated-rounding MC3D and SPARTA runs as historical
+comparators. Reused seed labels do not make trajectories paired. A changed random
+stream is part of this exploratory intervention, so three runs cannot certify
+causality or acceptance. No automatic retries, selected windows or fitted-shift
+acceptance correction are permitted.
+
+Report original-coordinate profile means, front and width descriptions, half-run
+changes, full-domain inventory and boundary balances regardless of outcome.
+A smaller discrepancy alone must not promote the experimental mode to default.
+If discrepancy persists, retain the negative result and isolate time-step/order
+sensitivity next. Any promising result still requires fresh-seed confirmation,
+qualified uncertainty and the remaining numerical and experimental gates.
