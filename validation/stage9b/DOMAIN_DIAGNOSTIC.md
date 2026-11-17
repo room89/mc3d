@@ -70,3 +70,18 @@ The next investigation must distinguish front motion, between-run variation
 and reservoir effects before another domain enlargement. Preserve the raw
 fixed-coordinate comparison and existing tolerances. Stages 9–11 remain open;
 this engineering diagnostic is not an experiment-matched acceptance result.
+
+### Boundary bookkeeping follow-up
+
+`output/domain2-boundary-exchange-v1.json` audits all three MC3D runs using
+whole steps over the full run and eight fixed time sections. Particle-count
+balances close exactly; momentum and energy residuals are below 1e-10 of
+the summed absolute incoming/outgoing exchange. Integrated incoming counts
+differ from the analytic reservoir expectation by -0.755741 model particles
+in every run, consistent with a sub-particle injection remainder.
+Full-run incoming momentum deviations in analytic standard-error units are
+-2.5263, -0.2704 and 0.2104; energy deviations are -1.0677, -1.7264 and 0.1473.
+The largest absolute sectional momentum deviation is 3.8163. These are
+uncalibrated descriptive diagnostics under adaptive stepping, not simultaneous
+significance tests. They do not identify a bookkeeping defect or exclude a
+boundary-model effect. Equivalent SPARTA per-step exchange evidence is absent.
