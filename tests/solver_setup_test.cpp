@@ -279,3 +279,13 @@ TEST(SimulationConfigTest, VhsRequiresExplicitPhysicalParameters) {
  EXPECT_EQ(config.collisions.kind,mc3d::CollisionKind::VHS);
  EXPECT_DOUBLE_EQ(config.collisions.omega,.75);
 }
+
+TEST(SimulationConfigTest, ParsesHyperfreeInflowRounding) {
+  char program[]="solver", option[]="--hyperfree-inflow-rounding";
+  char valid[]="stochastic", invalid[]="unknown";
+  char* args[]={program,option,valid};
+  EXPECT_EQ(mc3d::LoadSimulationConfig(1,args).hyperfree_inflow_rounding,"accumulated");
+  EXPECT_EQ(mc3d::LoadSimulationConfig(3,args).hyperfree_inflow_rounding,"stochastic");
+  args[2]=invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(3,args),std::runtime_error);
+}

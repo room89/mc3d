@@ -107,3 +107,20 @@ A smaller discrepancy alone must not promote the experimental mode to default.
 If discrepancy persists, retain the negative result and isolate time-step/order
 sensitivity next. Any promising result still requires fresh-seed confirmation,
 qualified uncertainty and the remaining numerical and experimental gates.
+
+### Experimental mode interface
+
+The solver JSON field `hyperfree_inflow_rounding` accepts `accumulated`
+(default) or `stochastic`; the solver CLI uses `--hyperfree-inflow-rounding`.
+SI configuration accepts the same field under `numerics`. The campaign runner
+also accepts `--hyperfree-inflow-rounding stochastic`, records it in its report,
+and rejects a changed mode on resume before rewriting evidence. Historical
+reports without the field mean `accumulated`. The mode affects MC3D hyperfree
+boundaries only; SPARTA already uses stochastic count rounding.
+
+For a controlled MC3D-only campaign, use the frozen new binary and runner with
+`--variants E --seeds 210001 210002 210003 --warmup-transits 20
+--domain-multiplier 2 --population-multiplier 4 --hyperfree-inflow-rounding stochastic
+--load-mode full --no-time-budget` and a new output directory. Omit `--sparta-bin`
+when using the already verified SPARTA comparator. Freeze provenance before
+launch; the command alone does not certify physical acceptance.
