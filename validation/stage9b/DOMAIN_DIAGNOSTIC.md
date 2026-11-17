@@ -85,3 +85,30 @@ The largest absolute sectional momentum deviation is 3.8163. These are
 uncalibrated descriptive diagnostics under adaptive stepping, not simultaneous
 significance tests. They do not identify a bookkeeping defect or exclude a
 boundary-model effect. Equivalent SPARTA per-step exchange evidence is absent.
+
+### Full-domain density decomposition
+
+The follow-up `output/domain2-full-regions-v1.json` (SHA256
+`566a6794bb3ea9204b175e973df229f209ee092f894492cba6597e5110566554`)
+re-extracts all 64 windows and 1600 cells per run and verifies the 1621
+campaign evidence hashes before and after analysis. The table integrates
+second-half minus first-half normalized density in collision-mean-free-path
+coordinates. Central means [-14,14]; the outer regions complete the box.
+
+| Code / seed | Outer upstream | Central | Outer downstream | Total |
+| --- | ---: | ---: | ---: | ---: |
+| mc3d / 210001 | -0.005859 | 0.125281 | -0.046933 | 0.072489 |
+| mc3d / 210002 | 0.002940 | -0.007488 | 0.028557 | 0.024010 |
+| mc3d / 210003 | 0.001590 | 0.013746 | 0.010566 | 0.025902 |
+| sparta / 210001 | -0.004129 | -0.084020 | -0.003601 | -0.091750 |
+| sparta / 210002 | -0.004721 | -0.179137 | 0.018604 | -0.165253 |
+| sparta / 210003 | 0.001036 | -0.016047 | -0.018822 | -0.033833 |
+
+Outer downstream changes can compensate central changes or reverse the
+sign of their total (MC3D seed 210002). Total density integrals increase in
+these three MC3D runs and decrease in these three SPARTA runs. This small
+exploratory sample does not establish a systematic drift or a reservoir bug.
+A central mass estimate cannot be treated as an independent front position.
+The next control must distinguish population fluctuations and boundary
+exchange from front translation, retaining full-domain evidence. No physical
+gate is closed by this decomposition.
