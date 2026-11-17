@@ -6,7 +6,9 @@ from physical_config import prepare
 SEEDS=(123,456,789)
 VARIANTS={'A':(400,160),'B':(800,80),'C':(800,160),'D':(400,320),'E':(800,160),'F':(1600,160),'G':(800,160)}
 
-def configuration(variant,seed,warmup_transits=4):
+def configuration(variant,seed,warmup_transits=4,domain_multiplier=1):
+    if type(domain_multiplier) is not int or domain_multiplier not in (1,2):
+        raise ValueError("Domain multiplier must be 1 or 2")
     if not isinstance(warmup_transits,int) or isinstance(warmup_transits,bool) or warmup_transits<0:
         raise ValueError("Nonnegative integer warmup transits required")
     data,ref=setup(False,seed);nx,np=VARIANTS[variant]
@@ -18,6 +20,8 @@ def configuration(variant,seed,warmup_transits=4):
     if variant=='G':
         data['domain_m'][1]*=2;data['domain_m'][2]*=2
         data['numerics'].update(cells_y=2,cells_z=2)
+    data['domain_m'][0]*=domain_multiplier
+    data['numerics']['cells_x']*=domain_multiplier
     return data,ref
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -55,6 +59,7 @@ def main():
     p.add_argument('--seeds',nargs=3,type=int,default=SEEDS,help='Three distinct positive seeds; defaults preserve the original matrix');p.add_argument('--budget-hours',type=float,default=24);p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced')
     p.add_argument('--variants',nargs='+',choices=list(VARIANTS),default=list(VARIANTS),help='Selected execution cases; physical acceptance still requires the full matrix')
     p.add_argument("--warmup-transits",type=int,default=4,help="Initial unmeasured transit times; production remains eight transits")
+    p.add_argument("--domain-multiplier",type=int,choices=(1,2),default=1,help="Scale longitudinal length and cell count together; retain original physical time scale")
     a=p.parse_args()
     if a.warmup_transits<0:raise ValueError("Nonnegative warmup required")
     seeds=tuple(a.seeds)
@@ -71,6 +76,8 @@ def main():
     if report_file.exists() and tuple(report.get('seeds',SEEDS))!=seeds:raise ValueError('Cannot resume with different seeds')
     if report_file.exists() and report.get('variants',list(VARIANTS))!=variants:raise ValueError('Cannot resume with different variants')
     if report_file.exists() and report.get('warmup_transits',4)!=a.warmup_transits:raise ValueError('Cannot resume with different warmup')
+    if report_file.exists() and report.get('domain_multiplier',1)!=a.domain_multiplier:raise ValueError('Cannot resume with different domain multiplier')
+    report['domain_multiplier']=a.domain_multiplier
     report['warmup_transits']=a.warmup_transits
     report['seeds']=list(seeds)
     report['variants']=variants
@@ -95,7 +102,7 @@ def main():
     save(report_file,report)
     for variant in variants:
         for seed in seeds:
-            key=f'{variant}-{seed}';data,ref=configuration(variant,seed,a.warmup_transits)
+            key=f'{variant}-{seed}';data,ref=configuration(variant,seed,a.warmup_transits,a.domain_multiplier)
             folder=root/key;folder.mkdir(exist_ok=True)
             input_file=folder/'input_si.json'
             if input_file.exists() and json.loads(input_file.read_text())!=data:raise ValueError('Configuration mismatch')
@@ -150,7 +157,7 @@ def main():
                 if folder.exists():entry['reason']='Unfinished output retained';continue
                 remaining=budget_seconds-report['spent_seconds']
                 if a.prepare_only or remaining<=0:entry['reason']='Not executed within budget';continue
-                export(folder,variant,seed,warmup_transits=a.warmup_transits)
+                export(folder,variant,seed,warmup_transits=a.warmup_transits,domain_multiplier=a.domain_multiplier)
                 start=time.monotonic()
                 try:
                     with (folder/'run.log').open('w') as log:
