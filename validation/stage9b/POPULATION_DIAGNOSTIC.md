@@ -165,3 +165,23 @@ does not establish causality, stationarity, convergence or physical acceptance.
 Next isolate time-step sensitivity at the same domain, population and sampling
 schedule before changing collision/motion order. Fresh confirmation and all
 remaining numerical, experimental, wedge and dynamic-wall gates still apply.
+
+### Prospective matched time-step sensitivity control
+
+Use the existing C case at domain multiplier 2, population multiplier 4,
+warmup 20 and seeds 210001–210003 for both MC3D and SPARTA. Compare against
+the completed E population-4 campaign, retaining accumulated inflow rounding
+and the same pinned baseline solver binaries. Direct configuration comparison
+for all three seeds confirms that C differs from E only in Cu (0.5 versus
+0.25) and collision Courant (0.1 versus 0.05). This changes the time-step
+controls together; it does not isolate either limiter individually.
+
+Freeze the new campaign before launch, retain all 64 windows over [20,28],
+and report all six runs regardless of outcome. Reuse of seed labels is
+exploratory, not paired-path confirmation. Compare original-coordinate run
+means, half changes, front and width descriptions, full-domain inventories
+and balances. Do not align profiles, select windows, retry failed cases
+automatically, or use this two-level, three-seed sensitivity check as a
+convergence certificate. If a material difference remains unresolved, a
+finer-than-E level and qualified uncertainty are still required; changing
+collision/motion order is a separate intervention.
