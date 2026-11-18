@@ -107,3 +107,30 @@ A smaller discrepancy alone must not promote the experimental mode to default.
 If discrepancy persists, retain the negative result and isolate time-step/order
 sensitivity next. Any promising result still requires fresh-seed confirmation,
 qualified uncertainty and the remaining numerical and experimental gates.
+
+## Timestep comparison at fourfold population
+
+Both solvers completed three runs per timestep with seed labels 210001–210003.
+The C comparison uses three complete SPARTA recovery runs. The interrupted
+SPARTA run contributes no windows. Each run mean weights all 64 production
+windows equally. The density comparison uses the same 560 central cell centers
+in the original coordinates and weights each run equally.
+
+| Diagnostic | C | E |
+|---|---:|---:|
+| Maximum absolute inter-code difference in normalized density | 0.05701 | 0.04910 |
+| MC3D mean front position (collision mean free paths) | 0.1271 | 0.1446 |
+| SPARTA mean front position (collision mean free paths) | 0.3622 | 0.3441 |
+| MC3D mean 10–90% width (collision mean free paths) | 4.6466 | 4.6474 |
+| SPARTA mean 10–90% width (collision mean free paths) | 4.6368 | 4.6264 |
+
+Front positions and widths are averages of isotonic crossing measurements
+on individual run means. From C to E the maximum absolute change in the
+ensemble density profile was 0.00514 for MC3D and 0.00504 for SPARTA.
+The front-position gap decreased from 0.2351 to 0.1995 collision mean free
+paths. The three seed labels provide a descriptive comparison. Time convergence,
+uncertainty qualification and physical acceptance remain open.
+
+The local comparison artifact is
+`output/shock-population4-timestep-c-recovery-analysis-v1.json`
+(SHA-256 `ed273e3e56048b7b2ebe705941b1f564cf932faa123cd2f2c8816c117eb39355`).
