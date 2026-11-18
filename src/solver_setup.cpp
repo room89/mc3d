@@ -90,10 +90,16 @@ std::unique_ptr<Boundary> MakeBoundary(const BoundaryDescriptor& descriptor,
       return std::make_unique<FreeBoundary>(
           descriptor.position, descriptor.normal, cfg.particles_per_cell, cfg.S,
           cfg.temperature, cfg.alpha);
-    case BoundaryType::HyperFree:
-      return std::make_unique<HyperFreeBoundary>(
+    case BoundaryType::HyperFree: {
+      if (cfg.hyperfree_inflow_rounding != "accumulated" &&
+          cfg.hyperfree_inflow_rounding != "stochastic")
+        throw std::invalid_argument("Invalid hyperfree inflow rounding mode");
+      auto boundary = std::make_unique<HyperFreeBoundary>(
           descriptor.position, descriptor.normal, cfg.particles_per_cell, cfg.S,
           cfg.temperature, cfg.alpha);
+      boundary->SetStochasticRounding(cfg.hyperfree_inflow_rounding == "stochastic");
+      return boundary;
+    }
   }
   return nullptr;
 }

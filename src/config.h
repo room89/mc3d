@@ -36,6 +36,7 @@ struct InitialStep { double x; GasState left, right; };
 struct SimulationConfig {
   std::array<std::optional<GasState>,6> reservoirs;
   std::optional<InitialStep> initial_step;
+  std::string hyperfree_inflow_rounding = "accumulated";
   CollisionParameters collisions;
   bool statistics_enabled = true, balance_enabled = true;
   std::vector<std::array<double, 2>> statistics_windows;
