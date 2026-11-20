@@ -326,3 +326,25 @@ TEST(CellVolumeTest, FrequencyBoundAgainstDirectPairs) {
     }
   }
 }
+
+TEST(CellVolumeTest, FragmentedWedgePreservesCutCellVolumesAndCenters) {
+  Geometry plain, fragmented;
+  for (auto* body : {&plain, &fragmented})
+    body->CreateWedge(-.25, .3, .6, std::acos(-1.) / 12);
+  fragmented.Fragment(.1);
+  Point size(.025, .025, .025);
+  for (int i = 30; i < 54; ++i) {
+    for (int j = 13; j < 27; ++j) {
+      Point apex(-1 + i * size.x, -.5 + j * size.y, 0);
+      auto expected = plain.GasVolume(apex, size);
+      auto actual = fragmented.GasVolume(apex, size);
+      EXPECT_NEAR(actual.gas, expected.gas, size.Volume() * 1e-13);
+      ASSERT_EQ(actual.gas_center.has_value(), expected.gas_center.has_value());
+      if (actual.gas_center) {
+        EXPECT_NEAR(actual.gas_center->x, expected.gas_center->x, 1e-13);
+        EXPECT_NEAR(actual.gas_center->y, expected.gas_center->y, 1e-13);
+        EXPECT_NEAR(actual.gas_center->z, expected.gas_center->z, 1e-13);
+      }
+    }
+  }
+}
