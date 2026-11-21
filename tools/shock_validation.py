@@ -6,15 +6,17 @@ from physical_config import prepare
 SEEDS=(123,456,789)
 VARIANTS={'A':(400,160),'B':(800,80),'C':(800,160),'D':(400,320),'E':(800,160),'F':(1600,160),'G':(800,160)}
 
-def configuration(variant,seed,warmup_transits=4,domain_multiplier=1,population_multiplier=1):
+def configuration(variant,seed,warmup_transits=4,domain_multiplier=1,population_multiplier=1,hyperfree_inflow_rounding="accumulated"):
     if type(domain_multiplier) is not int or domain_multiplier not in (1,2):
         raise ValueError("Domain multiplier must be 1 or 2")
     if not isinstance(warmup_transits,int) or isinstance(warmup_transits,bool) or warmup_transits<0:
         raise ValueError("Nonnegative integer warmup transits required")
     if type(population_multiplier) is not int or population_multiplier not in (1,4):
         raise ValueError("Population multiplier must be 1 or 4")
+    if hyperfree_inflow_rounding not in ('accumulated','stochastic'):raise ValueError('Invalid hyperfree inflow rounding')
     data,ref=setup(False,seed);nx,np=VARIANTS[variant]
     data['numerics'].update(cells_x=nx,particles_per_cell=np*population_multiplier)
+    if hyperfree_inflow_rounding!='accumulated':data['numerics']['hyperfree_inflow_rounding']=hyperfree_inflow_rounding
     tau=ref['transit_time_s'];data['end_time_s']=(warmup_transits+8)*tau
     data['statistics_windows_s']=[[(warmup_transits+i/8)*tau,(warmup_transits+(i+1)/8)*tau] for i in range(64)]
     if variant=='E':data['numerics'].update(cu=.25,collision_courant=.05)
@@ -62,6 +64,7 @@ def main():
     p.add_argument('--variants',nargs='+',choices=list(VARIANTS),default=list(VARIANTS),help='Selected execution cases; physical acceptance still requires the full matrix')
     p.add_argument("--warmup-transits",type=int,default=4,help="Initial unmeasured transit times; production remains eight transits")
     p.add_argument("--domain-multiplier",type=int,choices=(1,2),default=1,help="Scale longitudinal length and cell count together; retain original physical time scale")
+    p.add_argument("--hyperfree-inflow-rounding",choices=("accumulated","stochastic"),default="accumulated")
     p.add_argument("--population-multiplier",type=int,choices=(1,4),default=1)
     a=p.parse_args()
     if a.warmup_transits<0:raise ValueError("Nonnegative warmup required")
@@ -81,6 +84,8 @@ def main():
     if report_file.exists() and report.get('warmup_transits',4)!=a.warmup_transits:raise ValueError('Cannot resume with different warmup')
     if report_file.exists() and report.get('domain_multiplier',1)!=a.domain_multiplier:raise ValueError('Cannot resume with different domain multiplier')
     if report_file.exists() and report.get('population_multiplier',1)!=a.population_multiplier:raise ValueError('Cannot resume with different population multiplier')
+    if report_file.exists() and report.get('hyperfree_inflow_rounding','accumulated')!=a.hyperfree_inflow_rounding:raise ValueError('Cannot resume with different inflow rounding')
+    report['hyperfree_inflow_rounding']=a.hyperfree_inflow_rounding
     report['population_multiplier']=a.population_multiplier
     report['domain_multiplier']=a.domain_multiplier
     report['warmup_transits']=a.warmup_transits
@@ -107,7 +112,7 @@ def main():
     save(report_file,report)
     for variant in variants:
         for seed in seeds:
-            key=f'{variant}-{seed}';data,ref=configuration(variant,seed,a.warmup_transits,a.domain_multiplier,a.population_multiplier)
+            key=f'{variant}-{seed}';data,ref=configuration(variant,seed,a.warmup_transits,a.domain_multiplier,a.population_multiplier,a.hyperfree_inflow_rounding)
             folder=root/key;folder.mkdir(exist_ok=True)
             input_file=folder/'input_si.json'
             if input_file.exists() and json.loads(input_file.read_text())!=data:raise ValueError('Configuration mismatch')

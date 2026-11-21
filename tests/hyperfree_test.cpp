@@ -4,6 +4,7 @@
 #include <memory>
 #include <numbers>
 #include <stdexcept>
+#include <vector>
 
 #include "cell.h"
 #include "giper_free_boundary.h"
@@ -122,6 +123,34 @@ TEST(HyperFreeSamplingTest, ReservoirDensityScalesFractionalFlux) {
     EXPECT_GT(double(count),expected-1-1e-10);
     EXPECT_NEAR(boundary.TransportTimeLimit(),1/(3+2.),1e-14);
   }
+}
+
+TEST(HyperFreeSamplingTest, StochasticCountsHaveExpectedMeanAndAreReproducible) {
+  auto sample = [](unsigned seed) {
+    std::deque<mc3d::Cell> cells;
+    cells.emplace_back(std::make_shared<utils::RandomStream>(seed));
+    cells.front().SetApex({0,0,0}); cells.front().SetSize(1,1,1);
+    mc3d::HyperFreeBoundary boundary({0,0,0},{-1,0,0},20,0,1);
+    boundary.SetReservoir(1,1,{0,0,0}); boundary.BindCells(cells);
+    boundary.SetStochasticRounding(true);
+    std::vector<unsigned> counts;
+    double total = 0, expected = 0, variance = 0;
+    for (int i=0;i<20000;++i) {
+      const double target = i%2 ? 2.7 : .2;
+      const double dt = target/(20*utils::IncomingFlux(0,1));
+      const auto n = boundary.GenerateInflow(dt).transit.size();
+      EXPECT_TRUE(n==static_cast<unsigned>(target) || n==static_cast<unsigned>(target)+1);
+      counts.push_back(static_cast<unsigned>(n));
+      total += n; expected += target;
+      const double fraction = target-std::floor(target);
+      variance += fraction*(1-fraction);
+    }
+    EXPECT_NEAR(total, expected, 6*std::sqrt(variance));
+    EXPECT_TRUE(boundary.GenerateInflow(0).transit.empty());
+    return counts;
+  };
+  EXPECT_EQ(sample(917),sample(917));
+  EXPECT_NE(sample(917),sample(918));
 }
 
 TEST(HyperFreeSamplingTest, ShockReservoirMomentumAndEnergyFluxes) {

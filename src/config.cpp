@@ -220,6 +220,10 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.collisions.omega = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature_unit_k") {
     config.collisions.temperature_unit = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "hyperfree_inflow_rounding") {
+    if (prepared_value != "accumulated" && prepared_value != "stochastic")
+      ThrowOptionError(raw_key, ctx, "expected accumulated or stochastic");
+    config.hyperfree_inflow_rounding = prepared_value;
   } else if (key == "seed") {
     unsigned int seed = 0;
     const auto result = std::from_chars(prepared_value.data(), prepared_value.data() + prepared_value.size(), seed);

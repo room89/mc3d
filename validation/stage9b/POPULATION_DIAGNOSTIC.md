@@ -108,7 +108,73 @@ If discrepancy persists, retain the negative result and isolate time-step/order
 sensitivity next. Any promising result still requires fresh-seed confirmation,
 qualified uncertainty and the remaining numerical and experimental gates.
 
+### Experimental mode interface
+
+The solver JSON field `hyperfree_inflow_rounding` accepts `accumulated`
+(default) or `stochastic`; the solver CLI uses `--hyperfree-inflow-rounding`.
+SI configuration accepts the same field under `numerics`. The campaign runner
+also accepts `--hyperfree-inflow-rounding stochastic`, records it in its report,
+and rejects a changed mode on resume before rewriting evidence. Historical
+reports without the field mean `accumulated`. The mode affects MC3D hyperfree
+boundaries only; SPARTA already uses stochastic count rounding.
+
+For a controlled MC3D-only campaign, use the frozen new binary and runner with
+`--variants E --seeds 210001 210002 210003 --warmup-transits 20
+--domain-multiplier 2 --population-multiplier 4 --hyperfree-inflow-rounding stochastic
+--load-mode full --no-time-budget` and a new output directory. Omit `--sparta-bin`
+when using the already verified SPARTA comparator. Freeze provenance before
+launch; the command alone does not certify physical acceptance.
+
+### Completed stochastic-rounding control
+
+The frozen `output/shock-inflow-stochastic-v2` campaign completed all three
+MC3D runs (seeds 210001–210003), each with all 64 production windows. Source
+`da0d11c43bcae08f5db7c9d35a4b8cd9cbc6e1eb` and its frozen inputs were retained.
+The earlier v1 attempt failed during the runner's RSS monitoring immediately after launch;
+its evidence was retained separately. The diagnosed infrastructure failure was
+retried in v2 with unchanged frozen source, binary and numerical inputs.
+
+Compared with the completed accumulated-rounding population-4 series, only
+`hyperfree_inflow_rounding` changed among physical and numerical parameters;
+unit scales match for all three seeds. Paths in provenance necessarily differ.
+The original-coordinate comparison uses all windows and the same central grid,
+without translation or interpolation. The maximum absolute normalized mean
+profile difference from the historical SPARTA comparator is 0.04436484, versus
+0.04910187 for accumulated rounding. The maximum change between MC3D rounding
+modes is 0.00552855. The stochastic ensemble's maximum absolute half-run profile
+change is 0.00387417. These descriptive values have no qualified uncertainty;
+reused seed labels do not make trajectories paired.
+
+Stochastic per-run front positions are [0.18378984, 0.12685153, 0.18583472]
+and 10–90 widths are [4.65884641, 4.64459645, 4.63370869], in collision mean free
+path units. Full-domain second-half minus first-half normalized density
+integrals are [-0.01224975, -0.02485216, -0.02118041]. Outer regions contribute;
+these signs neither establish significant drift nor identify its cause.
+Whole-run and eight fixed, whole-step section balances close exactly for particle
+count; longitudinal momentum and energy residuals are below 1e-10 of absolute
+incoming plus outgoing exchange. This checks bookkeeping, not boundary physics.
+
+Local evidence: `output/shock-inflow-stochastic-analysis-v1.json` (SHA-256
+`e16758ac5fc0fb1cf9356ffe2765a2618aded8c8a32b1cabba1c830bdf15c76c`),
+`output/inflow-stochastic-input-audit-v2.json`,
+`output/inflow-stochastic-full-regions-v1.json`, and
+`output/inflow-stochastic-boundary-balances-v1.json`.
+
+The discrepancy persists. Keep accumulated rounding as default; this control
+does not establish causality, stationarity, convergence or physical acceptance.
+The comparison below measures time-step sensitivity at the same domain,
+population and sampling schedule. Changing collision/motion order is a separate
+intervention. Fresh confirmation and all remaining numerical, experimental,
+wedge and dynamic-wall gates still apply.
+
 ## Timestep comparison at fourfold population
+
+The comparison uses variants C and E at domain multiplier 2, population
+multiplier 4 and warmup 20, with the pinned baseline solver binaries and
+accumulated MC3D inflow rounding. The configuration comparison for all
+three seeds found two differences between C and E: Cu (0.5 versus 0.25)
+and collision Courant (0.1 versus 0.05). The comparison measures the
+combined sensitivity to those two time-step controls.
 
 Both solvers completed three runs per timestep with seed labels 210001–210003.
 The C comparison uses three complete SPARTA recovery runs. The interrupted
