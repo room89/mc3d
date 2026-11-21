@@ -12,6 +12,7 @@
 #include <pereodic_boundary.h>
 #include <point.h>
 
+#include <array>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
@@ -40,6 +41,8 @@ class CellCluster {
 
  public:
   ConservedQuantity step_incoming, step_outgoing;
+  // Open faces in x-, x+, y-, y+, z-, z+ order, then multi-face exits.
+  std::array<std::size_t, 7> step_outgoing_counts{};
   Point step_body_impulse{0, 0, 0}, step_mirror_impulse{0, 0, 0};
   double step_body_heat = 0, step_mirror_heat = 0;
   CollisionParameters collision_parameters;
