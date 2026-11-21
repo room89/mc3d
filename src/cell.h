@@ -102,6 +102,7 @@ class Cell {
   std::vector<Geometry::Exchange> surface_exchanges;
   ConservedQuantity incoming_quantity;
   CellMoments ComputeMoments() const;
+  double SampleInflowRounding() { return Random().Uniform(); }
   explicit Cell(std::shared_ptr<utils::RandomStream> random = nullptr);
   Cell(uint32_t seed, uint64_t stream_id);
   Cell(const Cell&) = delete;

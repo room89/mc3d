@@ -92,12 +92,16 @@ def sparta_profile(folder):
     ref=json.loads((folder/'reference.json').read_text())
     if ref['quick']:raise ValueError('Smoke run is not production data')
     n1=ref['reference']['left']['number_density_m3'];n2=ref['reference']['right']['number_density_m3'];lam=ref['reference']['mean_free_path_m'];step=ref['steps_per_window'];windows=[]
-    burn=ref["burn_steps"]
-    measurement=ref["measurement_steps"]
-    if step <= 0 or burn < 0 or measurement % step or measurement//step != len(ref["source"]["statistics_windows_s"]):
-        raise ValueError("Inconsistent SPARTA production schedule")
-    for wi in range(measurement//step):
-        lines=(folder/f'profile.{burn+(wi+1)*step}').read_text().splitlines()
+    if 'burn_steps' in ref or 'measurement_steps' in ref:
+        burn = ref['burn_steps']
+        measurement = ref['measurement_steps']
+    else:
+        burn = ref.get('warmup_windows', 32) * step
+        measurement = 64 * step
+    if step <= 0 or burn < 0 or measurement % step or measurement // step != len(ref['source']['statistics_windows_s']):
+        raise ValueError('Inconsistent SPARTA production schedule')
+    for wi in range(measurement // step):
+        lines = (folder / f'profile.{burn + (wi + 1) * step}').read_text().splitlines()
         header=next(i for i,line in enumerate(lines) if line.startswith('ITEM: CELLS '));fields=lines[header].split()[2:]
         rows=[dict(zip(fields,map(float,line.split()))) for line in lines[header+1:] if line.strip()]
         nx=ref['source']['numerics']['cells_x'];groups={}

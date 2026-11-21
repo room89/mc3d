@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 
 #include "geometry.h"
@@ -42,7 +43,13 @@ Moment Integrate(const Poly& p) {
   P origin = p[0];
   for (size_t i = 1; i + 1 < p.size(); ++i) {
     long double a = Cross(origin, p[i], p[i + 1]) / 2;
-    if (a < 0) throw std::runtime_error("Negative clipped polygon orientation");
+    if (a < 0) {
+      // Clipping operates inside the unit square. Interpolating an intersection
+      // can put a collinear vertex a few ulps outside a triangle edge.
+      if (a < -8 * std::numeric_limits<long double>::epsilon())
+        throw std::runtime_error("Negative clipped polygon orientation");
+      continue;
+    }
     m.area += a;
     m.x += a * (origin.x + p[i].x + p[i + 1].x) / 3;
     m.y += a * (origin.y + p[i].y + p[i + 1].y) / 3;
