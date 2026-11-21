@@ -40,6 +40,38 @@ void AppendDouble(std::string& out, double value) {
 
 }  // namespace
 
+CellVolumeSummary SnapshotWriter::WriteCellGeometry() {
+  CellVolumeSummary summary;
+  std::ofstream out("cell_geometry.csv");
+  out << std::setprecision(17);
+  out << "index;x;y;z;dx;dy;dz;region;Vcell;Vgas;Vsolid;gas_fraction\n";
+  size_t index = 0;
+  long double full = 0, gas = 0, solid = 0;
+  for (const auto& cell : cluster_.cells) {
+    auto a = cell.GetApex(), s = cell.GetSize();
+    auto v = cluster_.body_ ? cluster_.body_->GasVolume(a, s)
+                            : CellVolume{s.Volume(), s.Volume(), 0,
+                                         CellRegion::Gas, a + s / 2};
+    if (std::abs(v.gas - cell.GetVolume()) > 1e-12 * v.full)
+      throw std::runtime_error("Stale cell gas volume");
+    ++summary.counts[static_cast<size_t>(v.region)];
+    full += v.full;
+    gas += v.gas;
+    solid += v.solid;
+    const char* names[] = {"gas", "cut", "solid"};
+    out << index++ << ';' << a.x << ';' << a.y << ';' << a.z << ';' << s.x
+        << ';' << s.y << ';' << s.z << ';'
+        << names[static_cast<size_t>(v.region)] << ';' << v.full << ';' << v.gas
+        << ';' << v.solid << ';' << v.gas / v.full << '\n';
+  }
+  out.close();
+  SimulationRunner::RequireWrite(bool(out));
+  summary.full = full;
+  summary.gas = gas;
+  summary.solid = solid;
+  return summary;
+}
+
 void SnapshotWriter::SetBinaryOutput(bool enabled) { binary_output_ = enabled; }
 
 bool SnapshotWriter::WriteFile(const std::string& file_name) {
@@ -49,20 +81,27 @@ bool SnapshotWriter::WriteFile(const std::string& file_name) {
     return false;
   }
 
-  if (binary_output_) {
-    return WriteBinarySnapshot(file);
-  }
-
-  return WriteTextSnapshot(file);
+  const bool success = binary_output_ ? WriteBinarySnapshot(file) : WriteTextSnapshot(file);
+  file.close();
+  if (!success || !file) return false;
+  if (cluster_.body_ && cluster_.body_->SurfaceHeatingEnabled())
+    return cluster_.body_->WriteSurfaceSnapshot(file_name + ".surface.csv", cluster_.t);
+  return true;
 }
 
 bool SnapshotWriter::WriteFile() {
+  if (cluster_.body_ && cluster_.body_->SurfaceHeatingEnabled() &&
+      !cluster_.body_->WriteSurfaceSnapshot("data.dat.surface.csv", cluster_.t)) return false;
   std::ofstream file1("data.dat");
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     auto ap = cell.GetCenter();
 
     file1 << ap << "\t"
-          << double(cell.GetParticleCount()) / (cell.GetVolume() * cluster_.density)
+          << (cell.GetVolume() > 0 && cluster_.density > 0
+                  ? double(cell.GetParticleCount()) /
+                        (cell.GetVolume() * cluster_.density)
+                  : 0.0)
           << "\t" << cell.ComputeMoments().temperature << '\n';
   }
   file1.close();
@@ -76,6 +115,7 @@ bool SnapshotWriter::WriteTextSnapshot(std::ofstream& file) {
   buffer.append("x;y;z;N;ro;T;vx;vy;vz;E\n");
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto center = cell.GetCenter();
     const auto moments = cell.ComputeMoments();
     const auto velocity = moments.velocity;
@@ -132,6 +172,7 @@ bool SnapshotWriter::WriteBinarySnapshot(std::ofstream& file) {
   }
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto center = cell.GetCenter();
     const auto moments = cell.ComputeMoments();
     const auto velocity = moments.velocity;
@@ -171,6 +212,7 @@ bool SnapshotWriter::WriteSpeedFile(const char* file_name) {
   std::ofstream file1(file_name);
   Point ap;
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     ap = cell.GetCenter();
     file1 << ap << cell.ComputeMoments().velocity << '\n';
   }
@@ -182,6 +224,7 @@ bool SnapshotWriter::WriteSpeedFile() {
   std::ofstream file1("speed.dat");
   Point ap;
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     ap = cell.GetCenter();
 
     file1 << ap << "\t" << cell.ComputeMoments().velocity << '\n';
@@ -224,10 +267,11 @@ bool SnapshotWriter::WriteCellFile(const std::string& init_file) {
   file << "cluster" << std::endl;
 
   for (auto& cell : cluster_.cells) {
+    cell.ValidateGasPopulation();
     const auto moments = cell.ComputeMoments();
     Point V = moments.velocity;
     double S = std::sqrt((V.x * V.x + V.y * V.y) / 2 * moments.temperature);
-    double alpha = M_PI / 2 - std::atan(V.x / V.y);
+    double alpha = (V.x == 0 && V.y == 0) ? 0 : M_PI / 2 - std::atan(V.x / V.y);
     if (V.x > 100000 * V.y) {
       V.x > 0 ? alpha = 0 : alpha = 3.141592654;
     }
@@ -286,19 +330,247 @@ bool SimulationRunner::UpdateSnapshotSchedule() {
 }
 
 void SimulationRunner::Compute() {
+  if (resolution_diagnostics_ && !steps_) {
+    std::ofstream out("resolution_steps.csv");
+    out << "step;time;end_time;dt;transport_limit;collision_limit;max_dt_nu;"
+           "solid;unavailable;N0;N1;N2_4;N5_9;N10_19;N20_49;N50_plus;dx_lt05;"
+           "dx_05_1;dx_1_2;dx_2_5;dx_ge5;dy_lt05;dy_05_1;dy_1_2;dy_2_5;dy_ge5;"
+           "dz_lt05;dz_05_1;dz_1_2;dz_2_5;dz_ge5;dt_le005;dt_005_01;dt_01_02;"
+           "dt_gt02;limiter;limiting_cell;axis;boundary\n";
+    out.close();
+    RequireWrite(bool(out));
+  }
   size_t step = 0;
-  while (cluster_.t < cluster_.t_end) {
-    LOG_INFO() << "Time step:" << ++step;
-    utils::Stopwatch stopwatch("ClusterStep");
-    Step();
+  RuntimeControl control(runtime_control_path_, cluster_.thread_pool_.GetCapacity());
+  std::chrono::steady_clock::duration work{};
+  while (cluster_.t < cluster_.t_end && !stop_requested) {
+    auto workers=control.WaitBeforeStep(work, [] { return stop_requested != 0; });
+    if(stop_requested) break;
+    cluster_.thread_pool_.SetActiveThreadCount(workers);
+    if(runtime_progress) runtime_progress(cluster_.t, steps_, control.Mode(), workers);
+    const auto started = std::chrono::steady_clock::now();
+    {
+      LOG_INFO() << "Time step:" << ++step;
+      utils::Stopwatch stopwatch("ClusterStep");
+      Step();
+    }
+    work = std::chrono::steady_clock::now() - started;
+    if(progress) progress(cluster_.t, steps_);
+  }
+  if (resolution_diagnostics_ && steps_) FlushLastResolution();
+  if (statistics_) statistics_->Write();
+}
+
+void SimulationRunner::SetForceReference(double area, double speed, double alpha) {
+  const double q = 0.5 * speed * speed;
+  const double scale = q * area;
+  if (!(area > 0) || !std::isfinite(area) || !(speed > 0) ||
+      !std::isfinite(speed) || !std::isfinite(alpha) ||
+      !(scale > 0) || !std::isfinite(scale))
+    throw std::invalid_argument("Force coefficients require positive finite area and speed, and finite flow angle");
+  if (body_loads_.is_open())
+    throw std::logic_error("Cannot change force reference after recording loads");
+  reference_area_ = area;
+  dynamic_pressure_ = q;
+  flow_angle_ = alpha;
+  force_scale_ = scale;
+}
+
+void SimulationRunner::WriteBodyLoads(const StepResult& result) {
+  if (!cluster_.body_ || cluster_.body_->PolygonCount() == 0) return;
+  if (!body_loads_.is_open()) {
+    body_loads_.open("body_loads.csv");
+    body_loads_ << std::setprecision(17);
+    body_loads_ << "time;dt;Fx;Fy;Fz;mean_Fx;mean_Fy;mean_Fz";
+    if (force_scale_)
+      body_loads_ << ";reference_area;dynamic_pressure;flow_angle;Cx;Cy;Cz;Cd;Cl;mean_Cx;mean_Cy;mean_Cz;mean_Cd;mean_Cl";
+    body_loads_ << '\n';
+  }
+  body_loads_ << result.time << ';' << result.dt;
+  for (const auto& f : {result.body_force, result.mean_body_force})
+    body_loads_ << ';' << f.x << ';' << f.y << ';' << f.z;
+  if (force_scale_) {
+    body_loads_ << ';' << reference_area_ << ';' << dynamic_pressure_ << ';' << flow_angle_;
+    for (const auto& f : {result.body_force, result.mean_body_force}) {
+      const Point c = f / *force_scale_;
+      const double cd = c.x * std::cos(flow_angle_) + c.y * std::sin(flow_angle_);
+      const double cl = -c.x * std::sin(flow_angle_) + c.y * std::cos(flow_angle_);
+      body_loads_ << ';' << c.x << ';' << c.y << ';' << c.z << ';' << cd << ';' << cl;
+    }
+  }
+  body_loads_ << '\n';
+  body_loads_.flush();
+  RequireWrite(bool(body_loads_));
+}
+
+void SimulationRunner::FlushLastResolution() {
+  if (last_resolution_rows_.empty()) return;
+  std::ofstream out("resolution_cells_" + std::to_string(steps_) + ".csv");
+  out << last_resolution_rows_;
+  out.close();
+  RequireWrite(bool(out));
+}
+
+void SimulationRunner::WriteResolution() {
+  const auto step = steps_ + 1;
+  const bool detailed =
+      steps_ == 0 || cluster_.t + cluster_.dt >= cluster_.t_end ||
+      (snapshot_interval_ <= 0 ||
+       cluster_.t + cluster_.dt + kSnapshotTolerance >= next_snapshot_time_);
+  std::ofstream summary("resolution_steps.csv",
+                        steps_ ? std::ios::app : std::ios::out);
+  summary.precision(17);
+  if (!steps_)
+    summary << "step;time;end_time;dt;transport_limit;collision_limit;max_dt_"
+               "nu;solid;unavailable;N0;N1;N2_4;N5_9;N10_19;N20_49;N50_plus;dx_"
+               "lt05;dx_05_1;dx_1_2;dx_2_5;dx_ge5;dy_lt05;dy_05_1;dy_1_2;dy_2_"
+               "5;dy_ge5;dz_lt05;dz_05_1;dz_1_2;dz_2_5;dz_ge5;dt_le005;dt_005_"
+               "01;dt_01_02;dt_gt02;limiter;limiting_cell;axis;boundary\n";
+  std::ostringstream detail;
+  {
+    detail.precision(17);
+    detail << "step;time;end_time;index;region;status;N;gas_fraction;nu_bound;"
+              "nu_eq;"
+              "lambda_eq;dx_lambda;dy_lambda;dz_lambda;dt_nu;transport_limit\n";
+  }
+  std::array<std::size_t, 7> population{};
+  std::array<std::size_t, 15> spatial{};
+  std::array<std::size_t, 4> temporal{};
+  std::size_t index = 0, solid = 0, unavailable = 0;
+  double max_ratio = 0;
+  long collision_cell = -1, transport_cell = -1;
+  int transport_axis = -1;
+  for (const auto& cell : cluster_.cells) {
+    const auto& r = cell.resolution;
+    const auto size = cell.GetSize();
+    const auto n = r.count;
+    if (r.frequency > 0 &&
+        cluster_.collision_courant / r.frequency == cluster_.collision_dt &&
+        collision_cell < 0)
+      collision_cell = index;
+    if (r.transport * cluster_.Cu == cluster_.transport_dt &&
+        transport_cell < 0) {
+      transport_cell = index;
+      transport_axis = r.transport_axis;
+    }
+    if (cell.GetVolume() == 0)
+      ++solid;
+    else
+      ++population[n == 0   ? 0
+                   : n == 1 ? 1
+                   : n < 5  ? 2
+                   : n < 10 ? 3
+                   : n < 20 ? 4
+                   : n < 50 ? 5
+                            : 6];
+    if (!r.mean_free_path) ++unavailable;
+    const double ratio = cluster_.dt * r.frequency;
+    if (cell.GetVolume() > 0)
+      ++temporal[ratio <= .05 ? 0 : ratio <= .1 ? 1 : ratio <= .2 ? 2 : 3];
+    if (r.mean_free_path) {
+      int axis = 0;
+      for (double extent : {size.x, size.y, size.z}) {
+        const double q = extent / *r.mean_free_path;
+        ++spatial[5 * axis + (q < .5  ? 0
+                              : q < 1 ? 1
+                              : q < 2 ? 2
+                              : q < 5 ? 3
+                                      : 4)];
+        ++axis;
+      }
+    }
+    max_ratio = std::max(max_ratio, ratio);
+    {
+      detail << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt
+             << ';' << index << ';'
+             << (cell.GetVolume() == 0               ? "solid"
+                 : cell.GetVolume() == size.Volume() ? "gas"
+                                                     : "cut")
+             << ';'
+             << (cell.GetVolume() == 0 ? "solid"
+                 : r.mean_free_path    ? "valid"
+                 : r.count < 2         ? "low_population"
+                 : cell.collision_parameters.kind == CollisionKind::None
+                     ? "collisions_disabled"
+                     : "cold")
+             << ';' << n << ';' << cell.GetVolume() / size.Volume() << ';'
+             << r.frequency << ';';
+      if (r.equilibrium_frequency) detail << *r.equilibrium_frequency;
+      detail << ';';
+      if (r.mean_free_path) detail << *r.mean_free_path;
+      for (double extent : {size.x, size.y, size.z}) {
+        detail << ';';
+        if (r.mean_free_path) detail << extent / *r.mean_free_path;
+      }
+      detail << ';' << cluster_.dt * r.frequency << ';';
+      if (std::isfinite(r.transport)) detail << r.transport;
+      detail << '\n';
+    }
+    ++index;
+  }
+  summary << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt << ';'
+          << cluster_.dt << ';';
+  if (std::isfinite(cluster_.transport_dt)) summary << cluster_.transport_dt;
+  summary << ';';
+  if (std::isfinite(cluster_.collision_dt)) summary << cluster_.collision_dt;
+  summary << ';' << max_ratio << ';' << solid << ';' << unavailable;
+  for (auto count : population) summary << ';' << count;
+  for (auto count : spatial) summary << ';' << count;
+  for (auto count : temporal) summary << ';' << count;
+  const char* limiter = cluster_.dt == cluster_.t_end - cluster_.t ? "end_time"
+                        : cluster_.collision_dt <= cluster_.transport_dt
+                            ? "collision"
+                            : "transport";
+  summary << ';' << limiter << ';';
+  if (std::string(limiter) == "collision")
+    summary << collision_cell << ";;";
+  else if (std::string(limiter) == "transport") {
+    if (transport_cell >= 0)
+      summary << transport_cell << ';' << transport_axis << ';';
+    else {
+      summary << ";;";
+      for (size_t b = 0; b < cluster_.boundary_cond_outer.size(); ++b)
+        if (cluster_.boundary_cond_outer[b]->TransportTimeLimit() *
+                cluster_.Cu ==
+            cluster_.transport_dt) {
+          summary << b;
+          break;
+        }
+    }
+  } else
+    summary << ";;";
+  summary << '\n';
+  summary.close();
+  RequireWrite(bool(summary));
+  last_resolution_rows_ = detail.str();
+  if (detailed) {
+    std::ofstream out("resolution_cells_" + std::to_string(step) + ".csv");
+    out << last_resolution_rows_;
+    out.close();
+    RequireWrite(bool(out));
   }
 }
 
 StepResult SimulationRunner::Step() {
-  const auto result = cluster_.TimeStep();
+  cluster_.before_step = [this] {
+    if (resolution_diagnostics_) WriteResolution();
+    if (statistics_) statistics_->BeforeStep();
+  };
+  StepResult result;
+  try {
+    result = cluster_.TimeStep();
+  } catch (...) {
+    cluster_.before_step = {};
+    throw;
+  }
+  cluster_.before_step = {};
+  ++steps_;
+  if (statistics_) statistics_->AfterStep();
+  WriteBodyLoads(result);
   if (result.inner_particles > 0)
     LOG_WARNING() << "Particles inside body at time " << result.time << ": " << result.inner_particles;
   if (UpdateSnapshotSchedule()) {
+    if (statistics_) statistics_->Write();
     std::ostringstream name;
     name << "data" << result.time << ".dat";
     RequireWrite(writer_.WriteFile(name.str()));

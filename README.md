@@ -7,9 +7,13 @@ MC3D — экспериментальный решатель разреженн�
 в процессе модернизации (перевод на современный стиль C++, чистка API и
 инфраструктуры сборки).
 
+[План развития физической модели](PHYSICS_PLAN.md) описывает переход к
+проверяемой VHS-модели аргона: этапы, критерии готовности, эталоны и статус работы.
+
 ## Возможности
-- геометрия твёрдого тела, задаваемая наборами полигонов (генерация клина,
-  пирамиды, куба либо импорт STL);
+- встроенные куб и клин с детерминированными газовыми объёмами ячеек;
+  тело должно лежать строго внутри области. Запуски с пирамидой, цилиндром
+  и STL временно отклоняются до появления проверенной модели объёма;
 - сетка ячеек (`CellCluster`) с контролем граничных условий
   (зеркальные, периодические, свободные, «гипер-свободные»);
 - моделирование движения частиц, столкновения, сбор статистики по ячейкам;
@@ -38,7 +42,9 @@ make clean
 использует демонстрационный набор `configs/example.json`, а `make run-smoke`
 запускает короткий расчёт на маленькой сетке без геометрии тела. Все файлы,
 созданные при запуске через Makefile, сохраняются в `output/`; каталог можно
-переопределить, например `OUTPUT_DIR=results/example`.
+переопределить, например `OUTPUT_DIR=results/example`. Он должен быть новым
+или пустым. `make run` передаёт его через `--output-dir`; входные пути
+разрешаются относительно каталога, из которого запущен make.
 
 Проверки запускаются командой `ctest --test-dir build --output-on-failure`.
 Каждый тест GoogleTest зарегистрирован в CTest отдельно, поэтому имя
@@ -118,6 +124,55 @@ python3 tools/body_flow_report.py --config configs/body_flow.json \
   ./build/MC3dSolver --geometry-type wedge --geometry-wedge-alpha 0.349
   ```
 
+### Управление нагрузкой во время расчёта
+
+Включите управление нагрузкой через `make run`:
+
+```bash
+make run CONFIG=configs/example.json OUTPUT_DIR=output/example LOAD_MODE=balanced
+```
+
+Из другого терминала, из корня репозитория:
+
+```bash
+make load OUTPUT_DIR=output/example LOAD_MODE=quiet
+make load OUTPUT_DIR=output/example LOAD_MODE=balanced
+make load OUTPUT_DIR=output/example LOAD_MODE=pause
+make load OUTPUT_DIR=output/example LOAD_MODE=full
+```
+
+| Режим | Рабочие потоки | Доля времени работы между шагами |
+|---|---|---|
+| `full` | Все заданные `--threads` | 100% |
+| `balanced` | Половина, округляя вверх | 60% |
+| `quiet` | Один | 25% |
+| `pause` | Новые шаги не запускаются | 0% |
+
+Без `LOAD_MODE` Makefile не создаёт файл управления. Если управление
+включено напрямую в solver, начальный режим — `full`. `make run LOAD_MODE=...`
+записывает выбранный режим в `OUTPUT_DIR.control` перед запуском.
+`make load` атомарно записывает запрос; это не
+подтверждение, что solver работает или уже применил его. Применение видно
+в логе по `Runtime load:`. Файл можно создать до запуска, чтобы начать в
+нужном режиме. Сохранённый режим действует и при следующем запуске с тем же
+файлом при прямом запуске. Для собственного пути у make используйте
+`CONTROL_FILE=...`; при прямом запуске — `--runtime-control PATH` у solver
+и `--file PATH` у скрипта; каждый расчёт должен иметь отдельный файл.
+
+Изменения применяются между завершёнными шагами; во время отдыха и паузы
+файл проверяется каждые 200 мс. Длинный шаг задерживает переключение.
+Инициализация и финальная запись снимков не ограничиваются. Пауза сохраняет
+расчёт в памяти, это не контрольная точка для перезапуска процесса.
+Ошибочный, удалённый или недоступный файл оставляет последний принятый режим.
+Без `--runtime-control` управление выключено.
+
+Доли относятся к реальному времени работы и отдыха, а не к показанию CPU в
+Activity Monitor. Это ограничение средней нагрузки, не гарантия температуры
+или шума: внутри шага выбранные потоки могут работать на полной скорости.
+Параметры физики, `dt` и состояние частиц не меняются, но изменение числа
+потоков может изменить порядок переноса частиц, как и обычный многопоточный
+запуск. Старому уже работающему бинарнику эта возможность недоступна.
+
 ### Конфигурационный файл
 Любую опцию можно перенести в JSON-файл:
 ```json
@@ -181,6 +236,122 @@ python3 tools/body_flow_report.py --config configs/body_flow.json \
 
 ## Визуализация результатов
 
+### Быстрый просмотр полей и анимации
+
+После завершения расчёта постройте плотность `ro`, температуру `T` и
+продольную скорость `vx`, а также GIF температуры одной командой:
+
+```bash
+# Зависимости (в активном Python-окружении):
+python -m pip install numpy pandas matplotlib pillow
+python tools/plot_fields.py output/wedge-preview --gif
+open output/wedge-preview/plots
+```
+
+Укажите фактический каталог своего запуска. Скрипт читает `final.dat` для
+PNG и `data*.dat` для GIF; поддерживаются текстовые и бинарные снимки.
+Результаты: `plots/ro_xy.png`, `plots/T_xy.png`, `plots/vx_xy.png` и
+`plots/temperature.gif`. Без `--gif` создаются только PNG.
+По умолчанию выбирается один слой ячеек XY, ближайший к `z=0`
+(при равном расстоянии — положительный). `--plane xz --slice 0.1`
+выбирает слой рядом с `y=0.1`, `--out PATH` меняет каталог результата.
+Шкала температуры GIF фиксирована от 0 до 12; её можно изменить через
+`--vmin` и `--vmax`. PNG имеют собственные автоматические шкалы.
+Это мгновенные поля без временного усреднения и без контура тела;
+интерполяция между центрами ячеек может сглаживать особенности у стенки.
+
+### Нагрев полигонов и силы на теле
+
+Параметр `wall_heat_capacity` (CLI: `--wall-heat-capacity`) включает
+динамическую температуру каждого треугольника. `wall_temperature` задаёт
+начальную температуру. Без теплоёмкости стенка остаётся изотермической.
+Значения обоих параметров должны быть конечными и положительными;
+для нагрева нужна непустая геометрия без вырожденных треугольников.
+
+`wall_heat_capacity` — **общая** теплоёмкость поверхности в нормированных
+единицах решателя, где плотность невозмущённого газа равна 1, а энергия
+частицы на единицу массы равна `v²/2`. Это не значение в Дж/К без перевода
+единиц. Теплоёмкость треугольника `Ci = Ctotal * Ai / Atotal` соответствует
+одинаковому материалу и толщине прогреваемого слоя по всей поверхности.
+Это независимые тепловые элементы: теплопроводность между ними, излучение
+и теплоотвод внутрь тела пока не моделируются. Мелкие треугольники имеют
+меньшую теплоёмкость и более шумную температуру; измельчение STL требует
+проверки статистики и шага времени.
+
+При отражении накапливается `ΔQi = w * (vin² - vout²) / 2`, где
+`w = 1 / ReferenceParticleDensity(config)`. Поэтому увеличение `np` или
+числа ячеек не меняет физический вес газа. В течение шага все отражения
+используют температуру начала шага; после завершения рабочих потоков
+обновляется `Ti += ΣΔQi / Ci`. Газ может нагревать и охлаждать поверхность.
+Если новая температура неположительна или не конечна, расчёт завершается
+с ошибкой, без обрезки температуры и потери баланса энергии. Уменьшите `Cu`
+и проверьте сходимость; теплоёмкость следует выбирать по модели материала.
+Даже положительная температура не гарантирует точность большого теплового шага.
+
+Рядом с каждым обычным снимком появляется файл `<snapshot>.surface.csv`
+(включая `initial.dat.surface.csv` и `final.dat.surface.csv`): время,
+индекс и вершины треугольника, температура, теплоёмкость и суммарное тепло
+`absorbed_heat` со знаком плюс при нагреве. Формат газовых снимков не меняется.
+
+Для любой непустой геометрии `body_loads.csv` записывает каждый шаг:
+`Fx/Fy/Fz = w * Σ(vin - vout) / dt` и средние с начала расчёта
+`mean_F* = Σ(F*dt) / t`. Это сила **газа на тело** в нормированных единицах,
+включающая нормальную и касательную передачу импульса; режим нагрева
+для её вычисления не обязателен. Средние включают начальный переходный
+процесс. Для установившихся характеристик усредняйте позднее окно по `dt`.
+
+При заданном `force_reference_area` (`--force-reference-area`) добавляются
+`Cx/Cy/Cz = Fx/Fy/Fz / (q∞ * Aref)` и их средние, где
+`q∞ = U∞²/2 = S²*T∞`. Площадь должна быть положительной и конечной,
+скорость потока — ненулевой. В CSV сохраняются площадь, скоростной напор
+и угол потока. Оси `Cx/Cy` — глобальные X/Y; дополнительно `Cd` направлен
+вдоль потока, `Cl` — перпендикулярно ему в плоскости XY:
+`Cd = Cx*cos(alpha) + Cy*sin(alpha)`,
+`Cl = -Cx*sin(alpha) + Cy*cos(alpha)`. При `alpha=0` они совпадают с `Cx/Cy`.
+Без опорной площади записываются только силы, коэффициенты не вычисляются.
+
+Пример параметров для `configs/hypersonic_wedge.json`:
+
+```text
+--wall-temperature 1 --wall-heat-capacity 10 --force-reference-area 0.18
+```
+
+Здесь `0.18 = length * width` — выбранная площадь клина в плане, а `10` —
+демонстрационная теплоёмкость, не параметр конкретного материала. Для STL
+выбирайте площадь явно и сохраняйте её одинаковой при сравнении расчётов.
+Все выходные файлы пишутся в рабочий каталог запуска; используйте отдельный
+каталог для каждого расчёта.
+
+### Визуализация поверхности и интегральных характеристик
+
+Общая команда `tools/plot_fields.py RUN --gif` автоматически добавляет
+визуализации тела, если в каталоге есть новые CSV. Для построения только
+по поверхностным данным и силам (без газовых снимков):
+
+```bash
+python3 tools/plot_body.py output/my-run --gif
+```
+
+В `RUN/plots` (или каталоге `--out`) создаются:
+
+- `surface_temperature.png` — трёхмерная сетка тела, цвет каждого
+  треугольника соответствует его температуре в последнем снимке;
+- `surface_history.png` — средняя температура с весами по теплоёмкости,
+  диапазон min–max полигонов и суммарное поглощённое тепло;
+- `surface_temperature.gif` при `--gif` — нагрев поверхности с общей
+  цветовой шкалой для всех времён и фиксированным ракурсом;
+- `body_forces.png` — силы Fx/Fy/Fz за шаг и их средние с начала расчёта;
+- `body_coefficients.png` — Cx/Cy/Cz и Cd/Cl за шаг и их средние, если
+  при расчёте была задана опорная площадь.
+
+Время берётся из CSV, снимки сортируются по времени; дублирующий финальный
+снимок не добавляет второй кадр. Длительность кадров GIF пропорциональна
+интервалам модельного времени (с минимальным кадром 20 мс), последний
+кадр задерживается. Газовая и поверхностная температуры имеют отдельные
+цветовые шкалы. Для изотермического расчёта без поверхностных снимков
+строятся только доступные графики сил и коэффициентов. Старые расчёты
+без новых CSV обрабатываются `plot_fields.py` как прежде.
+
 ### Клин и температура стенки
 
 Отражение от тела диффузное, с полной тепловой аккомодацией. Температура
@@ -240,8 +411,16 @@ python3 tools/wedge_wall_report.py --coarse results/wedge-coarse \
 `Kn/N`; их нужно пересчитать перед количественными сравнениями. Исправление
 нормировки не является полной валидацией решателя: оценка газового объёма
 пересечённых телом ячеек и сходимость пространственной сетки требуют отдельной
-проверки. При пяти и менее частицах существующая модель пропускает столкновения;
-для исследования независимости от статистики следует избегать такого режима.
+проверки. Столкновения разрешены при двух и более частицах; пустые и одиночные
+ячейки не сталкиваются. Малая заселённость увеличивает статистическую погрешность
+и сама по себе не обеспечивает достаточную точность расчёта.
+
+`CollisionModel::ApplyWithStats` выполняет то же ядро, что и `Apply`, и возвращает
+`CollisionStats::accepted_collisions` (`uint64_t`) — число принятых событий пар
+за вызов. Отклонённые попытки не учитываются; статистика не меняет траектории
+и состояние RNG. При `dt <= 0` столкновительная фаза не расходует RNG.
+Нормировка сохраняет число различных пар `N*(N-1)/2`: частота малой популяции
+не обязана совпадать с пределом большого ансамбля.
 
 ### Гиперзвуковой поток и `hyperfree`
 
@@ -466,3 +645,80 @@ python3 tools/benchmark_solver.py --baseline /path/to/old/MC3dSolver \
 сценариях и на 15–27% в увеличенном сценарии. Полный шаг ускорился на 1–8%
 во всех девяти случаях. Это результаты конкретных сценариев; многопоточный
 порядок поступления частиц и траектории могут различаться.
+
+### VHS and argon
+
+`collision_model` (CLI `--collision-model`) accepts `hs` (default), `vhs`,
+`none`. VHS requires finite positive `molecular_mass_kg`, `vhs_diameter_m`,
+`vhs_reference_temperature_k`, `temperature_unit_k`, and `vhs_omega` in [0.5,1].
+Temperature in kelvin is solver temperature times `temperature_unit_k`;
+velocity scale is sqrt(kB*temperature_unit_k/mass). Full SI input is not yet provided.
+
+VHS uses isotropic scattering and the SPARTA/Bird diameter convention:
+K(g)=pi*d_ref^2/Gamma(2.5-omega)*(4*kB*Tref/mass)^(omega-0.5)*g^(2-2*omega).
+At zero speed K is zero for omega<1 and its finite limit for omega=1.
+For omega=1 even a cold pair has counted events without velocity changes.
+
+VHS Kn means lambda_eq(Tref)/L, where lambda_eq=mean thermal speed/(n*mean K).
+The Maxwell relative-speed moment is
+E[g^p]=(4*kB*T/mass)^(p/2)*Gamma((p+3)/2)/Gamma(1.5).
+At fixed Kn diameter fixes physical reference density, not another multiplier
+on the normalized collision rate. Experimental definitions of mean free path
+must be converted separately. At omega=0.5 the normalized rate is exactly HS.
+
+`python3 tools/argon_vhs.py --output configs/argon` reproduces the argon
+configuration and report offline from Eq. 2/Table 3 of
+https://doi.org/10.1007/s10765-025-03603-8 (zero-density viscosity, valid 84–10000 K).
+The fit uses 32 log-spaced samples over 300–2000 K and validates 1001 points.
+Maximum relative error is 3.098%; the acceptance threshold is 5%.
+The fit is not a validation against a shock-wave experiment.
+Example: `./build/MC3dSolver --config configs/argon/argon_vhs.json` with additional
+geometry/domain options as needed. The report JSON is not a solver configuration.
+
+SPARTA convention reference: https://github.com/sparta/sparta/blob/5702a655006b76fbe41de68d64c8f65249b64d23/src/collide_vss.cpp
+
+### Physical units and run manifests
+
+Ready-to-run checks and SI examples: [configs/README.md](configs/README.md).
+`tools/physical_config.py input_si.json --output-dir prepared_case` generates
+normalized `solver.json`, `units.json`, and a copy of the physical input.
+Physical input uses temperature K, number density m^-3, speed m/s and flow angle
+in the XY plane. Domain/geometry lengths and translations use metres, time uses
+seconds, wall capacity J/K, and reference area m². Unknown or conflicting inputs
+are rejected. Default scales are L0=domain x length and T0=inflow temperature.
+Optional `length_unit_m` and `temperature_unit_k` change normalization, not physics.
+
+`--output-dir DIR` requires a new or empty directory. Without it legacy output
+paths remain unchanged and each manifest is saved under `run_metadata/<id>/`.
+Manifests contain effective configuration, selected seed and thread count, build
+information, executable SHA-256, archived inputs, geometry hash, units, output
+hashes and completion status. SHA-256 is an integrity check, not a signature.
+`--units-file` binds SI scales to the effective configuration; incompatible CLI
+overrides fail. Optional `--provenance-file` accepts JSON describing experimental
+sources or another solver, with a `files` array of local paths to archive.
+Paths in this explicit provenance file are interpreted relative to the launch
+working directory. SI-generator provenance paths are relative to the SI input.
+
+`tools/replay_run.py MANIFEST --output-dir NEW_DIR` verifies inputs and executable
+before replay. `--binary` selects an executable; `--allow-different-binary`
+explicitly allows a changed hash and records that choice. Single-thread replay
+with the same binary/seed is tested for identical physical output; timing data is
+excluded. Multiple threads or changed compiler/platform do not guarantee bitwise
+identity. SIGINT/SIGTERM finish at a step boundary with `interrupted`; SIGKILL can
+leave `running`, which must not be interpreted as successful completion.
+There is no restart from intermediate snapshots.
+
+Unit multipliers: x=L0, t=L0/v0, T=T0, v=v0=sqrt(kB*T0/m), ro=n_inf;
+force=rho0*v0²*L0², absorbed heat=rho0*v0²*L0³,
+wall capacity=rho0*v0²*L0³/T0, pressure=rho0*v0², area=L0².
+Snapshot E is mean kinetic energy per molecule and uses m*v0²; N remains model
+particle count. Physical molecule weight is recorded separately. VHS Kn uses
+lambda_eq(Tref)/physical domain x length; no experimental mean-free-path
+convention is silently substituted. Legacy runs without a unit table are
+explicitly marked `normalized_only`.
+
+Runtime load control is preserved when using --output-dir; its input path is
+resolved before changing directories. The manifest records accepted scheduling
+policy changes (step, time, mode, worker limit). Replay disables live control
+and records this choice, so a stale pause file cannot block a replay. Timing
+policies and multi-worker scheduling are not claimed to replay bitwise.

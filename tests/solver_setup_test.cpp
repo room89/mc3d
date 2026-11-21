@@ -250,3 +250,42 @@ TEST(SimulationConfigTest, SeedIsOptionalAndValidated) {
   args[2] = overflow;
   EXPECT_THROW(mc3d::LoadSimulationConfig(3, args), std::runtime_error);
 }
+
+TEST(SimulationConfigTest, ParsesAndValidatesSurfaceCapacityAndReferenceArea) {
+  char program[] = "solver";
+  char capacity[] = "--wall-heat-capacity";
+  char area[] = "--force-reference-area";
+  char valid[] = "2.5";
+  char invalid[] = "-1";
+  char* args[] = {program, capacity, valid, area, valid};
+  const auto defaults = mc3d::LoadSimulationConfig(1, args);
+  EXPECT_FALSE(defaults.wall_heat_capacity);
+  EXPECT_FALSE(defaults.force_reference_area);
+  const auto cfg = mc3d::LoadSimulationConfig(5, args);
+  EXPECT_DOUBLE_EQ(*cfg.wall_heat_capacity, 2.5);
+  EXPECT_DOUBLE_EQ(*cfg.force_reference_area, 2.5);
+  args[2] = invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(5, args), std::invalid_argument);
+  args[2] = valid;
+  args[4] = invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(5, args), std::invalid_argument);
+}
+
+TEST(SimulationConfigTest, VhsRequiresExplicitPhysicalParameters) {
+ const char* args[]={"mc3d","--collision-model","vhs","--molecular-mass-kg","6.63e-26","--vhs-diameter-m","4e-10","--vhs-reference-temperature-k","300","--vhs-omega","0.75","--temperature-unit-k","300"};
+ auto argv=const_cast<char**>(args);
+ EXPECT_THROW(mc3d::LoadSimulationConfig(3,argv),std::invalid_argument);
+ auto config=mc3d::LoadSimulationConfig(13,argv);
+ EXPECT_EQ(config.collisions.kind,mc3d::CollisionKind::VHS);
+ EXPECT_DOUBLE_EQ(config.collisions.omega,.75);
+}
+
+TEST(SimulationConfigTest, ParsesHyperfreeInflowRounding) {
+  char program[]="solver", option[]="--hyperfree-inflow-rounding";
+  char valid[]="stochastic", invalid[]="unknown";
+  char* args[]={program,option,valid};
+  EXPECT_EQ(mc3d::LoadSimulationConfig(1,args).hyperfree_inflow_rounding,"accumulated");
+  EXPECT_EQ(mc3d::LoadSimulationConfig(3,args).hyperfree_inflow_rounding,"stochastic");
+  args[2]=invalid;
+  EXPECT_THROW(mc3d::LoadSimulationConfig(3,args),std::runtime_error);
+}

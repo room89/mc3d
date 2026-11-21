@@ -14,6 +14,8 @@
 #include <string_view>
 #include <vector>
 
+#include "../third_party/json.hpp"
+
 namespace mc3d {
 namespace {
 
@@ -200,7 +202,29 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
   const auto key = NormalizeKey(raw_key);
   const auto prepared_value = StripQuotes(TrimCopy(raw_value));
 
-  if (key == "seed") {
+  if (key == "output_dir") { config.output_dir = prepared_value;
+  } else if (key == "provenance_file") { config.provenance_file = prepared_value;
+  } else if (key == "units_file") { config.units_file = prepared_value;
+  } else if (key == "collision_model") {
+    if (prepared_value == "hs") config.collisions.kind = CollisionKind::HS;
+    else if (prepared_value == "vhs") config.collisions.kind = CollisionKind::VHS;
+    else if (prepared_value == "none") config.collisions.kind = CollisionKind::None;
+    else ThrowOptionError(raw_key, ctx, "expected hs, vhs or none");
+  } else if (key == "molecular_mass_kg") {
+    config.collisions.mass = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_diameter_m") {
+    config.collisions.diameter = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_reference_temperature_k") {
+    config.collisions.reference_temperature = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "vhs_omega") {
+    config.collisions.omega = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "temperature_unit_k") {
+    config.collisions.temperature_unit = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "hyperfree_inflow_rounding") {
+    if (prepared_value != "accumulated" && prepared_value != "stochastic")
+      ThrowOptionError(raw_key, ctx, "expected accumulated or stochastic");
+    config.hyperfree_inflow_rounding = prepared_value;
+  } else if (key == "seed") {
     unsigned int seed = 0;
     const auto result = std::from_chars(prepared_value.data(), prepared_value.data() + prepared_value.size(), seed);
     if (result.ec != std::errc() || result.ptr != prepared_value.data() + prepared_value.size())
@@ -214,6 +238,53 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.Lz = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "kn") {
     config.Kn = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "collision_courant") {
+    config.collision_courant = ParseDouble(prepared_value, raw_key, ctx);
+    if (!std::isfinite(config.collision_courant) || config.collision_courant < 0 || config.collision_courant > 1)
+      throw std::invalid_argument("collision_courant must be in [0,1]");
+  } else if (key == "resolution_diagnostics") {
+    config.resolution_diagnostics = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "statistics_enabled") {
+    config.statistics_enabled = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "balance_enabled") {
+    config.balance_enabled = ParseBool(prepared_value, raw_key, ctx);
+  } else if (key == "reservoirs" || key == "initial_step") {
+    auto j = nlohmann::json::parse(prepared_value);
+    auto state = [](const nlohmann::json& v) {
+      if (!v.is_object() || v.size()!=3 || !v.contains("density_ratio") || !v.contains("temperature") || !v.contains("velocity"))
+        throw std::invalid_argument("Gas state requires density_ratio, temperature, velocity");
+      GasState s;
+      s.density_ratio=v.at("density_ratio").get<double>();
+      s.temperature=v.at("temperature").get<double>();
+      if(!v.at("velocity").is_array() || v.at("velocity").size()!=3) throw std::invalid_argument("velocity requires three components");
+      s.velocity=v.at("velocity").get<std::array<double,3>>();
+      if (!(s.density_ratio>0) || !std::isfinite(s.density_ratio) || !(s.temperature>0) || !std::isfinite(s.temperature)) throw std::invalid_argument("Invalid gas density or temperature");
+      for(double u:s.velocity) if(!std::isfinite(u)) throw std::invalid_argument("Invalid velocity");
+      return s;
+    };
+    if(!j.is_object()) throw std::invalid_argument("Expected object");
+    if(key=="initial_step") {
+      if(j.size()!=3) throw std::invalid_argument("initial_step requires x,left,right");
+      config.initial_step=InitialStep{j.at("x").get<double>(),state(j.at("left")),state(j.at("right"))};
+    } else {
+      for(auto it=j.begin();it!=j.end();++it) {
+        bool found=false;
+        for(size_t i=0;i<6;++i) if(it.key()==ReservoirFaces[i]) {config.reservoirs[i]=state(it.value());found=true;}
+        if(!found) throw std::invalid_argument("Unknown reservoir face");
+      }
+    }
+  } else if (key == "statistics_windows") {
+    const auto j = nlohmann::json::parse(prepared_value);
+    if (!j.is_array())
+      throw std::invalid_argument("statistics_windows requires array");
+    config.statistics_windows.clear();
+    for (const auto& w : j) {
+      if (!w.is_array() || w.size() != 2 || !w[0].is_number() ||
+          !w[1].is_number())
+        throw std::invalid_argument("Expected [start,end] window");
+      config.statistics_windows.push_back(
+          {w[0].get<double>(), w[1].get<double>()});
+    }
   } else if (key == "cu") {
     config.Cu = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "temperature" || key == "t") {
@@ -222,6 +293,16 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.wall_temperature = ParseDouble(prepared_value, raw_key, ctx);
     if (!(config.wall_temperature > 0) || !std::isfinite(config.wall_temperature))
       throw std::invalid_argument("Wall temperature must be finite and positive");
+  } else if (key == "force_reference_area") {
+    const double area = ParseDouble(prepared_value, raw_key, ctx);
+    if (!(area > 0) || !std::isfinite(area))
+      throw std::invalid_argument("Force reference area must be finite and positive");
+    config.force_reference_area = area;
+  } else if (key == "wall_heat_capacity") {
+    const double capacity = ParseDouble(prepared_value, raw_key, ctx);
+    if (!(capacity > 0) || !std::isfinite(capacity))
+      throw std::invalid_argument("Wall heat capacity must be finite and positive");
+    config.wall_heat_capacity = capacity;
   } else if (key == "alpha") {
     config.alpha = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "ncx" || key == "cells_x") {
@@ -239,6 +320,8 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
       ThrowOptionError(raw_key, ctx, "thread pool size must be positive");
     }
     config.thread_pool_size = parsed;
+  } else if (key == "runtime_control") {
+    config.runtime_control = ParseStringValue(prepared_value);
   } else if (key == "s" || key == "sigma") {
     config.S = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "end_time" || key == "t_end") {
@@ -315,6 +398,14 @@ void ApplyOption(SimulationConfig& config, const std::string& raw_key,
     config.geometry_cube_length = ParseDouble(prepared_value, raw_key, ctx);
   } else if (key == "geometry_cube_height") {
     config.geometry_cube_height = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_x") {
+    config.geometry_cylinder_x = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_radius") {
+    config.geometry_cylinder_radius = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_length") {
+    config.geometry_cylinder_length = ParseDouble(prepared_value, raw_key, ctx);
+  } else if (key == "geometry_cylinder_segments") {
+    config.geometry_cylinder_segments = ParseUnsigned(prepared_value, raw_key, ctx);
   } else if (key == "boundary_x_neg") {
     config.boundary_types[ToIndex(BoundaryFace::XNeg)] =
         ParseBoundaryType(prepared_value, raw_key, ctx);
@@ -600,6 +691,32 @@ class JsonReader {
     if (ch == '"') {
       return ParseString();
     }
+    if (ch == '{') {
+      const auto start=pos_;
+      int depth=0; bool quoted=false, escaped=false;
+      do {
+        char c=data_[pos_++];
+        if(quoted) { if(escaped) escaped=false; else if(c=='\\') escaped=true; else if(c=='"') quoted=false; }
+        else if(c=='"') quoted=true;
+        else if(c=='{') ++depth;
+        else if(c=='}') --depth;
+      } while(pos_<data_.size() && depth>0);
+      if(depth) Throw("unterminated object");
+      return data_.substr(start,pos_-start);
+    }
+    if (ch == '[') {
+      const auto start = pos_;
+      int depth = 0;
+      do {
+        if (data_[pos_] == '[')
+          ++depth;
+        else if (data_[pos_] == ']')
+          --depth;
+        ++pos_;
+      } while (pos_ < data_.size() && depth > 0);
+      if (depth) Throw("unterminated array");
+      return data_.substr(start, pos_ - start);
+    }
     if (ch == '-' || IsDigit(ch)) {
       return ParseNumber();
     }
@@ -689,12 +806,34 @@ void PrintUsage(const char* program) {
       << "  --lx, --ly, --lz                 Domain size along axes\n"
       << "  --ncx, --ncy, --ncz              Number of cells along axes\n"
       << "  --np                             Particles per cell\n"
+      << "  --output-dir DIR              New or empty result directory\n"
+      << "  --units-file FILE             SI scale table from "
+         "physical_config.py\n"
+      << "  --collision-model hs|vhs|none  Molecular collision law (default "
+         "hs)\n"
+      << "  VHS requires --molecular-mass-kg, --vhs-diameter-m,\n"
+      << "    --vhs-reference-temperature-k, --vhs-omega, "
+         "--temperature-unit-k\n"
+      << "  --collision-courant <0..1>       Collision time limit (default "
+         "0.1; 0 disables)\n"
+      << "  --resolution-diagnostics <bool> Write resolution diagnostics "
+         "(default true)\n"
+      << "  --statistics-enabled <bool> --balance-enabled <bool> (default "
+         "true)\n"
+      << "  --statistics-windows '[[start,end],...]' (default entire run)\n"
       << "  --kn, --cu, --temperature        Physical parameters\n"
-      << "  --wall-temperature VALUE        Diffuse body temperature (default 1)\n"
+      << "  --force-reference-area VALUE    Area for Cx/Cy/Cz and Cd/Cl "
+         "output\n"
+      << "  --wall-heat-capacity VALUE      Enable per-polygon heating (total "
+         "capacity)\n"
+      << "  --wall-temperature VALUE        Diffuse body temperature (default "
+         "1)\n"
       << "  --s                              Accommodation coefficient S\n"
       << "  --end-time                       Simulation end time\n"
       << "  --snapshot-interval TIME         Snapshot interval in time units\n"
       << "  --seed UINT32                    Random seed (logged at startup)\n"
+      << "  --runtime-control PATH          Live load mode file "
+         "(full/balanced/quiet/pause)\n"
       << "  --thread-pool-size COUNT         Number of worker threads\n"
       << "  --snapshots-binary               Enable binary snapshot output\n"
       << "  --boundary-x-neg TYPE            Boundary type (none, mirror, "
@@ -712,6 +851,12 @@ void PrintUsage(const char* program) {
 SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   SimulationConfig config;
   if (argc <= 1 || argv == nullptr) {
+    for (auto w : config.statistics_windows)
+      if (!std::isfinite(w[0]) || !std::isfinite(w[1]) || w[0] < 0 ||
+          !(w[1] > w[0]) || w[1] > config.end_time)
+        throw std::invalid_argument(
+            "Statistics windows require 0 <= start < end <= end_time");
+    config.collisions.Validate();
     return config;
   }
 
@@ -746,6 +891,7 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
   for (const auto& path : config_paths) {
     LoadConfigFile(config, path);
     config.config_path = path.string();
+    config.input_configs.push_back(path.string());
   }
 
   for (std::size_t i = 0; i < args.size(); ++i) {
@@ -790,6 +936,31 @@ SimulationConfig LoadSimulationConfig(int argc, char* argv[]) {
     throw std::runtime_error("Unexpected positional argument '" + arg + "'");
   }
 
+  for (auto w : config.statistics_windows)
+    if (!std::isfinite(w[0]) || !std::isfinite(w[1]) || w[0] < 0 ||
+        !(w[1] > w[0]) || w[1] > config.end_time)
+      throw std::invalid_argument(
+          "Statistics windows require 0 <= start < end <= end_time");
+  config.collisions.Validate();
+  if (!config.geometry_file.empty() ||
+      (config.geometry_type != "none" && config.geometry_type != "cube" &&
+       config.geometry_type != "wedge"))
+    throw std::invalid_argument(
+        "Gas volume supports only built-in cube and wedge; STL, cylinder and "
+        "pyramid are unsupported");
+  auto positive = [](double x) { return x > 0 && std::isfinite(x); };
+  if (config.geometry_type == "cube" &&
+      !(positive(config.geometry_cube_width) &&
+        positive(config.geometry_cube_length) &&
+        positive(config.geometry_cube_height)))
+    throw std::invalid_argument("Cube dimensions must be finite and positive");
+  if (config.geometry_type == "wedge" &&
+      !(positive(config.geometry_wedge_width) &&
+        positive(config.geometry_wedge_length) &&
+        positive(config.geometry_wedge_alpha) &&
+        config.geometry_wedge_alpha < std::acos(-1.) / 2))
+    throw std::invalid_argument(
+        "Wedge requires positive dimensions and angle in (0,pi/2)");
   return config;
 }
 

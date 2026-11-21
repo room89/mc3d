@@ -38,6 +38,7 @@ void Cell::SetSize(double lx, double ly, double lz) {
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
   volume_ = std::abs(lx * ly * lz);
+  if (geometry_initialized_) CalculateVolume();
 }
 
 void Cell::SetSize(Point dl) {
@@ -48,15 +49,28 @@ void Cell::SetSize(Point dl) {
   L = lx > ly ? lx : ly;
   L = L > lz ? L : lz;
   volume_ = std::abs(lx * ly * lz);
+  if (geometry_initialized_) CalculateVolume();
 }
 
-void Cell::SetApex(Point a) { apex = a; }
+void Cell::SetApex(Point a) {
+  apex = a;
+  if (geometry_initialized_) CalculateVolume();
+}
 
 bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   // Keep the reservoir normalization, not the fluctuating current population.
   // Empty standalone cells retain the explicit/default normalization.
   if (N > 0) SetReferenceParticleCount(static_cast<double>(N));
-  this->GenerateRandom(N);
+  if (bbody)
+    body_boundary.SetGeometry(*bbody);
+  else
+    body_boundary.ClearGeometry();
+  geometry_initialized_ = true;
+  CalculateVolume();
+  if (volume_ > 0)
+    this->GenerateRandom(N);
+  else
+    particles.clear();
 
   dt = 100000;
   RefreshMoments();
@@ -72,9 +86,6 @@ bool Cell::Initialize(size_t N, const std::unique_ptr<Geometry>& bbody) {
   if (bbody) {
     body_boundary.SetGeometry(*bbody);
     body_mark = body_boundary.AddPolygon(*bbody, GetCenter(), L);
-    if (body_mark) {
-      CalculateVolume();
-    }
   } else {
     body_mark = false;
   }
@@ -102,6 +113,7 @@ double Cell::GenerateRandom(unsigned int N, double temperature, Point drift) {
 std::vector<Particle> Cell::SampleFreeInflow(unsigned int N, double temperature, Point drift, Point normal) {
   std::vector<Particle> arrivals;
   ParticleSampler::Free(arrivals, apex, GetSize(), N, temperature, drift, normal, Random());
+  for (const auto& p : arrivals) incoming_quantity.Add(p.velocity);
   return arrivals;
 }
 void Cell::AppendGeneratedParticles(std::vector<Particle>&& incoming) {
@@ -110,20 +122,25 @@ void Cell::AppendGeneratedParticles(std::vector<Particle>&& incoming) {
 }
 void Cell::GenerateHyperFreeRandom(unsigned int N, Point drift, double temperature,
                                   Point normal, double step, std::vector<Particle>& arrivals) {
-  ParticleSampler::HyperFree(apex, GetSize(), N, drift, temperature, normal, step,
-                            body_boundary, arrivals, Random());
+  Geometry::ExchangeCapture capture(defer_surface_exchange ? &surface_exchanges
+                                                           : nullptr);
+  ParticleSampler::HyperFree(apex, GetSize(), N, drift, temperature, normal,
+                             step, body_boundary, arrivals, Random(),
+                             &incoming_quantity);
 }
 
 void Cell::Collisions() {
-  if (particles.size() <= 5) return;
+  ValidateGasPopulation();
+  if (particles.size() < 2 || dt <= 0) return;
   RefreshMoments();
   CollisionsWithPreparedMoments();
 }
 
 void Cell::CollisionsWithPreparedMoments() {
-  if (particles.size() <= 5) return;
+  ValidateGasPopulation();
+  if (particles.size() < 2 || dt <= 0) return;
   CalculateKn();
-  CollisionModel::Apply(particles, velocity, L, Kn_l, dt, Random());
+  CollisionModel::ApplyWithStats(particles, velocity, L, Kn_l, dt, Random(), collision_parameters);
 }
 
 void Cell::MoveParticles() {
@@ -245,6 +262,7 @@ void Cell::SetReferenceParticleCount(double count) {
 }
 
 double Cell::CalculateKn() {
+  ValidateGasPopulation();
   if (particles.empty()) return Kn_l = std::numeric_limits<double>::infinity();
   // n/n0 = N / (N0 * Vgas/Vcell); N0 includes the model-particle weight.
   Kn_l = Kn * reference_particle_count_ * GetVolume() /
@@ -276,14 +294,73 @@ void Cell::RefreshMoments() {
   T = moments.temperature;
 }
 
+double Cell::CollisionFrequencyBound() const {
+  ValidateGasPopulation();
+  const auto n = particles.size();
+  if (n < 2 || collision_parameters.kind == CollisionKind::None) return 0;
+  const auto mean = ComputeMoments().velocity;
+  long double sum = 0;
+  for (const auto& particle : particles) {
+    const auto c = particle.velocity - mean;
+    sum += static_cast<long double>(c.x)*c.x + static_cast<long double>(c.y)*c.y + static_cast<long double>(c.z)*c.z;
+  }
+  const double g = std::sqrt(2 * sum / (n - 1));
+  const double denominator = std::sqrt(2.) * L * Kn * reference_particle_count_ * (volume_ / GetSize().Volume());
+  if (!(denominator > 0) || !std::isfinite(denominator))
+    throw std::runtime_error("Invalid collision normalization for time step");
+  const double rate = (n - 1) * collision_parameters.Rate(g) / denominator;
+  if (!std::isfinite(rate) || rate < 0)
+    throw std::runtime_error("Invalid collision frequency for time step");
+  return rate;
+}
+
 double Cell::CalculateDt() {
+  ValidateGasPopulation();
+  resolution = {};
+  resolution.count = particles.size();
+  if (volume_ == 0) return dt = std::numeric_limits<double>::infinity();
   RefreshMoments();
-  dt = 1000000;
-  double c = sqrt(2 * T);
+  dt = std::numeric_limits<double>::infinity();
+  long double peculiar = 0;
+  for (const auto& particle : particles) {
+    const auto d = particle.velocity - velocity;
+    peculiar += static_cast<long double>(d.x) * d.x +
+                static_cast<long double>(d.y) * d.y +
+                static_cast<long double>(d.z) * d.z;
+  }
+  const double local_temperature =
+      particles.empty() ? 0 : double(peculiar / (3 * particles.size()));
+  double c = std::sqrt(2 * local_temperature);
   double dtt = min(lx / (fabs(velocity.x) + c), ly / (fabs(velocity.y) + c));
   dtt = min(dtt, lz / (fabs(velocity.z) + c));
   if (dtt < dt) dt = dtt;
-  // if(dt < 0.00001) cin>>c;
+  resolution.transport = dt;
+  const double axis_limits[] = {lx / (std::fabs(velocity.x) + c),
+                                ly / (std::fabs(velocity.y) + c),
+                                lz / (std::fabs(velocity.z) + c)};
+  for (int axis = 0; axis < 3; ++axis)
+    if (axis_limits[axis] == dt) {
+      resolution.transport_axis = axis;
+      break;
+    }
+  resolution.frequency = CollisionFrequencyBound();
+  if (particles.size() >= 2 && local_temperature > 0 &&
+      collision_parameters.kind != CollisionKind::None) {
+    const double power = collision_parameters.kind == CollisionKind::HS
+                             ? 1
+                             : 2 - 2 * collision_parameters.omega;
+    const double moment = std::pow(4 * local_temperature, power / 2) *
+                          std::tgamma((power + 3) / 2) / std::tgamma(1.5);
+    const double rate = particles.size() * collision_parameters.Rate(1) *
+                        moment /
+                        (std::sqrt(2.) * L * Kn * reference_particle_count_ *
+                         (volume_ / GetSize().Volume()));
+    if (!(rate > 0) || !std::isfinite(rate))
+      throw std::runtime_error("Invalid equilibrium frequency");
+    resolution.equilibrium_frequency = rate;
+    resolution.mean_free_path =
+        std::sqrt(8 * local_temperature / std::acos(-1.)) / rate;
+  }
   return dt;
 }
 
@@ -307,6 +384,8 @@ void Cell::CalculateWithPreparedMoments() {
 }
 
 void Cell::AdvanceParticles() {
+  Geometry::ExchangeCapture capture(defer_surface_exchange ? &surface_exchanges
+                                                           : nullptr);
   if (body_boundary.GetGeometryPtr() &&
       body_boundary.GetGeometryPtr()->PolygonCount() > 0)
     body_boundary.BoundaryCondition(particles, dt, Random());
@@ -375,18 +454,24 @@ std::deque<std::unique_ptr<Cell>> Cell::Fragment(
 void Cell::SetInnerBoundary(InnerBoundary bound) { body_boundary = bound; }
 
 double Cell::CalculateVolume() {
-  volume_ = body_boundary.CalcCellVolume(apex, GetSize(), Random(), &mass_center);
-  if (volume_ < 0) {
-    return volume_ = GetSize().Volume();
-  }
-  return volume_;
-}
-
-double Cell::GetVolume() const {
-  if (volume_ > 0.0) {
+  auto* geometry = body_boundary.GetGeometryPtr();
+  if (!geometry) {
+    volume_ = GetSize().Volume();
+    mass_center = GetCenter();
     return volume_;
   }
-  return std::abs(lx * ly * lz);
+  const auto result = geometry->GasVolume(apex, GetSize());
+  volume_ = result.gas;
+  mass_center = result.gas_center.value_or(GetCenter());
+  return volume_;
+}
+double Cell::GetVolume() const { return volume_; }
+void Cell::ValidateGasPopulation() const {
+  if (volume_ == 0 && (!particles.empty() || !particle_buffer.empty()))
+    throw std::runtime_error(
+        "Particles in fully solid cell at (" + std::to_string(apex.x) + "," +
+        std::to_string(apex.y) + "," + std::to_string(apex.z) +
+        "): N=" + std::to_string(particles.size() + particle_buffer.size()));
 }
 
 bool Cell::GetBodyMark() { return body_mark; }
@@ -403,6 +488,7 @@ Point Cell::GetParticleMassCenter() {
 }
 
 void Cell::CleanInnerParticles(const Geometry& body) {
+  ValidateGasPopulation();
   if (particles.size() < 100) {
     Point ad = Point(0, 0, 0);
   }

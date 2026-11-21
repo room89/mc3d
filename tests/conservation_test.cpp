@@ -44,6 +44,7 @@ TEST(CellTimeStepTest, ThermalSpeedLimitsEveryAxisEvenWithZeroMeanVelocity) {
     const std::array<mc3d::Point, 3> sizes{
         {{1, 10, 10}, {10, 1, 10}, {10, 10, 1}}};
     cell.SetSize(sizes[axis]);
+    cell.collision_parameters.kind = mc3d::CollisionKind::None;
     // Six velocities give zero mean and T = 1 exactly.
     const std::array<mc3d::Point, 6> velocities{
         {{3, 0, 0}, {-3, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};

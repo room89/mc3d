@@ -1,0 +1,55 @@
+{
+  "binary_sha256": "bb71a79a31313b3ee9450a65fccc24f15c2d444b9822b4b52a26515e19a0514b",
+  "runs": [
+    {
+      "temperature_k": 300.0,
+      "seed": 123,
+      "observed": 49745.0,
+      "expected": 49735.15664085646,
+      "tolerance": 4783.83555117594,
+      "passed": true
+    },
+    {
+      "temperature_k": 300.0,
+      "seed": 456,
+      "observed": 49815.0,
+      "expected": 49857.84364518724,
+      "tolerance": 4793.984935281502,
+      "passed": true
+    },
+    {
+      "temperature_k": 300.0,
+      "seed": 789,
+      "observed": 49795.0,
+      "expected": 49567.602768443234,
+      "tolerance": 4769.971228376014,
+      "passed": true
+    },
+    {
+      "temperature_k": 1612.354570637119,
+      "seed": 123,
+      "observed": 49469.0,
+      "expected": 49735.15680333621,
+      "tolerance": 4783.835564618558,
+      "passed": true
+    },
+    {
+      "temperature_k": 1612.354570637119,
+      "seed": 456,
+      "observed": 50015.0,
+      "expected": 49857.843968676665,
+      "tolerance": 4793.984962039755,
+      "passed": true
+    },
+    {
+      "temperature_k": 1612.354570637119,
+      "seed": 789,
+      "observed": 49645.0,
+      "expected": 49567.602460501024,
+      "tolerance": 4769.971202891692,
+      "passed": true
+    }
+  ],
+  "scope": "Equilibrium event-rate preflight; not shock validation",
+  "source_commit": "95b9abaa8bd548991cc3c3f1c58b34722f7ade74"
+}

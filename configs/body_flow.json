@@ -32,5 +32,7 @@
   "write_default_snapshot_after_compute": false,
   "write_speed_before": false,
   "write_speed_after": false,
-  "write_times": false
+  "write_times": false,
+  "seed": 123,
+  "collision_model": "hs"
 }

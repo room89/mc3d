@@ -1,0 +1,2063 @@
+{
+  "status": "experimental_calibration_only",
+  "bootstrap_repeats": 128,
+  "replicates_per_case": 16,
+  "noiseless": [
+    {
+      "shape": "logistic",
+      "scale": 0.25,
+      "dx": 0.05,
+      "estimate": [
+        1.0987173281534188,
+        1.023657734368512
+      ],
+      "truth": [
+        1.0986122886681098,
+        1.0
+      ],
+      "relative_error": [
+        9.561105987287988e-05,
+        0.02365773436851204
+      ],
+      "resolved": false
+    },
+    {
+      "shape": "logistic",
+      "scale": 0.25,
+      "dx": 0.1,
+      "estimate": [
+        1.1065934045130548,
+        1.0255054518386197
+      ],
+      "truth": [
+        1.0986122886681098,
+        1.0
+      ],
+      "relative_error": [
+        0.007264724714321824,
+        0.02550545183861974
+      ],
+      "resolved": false
+    },
+    {
+      "shape": "logistic",
+      "scale": 1.0,
+      "dx": 0.05,
+      "estimate": [
+        4.3945530371256645,
+        4.0005624772561665
+      ],
+      "truth": [
+        4.394449154672439,
+        4.0
+      ],
+      "relative_error": [
+        2.363947097094865e-05,
+        0.00014061931404163452
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "logistic",
+      "scale": 1.0,
+      "dx": 0.1,
+      "estimate": [
+        4.394660774338257,
+        4.000613502115986
+      ],
+      "truth": [
+        4.394449154672439,
+        4.0
+      ],
+      "relative_error": [
+        4.815613023811949e-05,
+        0.00015337552899641338
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "logistic",
+      "scale": 2.0,
+      "dx": 0.05,
+      "estimate": [
+        8.78899660110455,
+        8.000072129844213
+      ],
+      "truth": [
+        8.788898309344878,
+        8.0
+      ],
+      "relative_error": [
+        1.1183626913435774e-05,
+        9.016230526626146e-06
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "logistic",
+      "scale": 2.0,
+      "dx": 0.1,
+      "estimate": [
+        8.789106074251329,
+        8.000078738120854
+      ],
+      "truth": [
+        8.788898309344878,
+        8.0
+      ],
+      "relative_error": [
+        2.363947097094865e-05,
+        9.842265106696502e-06
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "gompertz",
+      "scale": 0.25,
+      "dx": 0.05,
+      "estimate": [
+        0.7729795882109166,
+        0.7245373543293457
+      ],
+      "truth": [
+        0.7710999431401003,
+        0.6795704571147613
+      ],
+      "relative_error": [
+        0.002437615366903012,
+        0.06616958807406004
+      ],
+      "resolved": false
+    },
+    {
+      "shape": "gompertz",
+      "scale": 0.25,
+      "dx": 0.1,
+      "estimate": [
+        0.7778339918807112,
+        0.7331357252340596
+      ],
+      "truth": [
+        0.7710999431401003,
+        0.6795704571147613
+      ],
+      "relative_error": [
+        0.008733042714525796,
+        0.07882224360770373
+      ],
+      "resolved": false
+    },
+    {
+      "shape": "gompertz",
+      "scale": 1.0,
+      "dx": 0.05,
+      "estimate": [
+        3.084756775393358,
+        2.7190989671082058
+      ],
+      "truth": [
+        3.0843997725604013,
+        2.718281828459045
+      ],
+      "relative_error": [
+        0.0001157446697190867,
+        0.00030060850961288743
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "gompertz",
+      "scale": 1.0,
+      "dx": 0.1,
+      "estimate": [
+        3.0870172848808872,
+        2.7191749391901627
+      ],
+      "truth": [
+        3.0843997725604013,
+        2.718281828459045
+      ],
+      "relative_error": [
+        0.0008486293974510062,
+        0.0003285570766677903
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "gompertz",
+      "scale": 2.0,
+      "dx": 0.05,
+      "estimate": [
+        6.168996592232107,
+        5.436663427606925
+      ],
+      "truth": [
+        6.168799545120803,
+        5.43656365691809
+      ],
+      "relative_error": [
+        3.1942537581652886e-05,
+        1.835179262688058e-05
+      ],
+      "resolved": true
+    },
+    {
+      "shape": "gompertz",
+      "scale": 2.0,
+      "dx": 0.1,
+      "estimate": [
+        6.169513550786727,
+        5.436672630172857
+      ],
+      "truth": [
+        6.168799545120803,
+        5.43656365691809
+      ],
+      "relative_error": [
+        0.00011574466972086306,
+        2.0044510033123686e-05
+      ],
+      "resolved": true
+    }
+  ],
+  "noisy": [
+    {
+      "shape": "logistic",
+      "phi": 0.0,
+      "noise": 0.015,
+      "truth": [
+        4.394449154672439,
+        4.0
+      ],
+      "mean_relative_bias": [
+        0.0006856717186471961,
+        -0.022793766820802475
+      ],
+      "oracle_alignment_relative_bias": [
+        4.882979272857746e-05,
+        -0.0036291015763557644
+      ],
+      "statistical_coverage": [
+        0.9375,
+        0.75
+      ],
+      "with_processing_coverage": [
+        0.9375,
+        1.0
+      ],
+      "runs": [
+        {
+          "oracle_alignment_estimate": [
+            4.398659652741508,
+            3.9807706156212093
+          ],
+          "estimate": [
+            4.394314862706995,
+            3.9076490767154755
+          ],
+          "statistical_radius": [
+            0.04383477871628059,
+            0.16610196399349725
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.32679461763745543
+          ],
+          "alignment_rms": 0.04365794580630709,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.389961255555672,
+            4.012867173186094
+          ],
+          "estimate": [
+            4.3918113323471175,
+            3.9326633952737717
+          ],
+          "statistical_radius": [
+            0.06656956691556175,
+            0.47771313596888465
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3314500996172507
+          ],
+          "alignment_rms": 0.047736588315513924,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.395287833952153,
+            4.011701145539237
+          ],
+          "estimate": [
+            4.3883204926181865,
+            3.943719299605775
+          ],
+          "statistical_radius": [
+            0.02531330827843994,
+            0.26839360275472496
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.4424195418821921
+          ],
+          "alignment_rms": 0.04632978003874073,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.399873545052719,
+            4.032244993850609
+          ],
+          "estimate": [
+            4.401458356007635,
+            3.919568392403005
+          ],
+          "statistical_radius": [
+            0.06338591295411061,
+            0.18354318990753785
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.274701041786479
+          ],
+          "alignment_rms": 0.04774510425695689,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.38706408288919,
+            4.0142779245226
+          ],
+          "estimate": [
+            4.392587579128435,
+            3.930688861317502
+          ],
+          "statistical_radius": [
+            0.08465721006198397,
+            0.08351424510979653
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3607635256103223
+          ],
+          "alignment_rms": 0.045258659458613314,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.393040045257045,
+            3.9802043526942663
+          ],
+          "estimate": [
+            4.395535831696687,
+            3.9054700387059818
+          ],
+          "statistical_radius": [
+            0.040253099938073154,
+            0.10720405231282504
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3915674081126257
+          ],
+          "alignment_rms": 0.041312424528995126,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.387987079693141,
+            3.9914759147045773
+          ],
+          "estimate": [
+            4.402560284164309,
+            3.927916704752643
+          ],
+          "statistical_radius": [
+            0.04634273296064978,
+            0.14821906339553484
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.40085185919419564
+          ],
+          "alignment_rms": 0.046361550858020885,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.381890028747588,
+            3.948211355265136
+          ],
+          "estimate": [
+            4.392768353336065,
+            3.8602319542117933
+          ],
+          "statistical_radius": [
+            0.022291775088274707,
+            0.09885994850290047
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3091921489064555
+          ],
+          "alignment_rms": 0.047192357615797154,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.401384556506451,
+            3.966148395430701
+          ],
+          "estimate": [
+            4.407927135802467,
+            3.8843416306372487
+          ],
+          "statistical_radius": [
+            0.023992981673114144,
+            0.20335041282077856
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.4304363953584689
+          ],
+          "alignment_rms": 0.04687522792810357,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.365779141327517,
+            3.941792891521524
+          ],
+          "estimate": [
+            4.362292235165267,
+            3.868950614133304
+          ],
+          "statistical_radius": [
+            0.04091465042389654,
+            0.1754019238189211
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3248972865370172
+          ],
+          "alignment_rms": 0.045281649467510135,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.39647447112048,
+            4.019922984034361
+          ],
+          "estimate": [
+            4.402083456574797,
+            3.959766986156953
+          ],
+          "statistical_radius": [
+            0.07988017196351149,
+            0.13319428976538256
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.40361891262619487
+          ],
+          "alignment_rms": 0.046207235741713176,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.421391057044592,
+            3.9216532949768106
+          ],
+          "estimate": [
+            4.426524685936874,
+            3.8680113989365257
+          ],
+          "statistical_radius": [
+            0.02455263924633755,
+            0.09102903073989975
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.34170455361718544
+          ],
+          "alignment_rms": 0.04272387271420327,
+          "statistical_covers": [
+            false,
+            false
+          ],
+          "with_processing_covers": [
+            false,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.375906272225335,
+            3.9833780341116936
+          ],
+          "estimate": [
+            4.371969523987024,
+            3.8970208928590284
+          ],
+          "statistical_radius": [
+            0.06233640529149481,
+            0.0835410493375246
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.4102081780080251
+          ],
+          "alignment_rms": 0.05125874377320596,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.407655311671012,
+            3.9665574863825994
+          ],
+          "estimate": [
+            4.397952799369459,
+            3.882351012257264
+          ],
+          "statistical_radius": [
+            0.10381820477102331,
+            0.19321238991471562
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.41866943336658524
+          ],
+          "alignment_rms": 0.04664808670132512,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.4051871540851035,
+            3.9791563110410793
+          ],
+          "estimate": [
+            4.408231555715007,
+            3.8857540049253445
+          ],
+          "statistical_radius": [
+            0.03015437672316752,
+            0.07529657504034537
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3891794638882242
+          ],
+          "alignment_rms": 0.04944407886085294,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.407078267551578,
+            4.017374626230732
+          ],
+          "estimate": [
+            4.423058382272971,
+            3.9670946605770228
+          ],
+          "statistical_radius": [
+            0.1040257539982525,
+            0.11913776973259164
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3871098963727593
+          ],
+          "alignment_rms": 0.04325523404376622,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "logistic",
+      "phi": 0.8,
+      "noise": 0.015,
+      "truth": [
+        4.394449154672439,
+        4.0
+      ],
+      "mean_relative_bias": [
+        0.0018734930740373912,
+        -0.025935676867259394
+      ],
+      "oracle_alignment_relative_bias": [
+        0.0013640709541633544,
+        -0.0061532928896641526
+      ],
+      "statistical_coverage": [
+        1.0,
+        0.75
+      ],
+      "with_processing_coverage": [
+        1.0,
+        1.0
+      ],
+      "runs": [
+        {
+          "oracle_alignment_estimate": [
+            4.418320039537244,
+            4.03520990491381
+          ],
+          "estimate": [
+            4.406407431047973,
+            3.9221402467946653
+          ],
+          "statistical_radius": [
+            0.05039025986750634,
+            0.17857260380269693
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3292676603759448
+          ],
+          "alignment_rms": 0.04816973345456159,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.3906089394277945,
+            3.9451450705551285
+          ],
+          "estimate": [
+            4.385443057117093,
+            3.915620255628544
+          ],
+          "statistical_radius": [
+            0.09820900181323802,
+            0.27492417658245893
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.41604595838285796
+          ],
+          "alignment_rms": 0.04752581607101551,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.426590096720242,
+            3.9479487732589322
+          ],
+          "estimate": [
+            4.42730713865703,
+            3.848593750131164
+          ],
+          "statistical_radius": [
+            0.05564914163553258,
+            0.08298218755108988
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3772245016460656
+          ],
+          "alignment_rms": 0.04579159630871638,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.406331820879108,
+            4.014889499994665
+          ],
+          "estimate": [
+            4.403686718324414,
+            3.928714339576005
+          ],
+          "statistical_radius": [
+            0.019745051516335543,
+            0.18411376698679763
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.2991907140572323
+          ],
+          "alignment_rms": 0.047797060690163,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.37810173355009,
+            4.03128750963584
+          ],
+          "estimate": [
+            4.386187037357764,
+            3.98193873446584
+          ],
+          "statistical_radius": [
+            0.08696470331799808,
+            0.11439267310683995
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.38076982617018773
+          ],
+          "alignment_rms": 0.04264297794714677,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.397094444516272,
+            3.942475729139234
+          ],
+          "estimate": [
+            4.411779959140447,
+            3.8390721166400468
+          ],
+          "statistical_radius": [
+            0.057009344031890063,
+            0.08450213710722831
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.36152458542906407
+          ],
+          "alignment_rms": 0.043779690610739844,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.383766427813351,
+            3.968693692571085
+          ],
+          "estimate": [
+            4.399127167933724,
+            3.8502029842876757
+          ],
+          "statistical_radius": [
+            0.104136699823533,
+            0.08364085776032715
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.44690654846156663
+          ],
+          "alignment_rms": 0.048630518968166336,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.3785143471152015,
+            3.981317387269273
+          ],
+          "estimate": [
+            4.389560176224057,
+            3.88992823761976
+          ],
+          "statistical_radius": [
+            0.11558787623005176,
+            0.12313862380282417
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3513690220283121
+          ],
+          "alignment_rms": 0.04805953554204256,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.405526424387835,
+            3.996309444291899
+          ],
+          "estimate": [
+            4.406220532907739,
+            3.9198529012293135
+          ],
+          "statistical_radius": [
+            0.03175461904053911,
+            0.20533398373109638
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.40800267311484495
+          ],
+          "alignment_rms": 0.04231054721191164,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.390460588065514,
+            3.9577043784847126
+          ],
+          "estimate": [
+            4.380476199518824,
+            3.8943787730232824
+          ],
+          "statistical_radius": [
+            0.04369172026891672,
+            0.12118088172980394
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.32099523867295376
+          ],
+          "alignment_rms": 0.04342930064479685,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.407062931285825,
+            4.052204450525444
+          ],
+          "estimate": [
+            4.4167298009450064,
+            3.9532094422518895
+          ],
+          "statistical_radius": [
+            0.13606031119707424,
+            0.21413837588790727
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3037878347438303
+          ],
+          "alignment_rms": 0.04659430805286101,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.419619081563614,
+            3.9345432432050993
+          ],
+          "estimate": [
+            4.432576204885388,
+            3.853844195165943
+          ],
+          "statistical_radius": [
+            0.055465724221706994,
+            0.17482306347227136
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.43173792571334113
+          ],
+          "alignment_rms": 0.04769957839011916,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.393629041349142,
+            3.970529982366029
+          ],
+          "estimate": [
+            4.395957139709518,
+            3.9029396456806955
+          ],
+          "statistical_radius": [
+            0.10333841207762041,
+            0.19392846440313088
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.4228348437382454
+          ],
+          "alignment_rms": 0.04644767413852116,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.390995577638975,
+            3.932854432939749
+          ],
+          "estimate": [
+            4.3899216209690906,
+            3.867767159082231
+          ],
+          "statistical_radius": [
+            0.12026170654154392,
+            0.23028969571672386
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.38918504880266314
+          ],
+          "alignment_rms": 0.04444600910398346,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.414112106505939,
+            3.9454411590168723
+          ],
+          "estimate": [
+            4.402521196823604,
+            3.867307457086493
+          ],
+          "statistical_radius": [
+            0.04100846508134791,
+            0.2868471447326306
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.3782546634179078
+          ],
+          "alignment_rms": 0.050681267423775184,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            4.406362321625869,
+            3.9496345968937208
+          ],
+          "estimate": [
+            4.409012614085171,
+            3.9046064418318553
+          ],
+          "statistical_radius": [
+            0.17518150145347836,
+            0.08932251948981484
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.5116079226212182
+          ],
+          "alignment_rms": 0.04610878598765283,
+          "statistical_covers": [
+            true,
+            false
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.0,
+      "noise": 0.015,
+      "truth": [
+        3.0843997725604013,
+        2.718281828459045
+      ],
+      "mean_relative_bias": [
+        0.002362159259045704,
+        0.0052944718234611
+      ],
+      "oracle_alignment_relative_bias": [
+        0.002032558591576139,
+        0.00035348929345002666
+      ],
+      "statistical_coverage": [
+        1.0,
+        1.0
+      ],
+      "with_processing_coverage": [
+        1.0,
+        1.0
+      ],
+      "runs": [
+        {
+          "oracle_alignment_estimate": [
+            3.088207585343521,
+            2.716607546758213
+          ],
+          "estimate": [
+            3.0858249048333635,
+            2.744368131639602
+          ],
+          "statistical_radius": [
+            0.025883356194754754,
+            0.054138073672948206
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.07266222958800084
+          ],
+          "alignment_rms": 0.03459274930742705,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.080835228718726,
+            2.7430755245284093
+          ],
+          "estimate": [
+            3.085204317430833,
+            2.741471285456815
+          ],
+          "statistical_radius": [
+            0.07845644936534357,
+            0.21390680209144525
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.11491663073683567
+          ],
+          "alignment_rms": 0.03462087314879254,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.093599880670994,
+            2.7402216028976087
+          ],
+          "estimate": [
+            3.090401581912644,
+            2.748653036706112
+          ],
+          "statistical_radius": [
+            0.06637251324754151,
+            0.11335684440931665
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08694756038640028
+          ],
+          "alignment_rms": 0.03277133695017403,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0895358638559363,
+            2.7343373060614087
+          ],
+          "estimate": [
+            3.0912771709605984,
+            2.757594143308365
+          ],
+          "statistical_radius": [
+            0.03283727618428192,
+            0.04808207652199171
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.052280045536737596
+          ],
+          "alignment_rms": 0.03519803812651547,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.080886124924116,
+            2.731515619932054
+          ],
+          "estimate": [
+            3.0883575543030424,
+            2.7356947011726716
+          ],
+          "statistical_radius": [
+            0.028253625446999595,
+            0.0318280280316956
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08208759559484458
+          ],
+          "alignment_rms": 0.032440561357063386,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.090135070107863,
+            2.712692511349603
+          ],
+          "estimate": [
+            3.0927887594655123,
+            2.7372591470842793
+          ],
+          "statistical_radius": [
+            0.02019538141044839,
+            0.05687793830144061
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08650652348516408
+          ],
+          "alignment_rms": 0.0346432929102382,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0897424415562136,
+            2.7243804663008278
+          ],
+          "estimate": [
+            3.099132317348715,
+            2.745972572353835
+          ],
+          "statistical_radius": [
+            0.05696995392005254,
+            0.0635045678559484
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.03276120260941795
+          ],
+          "alignment_rms": 0.030327452911250424,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.084635489241747,
+            2.6972221086149486
+          ],
+          "estimate": [
+            3.0899216939492593,
+            2.721290520529727
+          ],
+          "statistical_radius": [
+            0.04565835686652033,
+            0.08081380725220665
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.030454038098222114
+          ],
+          "alignment_rms": 0.03258026759776709,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.096504042922872,
+            2.711689448608286
+          ],
+          "estimate": [
+            3.0991111188057623,
+            2.7305356530445932
+          ],
+          "statistical_radius": [
+            0.01935137103982898,
+            0.08681041933889325
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.10215496700806126
+          ],
+          "alignment_rms": 0.03395293407715527,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.075539527512394,
+            2.7015774222829396
+          ],
+          "estimate": [
+            3.0744814275719605,
+            2.7174734751196805
+          ],
+          "statistical_radius": [
+            0.02496782397331433,
+            0.09003670559115155
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.05329400632317283
+          ],
+          "alignment_rms": 0.03437868432671249,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0844448246361518,
+            2.737253980590228
+          ],
+          "estimate": [
+            3.0815120394784286,
+            2.7372277813072996
+          ],
+          "statistical_radius": [
+            0.028195850710739823,
+            0.09458796133717898
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.0999193562233458
+          ],
+          "alignment_rms": 0.03224813369721181,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.1030946861450923,
+            2.6873057847413464
+          ],
+          "estimate": [
+            3.0957101913871874,
+            2.6967049866862567
+          ],
+          "statistical_radius": [
+            0.022248105327162815,
+            0.03379335247586468
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.05680171378497212
+          ],
+          "alignment_rms": 0.0366965282735256,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.1031696859242595,
+            2.7153776532146723
+          ],
+          "estimate": [
+            3.1044402395216153,
+            2.724665964453645
+          ],
+          "statistical_radius": [
+            0.028971697303473487,
+            0.03905913158624211
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.06573709262400973
+          ],
+          "alignment_rms": 0.03424444625167509,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.093350308388648,
+            2.705922632222379
+          ],
+          "estimate": [
+            3.0903091291778435,
+            2.7210987254756307
+          ],
+          "statistical_radius": [
+            0.040536067789963784,
+            0.1237613227144241
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.055040626809864435
+          ],
+          "alignment_rms": 0.03264228970882326,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.094088435492205,
+            2.7147853091638194
+          ],
+          "estimate": [
+            3.0943484546631272,
+            2.726285016889572
+          ],
+          "statistical_radius": [
+            0.08189845596829985,
+            0.04176738650945042
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.05246914847040385
+          ],
+          "alignment_rms": 0.03492678935127966,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.1029347376468475,
+            2.733918474445006
+          ],
+          "estimate": [
+            3.104148955858152,
+            2.736483978900677
+          ],
+          "statistical_radius": [
+            0.0467249402560738,
+            0.041641661400014574
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.042284238924245265
+          ],
+          "alignment_rms": 0.03175298624667106,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "shape": "gompertz",
+      "phi": 0.8,
+      "noise": 0.015,
+      "truth": [
+        3.0843997725604013,
+        2.718281828459045
+      ],
+      "mean_relative_bias": [
+        0.002958828720552642,
+        0.0052391683227714925
+      ],
+      "oracle_alignment_relative_bias": [
+        0.002124040049691356,
+        -0.0016795291964654124
+      ],
+      "statistical_coverage": [
+        1.0,
+        1.0
+      ],
+      "with_processing_coverage": [
+        1.0,
+        1.0
+      ],
+      "runs": [
+        {
+          "oracle_alignment_estimate": [
+            3.083451817940478,
+            2.7372788446841767
+          ],
+          "estimate": [
+            3.0739658391673412,
+            2.752134728264052
+          ],
+          "statistical_radius": [
+            0.07211969166304077,
+            0.10540093532691072
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.0687526619559038
+          ],
+          "alignment_rms": 0.031873053751535034,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0867124161896875,
+            2.729545829016881
+          ],
+          "estimate": [
+            3.097158004599566,
+            2.725479850414798
+          ],
+          "statistical_radius": [
+            0.10733932503485334,
+            0.08559793897110046
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.10672613673656484
+          ],
+          "alignment_rms": 0.03523725754274501,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0951965547472335,
+            2.698442793858584
+          ],
+          "estimate": [
+            3.0977760390912223,
+            2.72615620617656
+          ],
+          "statistical_radius": [
+            0.07092096451710621,
+            0.13968145377950192
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.052630073965981516
+          ],
+          "alignment_rms": 0.0338465780007538,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.1001852460992483,
+            2.7279203533580554
+          ],
+          "estimate": [
+            3.1021610450821377,
+            2.7442958831229514
+          ],
+          "statistical_radius": [
+            0.04549427896451451,
+            0.10367996914500485
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.06731907076294785
+          ],
+          "alignment_rms": 0.03632220131251056,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0836323901901013,
+            2.748667266014508
+          ],
+          "estimate": [
+            3.087393150961875,
+            2.746934420465554
+          ],
+          "statistical_radius": [
+            0.05056967401000075,
+            0.056614971234286486
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.11441965571644142
+          ],
+          "alignment_rms": 0.030387676020352333,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.108877419883057,
+            2.6935803472968085
+          ],
+          "estimate": [
+            3.109871280080231,
+            2.722074521177329
+          ],
+          "statistical_radius": [
+            0.02604870551237637,
+            0.04726526643884865
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.07262569074889624
+          ],
+          "alignment_rms": 0.03241319616127438,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.071103214122788,
+            2.7081615198605573
+          ],
+          "estimate": [
+            3.071824822646023,
+            2.7319336855981864
+          ],
+          "statistical_radius": [
+            0.04691200001526755,
+            0.1156998484105582
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.05871934049684402
+          ],
+          "alignment_rms": 0.03495967493261973,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0737048729775545,
+            2.711508246319051
+          ],
+          "estimate": [
+            3.0833283620435266,
+            2.739023384159215
+          ],
+          "statistical_radius": [
+            0.064041804549134,
+            0.058363561168383774
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.03678345570616326
+          ],
+          "alignment_rms": 0.033498665229072744,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.09532542423588,
+            2.7204621729010428
+          ],
+          "estimate": [
+            3.1024054805035064,
+            2.7462858721770473
+          ],
+          "statistical_radius": [
+            0.02616388212833387,
+            0.11620630170924907
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.06779903094056827
+          ],
+          "alignment_rms": 0.033482492056223445,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0833626753539343,
+            2.7033391035825
+          ],
+          "estimate": [
+            3.0845506441336488,
+            2.735745084265842
+          ],
+          "statistical_radius": [
+            0.05054476525530811,
+            0.0938116649209891
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.06843358666837673
+          ],
+          "alignment_rms": 0.03385122994780625,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0901783364478685,
+            2.752211630566803
+          ],
+          "estimate": [
+            3.0973149071500545,
+            2.760291085032502
+          ],
+          "statistical_radius": [
+            0.039308708158615285,
+            0.08851826780290459
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08722627688095974
+          ],
+          "alignment_rms": 0.03214421003781105,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0963123928684313,
+            2.6918387887711446
+          ],
+          "estimate": [
+            3.0948543027221653,
+            2.722900987595935
+          ],
+          "statistical_radius": [
+            0.019583683648848806,
+            0.10015613370495038
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08088415006248084
+          ],
+          "alignment_rms": 0.03682985010014955,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.106850202552959,
+            2.7081378997357404
+          ],
+          "estimate": [
+            3.1096093028270917,
+            2.7249186699152155
+          ],
+          "statistical_radius": [
+            0.051689205606149265,
+            0.087135631906485
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.08554220967783621
+          ],
+          "alignment_rms": 0.03518324654192798,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.080609047250018,
+            2.6908138902872194
+          ],
+          "estimate": [
+            3.087595564961397,
+            2.7127221040487344
+          ],
+          "statistical_radius": [
+            0.03666875587192265,
+            0.13945520696615438
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.06639899831611462
+          ],
+          "alignment_rms": 0.03429039530913316,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.0966023574026558,
+            2.6958921154855235
+          ],
+          "estimate": [
+            3.0985863405881746,
+            2.7259383372540125
+          ],
+          "statistical_radius": [
+            0.09440894647637972,
+            0.1523572447437018
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.050731274044763186
+          ],
+          "alignment_rms": 0.03272511515026397,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        },
+        {
+          "oracle_alignment_estimate": [
+            3.1031142110433496,
+            2.701661514484236
+          ],
+          "estimate": [
+            3.0980206445319434,
+            2.7035390124452428
+          ],
+          "statistical_radius": [
+            0.03990942667880879,
+            0.04045062924794873
+          ],
+          "processing_sensitivity": [
+            0.0,
+            0.0580005794412668
+          ],
+          "alignment_rms": 0.035972483825574164,
+          "statistical_covers": [
+            true,
+            true
+          ],
+          "with_processing_covers": [
+            true,
+            true
+          ]
+        }
+      ]
+    }
+  ],
+  "numpy_version": "2.5.4",
+  "noiseless_relative_tolerance": 0.01
+}

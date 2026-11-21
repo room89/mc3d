@@ -11,6 +11,33 @@
 
 namespace mc3d {
 
+void ValidateSimulationGeometry(const SimulationConfig& c,
+                                const Geometry& body) {
+  for(size_t i=0;i<6;++i) if(c.reservoirs[i] && c.boundary_types[i]!=BoundaryType::HyperFree) throw std::invalid_argument("Reservoir overrides require hyperfree");
+  if(c.initial_step) {
+    const double x=c.initial_step->x, left=c.apex_x.value_or(-c.Lx/2), dx=c.Lx/c.cells_x;
+    const double index=(x-left)/dx;
+    if(c.geometry_type!="none" || !c.geometry_file.empty() || !std::isfinite(x) || !(index>0 && index<c.cells_x) || std::abs(index-std::round(index))>1e-9) throw std::invalid_argument("Initial step requires no body and an interior cell face");
+  }
+  if (!c.geometry_file.empty() ||
+      (c.geometry_type != "none" && c.geometry_type != "cube" &&
+       c.geometry_type != "wedge") ||
+      !body.SupportsGasVolume())
+    throw std::invalid_argument(
+        "Gas volume supports only built-in cube and wedge; STL, cylinder and "
+        "pyramid are unsupported");
+  if (!body.PolygonCount()) return;
+  auto [lo, hi] = body.Bounds();
+  Point origin(c.apex_x.value_or(-c.Lx / 2), c.apex_y.value_or(-c.Ly / 2),
+               c.apex_z.value_or(-c.Lz / 2));
+  if (!(lo.x > origin.x && lo.y > origin.y && lo.z > origin.z &&
+        hi.x < origin.x + c.Lx && hi.y < origin.y + c.Ly &&
+        hi.z < origin.z + c.Lz))
+    throw std::invalid_argument(
+        "Body must lie strictly inside domain; clipped inflow faces are not "
+        "supported");
+}
+
 double ReferenceParticleDensity(const SimulationConfig& cfg) {
   const double volume = cfg.Lx * cfg.Ly * cfg.Lz;
   if (!(volume > 0) || !std::isfinite(volume))
@@ -63,10 +90,16 @@ std::unique_ptr<Boundary> MakeBoundary(const BoundaryDescriptor& descriptor,
       return std::make_unique<FreeBoundary>(
           descriptor.position, descriptor.normal, cfg.particles_per_cell, cfg.S,
           cfg.temperature, cfg.alpha);
-    case BoundaryType::HyperFree:
-      return std::make_unique<HyperFreeBoundary>(
+    case BoundaryType::HyperFree: {
+      if (cfg.hyperfree_inflow_rounding != "accumulated" &&
+          cfg.hyperfree_inflow_rounding != "stochastic")
+        throw std::invalid_argument("Invalid hyperfree inflow rounding mode");
+      auto boundary = std::make_unique<HyperFreeBoundary>(
           descriptor.position, descriptor.normal, cfg.particles_per_cell, cfg.S,
           cfg.temperature, cfg.alpha);
+      boundary->SetStochasticRounding(cfg.hyperfree_inflow_rounding == "stochastic");
+      return boundary;
+    }
   }
   return nullptr;
 }

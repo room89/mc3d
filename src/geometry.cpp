@@ -5,6 +5,7 @@
 #include <cmath>
 #include <limits>
 #include <optional>
+#include <stdexcept>
 #include <vector>
 
 namespace mc3d {
@@ -154,14 +155,20 @@ Point Geometry::MassCenter() {
 }
 
 void Geometry::Move(Point a) {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->Move(a);
   }
 }
 
 void Geometry::Scale(double e) {
+  if (!(e > 0) || !std::isfinite(e))
+    throw std::invalid_argument("Geometry scale must be finite and positive");
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->Scale(e);
   }
@@ -279,13 +286,104 @@ std::optional<Point> Geometry::ExteriorPoint(Point interior) const {
   return std::nullopt;
 }
 
-void Geometry::AccumulateForce(Polygon& polygon, Point impulse) {
+void Geometry::AccumulateForce(Polygon& polygon, Point impulse, double energy) {
+  if (exchange_sink_) {
+    exchange_sink_->push_back({this, &polygon, impulse, energy});
+    return;
+  }
   std::lock_guard<std::mutex> lock(force_mutex_);
   polygon.force += impulse;
+  step_impulse_ += impulse;
+  step_heat_ += energy;
+  polygon.step_heat += energy;
+  polygon.step_impulse += impulse;
+  if (SurfaceHeatingEnabled()) polygon.pending_heat += thermal_particle_weight_ * energy;
+}
+
+void Geometry::ResetStepSurfaceExchange() {
+  for (auto& polygon : poligons) {
+    polygon->step_heat = 0;
+    polygon->step_impulse = {0, 0, 0};
+  }
+}
+
+double Geometry::TakeStepHeat() {
+  std::lock_guard<std::mutex> lock(force_mutex_);
+  const double result = step_heat_;
+  step_heat_ = 0;
+  return result;
+}
+
+Point Geometry::TakeStepImpulse() {
+  std::lock_guard<std::mutex> lock(force_mutex_);
+  const Point impulse = step_impulse_;
+  step_impulse_ = {0, 0, 0};
+  return impulse;
+}
+
+void Geometry::ConfigureSurfaceHeating(double temperature, double heat_capacity,
+                                       double particle_weight) {
+  if (!(temperature > 0) || !std::isfinite(temperature) ||
+      !(heat_capacity > 0) || !std::isfinite(heat_capacity) ||
+      !(particle_weight > 0) || !std::isfinite(particle_weight))
+    throw std::invalid_argument("Surface heating requires positive finite temperature, capacity and particle weight");
+  double total_area = 0;
+  for (const auto& p : poligons) {
+    const double area = 0.5 * (p->p2 - p->p1).Cross(p->p3 - p->p1).Mod();
+    if (!(area > 0) || !std::isfinite(area))
+      throw std::invalid_argument("Surface heating requires nondegenerate triangles");
+    total_area += area;
+  }
+  if (!(total_area > 0) || !std::isfinite(total_area))
+    throw std::invalid_argument("Surface heating requires a finite nonempty body");
+  for (const auto& p : poligons) {
+    const double area = 0.5 * (p->p2 - p->p1).Cross(p->p3 - p->p1).Mod();
+    const double capacity = heat_capacity * (area / total_area);
+    if (!(capacity > 0) || !std::isfinite(capacity))
+      throw std::invalid_argument("Polygon heat capacity is not representable");
+    p->wall_temperature = temperature;
+    p->heat_capacity = capacity;
+    p->pending_heat = p->absorbed_heat = 0;
+  }
+  thermal_particle_weight_ = particle_weight;
+}
+
+void Geometry::UpdateSurfaceTemperatures() {
+  if (!SurfaceHeatingEnabled()) return;
+  // Validate every polygon before committing any updates. Never clamp energy.
+  for (const auto& p : poligons) {
+    const double next = p->wall_temperature + p->pending_heat / p->heat_capacity;
+    if (!(next > 0) || !std::isfinite(next) ||
+        !std::isfinite(p->absorbed_heat + p->pending_heat))
+      throw std::runtime_error("Surface thermal step exhausted polygon energy; reduce Cu or increase wall heat capacity");
+  }
+  for (const auto& p : poligons) {
+    p->wall_temperature += p->pending_heat / p->heat_capacity;
+    p->absorbed_heat += p->pending_heat;
+    p->pending_heat = 0;
+  }
+}
+
+bool Geometry::WriteSurfaceSnapshot(const std::string& path, double time) const {
+  std::ofstream file(path);
+  file << std::setprecision(17);
+  file << "time;polygon;x1;y1;z1;x2;y2;z2;x3;y3;z3;temperature;heat_capacity;absorbed_heat\n";
+  for (std::size_t i = 0; i < poligons.size(); ++i) {
+    const auto& p = *poligons[i];
+    file << time << ';' << i;
+    for (const auto& v : {p.p1, p.p2, p.p3})
+      file << ';' << v.x << ';' << v.y << ';' << v.z;
+    file << ';' << p.wall_temperature << ';' << p.heat_capacity
+         << ';' << p.absorbed_heat << '\n';
+  }
+  file.close();
+  return bool(file);
 }
 
 void Geometry::PrepareQueries() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   query_bounds_ = Bounds();
   query_tolerance_ = SurfaceTolerance();
   std::vector<QueryTriangle> triangles;
@@ -331,7 +429,9 @@ double Geometry::SurfaceTolerance() const {
 
 void Geometry::CreateWedge(double x, double width, double length,
                            double alpha) {
+  const bool empty = poligons.empty();
   InvalidateQueries();
+  supported_volume_ = empty;
   Point vertices[6];
 
   vertices[0].Set(x, 0, -(width / 2));
@@ -385,7 +485,9 @@ void Geometry::CreateWedge(double x, double width, double length,
 }
 
 void Geometry::Fragment(double Lmax) {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   double max_Lmax = 10000.;
   while (max_Lmax > Lmax) {
     max_Lmax = 0;
@@ -461,7 +563,9 @@ double Geometry::DistanceToPoint(Point p) {
 }
 
 void Geometry::CreateCube(double x, double width, double length, double H) {
+  const bool empty = poligons.empty();
   InvalidateQueries();
+  supported_volume_ = empty;
   Point p[8];
   for (int i = 0; i < 4; i++) {
     p[i].x = x;
@@ -565,7 +669,9 @@ void Geometry::CreateCylinder(double x, double radius, double length,
 }
 
 int Geometry::FixPolygons() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   int res = 0;
   for (auto& polygon : poligons) {
     if (polygon->Fix()) res++;
@@ -574,7 +680,9 @@ int Geometry::FixPolygons() {
 }
 
 void Geometry::ReverseNormals() {
+  const bool supported = supported_volume_;
   InvalidateQueries();
+  supported_volume_ = supported;
   for (auto& polygon : poligons) {
     polygon->normal = polygon->normal * -1.;
   }

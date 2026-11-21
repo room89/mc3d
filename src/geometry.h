@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "boundary.h"
+#include "cell_volume.h"
 #include "exception.h"
 #include "poligon.h"
 // #include "inner_boundary.h"
@@ -33,7 +34,9 @@ class Geometry {
   std::deque<std::unique_ptr<Polygon>> poligons;
   std::mutex force_mutex_;
   // Subclasses editing polygon vertices/topology must invalidate before edits.
+  bool supported_volume_ = false;
   void InvalidateQueries() {
+    supported_volume_ = false;
     query_bounds_.reset();
     query_tolerance_.reset();
     query_triangles_.clear();
@@ -54,12 +57,42 @@ class Geometry {
   std::vector<QueryTriangle> query_triangles_;
   std::optional<std::pair<Point, Point>> query_bounds_;
   std::optional<double> query_tolerance_;
+  double thermal_particle_weight_ = 0;
+  Point step_impulse_{0, 0, 0};
+  double step_heat_ = 0;
 
  public:
+  struct Exchange {
+    Geometry* body;
+    Polygon* polygon;
+    Point impulse;
+    double energy;
+  };
+
+ private:
+  inline static thread_local std::vector<Exchange>* exchange_sink_ = nullptr;
+
+ public:
+  class ExchangeCapture {
+    std::vector<Exchange>* previous_;
+
+   public:
+    explicit ExchangeCapture(std::vector<Exchange>* sink)
+        : previous_(exchange_sink_) {
+      exchange_sink_ = sink;
+    }
+    ~ExchangeCapture() { exchange_sink_ = previous_; }
+    ExchangeCapture(const ExchangeCapture&) = delete;
+    ExchangeCapture& operator=(const ExchangeCapture&) = delete;
+  };
   struct SurfaceHit {
     Polygon* polygon;
     double fraction;
   };
+  CellVolume GasVolume(Point apex, Point size) const;
+  bool SupportsGasVolume() const {
+    return supported_volume_ || PolygonCount() == 0;
+  }
   Geometry();
   Geometry(const char* file_name);
   ~Geometry();
@@ -86,7 +119,16 @@ class Geometry {
   void PrepareQueries();
   std::pair<Point, Point> Bounds() const;
   double SurfaceTolerance() const;
-  void AccumulateForce(Polygon& polygon, Point impulse);
+  void AccumulateForce(Polygon& polygon, Point impulse, double energy = 0);
+  // Call setup/update only when particle workers are idle.
+  Point TakeStepImpulse();
+  double TakeStepHeat();
+  void ResetStepSurfaceExchange();
+  void ConfigureSurfaceHeating(double temperature, double heat_capacity,
+                               double particle_weight);
+  bool SurfaceHeatingEnabled() const { return thermal_particle_weight_ > 0; }
+  void UpdateSurfaceTemperatures();
+  bool WriteSurfaceSnapshot(const std::string& path, double time) const;
   pair<Point, Point> Size();
   double DistanceToPoint(Point p);
   int FixPolygons();

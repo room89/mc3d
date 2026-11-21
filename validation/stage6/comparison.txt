@@ -1,0 +1,9 @@
+metric=0 difference=0.0725567 tolerance=0.184962
+metric=1 difference=-0.0569301 tolerance=0.109703
+metric=2 difference=-0.0156266 tolerance=0.12378
+metric=3 difference=0.0291342 tolerance=0.142106
+metric=4 difference=-0.0313573 tolerance=0.117612
+metric=5 difference=0.00222311 tolerance=0.0913509
+metric=6 difference=-0.0795601 tolerance=0.174973
+metric=7 difference=0.0360669 tolerance=0.126308
+metric=8 difference=0.0434932 tolerance=0.0724786

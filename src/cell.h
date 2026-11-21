@@ -6,7 +6,6 @@
 // Description: Program for calculation of rarefaid flows.
 
 #pragma once
-
 #include <cstdlib>
 #include <deque>
 #include <fstream>
@@ -15,8 +14,11 @@
 #include <memory>
 #include <mutex>
 #include <span>
-#include <vector>
 #include <variant>
+#include <vector>
+
+#include "collision_parameters.h"
+#include "statistical_moments.h"
 // #include "free_boundary.h"
 #include "geometry.h"
 #include "inner_boundary.h"
@@ -37,9 +39,20 @@ struct CellMoments {
   double energy = 0;
 };
 
+struct CellResolution {
+  std::size_t count = 0;
+  double frequency = 0, transport = INFINITY;
+  int transport_axis = -1;
+  std::optional<double> equilibrium_frequency, mean_free_path;
+};
+
+class StatisticalDiagnostics;
 class Cell {
+  friend class StatisticalDiagnostics;
+
  private:
   friend class CellCluster;
+  friend class CellVolumeTestAccess;
   friend class CellClusterTestAccess;
   // Only after CalculateDt(), with unchanged particles and stored moments.
   // Setting the common dt is allowed; no cache is retained across steps.
@@ -73,6 +86,7 @@ class Cell {
   Point velocity;
   Point mass_center;
   double volume_;
+  bool geometry_initialized_ = false;
   double Kn_l;  // локальый кнутсен
   double Kn;
   double L;   // характерный размер
@@ -84,7 +98,11 @@ class Cell {
   std::mutex particles_mutex_;
 
  public:
+  bool defer_surface_exchange = false;
+  std::vector<Geometry::Exchange> surface_exchanges;
+  ConservedQuantity incoming_quantity;
   CellMoments ComputeMoments() const;
+  double SampleInflowRounding() { return Random().Uniform(); }
   explicit Cell(std::shared_ptr<utils::RandomStream> random = nullptr);
   Cell(uint32_t seed, uint64_t stream_id);
   Cell(const Cell&) = delete;
@@ -107,6 +125,7 @@ class Cell {
   void SetParameters(double S, double alpha, double T);
   void SetVelocity(Point velocity);
   void SetKn(double Kn);
+  CollisionParameters collision_parameters;
   void SetReferenceParticleCount(double count);
   void SetInnerBoundary(InnerBoundary bound);
   void SetBodyMark(bool mark);
@@ -136,12 +155,15 @@ class Cell {
   double GetDt();
   double PeekDt() const;
   double GetVolume() const;
+  void ValidateGasPopulation() const;
   Point GetParticleMassCenter();
   double GetCharacteristicLength();
   bool GetBodyMark();
   double CalculateVolume();
   void SetDt(double dt);
   double CalculateDt();
+  double CollisionFrequencyBound() const;
+  CellResolution resolution;
   void AddNeighbor(Cell& neighbor);
   friend ostream& operator<<(ostream& o, const Cell& c);
   friend class CellCollisionTestAccess;

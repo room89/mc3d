@@ -1,0 +1,202 @@
+# Population sensitivity control
+
+The completed domain diagnostic did not establish stationary fixed-coordinate
+profiles. Test particle-number sensitivity independently using variant E,
+longitudinal domain multiplier 2, warmup 20 original-domain transit times,
+64 equal sampling windows over [20,28], and population multiplier 4.
+This changes 160 to 640 model particles per upstream cell and divides model
+particle weight by four. Grid, reservoirs, physical domain, gas model and
+physical time schedule remain unchanged. Use the same pinned MC3D and SPARTA
+binaries as DOMAIN_DIAGNOSTIC.md, seeds 210001, 210002 and 210003, with a new
+output directory. Same seed labels do not imply paired random trajectories.
+
+Compare with the completed multiplier-1 doubled-domain campaign. Retain all
+runs and windows, with no automatic retry or favorable-window selection.
+Report original-coordinate mean density differences, run-level front and
+width descriptions, half-run changes and full-domain density inventories.
+Do not fit alignment as an acceptance correction. A fourfold particle count
+suggests a factor-two noise reduction only under an independent-particle
+approximation; it is not a promised variance reduction or a pass criterion.
+Three seeds provide exploratory evidence, not calibrated uncertainty.
+
+The runner option is `--population-multiplier 4`. Its default is 1, and changing
+it on resume is rejected before existing evidence is rewritten. This control
+does not itself close numerical convergence, experimental comparison or
+stages 9–11.
+
+## Completed exploratory result
+
+All six runs completed in `output/shock-population4-domain2-v1`.
+The analysis `output/shock-population4-analysis-v1.json` has SHA-256
+`02d5c090da09c3195991584dcb15a904340b74339e2073b1be5c9c63ae434b13`.
+It records 1,621 input hashes and retains all three seeds and 64 windows.
+
+Maximum absolute changes below use density normalized by the reservoir
+jump, in original coordinates, without profile alignment:
+
+| Quantity | Population 1 | Population 4 |
+| --- | ---: | ---: |
+| MC3D ensemble second-half minus first-half | 0.01136045 | 0.00388104 |
+| SPARTA ensemble second-half minus first-half | 0.02596195 | 0.00562813 |
+| MC3D versus SPARTA ensemble mean | 0.09970725 | 0.04910187 |
+
+The maximum population-4 minus population-1 mean change is 0.03592533
+for MC3D and 0.01654682 for SPARTA. Reduced half-run changes do not establish
+stationarity or population convergence from two populations and three seeds.
+
+An exploratory translation diagnostic locates ensemble fronts at 0.14493149
+and 0.34281224 collision mean free paths for MC3D and SPARTA. Their 10–90
+widths are 4.64562758 and 4.63499274. Fitting a shift of 0.19788075 to these
+same profiles reduces the maximum difference on [-11.975,11.975] to
+0.00327738. This is a description of the discrepancy, not an acceptance
+correction or an independently validated shape comparison.
+
+Full-domain integrated normalized density decreases between the two halves
+in all six runs. The changes are [-0.01240802,-0.02963447,-0.02015064] for
+MC3D and [-0.03222984,-0.02381037,-0.03283226] for SPARTA, in seed order.
+Changes outside the central region also contribute; a rigid front translation
+alone is not established. No significance claim follows from these signs.
+
+MC3D particle-count balances close exactly over each complete run and eight
+fixed time sections; momentum and energy residuals are below 1e-10 times
+the sum of absolute incoming and outgoing fluxes. This verifies bookkeeping,
+not the physical correctness of outflow. Initial particle-count discrepancies
+correspond to less than 0.00039 mean free paths under a rigid-step mass model;
+that simple initial count error cannot explain the observed front positions.
+Initial momentum and energy fluctuations are not thereby excluded.
+
+Supporting local artifacts are `output/population4-translation-diagnostic-v1.json`,
+`output/population4-full-regions-v1.json`,
+`output/population4-boundary-exchange-v1.json`, and
+`output/population4-initial-inventory-v1.json`.
+Physical acceptance remains incomplete. The remaining fixed-coordinate
+cross-code discrepancy requires a prospective uncertainty and convergence
+check; fitting shifts or selecting favorable windows must not turn it into a pass.
+
+## Next isolated control: inflow count rounding
+
+Pinned MC3D source `398078186333600d9a704ce0c4da447468eac8a6` carries the
+fractional expected inflow across steps. Pinned SPARTA source
+`95b9abaa8bd548991cc3c3f1c58b34722f7ade74` instead uses `floor(expected + U)`
+with a new uniform variate per step. Their collision/motion order also differs.
+Neither difference alone identifies a defect. The next control will change only
+MC3D hyperfree inflow count rounding; collision/motion order stays fixed.
+
+Implement an explicit experimental configuration mode with accumulated rounding
+as the unchanged default. Stochastic rounding must preserve the analytic expected
+incoming count and use the seeded cell random stream. Record the mode in effective
+configuration and prevent resume from silently mixing modes. Do not apply this
+mode to the legacy free-boundary batch temperature normalization.
+
+Before production, check counts below one and above one per step, varying time
+steps, reproducibility, invalid modes, serialization, conservation, and default
+behavior. Verify the new binary against the pinned control with identical
+physical inputs. Freeze both the new source and binary hashes.
+
+Run the E, domain-2, population-4, warmup-20 control for three seeds 210001–210003
+in a new directory, retaining the complete [20,28] interval and 64 windows.
+Use the completed accumulated-rounding MC3D and SPARTA runs as historical
+comparators. Reused seed labels do not make trajectories paired. A changed random
+stream is part of this exploratory intervention, so three runs cannot certify
+causality or acceptance. No automatic retries, selected windows or fitted-shift
+acceptance correction are permitted.
+
+Report original-coordinate profile means, front and width descriptions, half-run
+changes, full-domain inventory and boundary balances regardless of outcome.
+A smaller discrepancy alone must not promote the experimental mode to default.
+If discrepancy persists, retain the negative result and isolate time-step/order
+sensitivity next. Any promising result still requires fresh-seed confirmation,
+qualified uncertainty and the remaining numerical and experimental gates.
+
+### Experimental mode interface
+
+The solver JSON field `hyperfree_inflow_rounding` accepts `accumulated`
+(default) or `stochastic`; the solver CLI uses `--hyperfree-inflow-rounding`.
+SI configuration accepts the same field under `numerics`. The campaign runner
+also accepts `--hyperfree-inflow-rounding stochastic`, records it in its report,
+and rejects a changed mode on resume before rewriting evidence. Historical
+reports without the field mean `accumulated`. The mode affects MC3D hyperfree
+boundaries only; SPARTA already uses stochastic count rounding.
+
+For a controlled MC3D-only campaign, use the frozen new binary and runner with
+`--variants E --seeds 210001 210002 210003 --warmup-transits 20
+--domain-multiplier 2 --population-multiplier 4 --hyperfree-inflow-rounding stochastic
+--load-mode full --no-time-budget` and a new output directory. Omit `--sparta-bin`
+when using the already verified SPARTA comparator. Freeze provenance before
+launch; the command alone does not certify physical acceptance.
+
+### Completed stochastic-rounding control
+
+The frozen `output/shock-inflow-stochastic-v2` campaign completed all three
+MC3D runs (seeds 210001–210003), each with all 64 production windows. Source
+`da0d11c43bcae08f5db7c9d35a4b8cd9cbc6e1eb` and its frozen inputs were retained.
+The earlier v1 attempt failed during the runner's RSS monitoring immediately after launch;
+its evidence was retained separately. The diagnosed infrastructure failure was
+retried in v2 with unchanged frozen source, binary and numerical inputs.
+
+Compared with the completed accumulated-rounding population-4 series, only
+`hyperfree_inflow_rounding` changed among physical and numerical parameters;
+unit scales match for all three seeds. Paths in provenance necessarily differ.
+The original-coordinate comparison uses all windows and the same central grid,
+without translation or interpolation. The maximum absolute normalized mean
+profile difference from the historical SPARTA comparator is 0.04436484, versus
+0.04910187 for accumulated rounding. The maximum change between MC3D rounding
+modes is 0.00552855. The stochastic ensemble's maximum absolute half-run profile
+change is 0.00387417. These descriptive values have no qualified uncertainty;
+reused seed labels do not make trajectories paired.
+
+Stochastic per-run front positions are [0.18378984, 0.12685153, 0.18583472]
+and 10–90 widths are [4.65884641, 4.64459645, 4.63370869], in collision mean free
+path units. Full-domain second-half minus first-half normalized density
+integrals are [-0.01224975, -0.02485216, -0.02118041]. Outer regions contribute;
+these signs neither establish significant drift nor identify its cause.
+Whole-run and eight fixed, whole-step section balances close exactly for particle
+count; longitudinal momentum and energy residuals are below 1e-10 of absolute
+incoming plus outgoing exchange. This checks bookkeeping, not boundary physics.
+
+Local evidence: `output/shock-inflow-stochastic-analysis-v1.json` (SHA-256
+`e16758ac5fc0fb1cf9356ffe2765a2618aded8c8a32b1cabba1c830bdf15c76c`),
+`output/inflow-stochastic-input-audit-v2.json`,
+`output/inflow-stochastic-full-regions-v1.json`, and
+`output/inflow-stochastic-boundary-balances-v1.json`.
+
+The discrepancy persists. Keep accumulated rounding as default; this control
+does not establish causality, stationarity, convergence or physical acceptance.
+The comparison below measures time-step sensitivity at the same domain,
+population and sampling schedule. Changing collision/motion order is a separate
+intervention. Fresh confirmation and all remaining numerical, experimental,
+wedge and dynamic-wall gates still apply.
+
+## Timestep comparison at fourfold population
+
+The comparison uses variants C and E at domain multiplier 2, population
+multiplier 4 and warmup 20, with the pinned baseline solver binaries and
+accumulated MC3D inflow rounding. The configuration comparison for all
+three seeds found two differences between C and E: Cu (0.5 versus 0.25)
+and collision Courant (0.1 versus 0.05). The comparison measures the
+combined sensitivity to those two time-step controls.
+
+Both solvers completed three runs per timestep with seed labels 210001–210003.
+The C comparison uses three complete SPARTA recovery runs. The interrupted
+SPARTA run contributes no windows. Each run mean weights all 64 production
+windows equally. The density comparison uses the same 560 central cell centers
+in the original coordinates and weights each run equally.
+
+| Diagnostic | C | E |
+|---|---:|---:|
+| Maximum absolute inter-code difference in normalized density | 0.05701 | 0.04910 |
+| MC3D mean front position (collision mean free paths) | 0.1271 | 0.1446 |
+| SPARTA mean front position (collision mean free paths) | 0.3622 | 0.3441 |
+| MC3D mean 10–90% width (collision mean free paths) | 4.6466 | 4.6474 |
+| SPARTA mean 10–90% width (collision mean free paths) | 4.6368 | 4.6264 |
+
+Front positions and widths are averages of isotonic crossing measurements
+on individual run means. From C to E the maximum absolute change in the
+ensemble density profile was 0.00514 for MC3D and 0.00504 for SPARTA.
+The front-position gap decreased from 0.2351 to 0.1995 collision mean free
+paths. The three seed labels provide a descriptive comparison. Time convergence,
+uncertainty qualification and physical acceptance remain open.
+
+The local comparison artifact is
+`output/shock-population4-timestep-c-recovery-analysis-v1.json`
+(SHA-256 `ed273e3e56048b7b2ebe705941b1f564cf932faa123cd2f2c8816c117eb39355`).

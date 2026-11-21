@@ -33,8 +33,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Python analysis dependencies
+        run: |
+          python3 -m venv .venv-analysis
+          .venv-analysis/bin/python -m pip install -r requirements-analysis.txt
+
+      - name: Test Python diagnostics
+        run: .venv-analysis/bin/python -m unittest discover -s tests/python -v
+
       - name: Test benchmark tools
-        run: python3 -B -m unittest discover -s tools -p 'test_benchmark*.py'
+        run: .venv-analysis/bin/python -B -m unittest discover -s tools -p 'test_benchmark*.py'
 
       - name: Verify toolchain
         run: |
@@ -70,4 +78,4 @@ jobs:
         run: >
           ctest --test-dir build --output-on-failure
           --repeat until-fail:3
-          -R '^(BodyCollisionTest|BodyReviewRegressionTest|CellClusterIntegrationTest)\.'
+          -R '^(StatisticalMomentsTest|CellVolumeTest|VhsTest|LowPopulationCellTest|CollisionFrequencyTest|HsScatteringTest|BodyCollisionTest|BodyReviewRegressionTest|CellClusterIntegrationTest)\.|^StatisticsIntegration$'

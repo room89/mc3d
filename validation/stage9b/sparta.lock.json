@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/sparta/sparta.git",
+  "tag": "27Aug2026",
+  "commit": "95b9abaa8bd548991cc3c3f1c58b34722f7ade74",
+  "build_options": {
+    "BUILD_MPI": "OFF",
+    "PKG_MPI_STUBS": "ON",
+    "CMAKE_BUILD_TYPE": "Release"
+  },
+  "binary_sha256": "bb71a79a31313b3ee9450a65fccc24f15c2d444b9822b4b52a26515e19a0514b"
+}

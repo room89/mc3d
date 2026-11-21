@@ -26,11 +26,15 @@ class ThreadPool {
   size_t GetQueueSize() const;
 
   size_t GetThreadCount() const;
+  size_t GetCapacity() const { return threads_num_; }
+  // Change only between completed batches of tasks. Sleeping workers stay allocated.
+  void SetActiveThreadCount(size_t count);
 
  private:
   void Run();
 
   const size_t threads_num_;
+  size_t active_threads_;
   std::vector<std::thread> threads_;
   std::queue<Task> tasks_;
 

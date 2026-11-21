@@ -1,10 +1,17 @@
 #pragma once
+#include <csignal>
+#include <functional>
+
 #include "cell_cluster.h"
+#include "runtime_control.h"
+#include "statistical_diagnostics.h"
 namespace mc3d {
+inline volatile std::sig_atomic_t stop_requested = 0;
 class SnapshotWriter {
  public:
   explicit SnapshotWriter(CellCluster& cluster) : cluster_(cluster) {}
   void SetBinaryOutput(bool enabled);
+  CellVolumeSummary WriteCellGeometry();
   bool WriteFile(const std::string& name);
   bool WriteFile();
   bool WriteSpeedFile(const char* name);
@@ -24,14 +31,41 @@ class SimulationRunner {
   void SetSnapshotInterval(double interval);
   double SnapshotInterval() const { return snapshot_interval_; }
   double NextSnapshotTime() const { return next_snapshot_time_; }
+  // rho_infinity = 1 in normalized solver units.
+  void SetForceReference(double area, double speed, double alpha);
+  void SetResolutionDiagnostics(bool enabled) {
+    resolution_diagnostics_ = enabled;
+  }
+  void ConfigureStatistics(const SimulationConfig& config) {
+    if (config.statistics_enabled || config.balance_enabled)
+      statistics_ = std::make_unique<StatisticalDiagnostics>(cluster_, config);
+  }
   StepResult Step();
   void Compute();
+  std::function<void(double, std::size_t)> progress;
+  std::function<void(double, std::size_t, const std::string&, std::size_t)> runtime_progress;
+  double Time() const { return cluster_.t; }
+  std::size_t Steps() const { return steps_; }
+  void SetRuntimeControl(const std::string& path) { runtime_control_path_ = path; }
   static void RequireWrite(bool success);
  private:
   CellCluster& cluster_;
   SnapshotWriter writer_;
+  std::size_t steps_ = 0;
+  std::string runtime_control_path_;
   double snapshot_interval_ = 0;
   double next_snapshot_time_ = 0;
+  std::unique_ptr<StatisticalDiagnostics> statistics_;
+  bool resolution_diagnostics_ = false;
+  std::string last_resolution_rows_;
+  void WriteResolution();
+  void FlushLastResolution();
   bool UpdateSnapshotSchedule();
+  void WriteBodyLoads(const StepResult& result);
+  std::ofstream body_loads_;
+  std::optional<double> force_scale_;
+  double reference_area_ = 0;
+  double dynamic_pressure_ = 0;
+  double flow_angle_ = 0;
 };
 }

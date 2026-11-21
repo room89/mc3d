@@ -1,0 +1,8 @@
+{
+  "collision_model": "vhs",
+  "molecular_mass_kg": 6.633521472521616e-26,
+  "vhs_diameter_m": 3.8774087918641243e-10,
+  "vhs_reference_temperature_k": 300,
+  "vhs_omega": 0.7115290294715864,
+  "temperature_unit_k": 300
+}

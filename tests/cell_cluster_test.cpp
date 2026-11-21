@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -36,8 +37,82 @@ class CellClusterTestAccess {
 
   static std::vector<Particle>& MutableParticles(Cell& cell) { return cell.particles; }
   static std::vector<Particle>& Buffer(CellCluster& cluster) { return cluster.partile_buffer; }
-  static void Gather(CellCluster& cluster) { cluster.GatherParticles(); }
+  // Materialize only in the legacy gather-oracle tests; production keeps spans.
+  static void Gather(CellCluster& cluster) {
+    auto sources = cluster.GatherParticles();
+    std::vector<Particle> logical;
+    for (const auto& source : sources)
+      logical.insert(logical.end(), source.particles->begin(), source.particles->end());
+    for (const auto& source : sources) source.particles->clear();
+    cluster.partile_buffer = std::move(logical);
+  }
+  static void DirectTransport(CellCluster& cluster) {
+    auto sources = cluster.GatherParticles();
+    cluster.DistributeSources(sources, cluster.partile_buffer);
+  }
+  static void RouteGathered(CellCluster& cluster) {
+    CellCluster::OutgoingSources sources;
+    std::size_t total = 0;
+    auto append = [&](std::vector<Particle>& b) {
+      if (!b.empty()) { total += b.size(); sources.push_back({&b,total}); }
+    };
+    append(cluster.partile_buffer);
+    for (auto& cell : cluster.cells) append(cell.GetBuffer());
+    cluster.DistributeSources(sources, cluster.partile_buffer);
+  }
+  static void ReferenceRoute(CellCluster& cluster) {
+    std::vector<Particle> remaining;
+    for (auto& particle : cluster.partile_buffer) {
+      std::size_t destination = 0;
+      if (!cluster.FindCellIndex(particle.position, destination) ||
+          !cluster.cell_lookup_[destination] ||
+          !cluster.cell_lookup_[destination]->TryAcceptParticle(particle))
+        remaining.push_back(particle);
+    }
+    cluster.partile_buffer = std::move(remaining);
+  }
 
+  static std::size_t CountBody(CellCluster& c) { return c.CountBodyParticles(); }
+  static std::size_t Candidates(const CellCluster& c) { return c.body_check_cells_.size(); }
+  static bool Cached(const CellCluster& c) { return c.body_check_bounds_.has_value(); }
+  static void ClearCells(CellCluster& c) { c.cells.clear(); c.cell_lookup_.clear(); }
+  // Fault injection for the worker-draining test only: synthetic opposing walls
+  // exercise the reflection limit, not supported-volume initialization.
+  static void FaultBoundary(CellCluster& c, std::unique_ptr<Geometry> body) {
+    c.body_ = std::move(body);
+    c.body_->PrepareQueries();
+    for (auto& cell : c.cells)
+      cell.SetInnerBoundary(
+          InnerBoundary(*c.body_, cell.GetCenter(), cell.GetSize().Mod()));
+  }
+  static Geometry* Body(CellCluster& c) { return c.body_.get(); }
+  static void BodyCells(CellCluster& c, std::unique_ptr<Geometry> body, int n) {
+    c.body_ = std::move(body);
+    if (c.body_) c.body_->PrepareQueries();
+    for (int i = 0; i < n; ++i) {
+      c.cells.emplace_back(123, i);
+      auto& cell = c.cells.back();
+      cell.SetApex({-.5 + (i % 100) * .01, -.1, -.1});
+      cell.SetSize(.01, .2, .2);
+      cell.particles.emplace_back(Point(0, 0, 0), Point(1, 2, 3));
+      cell.particles.emplace_back(Point(-.5, 0, 0), Point(3, 2, 1));
+      cell.particles.emplace_back(Point(5, 5, 5), Point(0, 0, 0));
+      c.cell_lookup_.push_back(&cell);
+    }
+  }
+  static std::size_t BodyOracle(const CellCluster& c) {
+    if (!c.body_ || !c.body_->PolygonCount()) return 0;
+    const auto [lo, hi] = c.body_->Bounds();
+    std::size_t count = 0;
+    for (const auto& cell : c.cells) {
+      auto p = cell.GetApex(), d = cell.GetSize();
+      if (p.x <= hi.x && p.x+d.x >= lo.x && p.y <= hi.y && p.y+d.y >= lo.y &&
+          p.z <= hi.z && p.z+d.z >= lo.z)
+        for (const auto& particle : cell.particles)
+          count += c.body_->IsInnerPoint(particle.position);
+    }
+    return count;
+  }
   static double GetDt(const CellCluster& cluster) { return cluster.dt; }
   static void ConfigureTime(CellCluster& cluster, double cu, double t, double end) {
     cluster.Cu = cu; cluster.t = t; cluster.t_end = end;
@@ -607,9 +682,10 @@ TEST(CellClusterIntegrationTest, PeriodicFlowConservesCountMomentumAndEnergy) {
     };
     const auto initial = totals();
     ASSERT_EQ(initial[0], 720);
+    for (auto* cell : cells) cell->SetReferenceParticleCount(24);
     bool finished = false;
     int steps = 0;
-    while (!finished && steps < 1000) {
+    while (!finished && steps < 20000) {
       SCOPED_TRACE(steps);
       const double previous_time =
           mc3d::CellClusterTestAccess::GetTime(cluster);
@@ -737,7 +813,9 @@ TEST(CellClusterIntegrationTest, PropagatesCollisionLimitAfterWorkersFinish) {
   cluster.SetSize(2.0001, 100, 100);
   cluster.SetEndTime(1);
   runner.SetSnapshotInterval(10);
-  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1, std::move(body), 0, 0, 1));
+  ASSERT_TRUE(cluster.Initialize(1, 2, 1, 0, kKn, 1,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  mc3d::CellClusterTestAccess::FaultBoundary(cluster, std::move(body));
   const auto& cells = mc3d::CellClusterTestAccess::GetLookup(cluster);
   mc3d::Particle left({5e-5, -0.1, 0}, {1, 0, 0});
   mc3d::Particle right({5e-5, 0.1, 0}, {1, 0, 0});
@@ -1013,7 +1091,7 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
         std::vector<double> local_dt;
         std::vector<mc3d::CellMoments> moments;
         std::vector<utils::Pcg32> engines;
-        double expected = 1000000.;
+        double expected = std::numeric_limits<double>::infinity();
         for (auto* cell : cells) {
           engines.push_back(Access::Engine(*cell));
           const auto local = cell->CalculateDt();
@@ -1026,6 +1104,10 @@ TEST(CellClusterTimeStepTest, ParallelPreparationMatchesSequentialOracleExactly)
           cell->SetDt(-1);
         }
         expected *= cu;
+        for (auto* cell : cells) {
+          const double rate = cell->CollisionFrequencyBound();
+          if (rate > 0) expected = std::min(expected, cluster.collision_courant/rate);
+        }
         if (t + expected > end) expected = end - t;
         cluster.CalculateDt();
         EXPECT_EQ(Access::GetDt(cluster),expected);
@@ -1259,4 +1341,291 @@ TEST(CellStorageTest, ConcurrentAcceptanceHasNoLossOrDuplicates) {
   std::sort(ids.begin(), ids.end());
   ASSERT_EQ(ids.size(), 2000);
   for (int i = 0; i < 2000; ++i) EXPECT_EQ(ids[i], i);
+}
+
+TEST(CellClusterIntegrationTest, SurfaceHeatingAndLoadsReachSnapshots) {
+  ScopedWorkingDirectory guard("mc3d_surface_loads_test");
+  auto geometry = std::make_unique<mc3d::Geometry>();
+  geometry->CreateCube(-0.25, 0.5, 0.5, 0.5);
+  auto* body = geometry.get();
+  mc3d::CellCluster cluster(2, 123);
+  mc3d::SimulationRunner runner(cluster);
+  cluster.SetApex({-0.5,-0.5,-0.5});
+  cluster.SetSize(1,1,1);
+  cluster.SetEndTime(0.03);
+  ASSERT_TRUE(cluster.Initialize(4,4,4,512,0.05,0.2,std::move(geometry),2,0,1,1,10));
+  runner.SetForceReference(0.25, 2*std::sqrt(2.), 0.2);
+  ASSERT_TRUE(runner.Writer().WriteFile("initial.dat"));
+  EXPECT_TRUE(std::filesystem::exists("initial.dat.surface.csv"));
+  mc3d::Point integrated_force(0,0,0);
+  mc3d::StepResult result{};
+  for (int n = 0; n < 100; ++n) {
+    result = runner.Step();
+    integrated_force += result.body_force * result.dt;
+    mc3d::Point total_impulse(0,0,0);
+    for (std::size_t i = 0; i < body->PolygonCount(); ++i) {
+      const auto& p = body->GetPolygon(i);
+      total_impulse += p.force / 512;
+      EXPECT_NEAR(p.heat_capacity * (p.wall_temperature-1), p.absorbed_heat, 1e-12);
+      EXPECT_DOUBLE_EQ(p.pending_heat, 0);
+    }
+    EXPECT_NEAR((integrated_force-total_impulse).Mod(), 0, 1e-12);
+    EXPECT_NEAR((result.mean_body_force*result.time-total_impulse).Mod(), 0, 1e-12);
+    if (result.finished) break;
+  }
+  EXPECT_TRUE(result.finished);
+  EXPECT_GT(integrated_force.Mod(), 0);
+  ASSERT_TRUE(runner.Writer().WriteFile("final.dat"));
+  EXPECT_TRUE(std::filesystem::exists("final.dat.surface.csv"));
+  std::ifstream file("body_loads.csv");
+  std::string header, row, last;
+  std::getline(file, header);
+  EXPECT_NE(header.find("Cx;Cy;Cz;Cd;Cl"), std::string::npos);
+  while (std::getline(file, row)) last = row;
+  std::replace(last.begin(), last.end(), ';', ' ');
+  std::istringstream values(last);
+  std::vector<double> columns;
+  for (double value; values >> value;) columns.push_back(value);
+  ASSERT_EQ(columns.size(), 21u);
+  EXPECT_NEAR(columns[8], 0.25, 1e-12);
+  EXPECT_NEAR(columns[9], 4, 1e-12);
+  EXPECT_NEAR(columns[11], result.body_force.x, 1e-12);
+  EXPECT_NEAR(columns[12], result.body_force.y, 1e-12);
+  EXPECT_NEAR(columns[14], columns[11]*std::cos(0.2)+columns[12]*std::sin(0.2), 1e-12);
+  EXPECT_NEAR(columns[15], -columns[11]*std::sin(0.2)+columns[12]*std::cos(0.2), 1e-12);
+  EXPECT_NEAR(columns[16], result.mean_body_force.x, 1e-12);
+}
+
+
+TEST(BodyParticleCheckTest, MatchesSerialOracleWithoutChangingParticlesOrRandom) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto threads : {1, 4, 12}) for (auto size : {0, 1, 32, 33, 100, 400}) {
+    for (int shape = 0; shape < 3; ++shape) {
+      mc3d::CellCluster c(threads, 123);
+      auto body = std::make_unique<mc3d::Geometry>();
+      if (shape == 1) body->CreateCube(-.5, 1, 1, 1);
+      if (shape == 2) body->CreateWedge();
+      A::BodyCells(c, std::move(body), size);
+      std::vector<std::vector<mc3d::Particle>> particles;
+      std::vector<utils::Pcg32> engines;
+      for (auto* cell : A::GetLookup(c)) {
+        particles.push_back(A::Particles(*cell));
+        engines.push_back(A::Engine(*cell));
+      }
+      EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+      EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+      for (std::size_t i = 0; i < particles.size(); ++i) {
+        auto engine = A::Engine(*A::GetLookup(c)[i]);
+        EXPECT_EQ(engine(), engines[i]());
+        const auto& actual = A::Particles(*A::GetLookup(c)[i]);
+        ASSERT_EQ(actual.size(), particles[i].size());
+        for (std::size_t j = 0; j < actual.size(); ++j) {
+          for (auto pair : {std::pair{actual[j].position, particles[i][j].position},
+                            std::pair{actual[j].velocity, particles[i][j].velocity}}) {
+            EXPECT_EQ(pair.first.x, pair.second.x);
+            EXPECT_EQ(pair.first.y, pair.second.y);
+            EXPECT_EQ(pair.first.z, pair.second.z);
+          }
+        }
+      }
+    }
+  }
+  mc3d::CellCluster no_body(4, 123);
+  A::BodyCells(no_body, nullptr, 100);
+  EXPECT_EQ(A::CountBody(no_body), 0);
+  EXPECT_FALSE(A::Cached(no_body));
+}
+
+TEST(BodyParticleCheckTest, CacheTracksBoundsAndReadsCurrentParticles) {
+  using A = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4, 123);
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(body), 100);
+  ASSERT_EQ(A::CountBody(c), 100);
+  A::MutableParticles(*A::GetLookup(c)[0]).clear();
+  EXPECT_EQ(A::CountBody(c), 99);
+  auto same_bounds = std::make_unique<mc3d::Geometry>();
+  same_bounds->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(same_bounds), 1);
+  EXPECT_EQ(A::CountBody(c), 100);
+  EXPECT_EQ(A::Candidates(c), 101);
+  A::Body(c)->Move({10, 0, 0});
+  EXPECT_EQ(A::CountBody(c), 0);
+  EXPECT_EQ(A::Candidates(c), 0);
+  A::Body(c)->Move({-10, 0, 0});
+  EXPECT_EQ(A::CountBody(c), A::BodyOracle(c));
+  c.SetSize(1, 1, 1);
+  EXPECT_FALSE(A::Cached(c));
+  A::CountBody(c);
+  c.SetApex({0, 0, 0});
+  EXPECT_FALSE(A::Cached(c));
+  A::CountBody(c);
+  auto empty = std::make_unique<mc3d::Geometry>();
+  A::ClearCells(c);
+  c.Initialize(1, 1, 1, 0, .04, .5, std::move(empty), 0, 0, 1);
+  EXPECT_FALSE(A::Cached(c));
+  EXPECT_EQ(A::CountBody(c), 0);
+}
+
+TEST(BodyParticleCheckTest, StoppedPoolFailsWithoutPublishingPartialCount) {
+  using A = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4, 123);
+  auto body = std::make_unique<mc3d::Geometry>();
+  body->CreateCube(-.5, 1, 1, 1);
+  A::BodyCells(c, std::move(body), 100);
+  A::StopPool(c);
+  EXPECT_THROW(A::CountBody(c), std::runtime_error);
+}
+
+namespace {
+class CheckConcaveGeometry : public mc3d::Geometry {
+ public:
+  void Triangle(mc3d::Point a, mc3d::Point b, mc3d::Point c, mc3d::Point normal) {
+    InvalidateQueries();
+    poligons.push_back(std::make_unique<mc3d::Polygon>(a, b, c, normal));
+  }
+};
+std::unique_ptr<CheckConcaveGeometry> MakeCheckConcavePrism() {
+  auto geometry = std::make_unique<CheckConcaveGeometry>();
+  // Extrude the L-shaped polygon (0,0)-(2,0)-(2,1)-(1,1)-(1,2)-(0,2).
+  const std::array<mc3d::Point, 6> outline{
+      {{0, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}}};
+  for (std::size_t i = 0; i < outline.size(); ++i) {
+    auto a = outline[i];
+    auto b = outline[(i + 1) % outline.size()];
+    auto top_a = a + mc3d::Point(0, 0, 1);
+    auto top_b = b + mc3d::Point(0, 0, 1);
+    mc3d::Point normal(b.y - a.y, a.x - b.x, 0);
+    geometry->Triangle(a, b, top_b, normal);
+    geometry->Triangle(a, top_b, top_a, normal);
+  }
+  const std::array<std::array<mc3d::Point, 4>, 3> squares{
+      {{{{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}}},
+       {{{1, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}}},
+       {{{0, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}}}}};
+  for (const auto& square : squares) {
+    geometry->Triangle(square[0], square[2], square[1], {0, 0, -1});
+    geometry->Triangle(square[0], square[3], square[2], {0, 0, -1});
+    const auto rise = mc3d::Point(0, 0, 1);
+    geometry->Triangle(square[0] + rise, square[1] + rise, square[2] + rise,
+                       {0, 0, 1});
+    geometry->Triangle(square[0] + rise, square[2] + rise, square[3] + rise,
+                       {0, 0, 1});
+  }
+  return geometry;
+}
+}
+TEST(BodyParticleCheckTest, CountsConcaveInteriorAndNotchExactly) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto workers : {1, 4, 12}) {
+    mc3d::CellCluster c(workers, 123);
+    A::BodyCells(c, MakeCheckConcavePrism(), 100);
+    for (auto* cell : A::GetLookup(c)) {
+      auto& p = A::MutableParticles(*cell);
+      p.clear();
+      p.emplace_back(mc3d::Point(.5, .5, .5), mc3d::Point(0, 0, 0));
+      p.emplace_back(mc3d::Point(1.5, 1.5, .5), mc3d::Point(0, 0, 0));
+      p.emplace_back(mc3d::Point(0, .5, .5), mc3d::Point(0, 0, 0));
+    }
+    const auto expected = A::BodyOracle(c);
+    ASSERT_GT(expected, 0);
+    EXPECT_EQ(A::CountBody(c), expected);
+  }
+}
+
+
+TEST(DirectDistributionTest, SegmentedInputMatchesSerialRoutingAndBoundaryOrder) {
+  using A = mc3d::CellClusterTestAccess;
+  for (auto workers : {1,4,12}) for (auto outside_percent : {0,1,100}) {
+    mc3d::CellCluster actual(workers,123), expected(1,123);
+    for (auto* c : {&actual,&expected}) {
+      c->SetApex({0,0,0}); c->SetSize(5,1,1);
+      ASSERT_TRUE(c->Initialize(5,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+      std::size_t id=0;
+      // A pre-existing prefix plus uneven spans and a long same-destination batch.
+      const std::array<std::size_t,6> sizes{3,1,1023,1024,1025,4097};
+      for (std::size_t span=0;span<sizes.size();++span) {
+        auto& buffer=span ? A::GetLookup(*c)[span-1]->GetBuffer() : A::Buffer(*c);
+        for (std::size_t i=0;i<sizes[span];++i,++id) {
+          const bool outside=id%100<static_cast<std::size_t>(outside_percent);
+          buffer.emplace_back(mc3d::Point(outside ? -1. : 4.5,.5,.5),mc3d::Point(double(id),2,3));
+        }
+      }
+    }
+    for (int repeat=0;repeat<2;++repeat) {
+      A::DirectTransport(actual);
+      ReferenceGather(expected);
+      A::ReferenceRoute(expected);
+      const auto& left=A::Buffer(actual); const auto& right=A::Buffer(expected);
+      ASSERT_EQ(left.size(),right.size());
+      for (std::size_t i=0;i<left.size();++i) ExpectSameParticle(left[i],right[i]);
+      for (std::size_t i=0;i<A::GetLookup(actual).size();++i) {
+        auto a=A::Particles(*A::GetLookup(actual)[i]);
+        auto b=A::Particles(*A::GetLookup(expected)[i]);
+        if (workers>1) {
+          auto less=[](const auto& x,const auto& y){return x.velocity.x<y.velocity.x;};
+          std::sort(a.begin(),a.end(),less); std::sort(b.begin(),b.end(),less);
+        }
+        ASSERT_EQ(a.size(),b.size());
+        for (std::size_t j=0;j<a.size();++j) ExpectSameParticle(a[j],b[j]);
+        EXPECT_TRUE(A::GetLookup(actual)[i]->GetBuffer().empty());
+      }
+    }
+  }
+}
+
+TEST(DirectDistributionTest, InternalTrafficDoesNotAllocateGlobalParticleStorage) {
+  using A=mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4,123);
+  c.SetApex({0,0,0}); c.SetSize(2,1,1);
+  ASSERT_TRUE(c.Initialize(2,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+  for (int i=0;i<10000;++i)
+    A::GetLookup(c)[0]->GetBuffer().emplace_back(mc3d::Point(1.5,.5,.5),mc3d::Point(i,0,0));
+  A::DirectTransport(c);
+  EXPECT_EQ(A::Buffer(c).capacity(),0);
+  EXPECT_EQ(A::GetLookup(c)[1]->GetParticleCount(),10000);
+}
+
+TEST(DirectDistributionTest, SubmissionFailureRetainsSourceBuffers) {
+  using A=mc3d::CellClusterTestAccess;
+  mc3d::CellCluster c(4,123);
+  c.SetApex({0,0,0}); c.SetSize(1,1,1);
+  ASSERT_TRUE(c.Initialize(1,1,1,0,kKn,kCu,std::make_unique<mc3d::Geometry>(),0,0,1));
+  auto& local=A::GetLookup(c)[0]->GetBuffer();
+  local.assign(4097,mc3d::Particle({.5,.5,.5},{1,2,3}));
+  A::StopPool(c);
+  EXPECT_THROW(A::RouteGathered(c),std::runtime_error);
+  EXPECT_EQ(local.size(),4097);
+  EXPECT_TRUE(A::Buffer(c).empty());
+}
+
+TEST(CellClusterTimeStepTest, DenseGasReachesEndWithIndependentCollisionLimit) {
+  using Access = mc3d::CellClusterTestAccess;
+  mc3d::CellCluster cluster(1, 123);
+  cluster.SetApex({0, 0, 0});
+  cluster.SetSize(1, 1, 1);
+  cluster.SetEndTime(.05);
+  ASSERT_TRUE(cluster.Initialize(1, 1, 1, 0, .1, .8,
+                                 std::make_unique<mc3d::Geometry>(), 0, 0, 1));
+  auto* cell = Access::GetLookup(cluster).front();
+  cell->SetReferenceParticleCount(1);
+  for (int i = 0; i < 24; ++i) {
+    mc3d::Particle particle({.5, .5, .5}, {i % 2 ? 1. : -1., 0, 0});
+    ASSERT_TRUE(cell->TryAcceptParticle(particle));
+  }
+  const double expected_rate = 23 * std::sqrt(48. / 23) / (std::sqrt(2.) * .1);
+  cluster.CalculateDt();
+  EXPECT_NEAR(Access::GetDt(cluster), .1 / expected_rate, 1e-14);
+  bool finished = false;
+  int steps = 0;
+  while (!finished && steps++ < 20000) {
+    finished = Access::RunTimeStep(cluster);
+    EXPECT_EQ(cell->GetParticleCount(), 24);
+    const auto moments = cell->ComputeMoments();
+    EXPECT_NEAR(moments.energy, .5, 1e-12);
+    EXPECT_NEAR(moments.velocity.Mod(), 0, 1e-12);
+  }
+  EXPECT_TRUE(finished);
+  EXPECT_DOUBLE_EQ(Access::GetTime(cluster), .05);
 }

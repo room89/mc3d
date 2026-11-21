@@ -1,4 +1,5 @@
 #include "simulation_runner.h"
+#include "run_manifest.h"
 #include <iostream>
 #include <memory>
 #include <utility>
@@ -10,9 +11,17 @@
 #include "solver_setup.h"
 
 int Run(int argc, char* argv[]) {
-  const auto config = mc3d::LoadSimulationConfig(argc, argv);
+  auto config = mc3d::LoadSimulationConfig(argc, argv);
+  if (!config.seed) config.seed = std::random_device{}();
+  config.thread_pool_size = std::max(1u, config.thread_pool_size);
+  mc3d::RunManifest manifest(config, argc, argv);
+  std::signal(SIGINT, [](int signal) { mc3d::stop_requested = signal; });
+  std::signal(SIGTERM, [](int signal) { mc3d::stop_requested = signal; });
+  try {
 
   auto geometry = mc3d::BuildGeometry(config);
+  mc3d::ValidateSimulationGeometry(config, *geometry);
+  manifest.GeometryHash(*geometry);
 
   const mc3d::Point apex(config.apex_x.value_or(-0.5 * config.Lx),
                          config.apex_y.value_or(-0.5 * config.Ly),
@@ -23,6 +32,8 @@ int Run(int argc, char* argv[]) {
   std::cout << "Random seed: " << seed << std::endl;
   mc3d::CellCluster cluster(config.thread_pool_size, seed);
   mc3d::SimulationRunner runner(cluster);
+  cluster.collision_parameters = config.collisions;
+  cluster.collision_courant = config.collision_courant;
   cluster.SetApex(apex);
   cluster.SetSize(config.Lx, config.Ly, config.Lz);
 
@@ -30,9 +41,17 @@ int Run(int argc, char* argv[]) {
 
   cluster.Initialize(config.cells_x, config.cells_y, config.cells_z,
                      reference_density, config.Kn, config.Cu, std::move(geometry),
-                     config.S, config.alpha, config.temperature, config.wall_temperature);
+                     config.S, config.alpha, config.temperature, config.wall_temperature,
+                     config.wall_heat_capacity);
+  cluster.ApplyInitialStep(config);
+  manifest.CellGeometry(runner.Writer().WriteCellGeometry());
+  if (config.force_reference_area)
+    runner.SetForceReference(*config.force_reference_area,
+                             config.S * std::sqrt(2 * config.temperature), config.alpha);
   runner.Writer().SetBinaryOutput(config.snapshots_binary);
   runner.SetSnapshotInterval(config.snapshot_interval);
+  runner.SetResolutionDiagnostics(config.resolution_diagnostics);
+  runner.ConfigureStatistics(config);
 
   if (config.write_default_snapshot_before_compute) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile());
@@ -46,6 +65,10 @@ int Run(int argc, char* argv[]) {
     const auto descriptor = mc3d::MakeBoundaryDescriptor(face, config);
     auto boundary =
         mc3d::MakeBoundary(descriptor, config.boundary_types[idx], config);
+    if(config.reservoirs[idx]) {
+      const auto& s=*config.reservoirs[idx];
+      dynamic_cast<mc3d::FreeBoundary&>(*boundary).SetReservoir(s.density_ratio,s.temperature,{s.velocity[0],s.velocity[1],s.velocity[2]});
+    }
     if (boundary) {
       boundaries.emplace_back(std::move(boundary));
     }
@@ -65,7 +88,11 @@ int Run(int argc, char* argv[]) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteFile(config.precompute_snapshot));
   }
 
+  runner.progress = [&manifest](double t, std::size_t steps) { manifest.Progress(t, steps); };
+  runner.runtime_progress = [&manifest](double t, std::size_t step, const std::string& mode, std::size_t workers) { manifest.RuntimePolicy(t, step, mode, workers); };
+  runner.SetRuntimeControl(config.runtime_control);
   runner.Compute();
+  manifest.Progress(runner.Time(), runner.Steps());
 
   std::cout << "Computation is over." << std::endl;
 
@@ -89,7 +116,9 @@ int Run(int argc, char* argv[]) {
     mc3d::SimulationRunner::RequireWrite(runner.Writer().WriteSpeedFile());
   }
 
-  return 0;
+  manifest.Finish(mc3d::stop_requested ? "interrupted" : "completed");
+  return mc3d::stop_requested ? 128 + mc3d::stop_requested : 0;
+  } catch(const std::exception& error) { manifest.Finish("failed", error.what()); throw; }
 }
 
 int main(int argc, char* argv[]) {

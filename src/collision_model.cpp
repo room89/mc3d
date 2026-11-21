@@ -1,11 +1,29 @@
 #include "collision_model.h"
+
 #include <algorithm>
 #include <cmath>
-namespace mc3d {
-namespace { constexpr double Pi = 3.14159265358979; }
-void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, double L, double Kn_l, double dt, utils::RandomStream& random) {
-  if (particles.size() <= 5) return;
 
+#include "collision_scattering.h"
+namespace mc3d {
+void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity,
+                           double L, double Kn_l, double dt,
+                           utils::RandomStream& random) {
+  (void)ApplyWithStats(particles, velocity, L, Kn_l, dt, random);
+}
+CollisionStats CollisionModel::ApplyWithStats(std::vector<Particle>& particles,
+                                              Point velocity, double L,
+                                              double Kn_l, double dt,
+                                              utils::RandomStream& random) {
+  return ApplyWithStats(particles, velocity, L, Kn_l, dt, random, {});
+}
+CollisionStats CollisionModel::ApplyWithStats(
+    std::vector<Particle>& particles, Point velocity, double L, double Kn_l,
+    double dt, utils::RandomStream& random,
+    const CollisionParameters& parameters) {
+  parameters.Validate();
+  CollisionStats stats;
+  if (particles.size() < 2 || dt <= 0 || parameters.kind == CollisionKind::None)
+    return stats;
 
   // Bound every relative speed by twice the largest peculiar speed. A thermal
   // mean is not an upper bound and causes population-dependent missed events.
@@ -16,18 +34,18 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
   };
   for (const auto& p : particles)
     max_speed_squared = std::max(max_speed_squared, speed_squared(p.velocity));
-  if (max_speed_squared == 0) return;
+  if (max_speed_squared == 0 && parameters.Rate(0) == 0) return stats;
   double g_max = 2 * std::sqrt(max_speed_squared);
   // N*(N-1)/2 distinct unordered pairs, with particle weight set by N0.
   double factor = 2 * sqrt(2.) * L * Kn_l / (particles.size() - 1);
-  double frequency_t = factor / g_max;
+  double frequency_t = factor / parameters.Rate(g_max);
 
   double t = 0;
 
   auto& rng = random.Engine();
 
-  std::uniform_int_distribution<std::size_t> first(0, particles.size()-1);
-  std::uniform_int_distribution<std::size_t> second(0, particles.size()-2);
+  std::uniform_int_distribution<std::size_t> first(0, particles.size() - 1);
+  std::uniform_int_distribution<std::size_t> second(0, particles.size() - 2);
 
   while (t <= dt) {
     double r = random.Uniform();
@@ -39,7 +57,8 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
     if (t > dt) break;
 
     // Every attempt must sample all particles, even when a time step contains
-    // fewer attempts than N/2. Restarting at the vector prefix biases collisions.
+    // fewer attempts than N/2. Restarting at the vector prefix biases
+    // collisions.
     const auto i = first(rng);
     auto j = second(rng);
     if (j >= i) ++j;
@@ -56,49 +75,27 @@ void CollisionModel::Apply(std::vector<Particle>& particles, Point velocity, dou
 
     double rr = random.Uniform();
 
-    if (gmod / g_max > rr)  // g == gmod?
-    {
+    if (parameters.Rate(gmod) > parameters.Rate(g_max) * (1 + 1e-12))
+      throw std::logic_error("Collision rate exceeds majorant");
+    if (parameters.Rate(gmod) / parameters.Rate(g_max) > rr) {
       double r1 = random.Uniform();
       double r2 = random.Uniform();
 
-      double Fi = 2. * Pi * r1;
-      double Eta = 2. * acos(r2);
-
-      double gx = g.x;
-      double gy = g.y;
-      double gz = g.z;
-      double gxz = sqrt(gx * gx + gz * gz);
-
-      Point g1;
-
-      //                              Point g1(gmod * sin(Pi * r1) * cos(2. * Pi
-      //                              * r2),
-      //                                       gmod * sin(Pi * r1) * sin(2. * Pi
-      //                                       * r2), gmod * cos(Pi * r1));
-
-      if (gxz > 1.e-6) {
-        g1.x = gx * cos(Eta) -
-               sin(Eta) * (gmod * gz * cos(Fi) - gx * gy * sin(Fi)) / gxz;
-        g1.y = gy * cos(Eta) - gxz * sin(Fi) * sin(Eta);
-        g1.z = gz * cos(Eta) +
-               sin(Eta) * (gmod * gx * cos(Fi) + gy * gz * sin(Fi)) / gxz;
-      } else {
-        g1.x = -sin(Eta) * gmod * (cos(Fi) - sin(Fi)) / std::sqrt(2.);
-        g1.y = gmod * cos(Eta);
-        g1.z = sin(Eta) * gmod * (cos(Fi) + sin(Fi)) / std::sqrt(2.);
-      }
+      const Point g1 = detail::IsotropicRelativeVelocity(gmod, r1, r2);
 
       v1 = (velocity_sum - g1) * 0.5;
       v2 = (velocity_sum + g1) * 0.5;
 
+      ++stats.accepted_collisions;
       particle_1->velocity = v1;
       particle_2->velocity = v2;
-      max_speed_squared = std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
+      max_speed_squared =
+          std::max({max_speed_squared, speed_squared(v1), speed_squared(v2)});
       g_max = 2 * std::sqrt(max_speed_squared);
-      frequency_t = factor / g_max;
+      frequency_t = factor / parameters.Rate(g_max);
     }
-
   }
+  return stats;
 }
 
-}
+}  // namespace mc3d

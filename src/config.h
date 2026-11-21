@@ -1,6 +1,8 @@
 #pragma once
 
 #include <array>
+#include <vector>
+#include "collision_parameters.h"
 #include <cstddef>
 #include <optional>
 #include <string>
@@ -24,15 +26,32 @@ enum class BoundaryFace : std::size_t {
   ZPos,
 };
 
+inline constexpr std::array<const char*,6> ReservoirFaces{"x_neg","x_pos","y_neg","y_pos","z_neg","z_pos"};
+struct GasState {
+  double density_ratio = 1, temperature = 1;
+  std::array<double,3> velocity{0,0,0};
+};
+struct InitialStep { double x; GasState left, right; };
+
 struct SimulationConfig {
+  std::array<std::optional<GasState>,6> reservoirs;
+  std::optional<InitialStep> initial_step;
+  std::string hyperfree_inflow_rounding = "accumulated";
+  CollisionParameters collisions;
+  bool statistics_enabled = true, balance_enabled = true;
+  std::vector<std::array<double, 2>> statistics_windows;
   double Lx = 1.0;
   double Ly = 1.0;
   double Lz = 1.0;
 
   double Kn = 0.05;
   double Cu = 0.7;
+  double collision_courant = 0.1;
+  bool resolution_diagnostics = true;
   double temperature = 1.0;
   double wall_temperature = 1.0;
+  std::optional<double> wall_heat_capacity;
+  std::optional<double> force_reference_area;
   double alpha = 0.0;
 
   unsigned int cells_x = 20;
@@ -41,6 +60,7 @@ struct SimulationConfig {
   unsigned int particles_per_cell = 50;
   unsigned int thread_pool_size = 4;
   std::optional<unsigned int> seed;
+  std::string runtime_control;
 
   double S = 10.0;
   double end_time = 1.0;
@@ -97,6 +117,9 @@ struct SimulationConfig {
       BoundaryType::HyperFree, BoundaryType::HyperFree};
 
   std::string config_path;
+  std::string output_dir, units_file;
+  std::string provenance_file;
+  std::vector<std::string> input_configs;
 };
 
 SimulationConfig LoadSimulationConfig(int argc, char* argv[]);

@@ -1,4 +1,6 @@
 #pragma once
+#include "collision_parameters.h"
+#include "config.h"
 
 #include <cell.h>
 #include <exit_code.h>
@@ -10,13 +12,16 @@
 #include <pereodic_boundary.h>
 #include <point.h>
 
+#include <array>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <utils/threadpool.hpp>
 #include <vector>
+#include <utility>
 
 namespace mc3d {
 
@@ -26,10 +31,24 @@ struct StepResult {
   double dt;
   bool finished;
   std::size_t inner_particles;
+  Point body_force{0, 0, 0};
+  Point mean_body_force{0, 0, 0};
 };
 
+class StatisticalDiagnostics;
 class CellCluster {
+  friend class StatisticalDiagnostics;
+
  public:
+  ConservedQuantity step_incoming, step_outgoing;
+  // Open faces in x-, x+, y-, y+, z-, z+ order, then multi-face exits.
+  std::array<std::size_t, 7> step_outgoing_counts{};
+  Point step_body_impulse{0, 0, 0}, step_mirror_impulse{0, 0, 0};
+  double step_body_heat = 0, step_mirror_heat = 0;
+  CollisionParameters collision_parameters;
+  double collision_courant = 0.1;
+  double transport_dt = std::numeric_limits<double>::infinity();
+  double collision_dt = std::numeric_limits<double>::infinity();
   inline static constexpr std::size_t kDefaultThreadPoolSize = 4;
   friend class CellClusterTestAccess;
   friend class SnapshotWriter;
@@ -37,6 +56,7 @@ class CellCluster {
   void CalculateDt();  // вычисление шага по времени для данного кластера
   void SetDtInCells(
       double dt);  // установка шага по времени во все ячейки
+  std::function<void()> before_step;
   StepResult TimeStep();
   explicit CellCluster(std::size_t thread_pool_size =
                            kDefaultThreadPoolSize, uint32_t seed = std::random_device{}());  // конструктор по умолчанию
@@ -50,17 +70,27 @@ class CellCluster {
   bool Initialize(unsigned int ncx, unsigned int ncy, unsigned int ncz,
                   double density, double Kn, double Cu,
                   std::unique_ptr<Geometry>&& body_, double S, double alpha,
-                  double T, double wall_temperature = 1.0);
+                  double T, double wall_temperature = 1.0,
+                  std::optional<double> wall_heat_capacity = std::nullopt);
   void SetBoundaryCondition(
       std::vector<std::unique_ptr<Boundary>>&& boundaries);
   void SetBoundaryCondition(std::unique_ptr<Boundary> boundary);
+  void ApplyInitialStep(const SimulationConfig& config);
   void FragmentCells();
   void TestCells();
   void CleanInnerParticles();
 
  private:
   void CalculateCellTimeSteps();
-  void GatherParticles();
+  struct OutgoingSource {
+    std::vector<Particle>* particles;
+    std::size_t end;
+  };
+  using OutgoingSources = std::vector<OutgoingSource>;
+  OutgoingSources GatherParticles();
+  // Returned storage statistics are consumed only by the standalone memory probe.
+  struct RoutingStorage { std::size_t size = 0, capacity = 0; };
+  RoutingStorage DistributeSources(const OutgoingSources& sources, std::vector<Particle>& output);
   uint32_t random_seed_;
   int numproc;  // количество процессов(не путать с нитями), специально для MPI
   int proc_id;  // номер процесса
@@ -106,9 +136,15 @@ class CellCluster {
   void DistributeParticles(std::vector<Particle>& buffer);
   bool FindCellIndex(const Point& position, size_t& cell_index) const;
   std::unique_ptr<Geometry> body_;
+  std::vector<Cell*> body_check_cells_;
+  std::optional<std::pair<Point, Point>> body_check_bounds_;
+  std::size_t body_check_cell_count_ = 0;
+  void InvalidateBodyCheck();
+  std::size_t CountBodyParticles();
   double data_dt;
   double data_t;
   double density;
+  Point body_impulse_{0, 0, 0};
   double volume;
 
   utils::ThreadPool thread_pool_;

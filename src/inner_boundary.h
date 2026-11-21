@@ -25,6 +25,10 @@ class InnerBoundary {
   ~InnerBoundary();
   bool AddPolygon(mc3d::Geometry& body, Point cell_center, double L);
   void SetGeometry(Geometry& geometry);
+  void ClearGeometry() {
+    geometry_ = nullptr;
+    poligon_ptrs.clear();
+  }
   void SetWallTemperature(double temperature);
   Geometry* GetGeometryPtr();
   bool Empty() const;

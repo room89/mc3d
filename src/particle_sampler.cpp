@@ -250,7 +250,12 @@ double ParticleSampler::Free(std::vector<Particle>& particles, Point apex, Point
   return 0;
 }
 
-void ParticleSampler::HyperFree(Point apex, Point size, unsigned int N, Point V, double T, Point normal, double dt, InnerBoundary& body_boundary, std::vector<Particle>& arrivals, utils::RandomStream& random) {
+void ParticleSampler::HyperFree(Point apex, Point size, unsigned int N, Point V,
+                                double T, Point normal, double dt,
+                                InnerBoundary& body_boundary,
+                                std::vector<Particle>& arrivals,
+                                utils::RandomStream& random,
+                                ConservedQuantity* incoming) {
   std::normal_distribution<double> thermal(0, std::sqrt(T));
   const double inward_drift = -(V * normal);
   const Point tangent_drift = V - normal * (V * normal);
@@ -260,6 +265,7 @@ void ParticleSampler::HyperFree(Point apex, Point size, unsigned int N, Point V,
                 thermal(random.Engine()));
     const double w = utils::IncomingNormalSpeed(inward_drift, T, random);
     particle[0].velocity = tangent_drift + noise - normal * (noise * normal) - normal * w;
+    if (incoming) incoming->Add(particle[0].velocity);
     Point position = apex + Point(size.x * random.Uniform(), size.y * random.Uniform(),
                                   size.z * random.Uniform());
     auto face = [](double a, double size, double n) {
@@ -281,5 +287,4 @@ void ParticleSampler::HyperFree(Point apex, Point size, unsigned int N, Point V,
     arrivals.push_back(particle[0]);
   }
 }
-
 }

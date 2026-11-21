@@ -42,10 +42,17 @@ CellCluster::~CellCluster() {
 bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
                              unsigned int ncz, double density, double Kn,
                              double Cu, std::unique_ptr<Geometry>&& body,
-                             double S, double alpha, double T, double wall_temperature) {
+                             double S, double alpha, double T, double wall_temperature,
+                             std::optional<double> wall_heat_capacity) {
   LOG_DEBUG() << bool(body);
+  InvalidateBodyCheck();
   body_ = std::move(body);
   if (body_) body_->PrepareQueries();
+  if (wall_heat_capacity) {
+    if (!body_ || !(density > 0) || !std::isfinite(density))
+      throw std::invalid_argument("Surface heating requires a body and positive reference particle density");
+    body_->ConfigureSurfaceHeating(wall_temperature, *wall_heat_capacity, 1.0 / density);
+  }
 
   srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -69,6 +76,8 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   cell_lookup_.clear();
 
   this->t = 0;
+  body_impulse_ = {0, 0, 0};
+  if (body_) body_->TakeStepImpulse();
   this->dt = 1000000000;
 
   const size_t total_cells = static_cast<size_t>(ncx) *
@@ -101,11 +110,13 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
         cell.SetSize(dx, dy, dz);
 
         cell.Initialize(N_, body_);
+        cell.defer_surface_exchange = true;
         if (density > 0)
           cell.SetReferenceParticleCount(density * dx * dy * dz);
 
         cell.SetCharacteristicLength(Lx);
         cell.SetKn(Kn);
+        cell.collision_parameters = collision_parameters;
 
         N += N_;
         double dtt = cell.GetDt();
@@ -140,8 +151,10 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   // It must not become the total population (nor the population outside a body).
 
   cell_iter = cells.begin();
+  this->N = 0;
   for (auto& cell : cells) {
-    cell.CleanInnerParticles(*body_);
+    if (body_) cell.CleanInnerParticles(*body_);
+    this->N += cell.GetParticleCount();
   }
 
   this->SyncDt();
@@ -150,20 +163,42 @@ bool CellCluster::Initialize(unsigned int ncx, unsigned int ncy,
   return true;
 }
 
-void CellCluster::SetApex(Point apex) { this->apex = apex; }
+void CellCluster::SetApex(Point apex) {
+  InvalidateBodyCheck();
+  this->apex = apex;
+}
 
 void CellCluster::SetSize(double Lx, double Ly, double Lz) {
+  InvalidateBodyCheck();
   this->Lx = Lx;
   this->Ly = Ly;
   this->Lz = Lz;
 }
 
 StepResult CellCluster::TimeStep() {
+  if (body_) body_->ResetStepSurfaceExchange();
+  step_incoming = {};
+  step_outgoing = {};
+  step_outgoing_counts = {};
+  step_body_impulse = {0, 0, 0};
+  step_mirror_impulse = {0, 0, 0};
+  step_body_heat = step_mirror_heat = 0;
+  for (auto& cell : cells) {
+    cell.incoming_quantity = {};
+    cell.surface_exchanges.clear();
+  }
+  for (auto& boundary : boundary_cond_outer) {
+    boundary->step_impulse = {0, 0, 0};
+    boundary->step_heat = 0;
+  }
   {
     utils::Stopwatch sw("TimeStep::SyncDt");
     SyncDt();
   }
 
+  if (t < t_end && (!(dt > 0) || !std::isfinite(dt) || t + dt == t))
+    throw std::runtime_error("Time step cannot advance simulation time");
+  if (before_step) before_step();
   LOG_INFO() << "dt = " << dt << " t = " << t;
 
   //  auto cell_iter = cells.begin();
@@ -210,15 +245,17 @@ StepResult CellCluster::TimeStep() {
     }
   }
 
+  OutgoingSources outgoing;
   {
     utils::Stopwatch sw("TimeStep::GatherParticles");
-    GatherParticles();
-    LOG_INFO() << "particle_buffer_size:" << partile_buffer.size();
+    outgoing = GatherParticles();
+    LOG_INFO() << "particle_buffer_size:" << (outgoing.empty() ? 0 : outgoing.back().end);
   }
 
   {
     utils::Stopwatch sw("TimeStep::AddParticlesBeforeBoundary");
-    DistributeParticles(partile_buffer);
+    DistributeSources(outgoing, partile_buffer);
+    outgoing.clear();
   }
 
   {
@@ -230,34 +267,174 @@ StepResult CellCluster::TimeStep() {
     utils::Stopwatch sw("TimeStep::AddParticlesAfterBoundary");
     DistributeParticles(partile_buffer);
   }
+  for (const auto& cell : cells) cell.ValidateGasPopulation();
+  // Commit surface exchanges in cell/event order, independently of worker
+  // scheduling.
+  for (auto& cell : cells) {
+    for (const auto& e : cell.surface_exchanges)
+      e.body->AccumulateForce(*e.polygon, e.impulse, e.energy);
+    cell.surface_exchanges.clear();
+  }
+  if (body_) body_->UpdateSurfaceTemperatures();
   t += dt;
 
+  std::array<bool, 6> may_escape{true, true, true, true, true, true};
+  for (const auto& boundary : boundary_cond_outer) {
+    if (!dynamic_cast<PeriodicBoundary*>(boundary.get()) &&
+        !dynamic_cast<MirrorBoundary*>(boundary.get()))
+      continue;
+    const auto normal = boundary->GetNormal();
+    const int axis = normal.x != 0 ? 0 : normal.y != 0 ? 1 : 2;
+    const double component = axis == 0   ? normal.x
+                             : axis == 1 ? normal.y
+                                         : normal.z;
+    may_escape[2 * axis + (component > 0 ? 1 : 0)] = false;
+  }
+  for (const auto& particle : partile_buffer) {
+    if (!std::isfinite(particle.position.x) ||
+        !std::isfinite(particle.position.y) ||
+        !std::isfinite(particle.position.z))
+      throw std::runtime_error("Nonfinite outgoing particle");
+    size_t outgoing_index = 0;
+    if (FindCellIndex(particle.position, outgoing_index))
+      throw std::runtime_error("Unrouted particle inside domain");
+    const auto p = particle.position;
+    const std::array outside{p.x < apex.x, p.x >= apex.x + Lx,
+                             p.y < apex.y, p.y >= apex.y + Ly,
+                             p.z < apex.z, p.z >= apex.z + Lz};
+    auto category = step_outgoing_counts.size();
+    for (std::size_t face = 0; face < outside.size(); ++face) {
+      if (!outside[face] || !may_escape[face]) continue;
+      if (category != step_outgoing_counts.size()) {
+        category = outside.size();
+        break;
+      }
+      category = face;
+    }
+    if (category == step_outgoing_counts.size())
+      throw std::runtime_error("Particle escaped a closed boundary");
+    ++step_outgoing_counts[category];
+    step_outgoing.Add(particle.velocity);
+  }
+  for (const auto& cell : cells) step_incoming += cell.incoming_quantity;
+  for (const auto& boundary : boundary_cond_outer) {
+    step_mirror_impulse += boundary->step_impulse;
+    step_mirror_heat += boundary->step_heat;
+  }
   partile_buffer.clear();
 
   std::size_t inner_particles = 0;
   if (body_ && body_->PolygonCount() > 0) {
     utils::Stopwatch sw("TimeStep::CheckBodyParticles");
-    const auto [lower, upper] = body_->Bounds();
-    for (const auto& cell : cells) {
+    inner_particles = CountBodyParticles();
+  } else {
+    InvalidateBodyCheck();
+  }
+  Point force(0, 0, 0), mean_force(0, 0, 0);
+  if (body_ && body_->PolygonCount() > 0) {
+    step_body_impulse = body_->TakeStepImpulse();
+    step_body_heat = body_->TakeStepHeat();
+    const Point impulse = step_body_impulse / density;
+    body_impulse_ += impulse;
+    if (dt > 0) force = impulse / dt;
+    if (t > 0) mean_force = body_impulse_ / t;
+  }
+  return {t, dt, t >= t_end, inner_particles, force, mean_force};
+}
+
+void CellCluster::InvalidateBodyCheck() {
+  body_check_cells_.clear();
+  body_check_bounds_.reset();
+  body_check_cell_count_ = 0;
+}
+
+std::size_t CellCluster::CountBodyParticles() {
+  if (!body_ || body_->PolygonCount() == 0) {
+    InvalidateBodyCheck();
+    return 0;
+  }
+  const auto bounds = body_->Bounds();
+  const auto same = [](Point a, Point b) {
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+  };
+  if (!body_check_bounds_ || body_check_cell_count_ != cells.size() ||
+      !same(body_check_bounds_->first, bounds.first) ||
+      !same(body_check_bounds_->second, bounds.second)) {
+    // Publish a complete cache only after a successful rebuild.
+    InvalidateBodyCheck();
+    const auto [lower, upper] = bounds;
+    for (auto& cell : cells) {
       const auto origin = cell.GetApex();
       const auto extent = cell.GetSize();
       if (origin.x <= upper.x && origin.x + extent.x >= lower.x &&
           origin.y <= upper.y && origin.y + extent.y >= lower.y &&
-          origin.z <= upper.z && origin.z + extent.z >= lower.z) {
-        inner_particles += cell.CountInnerParticles(*body_);
-      }
+          origin.z <= upper.z && origin.z + extent.z >= lower.z)
+        body_check_cells_.push_back(&cell);
     }
+    body_check_cell_count_ = cells.size();
+    body_check_bounds_ = bounds;
   }
-  return {t, dt, t >= t_end, inner_particles};
+  constexpr std::size_t chunk_size = 32;
+  const auto chunks = body_check_cells_.size() / chunk_size +
+                      (body_check_cells_.size() % chunk_size != 0);
+  const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
+  if (workers <= 1) {
+    std::size_t count = 0;
+    for (const auto* cell : body_check_cells_) count += cell->CountInnerParticles(*body_);
+    return count;
+  }
+  std::atomic<std::size_t> next{0};
+  std::vector<std::size_t> counts(workers, 0);
+  std::vector<std::future<void>> futures;
+  futures.reserve(workers);
+  std::exception_ptr failure;
+  try {
+    for (std::size_t worker = 0; worker < workers; ++worker) {
+      futures.emplace_back(thread_pool_.Execute([&, worker] {
+        std::size_t count = 0;
+        for (;;) {
+          const auto begin = next.fetch_add(chunk_size, std::memory_order_relaxed);
+          if (begin >= body_check_cells_.size()) break;
+          const auto end = std::min(begin + chunk_size, body_check_cells_.size());
+          for (auto i = begin; i < end; ++i)
+            count += body_check_cells_[i]->CountInnerParticles(*body_);
+        }
+        counts[worker] = count;
+      }));
+    }
+  } catch (...) { failure = std::current_exception(); }
+  // Tasks refer to local counters and cluster data: drain before unwinding.
+  for (auto& future : futures) {
+    try { future.get(); }
+    catch (...) { if (!failure) failure = std::current_exception(); }
+  }
+  if (failure) std::rethrow_exception(failure);
+  std::size_t count = 0;
+  for (auto local : counts) count += local;
+  return count;
 }
 
-void CellCluster::GatherParticles() {
+CellCluster::OutgoingSources CellCluster::GatherParticles() {
+  auto describe = [&](bool include_cells) {
+    OutgoingSources sources;
+    std::size_t total = 0;
+    auto append = [&](std::vector<Particle>& buffer) {
+      if (buffer.empty()) return;
+      if (buffer.size() > std::numeric_limits<std::size_t>::max() - total)
+        throw std::length_error("Outgoing particle count overflow");
+      total += buffer.size();
+      sources.push_back({&buffer, total});
+    };
+    append(partile_buffer);
+    if (include_cells) for (auto& cell : cells) append(cell.GetBuffer());
+    return sources;
+  };
   constexpr size_t chunk_size = 32;
   const auto chunks = cells.size() / chunk_size + (cells.size() % chunk_size != 0);
   const auto workers = std::min(thread_pool_.GetThreadCount(), chunks);
   const bool has_neighbors = std::any_of(cells.begin(), cells.end(),
       [](const Cell& cell) { return !cell.neighbors.empty(); });
-  if (workers <= 1 || has_neighbors) {
+  if (has_neighbors) {
     // Neighbor arrivals can affect cells later in this same traversal.
     for (auto& cell : cells) {
       cell.Sort();
@@ -268,7 +445,11 @@ void CellCluster::GatherParticles() {
                             std::make_move_iterator(cell_buffer.end()));
       cell_buffer.clear();
     }
-    return;
+    return describe(false);
+  }
+  if (workers <= 1) {
+    for (auto& cell : cells) cell.Sort();
+    return describe(true);
   }
 
   std::atomic<size_t> next{0};
@@ -299,14 +480,7 @@ void CellCluster::GatherParticles() {
   }
   if (failure) std::rethrow_exception(failure);
 
-  // Preserve cell order and any existing prefix in the cluster buffer.
-  for (auto& cell : cells) {
-    auto& cell_buffer = cell.GetBuffer();
-    partile_buffer.insert(partile_buffer.end(),
-                         std::make_move_iterator(cell_buffer.begin()),
-                         std::make_move_iterator(cell_buffer.end()));
-    cell_buffer.clear();
-  }
+  return describe(true);
 }
 
 void CellCluster::BoundaryCondition() {
@@ -352,79 +526,88 @@ bool CellCluster::FindCellIndex(const Point& position,
 }
 
 void CellCluster::DistributeParticles(std::vector<Particle>& buffer) {
-  if (buffer.empty()) {
-    return;
-  }
+  if (buffer.empty()) return;
+  DistributeSources({{&buffer, buffer.size()}}, buffer);
+}
 
-  const size_t thread_count =
-      std::max<size_t>(1, thread_pool_.GetThreadCount());
-  const size_t chunk_size =
-      std::max<size_t>(1024, (buffer.size() + thread_count - 1) / thread_count);
-  const size_t chunk_count = (buffer.size() + chunk_size - 1) / chunk_size;
-
+CellCluster::RoutingStorage CellCluster::DistributeSources(const OutgoingSources& sources,
+                                    std::vector<Particle>& output) {
+  if (sources.empty()) return {};
+  const auto total = sources.back().end;
+  const auto thread_count = std::max<std::size_t>(1, thread_pool_.GetThreadCount());
+  const auto chunk_size = std::max<std::size_t>(1024,
+      total / thread_count + (total % thread_count != 0));
+  const auto chunk_count = total / chunk_size + (total % chunk_size != 0);
+  std::vector<std::vector<Particle>> leftovers(chunk_count);
   std::vector<std::future<void>> futures;
   futures.reserve(chunk_count);
-  std::vector<std::vector<Particle>> leftovers(chunk_count);
-
-  auto distribute = [&](size_t start, size_t end, std::vector<Particle>& remaining) {
-    std::vector<size_t> accepted;
-    accepted.reserve(std::min<size_t>(1024, end - start));
-    remaining.reserve(end - start);
-    size_t destination = 0;
-    auto flush = [&] {
-      if (!accepted.empty()) {
-        cell_lookup_[destination]->AppendRoutedParticles(buffer, accepted);
-        accepted.clear();
+  auto distribute = [&](std::size_t begin, std::size_t end, std::vector<Particle>& remaining) {
+    std::vector<std::size_t> accepted;
+    accepted.reserve(std::min<std::size_t>(1024, end - begin));
+    auto source = std::upper_bound(sources.begin(), sources.end(), begin,
+        [](std::size_t index, const OutgoingSource& range) { return index < range.end; });
+    while (begin < end) {
+      const auto source_begin = source->end - source->particles->size();
+      const auto stop = std::min(end, source->end);
+      std::span<Particle> particles(*source->particles);
+      std::size_t destination = 0;
+      auto flush = [&] {
+        if (!accepted.empty()) {
+          cell_lookup_[destination]->AppendRoutedParticles(particles, accepted);
+          accepted.clear();
+        }
+      };
+      for (auto index = begin - source_begin; index < stop - source_begin; ++index) {
+        std::size_t next_destination = 0;
+        if (FindCellIndex(particles[index].position, next_destination) &&
+            cell_lookup_[next_destination] &&
+            cell_lookup_[next_destination]->ContainsPosition(particles[index].position)) {
+          if (next_destination != destination) flush();
+          destination = next_destination;
+          accepted.push_back(index);
+          if (accepted.size() == 1024) flush();
+        } else {
+          // Allocate only for actual boundary leftovers, never for the whole input.
+          remaining.push_back(std::move(particles[index]));
+        }
       }
-    };
-    // Gather consecutive accepted particles for one destination. Full sorting
-    // costs more than the locks it saves for the mostly local transfer stream.
-    for (size_t index = start; index < end; ++index) {
-      size_t next_destination = 0;
-      if (FindCellIndex(buffer[index].position, next_destination) &&
-          cell_lookup_[next_destination] &&
-          cell_lookup_[next_destination]->ContainsPosition(buffer[index].position)) {
-        if (next_destination != destination) flush();
-        destination = next_destination;
-        accepted.push_back(index);
-      } else {
-        remaining.push_back(std::move(buffer[index]));
-      }
+      flush();
+      begin = stop;
+      ++source;
     }
-    flush();
   };
   if (chunk_count == 1) {
-    distribute(0, buffer.size(), leftovers.front());
+    distribute(0, total, leftovers.front());
   } else {
     std::exception_ptr failure;
     try {
-      for (size_t chunk = 0; chunk < chunk_count; ++chunk) {
-        const auto start = chunk * chunk_size;
-        const auto end = std::min(start + chunk_size, buffer.size());
-        futures.emplace_back(thread_pool_.Execute([&, start, end, chunk] {
-          distribute(start, end, leftovers[chunk]);
+      for (std::size_t chunk = 0; chunk < chunk_count; ++chunk) {
+        const auto begin = chunk * chunk_size;
+        const auto end = begin + std::min(chunk_size, total - begin);
+        futures.emplace_back(thread_pool_.Execute([&, begin, end, chunk] {
+          distribute(begin, end, leftovers[chunk]);
         }));
       }
     } catch (...) { failure = std::current_exception(); }
-    // Tasks capture local buffers: drain all submissions even on failure.
     for (auto& future : futures) {
       try { future.get(); }
       catch (...) { if (!failure) failure = std::current_exception(); }
     }
     if (failure) std::rethrow_exception(failure);
   }
-
-  buffer.clear();
-  size_t total_remaining = 0;
-  for (auto& chunk_leftovers : leftovers) {
-    total_remaining += chunk_leftovers.size();
+  RoutingStorage storage;
+  for (const auto& remaining : leftovers) {
+    storage.size += remaining.size();
+    storage.capacity += remaining.capacity();
   }
-  buffer.reserve(total_remaining);
-  for (auto& chunk_leftovers : leftovers) {
-    buffer.insert(buffer.end(),
-                  std::make_move_iterator(chunk_leftovers.begin()),
-                  std::make_move_iterator(chunk_leftovers.end()));
-  }
+  // Reserve before clearing input. All tasks have finished; output may alias a source.
+  output.reserve(storage.size);
+  for (const auto& source : sources) source.particles->clear();
+  output.clear();
+  for (auto& remaining : leftovers)
+    output.insert(output.end(), std::make_move_iterator(remaining.begin()),
+                  std::make_move_iterator(remaining.end()));
+  return storage;
 }
 
 bool CellCluster::SendData() { return true; }
@@ -494,15 +677,25 @@ void CellCluster::CalculateCellTimeSteps() {
 void CellCluster::CalculateDt() {
   CalculateCellTimeSteps();
   // Read stored local results in the original order; no extra per-cell buffer.
-  dt = 1000000.;
+  dt = std::numeric_limits<double>::infinity();
 
   cell_iter = cells.begin();
   for (auto& cell : cells) {
     double dtt = cell.PeekDt();
     if (dtt < dt) dt = dtt;
   }
-  dt *= Cu;
-  if (t + dt > t_end) dt = t_end - t;
+  for (const auto& boundary : boundary_cond_outer)
+    dt = std::min(dt, boundary->TransportTimeLimit());
+  transport_dt = dt * Cu;
+  collision_dt = std::numeric_limits<double>::infinity();
+  if (collision_courant > 0) {
+    for (const auto& cell : cells) {
+      const double rate = cell.resolution.frequency;
+      if (rate > 0) collision_dt = std::min(collision_dt, collision_courant / rate);
+    }
+  }
+  dt = std::min({transport_dt, collision_dt, std::max(0., t_end - t)});
+
 }
 
 void CellCluster::SetDtInCells(double dt) {
@@ -535,3 +728,27 @@ void CellCluster::CleanInnerParticles() {
   }
 }
 }  // namespace mc3d
+
+namespace mc3d {
+void CellCluster::ApplyInitialStep(const SimulationConfig& config) {
+  if(!config.initial_step) return;
+  for(auto& cell:cells) {
+    const auto& s=cell.GetCenter().x<config.initial_step->x?config.initial_step->left:config.initial_step->right;
+    const double expected=density*cell.GetVolume()*s.density_ratio;
+    if(!std::isfinite(expected) || expected>std::numeric_limits<unsigned int>::max()) throw std::invalid_argument("Initial population overflow");
+    auto& random=cell.Random();
+    const size_t count=static_cast<size_t>(expected)+(random.Uniform()<expected-std::floor(expected));
+    cell.particles.clear();
+    std::normal_distribution<double> normal(0,std::sqrt(s.temperature));
+    auto origin=cell.GetCenter()-cell.GetSize()*.5; auto size=cell.GetSize();
+    for(size_t i=0;i<count;++i) {
+      Particle p;
+      p.position=origin+Point(random.Uniform()*size.x,random.Uniform()*size.y,random.Uniform()*size.z);
+      p.velocity={s.velocity[0]+normal(random.Engine()),s.velocity[1]+normal(random.Engine()),s.velocity[2]+normal(random.Engine())};
+      cell.particles.push_back(p);
+    }
+    cell.SetTemperature(s.temperature);cell.SetVelocity({s.velocity[0],s.velocity[1],s.velocity[2]});
+    cell.RefreshMoments();cell.GetDt();
+  }
+}
+}

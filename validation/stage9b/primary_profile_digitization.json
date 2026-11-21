@@ -1,0 +1,721 @@
+{
+  "status": "primary_profile_digitization_candidate_not_acceptance",
+  "source_doi": "10.1017/S0022112076001912",
+  "source_sha256": "08063484e89e1070da80567fdcb36b6493224f6a06602febc4da47bc7a05262b",
+  "figure": "3",
+  "printed_page": 502,
+  "pdf_page": 6,
+  "clip_pdf_points": [
+    80,
+    95,
+    445,
+    280
+  ],
+  "render_scale": 3,
+  "pixel_intensity_threshold": 120,
+  "axis_origin_x_interval": [
+    551,
+    555
+  ],
+  "axis_pixels_per_lambda_interval": [
+    50.7,
+    51.1
+  ],
+  "axis_y0_interval": [
+    536,
+    538
+  ],
+  "axis_y1_interval": [
+    31,
+    33
+  ],
+  "pixel_extent_padding": 0.5,
+  "reference_length_m": 0.001098,
+  "stated_normalized_density_accuracy": 0.01,
+  "stated_relative_length_accuracy": 0.013,
+  "points": [
+    {
+      "pixel_row": 523,
+      "pixel_black_run": [
+        373,
+        384
+      ],
+      "x_paper_interval": [
+        -3.5996055226824457,
+        -3.258317025440313
+      ],
+      "rho_interval": [
+        0.024752475247524754,
+        0.030693069306930693
+      ]
+    },
+    {
+      "pixel_row": 519,
+      "pixel_black_run": [
+        391,
+        397
+      ],
+      "x_paper_interval": [
+        -3.244575936883629,
+        -3.003913894324853
+      ],
+      "rho_interval": [
+        0.032673267326732675,
+        0.03861386138613861
+      ]
+    },
+    {
+      "pixel_row": 515,
+      "pixel_black_run": [
+        400,
+        406
+      ],
+      "x_paper_interval": [
+        -3.067061143984221,
+        -2.827788649706458
+      ],
+      "rho_interval": [
+        0.040594059405940595,
+        0.046534653465346534
+      ]
+    },
+    {
+      "pixel_row": 511,
+      "pixel_black_run": [
+        411,
+        416
+      ],
+      "x_paper_interval": [
+        -2.8500986193293882,
+        -2.6320939334637963
+      ],
+      "rho_interval": [
+        0.048514851485148516,
+        0.054455445544554455
+      ]
+    },
+    {
+      "pixel_row": 507,
+      "pixel_black_run": [
+        420,
+        423
+      ],
+      "x_paper_interval": [
+        -2.67258382642998,
+        -2.4951076320939336
+      ],
+      "rho_interval": [
+        0.05643564356435644,
+        0.062376237623762376
+      ]
+    },
+    {
+      "pixel_row": 501,
+      "pixel_black_run": [
+        431,
+        433
+      ],
+      "x_paper_interval": [
+        -2.455621301775148,
+        -2.299412915851272
+      ],
+      "rho_interval": [
+        0.06831683168316832,
+        0.07425742574257425
+      ]
+    },
+    {
+      "pixel_row": 499,
+      "pixel_black_run": [
+        432,
+        435
+      ],
+      "x_paper_interval": [
+        -2.4358974358974357,
+        -2.26027397260274
+      ],
+      "rho_interval": [
+        0.07227722772277227,
+        0.07821782178217822
+      ]
+    },
+    {
+      "pixel_row": 497,
+      "pixel_black_run": [
+        434,
+        438
+      ],
+      "x_paper_interval": [
+        -2.396449704142012,
+        -2.2015655577299413
+      ],
+      "rho_interval": [
+        0.07623762376237624,
+        0.08217821782178218
+      ]
+    },
+    {
+      "pixel_row": 495,
+      "pixel_black_run": [
+        438,
+        441
+      ],
+      "x_paper_interval": [
+        -2.3175542406311638,
+        -2.142857142857143
+      ],
+      "rho_interval": [
+        0.0801980198019802,
+        0.08613861386138613
+      ]
+    },
+    {
+      "pixel_row": 493,
+      "pixel_black_run": [
+        440,
+        443
+      ],
+      "x_paper_interval": [
+        -2.2781065088757395,
+        -2.1037181996086107
+      ],
+      "rho_interval": [
+        0.08415841584158416,
+        0.0900990099009901
+      ]
+    },
+    {
+      "pixel_row": 491,
+      "pixel_black_run": [
+        442,
+        444
+      ],
+      "x_paper_interval": [
+        -2.2386587771203152,
+        -2.0841487279843443
+      ],
+      "rho_interval": [
+        0.08811881188118811,
+        0.09405940594059406
+      ]
+    },
+    {
+      "pixel_row": 487,
+      "pixel_black_run": [
+        446,
+        450
+      ],
+      "x_paper_interval": [
+        -2.159763313609467,
+        -1.9667318982387474
+      ],
+      "rho_interval": [
+        0.09603960396039604,
+        0.10198019801980197
+      ]
+    },
+    {
+      "pixel_row": 485,
+      "pixel_black_run": [
+        448,
+        451
+      ],
+      "x_paper_interval": [
+        -2.1203155818540433,
+        -1.9471624266144814
+      ],
+      "rho_interval": [
+        0.1,
+        0.10594059405940594
+      ]
+    },
+    {
+      "pixel_row": 483,
+      "pixel_black_run": [
+        450,
+        453
+      ],
+      "x_paper_interval": [
+        -2.080867850098619,
+        -1.908023483365949
+      ],
+      "rho_interval": [
+        0.10396039603960396,
+        0.1099009900990099
+      ]
+    },
+    {
+      "pixel_row": 481,
+      "pixel_black_run": [
+        452,
+        455
+      ],
+      "x_paper_interval": [
+        -2.0414201183431953,
+        -1.8688845401174168
+      ],
+      "rho_interval": [
+        0.10792079207920792,
+        0.11386138613861387
+      ]
+    },
+    {
+      "pixel_row": 479,
+      "pixel_black_run": [
+        454,
+        457
+      ],
+      "x_paper_interval": [
+        -2.001972386587771,
+        -1.8297455968688845
+      ],
+      "rho_interval": [
+        0.11188118811881188,
+        0.11782178217821782
+      ]
+    },
+    {
+      "pixel_row": 477,
+      "pixel_black_run": [
+        456,
+        459
+      ],
+      "x_paper_interval": [
+        -1.962524654832347,
+        -1.7906066536203522
+      ],
+      "rho_interval": [
+        0.11584158415841585,
+        0.12178217821782178
+      ]
+    },
+    {
+      "pixel_row": 455,
+      "pixel_black_run": [
+        474,
+        477
+      ],
+      "x_paper_interval": [
+        -1.6074950690335306,
+        -1.4383561643835616
+      ],
+      "rho_interval": [
+        0.1594059405940594,
+        0.16534653465346535
+      ]
+    },
+    {
+      "pixel_row": 445,
+      "pixel_black_run": [
+        481,
+        483
+      ],
+      "x_paper_interval": [
+        -1.4694280078895463,
+        -1.3209393346379648
+      ],
+      "rho_interval": [
+        0.1792079207920792,
+        0.18514851485148515
+      ]
+    },
+    {
+      "pixel_row": 435,
+      "pixel_black_run": [
+        487,
+        489
+      ],
+      "x_paper_interval": [
+        -1.3510848126232742,
+        -1.203522504892368
+      ],
+      "rho_interval": [
+        0.19900990099009902,
+        0.20495049504950494
+      ]
+    },
+    {
+      "pixel_row": 415,
+      "pixel_black_run": [
+        498,
+        500
+      ],
+      "x_paper_interval": [
+        -1.1341222879684418,
+        -0.9882583170254403
+      ],
+      "rho_interval": [
+        0.2386138613861386,
+        0.24455445544554455
+      ]
+    },
+    {
+      "pixel_row": 405,
+      "pixel_black_run": [
+        503,
+        504
+      ],
+      "x_paper_interval": [
+        -1.0355029585798816,
+        -0.9099804305283757
+      ],
+      "rho_interval": [
+        0.2584158415841584,
+        0.26435643564356437
+      ]
+    },
+    {
+      "pixel_row": 395,
+      "pixel_black_run": [
+        508,
+        510
+      ],
+      "x_paper_interval": [
+        -0.9368836291913214,
+        -0.7925636007827789
+      ],
+      "rho_interval": [
+        0.27821782178217824,
+        0.28415841584158413
+      ]
+    },
+    {
+      "pixel_row": 335,
+      "pixel_black_run": [
+        533,
+        535
+      ],
+      "x_paper_interval": [
+        -0.4437869822485207,
+        -0.30332681017612523
+      ],
+      "rho_interval": [
+        0.39702970297029705,
+        0.402970297029703
+      ]
+    },
+    {
+      "pixel_row": 325,
+      "pixel_black_run": [
+        537,
+        539
+      ],
+      "x_paper_interval": [
+        -0.36489151873767256,
+        -0.22504892367906065
+      ],
+      "rho_interval": [
+        0.4168316831683168,
+        0.42277227722772276
+      ]
+    },
+    {
+      "pixel_row": 250,
+      "pixel_black_run": [
+        566,
+        568
+      ],
+      "x_paper_interval": [
+        0.2054794520547945,
+        0.34516765285996054
+      ],
+      "rho_interval": [
+        0.5653465346534653,
+        0.5712871287128712
+      ]
+    },
+    {
+      "pixel_row": 230,
+      "pixel_black_run": [
+        574,
+        577
+      ],
+      "x_paper_interval": [
+        0.36203522504892366,
+        0.5226824457593688
+      ],
+      "rho_interval": [
+        0.6049504950495049,
+        0.6108910891089109
+      ]
+    },
+    {
+      "pixel_row": 180,
+      "pixel_black_run": [
+        594,
+        595
+      ],
+      "x_paper_interval": [
+        0.7534246575342466,
+        0.8777120315581853
+      ],
+      "rho_interval": [
+        0.7039603960396039,
+        0.7099009900990099
+      ]
+    },
+    {
+      "pixel_row": 170,
+      "pixel_black_run": [
+        598,
+        600
+      ],
+      "x_paper_interval": [
+        0.8317025440313112,
+        0.9763313609467456
+      ],
+      "rho_interval": [
+        0.7237623762376237,
+        0.7297029702970297
+      ]
+    },
+    {
+      "pixel_row": 160,
+      "pixel_black_run": [
+        602,
+        604
+      ],
+      "x_paper_interval": [
+        0.9099804305283757,
+        1.0552268244575935
+      ],
+      "rho_interval": [
+        0.7435643564356436,
+        0.7495049504950495
+      ]
+    },
+    {
+      "pixel_row": 107,
+      "pixel_black_run": [
+        632,
+        635
+      ],
+      "x_paper_interval": [
+        1.49706457925636,
+        1.6666666666666665
+      ],
+      "rho_interval": [
+        0.8485148514851485,
+        0.8544554455445544
+      ]
+    },
+    {
+      "pixel_row": 105,
+      "pixel_black_run": [
+        634,
+        636
+      ],
+      "x_paper_interval": [
+        1.5362035225048922,
+        1.6863905325443787
+      ],
+      "rho_interval": [
+        0.8524752475247525,
+        0.8584158415841584
+      ]
+    },
+    {
+      "pixel_row": 103,
+      "pixel_black_run": [
+        635,
+        638
+      ],
+      "x_paper_interval": [
+        1.5557729941291585,
+        1.7258382642998027
+      ],
+      "rho_interval": [
+        0.8564356435643564,
+        0.8623762376237624
+      ]
+    },
+    {
+      "pixel_row": 101,
+      "pixel_black_run": [
+        637,
+        639
+      ],
+      "x_paper_interval": [
+        1.5949119373776908,
+        1.7455621301775146
+      ],
+      "rho_interval": [
+        0.8603960396039604,
+        0.8663366336633663
+      ]
+    },
+    {
+      "pixel_row": 99,
+      "pixel_black_run": [
+        638,
+        641
+      ],
+      "x_paper_interval": [
+        1.6144814090019568,
+        1.7850098619329386
+      ],
+      "rho_interval": [
+        0.8643564356435643,
+        0.8702970297029703
+      ]
+    },
+    {
+      "pixel_row": 97,
+      "pixel_black_run": [
+        639,
+        642
+      ],
+      "x_paper_interval": [
+        1.634050880626223,
+        1.8047337278106508
+      ],
+      "rho_interval": [
+        0.8683168316831683,
+        0.8742574257425743
+      ]
+    },
+    {
+      "pixel_row": 95,
+      "pixel_black_run": [
+        641,
+        644
+      ],
+      "x_paper_interval": [
+        1.6731898238747553,
+        1.8441814595660748
+      ],
+      "rho_interval": [
+        0.8722772277227723,
+        0.8782178217821782
+      ]
+    },
+    {
+      "pixel_row": 93,
+      "pixel_black_run": [
+        642,
+        644
+      ],
+      "x_paper_interval": [
+        1.6927592954990214,
+        1.8441814595660748
+      ],
+      "rho_interval": [
+        0.8762376237623762,
+        0.8821782178217822
+      ]
+    },
+    {
+      "pixel_row": 81,
+      "pixel_black_run": [
+        654,
+        656
+      ],
+      "x_paper_interval": [
+        1.927592954990215,
+        2.080867850098619
+      ],
+      "rho_interval": [
+        0.9,
+        0.905940594059406
+      ]
+    },
+    {
+      "pixel_row": 79,
+      "pixel_black_run": [
+        655,
+        658
+      ],
+      "x_paper_interval": [
+        1.9471624266144814,
+        2.1203155818540433
+      ],
+      "rho_interval": [
+        0.903960396039604,
+        0.9099009900990099
+      ]
+    },
+    {
+      "pixel_row": 77,
+      "pixel_black_run": [
+        657,
+        660
+      ],
+      "x_paper_interval": [
+        1.9863013698630136,
+        2.159763313609467
+      ],
+      "rho_interval": [
+        0.907920792079208,
+        0.9138613861386139
+      ]
+    },
+    {
+      "pixel_row": 75,
+      "pixel_black_run": [
+        659,
+        662
+      ],
+      "x_paper_interval": [
+        2.025440313111546,
+        2.1992110453648914
+      ],
+      "rho_interval": [
+        0.9118811881188119,
+        0.9178217821782179
+      ]
+    },
+    {
+      "pixel_row": 73,
+      "pixel_black_run": [
+        661,
+        664
+      ],
+      "x_paper_interval": [
+        2.064579256360078,
+        2.2386587771203152
+      ],
+      "rho_interval": [
+        0.9158415841584159,
+        0.9217821782178218
+      ]
+    },
+    {
+      "pixel_row": 71,
+      "pixel_black_run": [
+        663,
+        666
+      ],
+      "x_paper_interval": [
+        2.1037181996086107,
+        2.2781065088757395
+      ],
+      "rho_interval": [
+        0.9198019801980198,
+        0.9257425742574258
+      ]
+    },
+    {
+      "pixel_row": 53,
+      "pixel_black_run": [
+        691,
+        697
+      ],
+      "x_paper_interval": [
+        2.6516634050880628,
+        2.8895463510848125
+      ],
+      "rho_interval": [
+        0.9554455445544554,
+        0.9613861386138614
+      ]
+    }
+  ],
+  "limitations": [
+    "Manual selection of visible long-dashed experimental line; known square-marker rows and ambiguous merged center omitted.",
+    "Intervals account for pixel extent and axis calibration; no Gaussian distribution or confidence level is assigned.",
+    "Raster rows are not independent experiments.",
+    "Unmeasured center, gaps and extreme tails are not certified by the sampled points.",
+    "Paper distortion and reproducibility of manual line identification remain unquantified.",
+    "Experimental density and length-scale accuracy are stored separately from digitization intervals."
+  ]
+}
