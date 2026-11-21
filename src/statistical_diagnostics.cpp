@@ -53,7 +53,7 @@ StatisticalDiagnostics::StatisticalDiagnostics(CellCluster& cluster,
                                                  : 0)});
   initial_ = last_ = Inventory();
   wall_initial_ = WallEnergy();
-  if (balance_)
+  if (balance_) {
     AtomicWrite(
         "conservation.csv",
         "step;time;end_time;dt;N_before;N_after;N_in;N_out;M_before;M_after;M_"
@@ -61,6 +61,10 @@ StatisticalDiagnostics::StatisticalDiagnostics(CellCluster& cluster,
         "in;Py_in;Pz_in;Px_out;Py_out;Pz_out;E_before;E_after;E_in;E_out;Jbody_"
         "x;Jbody_y;Jbody_z;Jmirror_x;Jmirror_y;Jmirror_z;Qbody;Qmirror;delta_"
         "Uwall;Qthermostat;Rcount;Rmass;Rp_x;Rp_y;Rp_z;RE;Rwall\n");
+    AtomicWrite("boundary_outflow.csv",
+                "step;time;end_time;N_out_x_neg;N_out_x_pos;N_out_y_neg;"
+                "N_out_y_pos;N_out_z_neg;N_out_z_pos;N_out_multiple\n");
+  }
 }
 void StatisticalDiagnostics::BeforeStep() {
   start_ = cluster_.t;
@@ -146,6 +150,13 @@ void StatisticalDiagnostics::AfterStep() {
     f << ';' << re << ';' << (dynamic ? du - qb : 0) << '\n';
     f.close();
     if (!f) throw std::runtime_error("Cannot write conservation.csv");
+
+    std::ofstream faces("boundary_outflow.csv", std::ios::app);
+    faces << std::setprecision(17) << steps_ << ';' << start_ << ';' << cluster_.t;
+    for (const auto count : cluster_.step_outgoing_counts) faces << ';' << count;
+    faces << '\n';
+    faces.close();
+    if (!faces) throw std::runtime_error("Cannot write boundary_outflow.csv");
   }
   for (const auto& w : windows_)
     if (start_ < w.end && cluster_.t >= w.end) {

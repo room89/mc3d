@@ -11,6 +11,8 @@ def profile(folder,stride=1):
     nx,ny,nz=(cfg['cells_'+a] for a in 'xyz');dx=cfg['lx']/nx
     weight=cfg['lx']*cfg['ly']*cfg['lz']/(nx*ny*nz*cfg['particles_per_cell'])
     lam=ref['mean_free_path_m']/units['scales']['length_m'];ratio=ref['right']['number_density_m3']/ref['left']['number_density_m3']
+    if stride not in (1,2) or len(cfg["statistics_windows"]) < 64 or len(cfg["statistics_windows"]) % 16:
+        raise ValueError("Expected at least 64 production windows in complete blocks of 16")
     windows=[];pending=[]
     for wi,bounds in enumerate(cfg['statistics_windows']):
         with (out/f'cell_statistics_{wi}.csv').open() as f:rows=list(csv.DictReader(f,delimiter=';'))
@@ -30,7 +32,6 @@ def profile(folder,stride=1):
         result['plateau_error']=max(abs(statistics.mean(rho[:nedge])-1),abs(statistics.mean(rho[-nedge:])-ratio))/(ratio-1)
         result['boundary_distance']=min(result['front']-x[0],x[-1]-result['front'])
         result['window']=wi;windows.append(result)
-    if len(windows)!=64//stride:raise ValueError('Expected 64 production windows')
     summary=json.loads((out/'conservation_summary.json').read_text())
     es=sum(abs(summary[k]['energy']) for k in ('initial','incoming','outgoing'))+1e-30
     ps=sum(summary[k]['absolute_momentum'] for k in ('initial','incoming','outgoing'))+1e-30
@@ -46,12 +47,15 @@ def interpolate(x,y,point):
         if x[i]<=point<=x[i+1]:return y[i]+(point-x[i])/(x[i+1]-x[i])*(y[i+1]-y[i])
     raise ValueError('Comparison grid outside profile')
 
-def summarize(trials):
-    result={};count=len(trials[0]);factor=64//count
+def summarize(trials, stride=1):
+    count=len(trials[0])
+    if stride not in (1,2) or count*stride < 64 or count*stride % 16 or any(len(run)!=count for run in trials):
+        raise ValueError("Inconsistent or incomplete statistical blocks")
+    result={}
     for key in ('width_10_90','gradient_thickness'):
         means=[statistics.mean(w[key] for w in run) for run in trials]
         mean,u=interval(means)
-        for block in (8//factor,16//factor):
+        for block in (8//stride,16//stride):
             block_u=[interval([statistics.mean(w[key] for w in run[i:i+block]) for i in range(0,count,block)])[1] for run in trials]
             u=max(u,max(block_u))
         result[key]=dict(mean=mean,uncertainty=u)
@@ -62,15 +66,15 @@ def summarize(trials):
         m,u=interval([p[i] for p in profiles])
         for run in trials:
             values=[interpolate(w['x_aligned'],w['density_normalized'],grid[i]) for w in run]
-            for block in (8//factor,16//factor):
+            for block in (8//stride,16//stride):
                 u=max(u,interval([statistics.mean(values[j:j+block]) for j in range(0,count,block)])[1])
         result['density'].append(m);result['density_uncertainty'].append(u)
     result['stationarity']='passed'
     for run in trials:
         if max(w['plateau_error'] for w in run)>.01 or min(w['boundary_distance'] for w in run)<10:result['stationarity']='incomplete'
         for k in ('width_10_90','gradient_thickness'):
-            first=[statistics.mean(w[k] for w in run[i:i+8//factor]) for i in range(0,count//2,8//factor)]
-            last=[statistics.mean(w[k] for w in run[i:i+8//factor]) for i in range(count//2,count,8//factor)]
+            first=[statistics.mean(w[k] for w in run[i:i+8//stride]) for i in range(0,count//2,8//stride)]
+            last=[statistics.mean(w[k] for w in run[i:i+8//stride]) for i in range(count//2,count,8//stride)]
             m1,u1=interval(first);m2,u2=interval(last)
             if not equivalence(m1-m2,u1+u2,.03*result[k]['mean']):result['stationarity']='incomplete'
     result['processing_uncertainty']=max(w['processing_uncertainty'] for run in trials for w in run)
@@ -88,8 +92,16 @@ def sparta_profile(folder):
     ref=json.loads((folder/'reference.json').read_text())
     if ref['quick']:raise ValueError('Smoke run is not production data')
     n1=ref['reference']['left']['number_density_m3'];n2=ref['reference']['right']['number_density_m3'];lam=ref['reference']['mean_free_path_m'];step=ref['steps_per_window'];windows=[]
-    for wi in range(64):
-        lines=(folder/f'profile.{(33+wi)*step}').read_text().splitlines()
+    if 'burn_steps' in ref or 'measurement_steps' in ref:
+        burn = ref['burn_steps']
+        measurement = ref['measurement_steps']
+    else:
+        burn = ref.get('warmup_windows', 32) * step
+        measurement = 64 * step
+    if step <= 0 or burn < 0 or measurement % step or measurement // step != len(ref['source']['statistics_windows_s']):
+        raise ValueError('Inconsistent SPARTA production schedule')
+    for wi in range(measurement // step):
+        lines = (folder / f'profile.{burn + (wi + 1) * step}').read_text().splitlines()
         header=next(i for i,line in enumerate(lines) if line.startswith('ITEM: CELLS '));fields=lines[header].split()[2:]
         rows=[dict(zip(fields,map(float,line.split()))) for line in lines[header+1:] if line.strip()]
         nx=ref['source']['numerics']['cells_x'];groups={}
@@ -124,7 +136,7 @@ def analyze(root):
     report['stationarity']={'status':'passed' if len(summaries)==7 and all(s['stationarity']=='passed' for s in summaries.values()) else 'incomplete'}
     window_checks={}
     for v in summaries:
-        try:window_checks[v]=compare(summaries[v],summarize([profile(root/f'{v}-{seed}',2) for seed in seeds]))
+        try:window_checks[v]=compare(summaries[v],summarize([profile(root/f'{v}-{seed}',2) for seed in seeds],stride=2))
         except (OSError,ValueError,KeyError) as e:window_checks[v]=dict(status='incomplete',reason=str(e))
     report['window_sensitivity']={'status':'passed' if len(window_checks)==7 and all(c['status']=='passed' for c in window_checks.values()) else 'incomplete','comparisons':window_checks}
     passed=len(comparisons)==6 and all(c['status']=='passed' for c in comparisons.values()) and report['stationarity']['status']=='passed' and report['window_sensitivity']['status']=='passed'

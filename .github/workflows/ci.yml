@@ -41,6 +41,9 @@ jobs:
       - name: Test Python diagnostics
         run: .venv-analysis/bin/python -m unittest discover -s tests/python -v
 
+      - name: Test benchmark tools
+        run: .venv-analysis/bin/python -B -m unittest discover -s tools -p 'test_benchmark*.py'
+
       - name: Verify toolchain
         run: |
           ${{ matrix.cc }} --version

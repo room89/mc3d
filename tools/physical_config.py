@@ -53,7 +53,7 @@ def prepare(data):
             c[target]=positive(data[key],key)/scale
     if speed==0 and 'force_reference_area' in c: raise ValueError('Force coefficients require nonzero flow speed')
     numerics=data.get('numerics',{})
-    if set(numerics)-{'cells_x','cells_y','cells_z','particles_per_cell','cu','collision_courant','resolution_diagnostics','statistics_enabled','balance_enabled','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
+    if set(numerics)-{'hyperfree_inflow_rounding','cells_x','cells_y','cells_z','particles_per_cell','cu','collision_courant','resolution_diagnostics','statistics_enabled','balance_enabled','seed','thread_pool_size','runtime_control','boundary_x_neg','boundary_x_pos','boundary_y_neg','boundary_y_pos','boundary_z_neg','boundary_z_pos'}: raise ValueError('Unknown numerical field')
     for k in ('cells_x','cells_y','cells_z','particles_per_cell','thread_pool_size'):
         value=numerics.get(k,dict(cells_x=20,cells_y=20,cells_z=3,particles_per_cell=50,thread_pool_size=4)[k])
         if type(value) is not int or value<=0:raise ValueError(k+': expected positive integer')
@@ -68,6 +68,7 @@ def prepare(data):
         if key.startswith('boundary_') and value not in ('none','mirror','periodic','free','hyperfree'):raise ValueError('Unknown boundary type')
     for name in ('statistics_enabled','balance_enabled'):
         if name in numerics and type(numerics[name]) is not bool:raise ValueError(name+': expected bool')
+    if numerics.get('hyperfree_inflow_rounding','accumulated') not in ('accumulated','stochastic'):raise ValueError('Invalid hyperfree inflow rounding')
     c.update(numerics)
     def gas_state(state):
         if set(state)!={'number_density_m3','temperature_k','velocity_m_s'}:raise ValueError('Invalid gas state fields')

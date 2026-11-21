@@ -27,7 +27,13 @@ with tempfile.TemporaryDirectory(prefix='mc3d-statistics-') as temporary:
         if name=='closed':assert math.isclose(summary['initial']['mass'],1,rel_tol=1e-12)
         scale=summary['initial']['energy']+abs(summary['incoming']['energy'])+abs(summary['outgoing']['energy'])+abs(summary['body_heat'])+1e-30
         momentum_scale=summary['initial']['absolute_momentum']+summary['incoming']['absolute_momentum']+summary['outgoing']['absolute_momentum']+1e-30
-        for row in rows(out/'conservation.csv'):
+        balance=rows(out/'conservation.csv')
+        outflow=rows(out/'boundary_outflow.csv')
+        assert len(balance)==len(outflow)>0
+        for row,faces in zip(balance,outflow):
+            assert all(row[k]==faces[k] for k in ('step','time','end_time'))
+            counts=[int(v) for k,v in faces.items() if k.startswith('N_out_')]
+            assert len(counts)==7 and min(counts)>=0 and sum(counts)==int(row['N_out'])
             assert int(row['Rcount'])==0
             for key in ['RE','Rwall']:assert abs(float(row[key]))<=1e-10*scale,(name,key,row)
             for key in ['Rp_x','Rp_y','Rp_z']:assert abs(float(row[key]))<=1e-10*momentum_scale,(name,key,row)
@@ -43,6 +49,7 @@ with tempfile.TemporaryDirectory(prefix='mc3d-statistics-') as temporary:
             if model=='fixed_wall':
                 assert all(float(row['wall_temperature_at_output'])==data['wall_temperature'] for row in surface)
         if model in ('fixed_wall','dynamic_wall'):assert abs(summary['body_heat'])>1e-8
+        if model in ('open','free'):assert sum(int(r['N_out_x_pos']) for r in outflow)>0
         if model=='mirror':
             assert summary['incoming']['N']==summary['outgoing']['N']==0
             assert abs(summary['mirror_heat'])<1e-12
@@ -52,6 +59,7 @@ with tempfile.TemporaryDirectory(prefix='mc3d-statistics-') as temporary:
         off=root/(name+'-off')
         subprocess.run([str(binary),'--config',str(disabled_file),'--output-dir',str(off)],check=True,capture_output=True)
         assert not list(off.glob('*statistics*')) and not list(off.glob('conservation*'))
+        assert not (off/'boundary_outflow.csv').exists()
         for f in off.iterdir():
             if f.suffix in ('.dat','.net','.csv'):
                 assert f.read_bytes()==(out/f.name).read_bytes(),(name,f.name)
@@ -68,13 +76,14 @@ with tempfile.TemporaryDirectory(prefix='mc3d-statistics-') as temporary:
             outputs.append(out)
             # The first window closes before the final step and must stay untouched.
             assert (out/'cell_statistics_0.csv').stat().st_mtime_ns < (out/'conservation.csv').stat().st_mtime_ns
-        for pattern in ('*statistics_*.csv','conservation*','final.dat*'):
+        for pattern in ('*statistics_*.csv','conservation*','boundary_outflow.csv','final.dat*'):
             for path in outputs[0].glob(pattern):
                 assert path.read_bytes()==(outputs[1]/path.name).read_bytes(),(model,path.name)
     empty=root/'zero.json';empty.write_text(json.dumps(data|{'end_time':0,'statistics_windows':[]}))
     zero=root/'zero'
     subprocess.run([str(binary),'--config',str(empty),'--output-dir',str(zero)],check=True,capture_output=True)
     assert rows(zero/'conservation.csv')==[]
+    assert rows(zero/'boundary_outflow.csv')==[]
     assert json.loads((zero/'conservation_summary.json').read_text())['steps']==0
     assert all(r['status']=='unobserved' for r in rows(zero/'cell_statistics_0.csv'))
     partial=json.loads((repo/'configs/checks/statistics_closed.json').read_text())

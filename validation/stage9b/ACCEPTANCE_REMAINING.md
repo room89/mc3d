@@ -1,30 +1,52 @@
 # Stage 9b: remaining acceptance work
 
-Physical acceptance is **not complete**. Passing software tests does not qualify
-an estimator or validate the physical model. Existing acceptance gates remain unchanged.
+Physical acceptance is **not complete**. Software tests, synthetic coverage
+screens and completed solver executions are separate evidence. Original gates
+and the full PHYSICS_PLAN.md scope remain in force.
 
-- The current order-envelope candidate fails density coverage in conditional
-  calibration cases. Increasing the sample count alone is not an established fix.
-- Historical MC3D/SPARTA comparisons used a different domain from the matched
-  experimental reference; their apparent agreement is not a final acceptance result.
-- The matched 40-experimental-mean-free-path matrix is prepared, but its production
-  run is blocked on estimator qualification.
-- Global shift search and latent-shift likelihood are separate research candidates.
-  The likelihood prototype assumes known covariance; it does not yet fit and qualify
-  the uncertainty model.
+## Current evidence
 
-## Next steps
+- The primary Alsmeyer PDF is available. Its hash and both committed primary
+  digitizations were reverified during pilot preparation. Source acquisition is
+  no longer a blocker. Digitization uncertainty, scan deformation and matched-
+  condition comparison remain unqualified; pointwise interval overlap is not
+  experimental acceptance. See [primary evidence](EXPERIMENT_SOURCE_COMPARISON.md).
+- #70–77 are merged. The fixed-coordinate arithmetic estimator and conservative
+  band passed prescribed synthetic screens. Those results do not qualify
+  physical noise, stationarity, intrinsic shock shape or gradient thickness.
+- Historical fixed-coordinate profiles show appreciable run variation and a
+  mean-front offset. Reservoir input checks and isolated flux checks found no
+  gross normalization error at their tested precision. Three-seed historical
+  C/E differences do not establish time-step convergence.
+- The [new independent C/E pilot](TIMESTEP_PILOT.md) is specified to measure
+  run variation and cost, not to pass acceptance. Inspect its actual process
+  and report state before claiming progress or completion.
+- The matched 40-experimental-mean-free-path matrix is prepared but has no
+  qualified production result. Engineering-domain pilot data cannot replace it.
 
-1. Finish and audit the ongoing coverage diagnostics with the agreed reduced load.
-2. Resolve estimator bias/coverage failures and qualify on independent scenarios.
-3. Run the matched reference matrix with the qualified estimator.
-4. Complete convergence, stationarity, cross-code and experimental uncertainty
-   checks before declaring acceptance. Do not relax gates to obtain a pass.
+## Required next decisions and evidence
+
+1. Complete the frozen C/E pilot; verify all runs, source hashes and full-window
+   coverage. Report per-run means and half changes, treating runs rather than
+   windows as independent units. Retain negative and inconclusive results.
+2. Design a prospective comparison with a justified uncertainty procedure,
+   sample size and stopping rule. Do not tune on confirmation results. Resolve
+   the relationship between fixed-frame profiles and the intrinsic thickness
+   required by experimental validation; the density band alone is insufficient.
+3. Establish stationarity and grid, time, population and domain convergence,
+   followed by inter-code and primary-experiment comparisons in matched conditions.
+   Preserve numerical, statistical and experimental uncertainties separately.
+4. After stage 9, complete the isothermal wedge and dynamic-wall checks in
+   stages 10–11 and the final limitations/reproducibility report. They remain
+   required for the user's full physical acceptance objective.
+
+The user's latest resource authorization permits full load and prepared launches
+without another confirmation. Older reduced-load guidance is superseded; this
+does not authorize automatic reruns of failed cases or omission of acceptance gates.
 
 ## Evidence and provenance
 
-The full investigation, including negative results and intermediate reports, is
-preserved in the [original PR snapshot](https://github.com/room89/mc3d/tree/2c58c95701e45c7e3b196e7e86c441fc8496b594/validation/stage9b).
-See [archive and file disposition](PR59_ARCHIVE.md) for checksums and reproduction.
-This compact status deliberately records no live progress counters: local ongoing
-runs must be inspected before reporting their completion.
+Negative estimator results and historical investigation remain in the
+[original PR snapshot](https://github.com/room89/mc3d/tree/2c58c95701e45c7e3b196e7e86c441fc8496b594/validation/stage9b).
+See [archive and file disposition](PR59_ARCHIVE.md). Historical estimates are not
+fresh confirmation samples. No live progress counters are recorded here.

@@ -42,6 +42,17 @@ with tempfile.TemporaryDirectory(prefix='mc3d-shock-') as d:
                 assert abs(u-state['velocity']['xyz'.index(axis)])<6*math.sqrt(state['temperature']/n)
 
         if seed==123:assert replay(out/'manifest.json',root/'replay')==0
+    data,ref=setup(True,917)
+    data['numerics']['hyperfree_inflow_rounding']='stochastic'
+    stochastic,units=prepare(data)
+    unit_file=root/'stochastic-units.json';unit_file.write_text(json.dumps(units))
+    stochastic['units_file']=str(unit_file)
+    result,out=run(stochastic,'stochastic')
+    assert result.returncode==0,result.stderr.decode()
+    assert inspect(out,stochastic,ref)['status']=='passed'
+    manifest=json.loads((out/'manifest.json').read_text())
+    assert manifest['effective_config']['hyperfree_inflow_rounding']=='stochastic'
+    assert replay(out/'manifest.json',root/'stochastic-replay')==0
     c.pop('units_file',None)
     for i,patch in enumerate([{'boundary_x_pos':'mirror'},{'initial_step':dict(c['initial_step'],x=.1234567)},{'initial_step':dict(c['initial_step'],x=100)},{'reservoirs':{'unknown':c['reservoirs']['x_neg']}},{'reservoirs':{'x_neg':{'density_ratio':1}}},{'reservoirs':{'x_neg':dict(c['reservoirs']['x_neg'],temperature=0)}},{'reservoirs':{'x_neg':dict(c['reservoirs']['x_neg'],density_ratio=-1)}},{'reservoirs':{'x_neg':dict(c['reservoirs']['x_neg'],velocity=[1,2])}}]):
         r,_=run(c|patch,'invalid'+str(i));assert r.returncode!=0,patch

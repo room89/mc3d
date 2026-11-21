@@ -126,6 +126,7 @@ RunManifest::RunManifest(SimulationConfig& c, int argc, char** argv) {
        {c.precompute_snapshot, c.final_cell_snapshot, c.final_snapshot}) {
     const auto base = fs::path(name).filename().string();
     if (base == "conservation.csv" || base == "conservation_summary.json" ||
+        base == "boundary_outflow.csv" ||
         base.starts_with("cell_statistics_") ||
         base.starts_with("surface_statistics_"))
       throw std::invalid_argument("Output path reserved for statistics");

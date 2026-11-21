@@ -6,16 +6,26 @@ from physical_config import prepare
 SEEDS=(123,456,789)
 VARIANTS={'A':(400,160),'B':(800,80),'C':(800,160),'D':(400,320),'E':(800,160),'F':(1600,160),'G':(800,160)}
 
-def configuration(variant,seed):
+def configuration(variant,seed,warmup_transits=4,domain_multiplier=1,population_multiplier=1,hyperfree_inflow_rounding="accumulated"):
+    if type(domain_multiplier) is not int or domain_multiplier not in (1,2):
+        raise ValueError("Domain multiplier must be 1 or 2")
+    if not isinstance(warmup_transits,int) or isinstance(warmup_transits,bool) or warmup_transits<0:
+        raise ValueError("Nonnegative integer warmup transits required")
+    if type(population_multiplier) is not int or population_multiplier not in (1,4):
+        raise ValueError("Population multiplier must be 1 or 4")
+    if hyperfree_inflow_rounding not in ('accumulated','stochastic'):raise ValueError('Invalid hyperfree inflow rounding')
     data,ref=setup(False,seed);nx,np=VARIANTS[variant]
-    data['numerics'].update(cells_x=nx,particles_per_cell=np)
-    tau=ref['transit_time_s'];data['end_time_s']=12*tau
-    data['statistics_windows_s']=[[(4+i/8)*tau,(4+(i+1)/8)*tau] for i in range(64)]
+    data['numerics'].update(cells_x=nx,particles_per_cell=np*population_multiplier)
+    if hyperfree_inflow_rounding!='accumulated':data['numerics']['hyperfree_inflow_rounding']=hyperfree_inflow_rounding
+    tau=ref['transit_time_s'];data['end_time_s']=(warmup_transits+8)*tau
+    data['statistics_windows_s']=[[(warmup_transits+i/8)*tau,(warmup_transits+(i+1)/8)*tau] for i in range(64)]
     if variant=='E':data['numerics'].update(cu=.25,collision_courant=.05)
     if variant=='F':data['domain_m'][0]*=2
     if variant=='G':
         data['domain_m'][1]*=2;data['domain_m'][2]*=2
         data['numerics'].update(cells_y=2,cells_z=2)
+    data['domain_m'][0]*=domain_multiplier
+    data['numerics']['cells_x']*=domain_multiplier
     return data,ref
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -52,7 +62,12 @@ def main():
     p.add_argument('--no-time-budget',action='store_true',help='Disable total and per-run time limits (explicit opt-in)')
     p.add_argument('--seeds',nargs=3,type=int,default=SEEDS,help='Three distinct positive seeds; defaults preserve the original matrix');p.add_argument('--budget-hours',type=float,default=24);p.add_argument('--load-mode',choices=['full','balanced','quiet'],default='balanced')
     p.add_argument('--variants',nargs='+',choices=list(VARIANTS),default=list(VARIANTS),help='Selected execution cases; physical acceptance still requires the full matrix')
+    p.add_argument("--warmup-transits",type=int,default=4,help="Initial unmeasured transit times; production remains eight transits")
+    p.add_argument("--domain-multiplier",type=int,choices=(1,2),default=1,help="Scale longitudinal length and cell count together; retain original physical time scale")
+    p.add_argument("--hyperfree-inflow-rounding",choices=("accumulated","stochastic"),default="accumulated")
+    p.add_argument("--population-multiplier",type=int,choices=(1,4),default=1)
     a=p.parse_args()
+    if a.warmup_transits<0:raise ValueError("Nonnegative warmup required")
     seeds=tuple(a.seeds)
     if len(set(a.variants))!=len(a.variants):raise ValueError('Distinct variants required')
     variants=[v for v in VARIANTS if v in a.variants]
@@ -66,6 +81,14 @@ def main():
     report=json.loads(report_file.read_text()) if a.resume and report_file.exists() else {'schema_version':1,'binary_sha256':binary_hash,'spent_seconds':0,'runs':{},'stationarity':{'status':'incomplete'},'convergence':{'status':'incomplete'},'cross_code':{'status':'incomplete'},'experiment':{'status':'incomplete','reason':'Primary experimental data not yet verified'}}
     if report_file.exists() and tuple(report.get('seeds',SEEDS))!=seeds:raise ValueError('Cannot resume with different seeds')
     if report_file.exists() and report.get('variants',list(VARIANTS))!=variants:raise ValueError('Cannot resume with different variants')
+    if report_file.exists() and report.get('warmup_transits',4)!=a.warmup_transits:raise ValueError('Cannot resume with different warmup')
+    if report_file.exists() and report.get('domain_multiplier',1)!=a.domain_multiplier:raise ValueError('Cannot resume with different domain multiplier')
+    if report_file.exists() and report.get('population_multiplier',1)!=a.population_multiplier:raise ValueError('Cannot resume with different population multiplier')
+    if report_file.exists() and report.get('hyperfree_inflow_rounding','accumulated')!=a.hyperfree_inflow_rounding:raise ValueError('Cannot resume with different inflow rounding')
+    report['hyperfree_inflow_rounding']=a.hyperfree_inflow_rounding
+    report['population_multiplier']=a.population_multiplier
+    report['domain_multiplier']=a.domain_multiplier
+    report['warmup_transits']=a.warmup_transits
     report['seeds']=list(seeds)
     report['variants']=variants
     if report['binary_sha256']!=binary_hash:raise ValueError('Cannot resume with changed binary')
@@ -89,7 +112,7 @@ def main():
     save(report_file,report)
     for variant in variants:
         for seed in seeds:
-            key=f'{variant}-{seed}';data,ref=configuration(variant,seed)
+            key=f'{variant}-{seed}';data,ref=configuration(variant,seed,a.warmup_transits,a.domain_multiplier,a.population_multiplier,a.hyperfree_inflow_rounding)
             folder=root/key;folder.mkdir(exist_ok=True)
             input_file=folder/'input_si.json'
             if input_file.exists() and json.loads(input_file.read_text())!=data:raise ValueError('Configuration mismatch')
@@ -144,12 +167,12 @@ def main():
                 if folder.exists():entry['reason']='Unfinished output retained';continue
                 remaining=budget_seconds-report['spent_seconds']
                 if a.prepare_only or remaining<=0:entry['reason']='Not executed within budget';continue
-                export(folder,variant,seed)
+                export(folder,variant,seed,warmup_transits=a.warmup_transits,domain_multiplier=a.domain_multiplier,population_multiplier=a.population_multiplier)
                 start=time.monotonic()
                 try:
                     with (folder/'run.log').open('w') as log:
                         result=run_limited([str(sparta),'-in',str(folder/'in.shock')],log,min(remaining,run_limit),a.memory_limit_mb,cwd=folder)
-                    reference=json.loads((folder/'reference.json').read_text());expected=96*reference['steps_per_window']
+                    reference=json.loads((folder/'reference.json').read_text());expected=(reference.get('warmup_windows',32)+64)*reference['steps_per_window']
                     complete=(folder/f'profile.{expected}').exists()
                     entry['status']='passed' if result.returncode==0 and complete else 'error'
                     entry['hashes']={p.name:digest(p) for p in folder.iterdir() if p.is_file()}

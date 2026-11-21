@@ -12,7 +12,7 @@ def sparta_density(folder,hashes):
     if ref['quick']:raise ValueError('Production data required')
     n1=ref['reference']['left']['number_density_m3'];n2=ref['reference']['right']['number_density_m3'];lam=ref['reference']['mean_free_path_m'];step=ref['steps_per_window'];windows=[]
     for wi in range(64):
-        path=folder/f'profile.{(33+wi)*step}';raw=path.read_bytes();hashes[str(path.relative_to(folder.parent))]=hashlib.sha256(raw).hexdigest();lines=raw.decode().splitlines()
+        path=folder/f'profile.{(ref.get('warmup_windows',32)+1+wi)*step}';raw=path.read_bytes();hashes[str(path.relative_to(folder.parent))]=hashlib.sha256(raw).hexdigest();lines=raw.decode().splitlines()
         header=next(i for i,line in enumerate(lines) if line.startswith('ITEM: CELLS '));fields=lines[header].split()[2:];groups={}
         for line in lines[header+1:]:
             if not line.strip():continue

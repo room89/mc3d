@@ -4,6 +4,7 @@
 #include <memory>
 #include <numbers>
 #include <stdexcept>
+#include <vector>
 
 #include "cell.h"
 #include "giper_free_boundary.h"
@@ -121,5 +122,87 @@ TEST(HyperFreeSamplingTest, ReservoirDensityScalesFractionalFlux) {
     EXPECT_LE(double(count),expected+1e-10);
     EXPECT_GT(double(count),expected-1-1e-10);
     EXPECT_NEAR(boundary.TransportTimeLimit(),1/(3+2.),1e-14);
+  }
+}
+
+TEST(HyperFreeSamplingTest, StochasticCountsHaveExpectedMeanAndAreReproducible) {
+  auto sample = [](unsigned seed) {
+    std::deque<mc3d::Cell> cells;
+    cells.emplace_back(std::make_shared<utils::RandomStream>(seed));
+    cells.front().SetApex({0,0,0}); cells.front().SetSize(1,1,1);
+    mc3d::HyperFreeBoundary boundary({0,0,0},{-1,0,0},20,0,1);
+    boundary.SetReservoir(1,1,{0,0,0}); boundary.BindCells(cells);
+    boundary.SetStochasticRounding(true);
+    std::vector<unsigned> counts;
+    double total = 0, expected = 0, variance = 0;
+    for (int i=0;i<20000;++i) {
+      const double target = i%2 ? 2.7 : .2;
+      const double dt = target/(20*utils::IncomingFlux(0,1));
+      const auto n = boundary.GenerateInflow(dt).transit.size();
+      EXPECT_TRUE(n==static_cast<unsigned>(target) || n==static_cast<unsigned>(target)+1);
+      counts.push_back(static_cast<unsigned>(n));
+      total += n; expected += target;
+      const double fraction = target-std::floor(target);
+      variance += fraction*(1-fraction);
+    }
+    EXPECT_NEAR(total, expected, 6*std::sqrt(variance));
+    EXPECT_TRUE(boundary.GenerateInflow(0).transit.empty());
+    return counts;
+  };
+  EXPECT_EQ(sample(917),sample(917));
+  EXPECT_NE(sample(917),sample(918));
+}
+
+TEST(HyperFreeSamplingTest, ShockReservoirMomentumAndEnergyFluxes) {
+  // Actual M=3.8 engineering-shock reservoirs; normalized mass and k_B are one.
+  for (bool downstream : {false, true}) {
+    SCOPED_TRACE(downstream);
+    const double temperature = downstream ? 5.374515235457063 : 1.;
+    const double density = downstream ? 3.3119266055045875 : 1.;
+    const double ux = downstream ? 1.4812462622337137 : 4.905778905196061;
+    const mc3d::Point normal(downstream ? 1 : -1, 0, 0);
+    const double drift = downstream ? -ux : ux;
+    const double sigma = std::sqrt(temperature);
+    // Half-line Gaussian moments M_k = integral_0^inf w^k N(drift,T) dw.
+    // Incoming velocity moments are M_(k+1)/M_1, not Gaussian volume moments.
+    double m[6];
+    m[0] = .5 * std::erfc(-drift / (std::sqrt(2.) * sigma));
+    m[1] = drift * m[0] + sigma / std::sqrt(2 * std::numbers::pi) *
+        std::exp(-drift * drift / (2 * temperature));
+    for (int k = 2; k <= 5; ++k)
+      m[k] = drift * m[k-1] + (k-1) * temperature * m[k-2];
+    const double expected_w = m[2]/m[1];
+    const double variance_w = m[3]/m[1] - expected_w*expected_w;
+    const double expected_energy = .5 * (m[3]/m[1] + 2*temperature);
+    const double variance_energy = .25 * (m[5]/m[1] -
+        std::pow(m[3]/m[1],2) + 4*temperature*temperature);
+    auto stream = std::make_shared<utils::RandomStream>(20261116);
+    std::deque<mc3d::Cell> cells;
+    cells.emplace_back(stream);
+    cells.front().SetApex({-.5,-.5,-.5});
+    cells.front().SetSize(1,1,1);
+    mc3d::HyperFreeBoundary boundary(normal*.5, normal, 160, 0, temperature);
+    boundary.SetReservoir(density,temperature,{ux,0,0});
+    boundary.BindCells(cells);
+    double expected_count = 0, sum_w = 0, sum_energy = 0;
+    size_t count = 0;
+    for (int step = 0; step < 1000; ++step) {
+      // Unequal steps exercise the fractional carry, not only the sampler.
+      const double target = step % 2 ? 173.375 : 226.125;
+      const double dt = target / (160*density*m[1]);
+      auto arrivals = boundary.GenerateInflow(dt).transit;
+      expected_count += target;
+      count += arrivals.size();
+      for (const auto& p : arrivals) {
+        const double w = -(p.velocity*normal);
+        ASSERT_GT(w,0);
+        sum_w += w;
+        sum_energy += .5*(p.velocity*p.velocity);
+      }
+    }
+    EXPECT_LE(std::abs(double(count)-expected_count),1.00000001);
+    // Six analytic standard errors; fixed seed, no tuned tolerance or resampling.
+    EXPECT_NEAR(sum_w/count,expected_w,6*std::sqrt(variance_w/count));
+    EXPECT_NEAR(sum_energy/count,expected_energy,6*std::sqrt(variance_energy/count));
   }
 }
