@@ -179,6 +179,7 @@ StepResult CellCluster::TimeStep() {
   if (body_) body_->ResetStepSurfaceExchange();
   step_incoming = {};
   step_outgoing = {};
+  step_outgoing_counts = {};
   step_body_impulse = {0, 0, 0};
   step_mirror_impulse = {0, 0, 0};
   step_body_heat = step_mirror_heat = 0;
@@ -298,14 +299,21 @@ StepResult CellCluster::TimeStep() {
     if (FindCellIndex(particle.position, outgoing_index))
       throw std::runtime_error("Unrouted particle inside domain");
     const auto p = particle.position;
-    const bool expected = (p.x < apex.x && may_escape[0]) ||
-                          (p.x >= apex.x + Lx && may_escape[1]) ||
-                          (p.y < apex.y && may_escape[2]) ||
-                          (p.y >= apex.y + Ly && may_escape[3]) ||
-                          (p.z < apex.z && may_escape[4]) ||
-                          (p.z >= apex.z + Lz && may_escape[5]);
-    if (!expected)
+    const std::array outside{p.x < apex.x, p.x >= apex.x + Lx,
+                             p.y < apex.y, p.y >= apex.y + Ly,
+                             p.z < apex.z, p.z >= apex.z + Lz};
+    auto category = step_outgoing_counts.size();
+    for (std::size_t face = 0; face < outside.size(); ++face) {
+      if (!outside[face] || !may_escape[face]) continue;
+      if (category != step_outgoing_counts.size()) {
+        category = outside.size();
+        break;
+      }
+      category = face;
+    }
+    if (category == step_outgoing_counts.size())
       throw std::runtime_error("Particle escaped a closed boundary");
+    ++step_outgoing_counts[category];
     step_outgoing.Add(particle.velocity);
   }
   for (const auto& cell : cells) step_incoming += cell.incoming_quantity;
