@@ -1,82 +1,100 @@
-# Two-window temporal covariance from independent calibration runs
+# Оценка временной ковариации по двум окнам независимых калибровочных прогонов
 
-Physical acceptance remains incomplete. This first noise-estimation step learns
-only the total stationary 2×2 temporal covariance. Spatial covariance and plateau
-means are supplied. It does not fit separate persistent/AR noise components:
-`a=.0001, b=.0004, phi=.8` and `a=.0003, b=.0002, phi=.6` both give lag-zero
-covariance .0005 and lag-one covariance .00042. Two windows cannot distinguish
-these parameter sets.
+Физическая валидация ещё не завершена. На этом этапе оценивается суммарная
+стационарная матрица временной ковариации 2×2. Пространственная ковариация и
+средние значения на плато заданы. Постоянная составляющая шума и
+авторегрессионная составляющая по двум окнам неразличимы. Например, наборы
+`a=.0001, b=.0004, phi=.8` и `a=.0003, b=.0002, phi=.6` дают одинаковую
+ковариацию 0,0005 при лаге 0 и 0,00042 при лаге 1.
 
-`shock_temporal_covariance.estimate` accepts run × two windows × plateau-node
-observations, a known plateau mean vector and a positive definite spatial
-covariance. It spatially whitens residuals, averages their temporal outer products
-across independent runs and whitened nodes, and averages the two diagonal entries
-to impose stationarity. It retains persistent run offsets: it never subtracts a
-separate mean from each run. Degenerate estimates are rejected without a ridge.
-The output includes the unconstrained sample matrix and the stationary matrix.
+Функция `shock_temporal_covariance.estimate` принимает массив наблюдений с
+размерностями «прогон × два окна × узел плато», известный вектор средних на
+плато и положительно определённую матрицу пространственной ковариации.
+Функция выполняет пространственное отбеливание остатков и усредняет внешние
+произведения остатков по двум окнам по всем независимым прогонам и отбеленным
+узлам. Для стационарной оценки оба диагональных элемента заменяются их
+средним. Вычитание заданного среднего плато сохраняет постоянные смещения
+отдельных прогонов. Вырожденные оценки отклоняются без регуляризации.
+Функция возвращает исходную выборочную матрицу и её стационарную оценку.
 
-## Synthetic diagnostic
+## Синтетическая проверка
 
-The unchanged piecewise-linear generator from the profile screen supplies 32
-independent calibration runs and 32 separate evaluation runs per trial. Seed
-families 202611160000 (calibration) and 202611150000 (evaluation), each combined
-with trial index, keep them independent. All four motion/noise combinations for
-logistic and Gompertz are retained, with 16 repetitions each: 128 trials total.
+Исходный кусочно-линейный генератор из эксперимента по подгонке профиля
+создаёт для каждого испытания 32 независимых калибровочных и 32 отдельных
+проверочных прогона. Для генерации используются разные семейства начальных
+значений генератора случайных чисел (seed), 202611160000 для калибровки и
+202611150000 для проверки. В обоих случаях учитывается номер испытания.
+Для логистического профиля и профиля Гомперца проверены все четыре
+сочетания параметров смещения и шума, по 16 повторов. Всего 128 испытаний.
 
-Calibration uses nodes `abs(x) >= 8 + motion_amplitude`: these are exact constant
-plateaus for every allowed shift in this **specified synthetic model**. Their
-means are zero and one. The spatial submatrix used for whitening is known.
-Estimated covariance is applied to separate evaluation runs; the same marginal
-profile fitter with true covariance is the paired control. No confidence bands,
-physical-data calibration or advancement criterion are asserted by this screen.
+Для калибровки используются узлы `abs(x) >= 8 + motion_amplitude`. В данной
+синтетической модели при любом допустимом смещении это участки постоянного
+профиля со средними 0 и 1. Пространственная подматрица для отбеливания
+известна. Оценённая ковариация используется при подгонке профиля по
+проверочным прогонам. Для парного сравнения тот же метод максимизации
+маргинального правдоподобия применяется к тем же наблюдениям с истинной
+ковариацией. Проверка ограничена оценкой осуществимости метода. Доверительные
+полосы, калибровка на физических данных и критерий перехода к следующему
+этапу выходят за её рамки.
 
-All 128 trials completed with both profile fits converged. Mean relative
-Frobenius covariance error was 0.0717852. Mean profile ISE was 0.00113403 with
-estimated covariance versus 0.00113722 with known covariance. Paired difference
-was -0.00000319, MCSE 0.00000595; this does not establish superiority or formal
-noninferiority. This diagnostic supplies feasibility evidence only.
+В каждом из 128 испытаний обе подгонки сошлись. Средняя относительная ошибка
+матрицы ковариации по норме Фробениуса составила 0,0717852. Средняя
+интегральная квадратичная ошибка профиля (ISE) составила 0,00113403 с оценённой
+ковариацией и 0,00113722 с истинной ковариацией. Средняя парная разность
+составила −0,00000319 при стандартной ошибке Монте-Карло 0,00000595. Эти
+оценки дают предварительное представление о точности метода. Для вывода о
+превосходстве или формального вывода о не меньшей эффективности нужна
+отдельная проверка.
 
-The audit checks all checkpoint hashes, regenerates calibration inputs, verifies
-the estimated matrices and profile error arithmetic, and recomputes the summary.
-It does not rerun the expensive profile optimization. Plan SHA-256:
+Аудит сверяет хеши всех контрольных точек, заново генерирует исходные данные
+калибровки, проверяет оценки матриц и пересчитывает ошибки профилей и итоговые
+показатели. Ошибки пересчитываются по сохранённым профилям, без повторной
+оптимизации.
+
+SHA-256 плана
 `e4eb3c3b2a179153db16ae69a4aaf829865a8b821a4a98da1e0caa0d996b52e4`.
-Report SHA-256:
+SHA-256 отчёта
 `77cc25e41349b43ca01ad44487af090b3543e996a9dc02e7906b99017a4e8ec0`.
 
-## Reproduction and limits
+## Воспроизведение и ограничения
 
-Set `OPENBLAS_NUM_THREADS=1`, `VECLIB_MAXIMUM_THREADS=1`, `OMP_NUM_THREADS=1`:
+Задайте `OPENBLAS_NUM_THREADS=1`, `VECLIB_MAXIMUM_THREADS=1` и
+`OMP_NUM_THREADS=1`, затем выполните следующие команды.
 
 ```sh
 python tools/screen_temporal_covariance.py --directory output/temporal-covariance-screen-v1
 python tools/audit_temporal_covariance.py --directory output/temporal-covariance-screen-v1
 ```
 
-Use `--resume` for an interrupted screen with the same frozen sources. The screen
-runs sequentially at nice 19 and stops on invalid covariance inputs. Existing
-reports must match recomputed summaries; completed files are never overwritten.
-Raw evidence remains under local output. No existing acceptance runner is changed.
+Чтобы продолжить прерванную серию, используйте `--resume` с той же
+зафиксированной версией исходного кода. Испытания выполняются последовательно
+с `nice 19`. При недопустимых входных данных для оценки ковариации серия
+останавливается. Сохранённые отчёты сверяются с пересчитанными итогами.
+Завершённые файлы защищены от перезаписи. Исходные результаты хранятся в
+локальном каталоге `output`. У проверки отдельный сценарий запуска.
 
-## Transfer to physical profiles
+## Применение к физическим профилям
 
-Historical profiles showed spatial variation upstream in both solvers, temporal
-variation downstream in MC3D, and a difference between training and held-out
-means downstream in SPARTA. A mean model fitted on training runs reduced
-upstream residual mean squared error by about 5%. Downstream discrepancies
-persisted. [Plateau audit](PHYSICAL_PLATEAUS.md) ·
-[Mean model](PHYSICAL_PLATEAU_MEAN.md)
+Исторические профили показали пространственную неоднородность перед фронтом в
+обоих солверах, временные изменения за фронтом в MC3D и разницу между
+средними обучающей и проверочной выборок за фронтом в SPARTA. Модель среднего,
+подогнанная на обучающих прогонах, уменьшила средний квадрат остатков перед
+фронтом примерно на 5%. Расхождения за фронтом сохранились.
+[Аудит плато](PHYSICAL_PLATEAUS.md) · [Модель среднего](PHYSICAL_PLATEAU_MEAN.md)
 
-The MC3D downstream residuals fell, rose, then fell again across sampling blocks.
-Downstream residuals also showed a modest association with front position. Both
-measures come from the same density field, so the association needs a
-shared-noise control before it can motivate a correction.
-[Sampling-time audit](PHYSICAL_PLATEAU_TIME.md) ·
-[Front and particle-balance diagnostic](PHYSICAL_PLATEAU_FRONT_BALANCE.md)
+Между блоками наблюдения остатки за фронтом в MC3D сначала снизились, затем
+выросли и вновь снизились. Выявлена умеренная связь между остатками за фронтом
+и положением фронта. Обе величины вычисляются по одному полю плотности.
+Прежде чем вводить поправку, нужно проверить, в какой мере эту связь создаёт
+общий шум. [Аудит времени наблюдения](PHYSICAL_PLATEAU_TIME.md) ·
+[Анализ фронта и баланса частиц](PHYSICAL_PLATEAU_FRONT_BALANCE.md)
 
-Keep this estimator scoped to synthetic calibration. Before applying it to
-physical profiles, freeze the plateau selection, mean model and spatial
-covariance procedure on training runs. Use fresh independent runs to check
-mean transfer, temporal stationarity and the separable spatial and temporal
-covariance model. The historical banks have already been inspected and can
-guide the design. Propagate uncertainty in the fitted mean and covariance into
-profile confidence bands before using them for physical acceptance.
+Пока область применения метода ограничена синтетической калибровкой. Перед
+применением к физическим профилям зафиксируйте на обучающих прогонах правила
+выбора плато, модель среднего и способ оценки пространственной ковариации.
+На свежих независимых прогонах проверьте переносимость модели среднего,
+стационарность во времени и представимость ковариации в виде произведения
+пространственного и временного множителей. Уже изученные исторические данные
+можно использовать для планирования этой проверки. При построении
+доверительных полос для физической валидации учитывайте неопределённость
+оценок среднего и ковариации.
