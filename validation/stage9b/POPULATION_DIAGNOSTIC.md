@@ -162,26 +162,41 @@ Local evidence: `output/shock-inflow-stochastic-analysis-v1.json` (SHA-256
 
 The discrepancy persists. Keep accumulated rounding as default; this control
 does not establish causality, stationarity, convergence or physical acceptance.
-Next isolate time-step sensitivity at the same domain, population and sampling
-schedule before changing collision/motion order. Fresh confirmation and all
-remaining numerical, experimental, wedge and dynamic-wall gates still apply.
+The comparison below measures time-step sensitivity at the same domain,
+population and sampling schedule. Changing collision/motion order is a separate
+intervention. Fresh confirmation and all remaining numerical, experimental,
+wedge and dynamic-wall gates still apply.
 
-### Prospective matched time-step sensitivity control
+## Timestep comparison at fourfold population
 
-Use the existing C case at domain multiplier 2, population multiplier 4,
-warmup 20 and seeds 210001–210003 for both MC3D and SPARTA. Compare against
-the completed E population-4 campaign, retaining accumulated inflow rounding
-and the same pinned baseline solver binaries. Direct configuration comparison
-for all three seeds confirms that C differs from E only in Cu (0.5 versus
-0.25) and collision Courant (0.1 versus 0.05). This changes the time-step
-controls together; it does not isolate either limiter individually.
+The comparison uses variants C and E at domain multiplier 2, population
+multiplier 4 and warmup 20, with the pinned baseline solver binaries and
+accumulated MC3D inflow rounding. The configuration comparison for all
+three seeds found two differences between C and E: Cu (0.5 versus 0.25)
+and collision Courant (0.1 versus 0.05). The comparison measures the
+combined sensitivity to those two time-step controls.
 
-Freeze the new campaign before launch, retain all 64 windows over [20,28],
-and report all six runs regardless of outcome. Reuse of seed labels is
-exploratory, not paired-path confirmation. Compare original-coordinate run
-means, half changes, front and width descriptions, full-domain inventories
-and balances. Do not align profiles, select windows, retry failed cases
-automatically, or use this two-level, three-seed sensitivity check as a
-convergence certificate. If a material difference remains unresolved, a
-finer-than-E level and qualified uncertainty are still required; changing
-collision/motion order is a separate intervention.
+Both solvers completed three runs per timestep with seed labels 210001–210003.
+The C comparison uses three complete SPARTA recovery runs. The interrupted
+SPARTA run contributes no windows. Each run mean weights all 64 production
+windows equally. The density comparison uses the same 560 central cell centers
+in the original coordinates and weights each run equally.
+
+| Diagnostic | C | E |
+|---|---:|---:|
+| Maximum absolute inter-code difference in normalized density | 0.05701 | 0.04910 |
+| MC3D mean front position (collision mean free paths) | 0.1271 | 0.1446 |
+| SPARTA mean front position (collision mean free paths) | 0.3622 | 0.3441 |
+| MC3D mean 10–90% width (collision mean free paths) | 4.6466 | 4.6474 |
+| SPARTA mean 10–90% width (collision mean free paths) | 4.6368 | 4.6264 |
+
+Front positions and widths are averages of isotonic crossing measurements
+on individual run means. From C to E the maximum absolute change in the
+ensemble density profile was 0.00514 for MC3D and 0.00504 for SPARTA.
+The front-position gap decreased from 0.2351 to 0.1995 collision mean free
+paths. The three seed labels provide a descriptive comparison. Time convergence,
+uncertainty qualification and physical acceptance remain open.
+
+The local comparison artifact is
+`output/shock-population4-timestep-c-recovery-analysis-v1.json`
+(SHA-256 `ed273e3e56048b7b2ebe705941b1f564cf932faa123cd2f2c8816c117eb39355`).
