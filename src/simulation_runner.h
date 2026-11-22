@@ -57,8 +57,14 @@ class SimulationRunner {
   double next_snapshot_time_ = 0;
   std::unique_ptr<StatisticalDiagnostics> statistics_;
   bool resolution_diagnostics_ = false;
-  std::string last_resolution_rows_;
+  struct ResolutionStep {
+    std::size_t number;
+    double start;
+    double dt;
+  };
+  std::optional<ResolutionStep> pending_resolution_;
   void WriteResolution();
+  void WriteResolutionCells(ResolutionStep step);
   void FlushLastResolution();
   bool UpdateSnapshotSchedule();
   void WriteBodyLoads(const StepResult& result);

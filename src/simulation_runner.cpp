@@ -404,11 +404,50 @@ void SimulationRunner::WriteBodyLoads(const StepResult& result) {
 }
 
 void SimulationRunner::FlushLastResolution() {
-  if (last_resolution_rows_.empty()) return;
-  std::ofstream out("resolution_cells_" + std::to_string(steps_) + ".csv");
-  out << last_resolution_rows_;
-  out.close();
-  RequireWrite(bool(out));
+  if (!pending_resolution_ || pending_resolution_->number != steps_) return;
+  // SyncDt updates cell resolution before the step. The values remain available
+  // after the step if the runner stops before another SyncDt.
+  WriteResolutionCells(*pending_resolution_);
+  pending_resolution_.reset();
+}
+
+void SimulationRunner::WriteResolutionCells(ResolutionStep step) {
+  std::ofstream detail("resolution_cells_" + std::to_string(step.number) + ".csv");
+  detail.precision(17);
+  detail << "step;time;end_time;index;region;status;N;gas_fraction;nu_bound;"
+            "nu_eq;lambda_eq;dx_lambda;dy_lambda;dz_lambda;dt_nu;transport_limit\n";
+  std::size_t index = 0;
+  for (const auto& cell : cluster_.cells) {
+    const auto& r = cell.resolution;
+    const auto size = cell.GetSize();
+    const auto volume = cell.GetVolume();
+    detail << step.number << ';' << step.start << ';' << step.start + step.dt
+           << ';' << index++ << ';'
+           << (volume == 0             ? "solid"
+               : volume == size.Volume() ? "gas"
+                                         : "cut")
+           << ';'
+           << (volume == 0          ? "solid"
+               : r.mean_free_path   ? "valid"
+               : r.count < 2        ? "low_population"
+               : cell.collision_parameters.kind == CollisionKind::None
+                   ? "collisions_disabled"
+                   : "cold")
+           << ';' << r.count << ';' << volume / size.Volume() << ';'
+           << r.frequency << ';';
+    if (r.equilibrium_frequency) detail << *r.equilibrium_frequency;
+    detail << ';';
+    if (r.mean_free_path) detail << *r.mean_free_path;
+    for (double extent : {size.x, size.y, size.z}) {
+      detail << ';';
+      if (r.mean_free_path) detail << extent / *r.mean_free_path;
+    }
+    detail << ';' << step.dt * r.frequency << ';';
+    if (std::isfinite(r.transport)) detail << r.transport;
+    detail << '\n';
+  }
+  detail.close();
+  RequireWrite(bool(detail));
 }
 
 void SimulationRunner::WriteResolution() {
@@ -426,13 +465,6 @@ void SimulationRunner::WriteResolution() {
                "lt05;dx_05_1;dx_1_2;dx_2_5;dx_ge5;dy_lt05;dy_05_1;dy_1_2;dy_2_"
                "5;dy_ge5;dz_lt05;dz_05_1;dz_1_2;dz_2_5;dz_ge5;dt_le005;dt_005_"
                "01;dt_01_02;dt_gt02;limiter;limiting_cell;axis;boundary\n";
-  std::ostringstream detail;
-  {
-    detail.precision(17);
-    detail << "step;time;end_time;index;region;status;N;gas_fraction;nu_bound;"
-              "nu_eq;"
-              "lambda_eq;dx_lambda;dy_lambda;dz_lambda;dt_nu;transport_limit\n";
-  }
   std::array<std::size_t, 7> population{};
   std::array<std::size_t, 15> spatial{};
   std::array<std::size_t, 4> temporal{};
@@ -480,32 +512,6 @@ void SimulationRunner::WriteResolution() {
       }
     }
     max_ratio = std::max(max_ratio, ratio);
-    {
-      detail << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt
-             << ';' << index << ';'
-             << (cell.GetVolume() == 0               ? "solid"
-                 : cell.GetVolume() == size.Volume() ? "gas"
-                                                     : "cut")
-             << ';'
-             << (cell.GetVolume() == 0 ? "solid"
-                 : r.mean_free_path    ? "valid"
-                 : r.count < 2         ? "low_population"
-                 : cell.collision_parameters.kind == CollisionKind::None
-                     ? "collisions_disabled"
-                     : "cold")
-             << ';' << n << ';' << cell.GetVolume() / size.Volume() << ';'
-             << r.frequency << ';';
-      if (r.equilibrium_frequency) detail << *r.equilibrium_frequency;
-      detail << ';';
-      if (r.mean_free_path) detail << *r.mean_free_path;
-      for (double extent : {size.x, size.y, size.z}) {
-        detail << ';';
-        if (r.mean_free_path) detail << extent / *r.mean_free_path;
-      }
-      detail << ';' << cluster_.dt * r.frequency << ';';
-      if (std::isfinite(r.transport)) detail << r.transport;
-      detail << '\n';
-    }
     ++index;
   }
   summary << step << ';' << cluster_.t << ';' << cluster_.t + cluster_.dt << ';'
@@ -542,13 +548,12 @@ void SimulationRunner::WriteResolution() {
   summary << '\n';
   summary.close();
   RequireWrite(bool(summary));
-  last_resolution_rows_ = detail.str();
+  const ResolutionStep resolution{step, cluster_.t, cluster_.dt};
   if (detailed) {
-    std::ofstream out("resolution_cells_" + std::to_string(step) + ".csv");
-    out << last_resolution_rows_;
-    out.close();
-    RequireWrite(bool(out));
-  }
+    WriteResolutionCells(resolution);
+    pending_resolution_.reset();
+  } else
+    pending_resolution_ = resolution;
 }
 
 StepResult SimulationRunner::Step() {
