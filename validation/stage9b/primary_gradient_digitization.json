@@ -1,0 +1,111 @@
+{
+  "status": "primary_experimental_gradient_digitization_diagnostic",
+  "physical_acceptance": "incomplete",
+  "source_doi": "10.1017/S0022112076001912",
+  "source_pdf_sha256": "08063484e89e1070da80567fdcb36b6493224f6a06602febc4da47bc7a05262b",
+  "gas": "argon",
+  "mach": 3.8,
+  "reference_length_mm": 1.098,
+  "rendering": "PyMuPDF RGB raster with the specified clip and scale. Pixel origin is the upper-left corner of the clip.",
+  "observations": {
+    "figure_1b": {
+      "printed_page": 500,
+      "expected_raster_sha256": "1bfbcd533c299c8d44c1439c409c14f47c711f52948abdb6291f32fae1aca4dc",
+      "calibration_gradient_0_2_rows": [
+        404,
+        408
+      ],
+      "calibration_gradient_0_3_rows": [
+        124,
+        128
+      ],
+      "peak_rows": [
+        196,
+        210
+      ],
+      "identification": "Enclose both nearest peak strokes where the M=3.38 solid and M=3.8 dashed curves nearly touch.",
+      "gradient_relative_to_reference_length": [
+        0.2692857142857143,
+        0.2757142857142857
+      ],
+      "thickness_experimental_mean_free_paths": [
+        3.6269430051813476,
+        3.7135278514588856
+      ],
+      "thickness_mm_at_stated_reference_scale": [
+        3.98238341968912,
+        4.077453580901857
+      ],
+      "pdf_page_number": 4,
+      "pymupdf_page_index": 3,
+      "render_scale": 6,
+      "clip_pdf_points": [
+        310,
+        335,
+        430,
+        508
+      ]
+    },
+    "figure_2": {
+      "printed_page": 501,
+      "expected_raster_sha256": "45b13ef80c9e2d2fdd311ae6f546a72513dec956746b6d24b4fecf4eac1f4afe",
+      "calibration_gradient_0_2_rows": [
+        663,
+        670
+      ],
+      "calibration_gradient_0_3_rows": [
+        220,
+        225
+      ],
+      "author_error_bar_rows": [
+        316,
+        367
+      ],
+      "marker_center_columns": [
+        357,
+        361
+      ],
+      "calibration_mach_3_columns": [
+        177,
+        182
+      ],
+      "calibration_mach_5_columns": [
+        623,
+        629
+      ],
+      "identification": "Authors' marker near M=3.8 with top and bottom caps. The caption and text attribute the error bars to scatter over at least three runs.",
+      "gradient_relative_to_reference_length": [
+        0.2668171557562077,
+        0.2795505617977528
+      ],
+      "thickness_experimental_mean_free_paths": [
+        3.577170418006431,
+        3.747884940778342
+      ],
+      "thickness_mm_at_stated_reference_scale": [
+        3.927733118971062,
+        4.1151776649746195
+      ],
+      "mach_interval_from_pixel_calibration": [
+        3.782997762863535,
+        3.8251121076233185
+      ],
+      "pdf_page_number": 5,
+      "pymupdf_page_index": 4,
+      "render_scale": 7,
+      "clip_pdf_points": [
+        140,
+        96,
+        240,
+        203
+      ]
+    }
+  },
+  "reported_relative_derivative_accuracy_approximate": 0.04,
+  "limitations": [
+    "The figures may share runs. The readings are not independent experimental replicates.",
+    "Figure 1(b) is a conservative peak reading where two curves nearly merge; Figure 2 includes the plotted scatter.",
+    "The authors' approximate 4% uncertainty for the derivative is distinct from the statistical scatter; no distribution or independence is assumed.",
+    "Pixel and axis bands are manual readings; scan deformation and estimator uncertainty are not included."
+  ]
+}
