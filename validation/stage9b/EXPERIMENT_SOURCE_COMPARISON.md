@@ -21,6 +21,47 @@ of an electron beam*, JFM 74(3), 497–513,
 - [Первичный профиль](primary_profile_digitization.json): 45 вручную проверенных
   поперечных сечений линии; перекрытые и неоднозначные участки исключены.
 
+### Повторный рендер
+
+В обоих файлах `pdf_page` — номер страницы PDF, начиная с единицы. В
+PyMuPDF ему соответствует индекс `pdf_page - 1`. Для рис. 1(b) это
+индекс 3 (печатная с. 500), для рис. 3 — индекс 5 (печатная с. 502).
+На соседней печатной с. 503 находится рис. 4 с похожими кривыми.
+
+Из корня репозитория с установленным PyMuPDF можно восстановить оба кадра
+рядом с локальным PDF. Первый аргумент после `-` задаёт путь к PDF.
+
+```sh
+python3 - output/alsmeyer-source/alsmeyer-1976-archive.pdf <<'PY'
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+import pymupdf
+
+source = Path(sys.argv[1])
+data = json.loads(Path('validation/stage9b/primary_width_digitization.json').read_text())
+assert hashlib.sha256(source.read_bytes()).hexdigest() == data['source_sha256']
+with pymupdf.open(source) as document:
+    for measurement in data['measurements']:
+        page = document[measurement['pdf_page'] - 1]
+        clip = pymupdf.Rect(*measurement['clip_pdf_points'])
+        raster = page.get_pixmap(matrix=pymupdf.Matrix(3, 3), clip=clip)
+        target = source.with_name(f"alsmeyer-p{measurement['printed_page']}.png")
+        with target.open('xb') as output:
+            output.write(raster.tobytes('png'))
+PY
+```
+
+На повторном RGB-рендере рис. 3 при пороге серого 120 каждое из 45
+сохранённых сечений пересекло один сплошной тёмный отрезок в указанной строке.
+У 22 сечений совпали обе границы пиксельного интервала. Максимальное
+расхождение границы составило 3 пикселя. Линейная калибровка по 20 делениям
+дала 51,005 пикселя на `lambda1`, внутри исходного диапазона 50,7–51,1.
+Сравнение отсчётов показывает воспроизводимость положения линии и оставляет
+погрешность её границ открытой.
+
 Заявленные точности плотности ±1%, масштаба ±1,3% и производной примерно ±4%
 не являются установленными гауссовыми 95%-интервалами. Соседние пиксельные
 сечения не являются независимыми экспериментами. Неопределённость оцифровки
