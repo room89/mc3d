@@ -912,6 +912,40 @@ TEST(SimulationOutputTest, ReportsWriteFailure) {
   EXPECT_THROW(mc3d::SimulationRunner::RequireWrite(false), std::runtime_error);
 }
 
+TEST(SimulationOutputTest, FlushesUnscheduledResolutionAtGracefulStop) {
+  std::string every_step;
+  std::string sparse;
+  for (const double interval : {0., 2.}) {
+    ScopedWorkingDirectory guard("mc3d_interrupted_resolution");
+    mc3d::CellCluster cluster(1, 123);
+    mc3d::SimulationRunner runner(cluster);
+    cluster.SetApex({0, 0, 0});
+    cluster.SetSize(1, 1, 1);
+    cluster.SetEndTime(1.);
+    ASSERT_TRUE(cluster.Initialize(4, 1, 1, 120, kKn, kCu,
+                                   std::make_unique<mc3d::Geometry>(), 0, 0, kTemperature));
+    runner.SetResolutionDiagnostics(true);
+    runner.SetSnapshotInterval(interval);
+    const auto second_step = "resolution_cells_2.csv";
+    runner.progress = [&](double, std::size_t step) {
+      if (step != 2) return;
+      EXPECT_EQ(std::filesystem::exists(second_step), interval == 0.);
+      mc3d::stop_requested = 1;
+    };
+    runner.Compute();
+    mc3d::stop_requested = 0;
+    ASSERT_EQ(runner.Steps(), 2U);
+    ASSERT_LT(runner.Time(), 1.);
+    std::ifstream rows(second_step);
+    ASSERT_TRUE(rows);
+    std::ostringstream data;
+    data << rows.rdbuf();
+    ASSERT_FALSE(data.str().empty());
+    (interval == 0. ? every_step : sparse) = data.str();
+  }
+  EXPECT_EQ(sparse, every_step);
+}
+
 TEST(BoundaryPhasesTest, LaterFacesProcessEarlierTransitArrivals) {
   class EmitBoundary : public mc3d::Boundary {
    public:
