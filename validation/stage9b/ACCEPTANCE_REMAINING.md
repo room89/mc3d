@@ -21,9 +21,9 @@ and the full PHYSICS_PLAN.md scope remain in force.
 - The [new independent C/E pilot](TIMESTEP_PILOT.md) is specified to measure
   run variation and cost, not to pass acceptance. Inspect its actual process
   and report state before claiming progress or completion.
-- The matched 40-experimental-mean-free-path matrix has completed short runs
-  and a verified 1024-window SPARTA C run. The long MC3D C160 comparison covers
-  896 matched windows in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
+- The matched 40-experimental-mean-free-path matrix has completed short runs.
+  The long MC3D C160 and SPARTA C runs have 1024 verified matching windows
+  in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
   The original window plateau criterion remains open. Gradient thickness and
   numerical convergence also remain open.
 
@@ -39,8 +39,8 @@ and the full PHYSICS_PLAN.md scope remain in force.
 3. Establish stationarity and grid, time, population and domain convergence,
    followed by inter-code and primary-experiment comparisons in matched conditions.
    Preserve numerical, statistical and experimental uncertainties separately.
-   Verify the complete long C160 history and match it to SPARTA, then compare
-   against the long C320 run. The uniform downstream controls will test
+   Complete the long C320 run and compare it with the verified C160 history.
+   The uniform downstream controls will test
    whether the outlet excursions also occur in the absence of the shock.
 4. After stage 9, complete the isothermal wedge and dynamic-wall checks in
    stages 10–11 and the final limitations/reproducibility report. They remain
