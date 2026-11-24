@@ -18,9 +18,10 @@ and the full PHYSICS_PLAN.md scope remain in force.
   mean-front offset. Reservoir input checks and isolated flux checks found no
   gross normalization error at their tested precision. Three-seed historical
   C/E differences do not establish time-step convergence.
-- The [new independent C/E pilot](TIMESTEP_PILOT.md) is specified to measure
-  run variation and cost, not to pass acceptance. Inspect its actual process
-  and report state before claiming progress or completion.
+- The [independent C/E pilot](TIMESTEP_PILOT.md#completed-pilot-results)
+  completed all 12 runs. The analysis verified 2,187 file hashes, and a second
+  extraction from the original outputs reproduced the report. Run-to-run variation
+  and half-profile changes leave time-step convergence unresolved.
 - The matched 40-experimental-mean-free-path matrix has completed short runs.
   The long MC3D C160 and SPARTA C runs have 1024 verified matching windows
   in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
@@ -29,20 +30,17 @@ and the full PHYSICS_PLAN.md scope remain in force.
 
 ## Required next decisions and evidence
 
-1. Complete the frozen C/E pilot; verify all runs, source hashes and full-window
-   coverage. Report per-run means and half changes, treating runs rather than
-   windows as independent units. Retain negative and inconclusive results.
-2. Design a prospective comparison with a justified uncertainty procedure,
+1. Design a prospective comparison with a justified uncertainty procedure,
    sample size and stopping rule. Do not tune on confirmation results. Resolve
    the relationship between fixed-frame profiles and the intrinsic thickness
    required by experimental validation; the density band alone is insufficient.
-3. Establish stationarity and grid, time, population and domain convergence,
+2. Establish stationarity and grid, time, population and domain convergence,
    followed by inter-code and primary-experiment comparisons in matched conditions.
    Preserve numerical, statistical and experimental uncertainties separately.
    Complete the long C320 run and compare it with the verified C160 history.
    The uniform downstream controls will test
    whether the outlet excursions also occur in the absence of the shock.
-4. After stage 9, complete the isothermal wedge and dynamic-wall checks in
+3. After stage 9, complete the isothermal wedge and dynamic-wall checks in
    stages 10–11 and the final limitations/reproducibility report. They remain
    required for the user's full physical acceptance objective.
 
