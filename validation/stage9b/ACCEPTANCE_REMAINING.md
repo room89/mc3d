@@ -23,7 +23,7 @@ and the full PHYSICS_PLAN.md scope remain in force.
   extraction from the original outputs reproduced the report. Run-to-run variation
   and half-profile changes leave time-step convergence unresolved.
 - The matched 40-experimental-mean-free-path matrix has completed short runs.
-  The long MC3D C160 and SPARTA C runs have 1024 verified matching windows
+  The long MC3D C160, MC3D C320 and SPARTA C runs have 1024 verified matching windows
   in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
   The original window plateau criterion remains open. Gradient thickness and
   numerical convergence also remain open.
@@ -37,8 +37,8 @@ and the full PHYSICS_PLAN.md scope remain in force.
 2. Establish stationarity and grid, time, population and domain convergence,
    followed by inter-code and primary-experiment comparisons in matched conditions.
    Preserve numerical, statistical and experimental uncertainties separately.
-   Complete the long C320 run and compare it with the verified C160 history.
-   The uniform downstream controls will test
+   Complete the time-step and domain contrasts and the independent repeats.
+   The uniform downstream controls test
    whether the outlet excursions also occur in the absence of the shock.
 3. After stage 9, complete the isothermal wedge and dynamic-wall checks in
    stages 10–11 and the final limitations/reproducibility report. They remain
