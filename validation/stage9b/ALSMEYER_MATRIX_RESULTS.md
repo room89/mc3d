@@ -113,8 +113,20 @@
 Пересчёт по состоянию и потокам дал максимальные относительные невязки
 1,7×10⁻¹⁶ по массе, 1,6×10⁻¹⁴ по импульсу и 3,0×10⁻¹⁴ по энергии.
 На 1024 окнах порог плотности у выхода 1% превысили 43 окна C160,
-11 окон C320 и 50 окон SPARTA. Для проверки выхода запущен контроль
-SPARTA в однородном потоке. Парный расчёт MC3D ожидает его завершения.
+11 окон C320 и 50 окон SPARTA.
+
+### Контроль выхода в однородном потоке
+
+В однородном потоке превышения порога 1% встретились в 16 из 256 окон
+MC3D и в 18 из 256 окон SPARTA. В соответствующих окнах расчётов с
+ударной волной зарегистрировано 10 и 12 превышений. Разница между
+сценариями по средней плотности внешней полосы относительно внутренней
+составила −0,0445% от скачка в MC3D и −0,0016% в SPARTA. Суммы
+полуширин по блокам из 64 окон составили 0,484% и 0,243% соответственно.
+На всех 60 199 шагах однородного MC3D баланс числа частиц сошёлся точно,
+максимальная относительная невязка энергии составила 2,3×10⁻¹⁴.
+Контроль подтвердил возможность превышений в однородном потоке.
+Проверка исходного критерия по отдельным окнам остаётся открытой.
 
 ## Исходные результаты
 
@@ -134,6 +146,9 @@ SPARTA в однородном потоке. Парный расчёт MC3D ож
 - `alsmeyer-long-sparta-C/production-full-matched-figure3-density-v1.json` — `eb54c5e4ff75f978b977b4f5358d823c6944c00562d15830ec1aebb6f7243b19`
 - `alsmeyer-long-sparta-C/production-full-matched-gradients-v1.json` — `448365a438b1a1a8b8a19fa030f4acd7f8cfcad325cd70ed6a52aa8acb57907d`
 - `alsmeyer-long-sparta-C/uniform-downstream-matched/protocol.json` — `4a828de9202e28c2f9e5c890fed4bee21c34152999e4f567ae1a8d4741ccef24`
+- `alsmeyer-long-sparta-C/uniform-downstream-matched/uniform-downstream-comparison.json` — `318859186aca9f4ef782a5c5aaaba77f242d243b48eddd726afa131d9c648f61`
+- `alsmeyer-long-sparta-C/uniform-downstream-matched/uniform-downstream-shock-contrast-v1.json` — `1fdc1be6aa7156faa767f3d7022857934fef4fdcd2460ff3282fb5e2585ebaab`
+- `alsmeyer-long-sparta-C/uniform-downstream-matched/mc3d-uniform-full-balance-v1.json` — `ca2bcf5fc49c0e3676cad977c934fffa0611fd7c68ebcbed1546c2557e4b73b1`
 - `alsmeyer-C-population320/C320-long-1024-inputs/C320-30001/execution.json` — `ca702f26bbd9939b4d5b2f52a0bf92584b12bc323a3f48db3fdbfdb59372e6c6`
 - `alsmeyer-C-population320/long-population-C160-C320-v1.json` — `6785c3975ba5a1bc602f0578562ff393306cfbf3f90a9971a776ff42b801398e`
 - `alsmeyer-C-population320/C320-long-1024-inputs/long-population-and-experiment-1024-v1.json` — `c9c9f08a24a3479565bd3d854be9d81f715c0b03badbf79cf6e13f237103cd4c`

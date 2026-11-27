@@ -25,8 +25,9 @@ and the full PHYSICS_PLAN.md scope remain in force.
 - The matched 40-experimental-mean-free-path matrix has completed short runs.
   The long MC3D C160, MC3D C320 and SPARTA C runs have 1024 verified matching windows
   in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
-  The original window plateau criterion remains open. Gradient thickness and
-  numerical convergence also remain open.
+  The completed uniform controls showed outlet excursions in both solvers
+  over 256 matched windows per run. The original window plateau criterion,
+  gradient thickness and numerical convergence remain open.
 
 ## Required next decisions and evidence
 
@@ -38,8 +39,6 @@ and the full PHYSICS_PLAN.md scope remain in force.
    followed by inter-code and primary-experiment comparisons in matched conditions.
    Preserve numerical, statistical and experimental uncertainties separately.
    Complete the time-step and domain contrasts and the independent repeats.
-   The uniform downstream controls test
-   whether the outlet excursions also occur in the absence of the shock.
 3. After stage 9, complete the isothermal wedge and dynamic-wall checks in
    stages 10–11 and the final limitations/reproducibility report. They remain
    required for the user's full physical acceptance objective.
