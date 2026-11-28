@@ -18,31 +18,33 @@ and the full PHYSICS_PLAN.md scope remain in force.
   mean-front offset. Reservoir input checks and isolated flux checks found no
   gross normalization error at their tested precision. Three-seed historical
   C/E differences do not establish time-step convergence.
-- The [new independent C/E pilot](TIMESTEP_PILOT.md) is specified to measure
-  run variation and cost, not to pass acceptance. Inspect its actual process
-  and report state before claiming progress or completion.
-- The matched 40-experimental-mean-free-path matrix is prepared but has no
-  qualified production result. Engineering-domain pilot data cannot replace it.
+- The [independent C/E pilot](TIMESTEP_PILOT.md#completed-pilot-results)
+  completed all 12 runs. The analysis verified 2,187 file hashes, and a second
+  extraction from the original outputs reproduced the report. Run-to-run variation
+  and half-profile changes leave time-step convergence unresolved.
+- The matched 40-experimental-mean-free-path matrix has completed short runs.
+  The long MC3D C160, MC3D C320 and SPARTA C runs have 1024 verified matching windows
+  in the [matrix report](ALSMEYER_MATRIX_RESULTS.md).
+  The completed uniform controls showed outlet excursions in both solvers
+  over 256 matched windows per run. The original window plateau criterion,
+  gradient thickness and numerical convergence remain open.
 
 ## Required next decisions and evidence
 
-1. Complete the frozen C/E pilot; verify all runs, source hashes and full-window
-   coverage. Report per-run means and half changes, treating runs rather than
-   windows as independent units. Retain negative and inconclusive results.
-2. Design a prospective comparison with a justified uncertainty procedure,
+1. Design a prospective comparison with a justified uncertainty procedure,
    sample size and stopping rule. Do not tune on confirmation results. Resolve
    the relationship between fixed-frame profiles and the intrinsic thickness
    required by experimental validation; the density band alone is insufficient.
-3. Establish stationarity and grid, time, population and domain convergence,
+2. Establish stationarity and grid, time, population and domain convergence,
    followed by inter-code and primary-experiment comparisons in matched conditions.
    Preserve numerical, statistical and experimental uncertainties separately.
-4. After stage 9, complete the isothermal wedge and dynamic-wall checks in
+   Complete the time-step and domain contrasts and the independent repeats.
+3. After stage 9, complete the isothermal wedge and dynamic-wall checks in
    stages 10–11 and the final limitations/reproducibility report. They remain
    required for the user's full physical acceptance objective.
 
-The user's latest resource authorization permits full load and prepared launches
-without another confirmation. Older reduced-load guidance is superseded; this
-does not authorize automatic reruns of failed cases or omission of acceptance gates.
+Apply the current user-approved load limits to prepared launches. Inspect
+the solver and output manifests before resuming interrupted work.
 
 ## Evidence and provenance
 
